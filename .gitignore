@@ -3,4 +3,4 @@
 .project
 .settings
 /bin
-build
+/build
