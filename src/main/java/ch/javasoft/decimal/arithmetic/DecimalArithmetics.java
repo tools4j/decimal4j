@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
+import ch.javasoft.decimal.Scale;
 
 public interface DecimalArithmetics {
 	/**
@@ -14,6 +15,7 @@ public interface DecimalArithmetics {
 	 * 
 	 * @return the non-negative scale applied to unscaled decimal values within
 	 *         this {@code DecimalArithmetics} object
+	 * @see Scale#getFractionDigits()
 	 */
 	int getScale();
 

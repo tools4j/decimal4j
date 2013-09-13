@@ -1,28 +1,125 @@
 package ch.javasoft.decimal;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
-public interface Decimal<S extends Scale> extends
-		Comparable<Decimal<S>> {
+/**
+ * Mutable or immutable fixed-precision signed decimal numbers similar to
+ * {@link BigDecimal}. A {@code Decimal} consists of an <i>unscaled long
+ * value</i> and a {@link #getScale() scale}. The scale defines the number of
+ * digits to the right of the decimal point. The value of the number represented
+ * by the {@code Decimal} is <tt>(unscaledValue &times; 10<sup>-n</sup>)</tt>
+ * with {@code n} {@link Scale#getFractionDigits() fraction digits}.
+ * <p>
+ * Scale is a generic parameter of the <tt>Decimal</tt> to ensure that only
+ * decimal numbers of the same scale can directly be combined in arithmetic
+ * operations (without conversion); the {@link Scale} class provides scale
+ * subclasses to support this principle.
+ * <p>
+ * TODO arithetic
+ * 
+ * @param <S>
+ *            the scale subclass type associated with this decimal
+ */
+public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
 
+	/**
+	 * Decimal arithmetics used for arithmetic operations and conversions using
+	 * the same scale and defining the default
+	 * {@link DecimalArithmetics#getRoundingMode() rounding mode} applied to
+	 * operations where rounding is necessary.
+	 * 
+	 * @return the decimal arithmetics with the same scale as this decimal and
+	 *         the default {@link DecimalArithmetics#getRoundingMode() rounding
+	 *         mode} applied to operations with rounding
+	 */
 	DecimalArithmetics getArithmetics();
-	
+
+	/**
+	 * Returns the scale associated with this decimal. The scale defines the
+	 * number of {@link Scale#getFractionDigits() fraction digits} and the
+	 * {@link Scale#getScaleFactor() scale factor} applied to the {@code long}
+	 * value underlying this <tt>Decimal</tt>.
+	 * 
+	 * @return the scale object
+	 */
 	S getScale();
 
+	/**
+	 * Returns the value of this <tt>Decimal</tt> as a <code>byte</code>. This
+	 * may involve rounding or truncation.
+	 * 
+	 * @return the numeric value represented by this object after conversion to
+	 *         type <code>byte</code>.
+	 * @see Number#byteValue()
+	 */
 	byte byteValue();
 
+	/**
+	 * Returns the value of this <tt>Decimal</tt> as a <code>short</code>. This
+	 * may involve rounding or truncation.
+	 * 
+	 * @return the numeric value represented by this object after conversion to
+	 *         type <code>short</code>.
+	 * @see Number#shortValue()
+	 */
 	short shortValue();
 
+	/**
+	 * Returns the value of this <tt>Decimal</tt> as an <code>int</code>. This
+	 * may involve rounding or truncation.
+	 * 
+	 * @return the numeric value represented by this object after conversion to
+	 *         type <code>int</code>.
+	 * @see Number#intValue()
+	 */
 	int intValue();
 
+	/**
+	 * Returns the value of this <tt>Decimal</tt> as a <code>long</code>. This
+	 * may involve rounding.
+	 * 
+	 * @return the numeric value represented by this object after conversion to
+	 *         type <code>long</code>.
+	 * @see Number#longValue()
+	 */
 	long longValue();
 
+	/**
+	 * Returns the value of this <tt>Decimal</tt> as a <code>float</code>. This
+	 * may involve rounding.
+	 * 
+	 * @return the numeric value represented by this object after conversion to
+	 *         type <code>float</code>.
+	 * @see Number#floatValue()
+	 */
 	float floatValue();
 
+	/**
+	 * Returns the value of this <tt>Decimal</tt> as a <code>double</code>. This
+	 * may involve rounding.
+	 * 
+	 * @return the numeric value represented by this object after conversion to
+	 *         type <code>double</code>.
+	 * @see Number#doubleValue()
+	 */
 	double doubleValue();
 
+	/**
+	 * Returns the unscaled value underlying this <tt>Decimal</tt>. Since the
+	 * value of this {@code Decimal} is
+	 * <tt>(unscaledValue &times; 10<sup>-n</sup>)</tt>, the returned value
+	 * equals <tt>(this &times; 10<sup>n</sup>)</tt> with {@code n} standing for
+	 * the number of {@link Scale#getFractionDigits() fraction digits}.
+	 * 
+	 * @return the unscaled numeric value represented by this object when to
+	 *         type <code>long</code>
+	 * @see #getScale()
+	 * @see Scale#getFractionDigits()
+	 * @see Scale#getScaleFactor()
+	 */
 	long unscaledValue();
 
 	/**
@@ -151,6 +248,10 @@ public interface Decimal<S extends Scale> extends
 	 * result is stored with the same scale as {@code this} so the result for
 	 * zero and nonzero values is equal to {@code [1,
 	 * getArithmethics().scale()]}.
+	 * <p>
+	 * Calling this method does NOT modify {@code this} instance; for constant
+	 * decimals, an ULP constant is returned; for mutable decimals, a new
+	 * mutable ULP instance is returned.
 	 * 
 	 * @return the size of an ulp of {@code this}
 	 */
@@ -304,7 +405,14 @@ public interface Decimal<S extends Scale> extends
 	@Override
 	int compareTo(Decimal<S> anotherDecimal);
 
+	/**
+	 * Returns a string representation of this {@code Decimal} object as fixed
+	 * precision decimal always showing all decimal places (also trailing zeros)
+	 * and a leading sign character if negative.
+	 * 
+	 * @return a {@code String} decimal representation of this {@code Decimal}
+	 *         object with all the fraction digits (including trailing zeros)
+	 */
 	@Override
 	String toString();
-
 }

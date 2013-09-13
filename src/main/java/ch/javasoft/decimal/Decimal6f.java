@@ -9,6 +9,10 @@ import ch.javasoft.decimal.Scale.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.RoundHalfEvenDecimalArithmetics;
 
+/**
+ * <tt>Decimal6f</tt> represents a constant decimal number with 6 fractional 
+ * digits.
+ */
 @SuppressWarnings("serial")
 public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
 	
