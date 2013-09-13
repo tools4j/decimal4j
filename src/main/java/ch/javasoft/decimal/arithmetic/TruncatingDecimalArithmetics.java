@@ -114,6 +114,8 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 			return new RoundHalfDownDecimalArithmetics(getScale());
 		case HALF_EVEN:
 			return new RoundHalfEvenDecimalArithmetics(getScale());
+		case UNNECESSARY:
+			return new RoundUnnecessaryDecimalArithmetics(getScale());
 		default:
 			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
 		}
