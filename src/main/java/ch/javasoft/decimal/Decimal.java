@@ -18,7 +18,9 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * operations (without conversion); the {@link Scale} class provides scale
  * subclasses to support this principle.
  * <p>
- * TODO arithetic
+ * The {@link #getArithmetics() arithmetics} object defines {@link RoundingMode}
+ * applied to methods which involve rounding as well as the {@link OverflowMode}
+ * used when an operation results in an overflow.
  * 
  * @param <S>
  *            the scale subclass type associated with this decimal

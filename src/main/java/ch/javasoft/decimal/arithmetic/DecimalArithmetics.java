@@ -319,8 +319,33 @@ public interface DecimalArithmetics {
 	 */
 	long fromUnscaled(long unscaledValue, int scale);
 
+	/**
+	 * Parses the string argument as a signed decimal returned as unscaled long
+	 * value. The characters in the string must all be decimal digits, except an
+	 * optional decimal point {@code '.'} and the first character that may be an
+	 * ASCII minus sign {@code '-'} (<code>&#92;u002D'</code>) to indicate a
+	 * negative value or an ASCII plus sign {@code '+'} (
+	 * <code>'&#92;u002B'</code>) to indicate a positive value.
+	 * 
+	 * @param value
+	 *            a {@code String} containing the decimal value representation
+	 *            to be parsed
+	 * @return the decimal as unscaled {@code long} value
+	 * @throws NumberFormatException
+	 *             if the string does not contain a parsable decimal.
+	 */
 	long parse(String value);
 
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into a
+	 * long value and returns it. The arithmetic's {@link #getRoundingMode() rounding mode}
+	 * is applied if rounding is necessary.
+	 *  
+	 * @param uDecimal
+	 *            the unscaled decimal value convert into a long value
+	 * @return the {@code uDecimal} value converted into a long value, possibly
+	 *         rounded or truncated
+	 */
 	long toLong(long uDecimal);
 
 	double toDouble(long uDecimal);
