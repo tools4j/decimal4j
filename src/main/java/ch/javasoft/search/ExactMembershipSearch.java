@@ -105,8 +105,8 @@ public class ExactMembershipSearch implements Search {
 		int high = toIndex - 1;
 
 		while (low <= high) {
-			int mid = (low + high) >>> 1;
-			int midVal = (int) arr.get(mid);
+			final int mid = (low + high) >>> 1;
+			final int midVal = (int) arr.getUnchecked(mid);
 
 			if (midVal < key) low = mid + 1;
 			else if (midVal > key) high = mid - 1;

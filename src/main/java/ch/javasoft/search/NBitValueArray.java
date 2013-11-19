@@ -53,14 +53,14 @@ public class NBitValueArray {
 		final long[] bits = this.bits;
 		final int bitsPerValue = this.bitsPerValue;
 		final long bitPos = index * bitsPerValue;
-		final long arrPos = bitPos / 64;
-		final long arrMod = bitPos % 64;
-		final int bits0 = (int)(64 - arrMod);
+		final int arrPos = (int)(bitPos >>> 6);//bitPos / 64
+		final int arrMod = (int)(bitPos & 63);//bitPos % 64
+		final int bits0 = 64 - arrMod;
 		final int bits1 = bitsPerValue - bits0;
-		final long val0 = bits[(int)arrPos];
+		final long val0 = bits[arrPos];
 		long result = (val0 >>> arrMod);
 		if (bits1 > 0) {
-			final long val1 = bits[(int)(arrPos+1)];
+			final long val1 = bits[arrPos+1];
 			result |= (val1 << bits0);
 		}
 		return result & mask;
@@ -75,16 +75,16 @@ public class NBitValueArray {
 		final long mask = this.mask;
 		final int bitsPerValue = this.bitsPerValue;
 		final long bitPos = index * bitsPerValue;
-		final long arrPos = bitPos / 64;
-		final long arrMod = bitPos % 64;
+		final int arrPos = (int)(bitPos >>> 6);//bitPos / 64
+		final int arrMod = (int)(bitPos & 63);//bitPos % 64
 		final int bits0 = (int)(64 - arrMod);
 		final int bits1 = bitsPerValue - bits0;
-		long val0 = bits[(int)arrPos];
+		long val0 = bits[arrPos];
 		val0 |= (mask << arrMod);
 		val0 ^= ((value ^ mask) << arrMod);
-		bits[(int)arrPos] = val0;
+		bits[arrPos] = val0;
 		if (bits1 > 0) {
-			long val1 = bits[(int)(arrPos+1)];
+			long val1 = bits[arrPos+1];
 			val1 = ((val1 >>> bits1) << bits1);//clear our bits
 			val1 |= (value >>> bits0);
 			bits[(int)(arrPos+1)] = val1;

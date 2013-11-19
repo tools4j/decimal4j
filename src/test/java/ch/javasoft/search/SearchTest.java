@@ -8,12 +8,12 @@ import org.junit.Test;
 public class SearchTest {
 
 	private final Random rnd = new Random();
-//	private final int n = 20000000;
-//	private final int h = 20000000;
-//	private final int m = 20000000;
-	private final int n = 1000000;
-	private final int h = 1000000;
-	private final int m = 1000000;
+	private final int n = 20000000;
+	private final int h = 20000000;
+	private final int m = 20000000;
+//	private final int n = 10000000;
+//	private final int h = 10000000;
+//	private final int m = 10000000;
 	private final int maxval = 0;//Integer.MAX_VALUE;//<=0 to allow any int
 	
 	@Test
