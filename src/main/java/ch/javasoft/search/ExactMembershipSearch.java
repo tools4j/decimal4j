@@ -12,7 +12,7 @@ public class ExactMembershipSearch implements Search {
 	public ExactMembershipSearch(int... values) {
 		final int[] sorted = Arrays.copyOf(values, values.length);
 		Arrays.sort(sorted);
-		this.k = findBestK(sorted.length);
+		this.k = Math.max(1, findBestK(sorted.length));
 		this.counts = initCounts(sorted, k);
 		this.values = new NBitValueArray(values.length, 32 - k);
 		this.kmask = 0xffffffff ^ (int) this.values.getMask();
@@ -63,14 +63,41 @@ public class ExactMembershipSearch implements Search {
 		return counts;
 	}
 	
+	/**
+	 * Returns the count array index for a given value.
+	 * <p>
+	 * If all positive values, formula would be simple:
+	 * result = value >>> (32 - k)
+	 * 
+	 * With negative values, we shift the whole index by half the count array 
+	 * size, i.e. by (1<<k)/2 = 1<<(k-1)
+	 * but than we must do modulo array size, i.e. (% kpow2) == (& (kpow2-1)) 
+	 * all together, we get the shown formula
+	 */
 	private static int icount(int value, int k) {
 		final int kpow2 = 1 << k;
-		return k == 0 ? 0 : ((value >>> (32 - k)) + (kpow2 >> 1)) % kpow2;
+		return ((value >>> (32 - k)) + (kpow2 >> 1)) & (kpow2-1);
 	}
 	
+	/**
+	 * Returns the high-order k-bits given the count array index. This is the
+	 * reverse function of {@link #icount(int, int)}.
+	 * <p>
+	 * If all positive values, formula would be simple:
+	 * result = icount << (32 - k)
+	 * 
+	 * With negative values, we must undo the shift operation applied in icout, 
+	 * i.e. we must first subtract half the size of the array, and than do modulo
+	 * the array size. Because this could be negative, we add the array size before
+	 * doing the modulo, and adding the array size plus subtracting half the array
+	 * size is the same as adding half the array size. 
+	 * 
+	 * Given modulo array size is (% kpow2) == (& (kpow2-1)) we get the formula 
+	 * below.
+	 */
 	private static int kbits(int icount, int k) {
 		final int kpow2 = 1 << k;
-		return k == 0 ? 0 : ((kpow2 + icount - (kpow2 >> 1)) % kpow2) << (32 - k);
+		return ((icount + (kpow2 >> 1)) & (kpow2-1)) << (32 - k);
 	}
 
 	@Override
