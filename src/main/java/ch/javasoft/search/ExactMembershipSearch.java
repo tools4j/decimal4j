@@ -22,8 +22,8 @@ public class ExactMembershipSearch implements Search {
 	}
 
 	private static int findBestK(int n) {
-		long bestSize = sizeOf(n, 0);
 		int bestK = 0;
+		long bestSize = sizeOf(n, bestK);
 		for (int k = 1; k <= 32; k++) {
 			final long size = sizeOf(n, k);
 			if (size < bestSize) {
@@ -36,10 +36,11 @@ public class ExactMembershipSearch implements Search {
 
 	private static long sizeOf(int n, int k) {
 		final long slots = 1L << k;
-		return (32L - k) * n + (slots - 1) * 32L;
+//		return (32L - k) * n + (slots - 1) * 32L;
+		return (32L - k) * n + slots * 32L;
 	}
 
-	private int[] initCounts(int[] sorted, int k) {
+	private static int[] initCounts(int[] sorted, int k) {
 		final int[] counts = new int[1 << k];
 		int index = sorted.length == 0 ? 0 : icount(sorted[0], k);
 		int kmask = index;
@@ -51,7 +52,7 @@ public class ExactMembershipSearch implements Search {
 			} else {
 				counts[index] = count;
 				kmask = valmask;
-				index = kmask % counts.length;
+				index = kmask;
 				count = 1;
 			}
 		}
@@ -59,6 +60,10 @@ public class ExactMembershipSearch implements Search {
 		//we want cumulative sums
 		for (int i = 1; i < counts.length; i++) {
 			counts[i] += counts[i - 1];
+		}
+		//assert
+		if (counts[counts.length - 1] != sorted.length) {
+			throw new RuntimeException("internal error, counts[end] = " + counts[counts.length] + " should be " + sorted.length);
 		}
 		return counts;
 	}
@@ -102,6 +107,8 @@ public class ExactMembershipSearch implements Search {
 
 	@Override
 	public int get(int index) {
+		final NBitValueArray values = this.values;
+		final int[] counts = this.counts;
 		if (index < 0 || index >= values.getCount()) {
 			throw new IndexOutOfBoundsException("index expected in [0, " + (values.getCount() - 1) + "] but was found to be " + index);
 		}
@@ -119,6 +126,7 @@ public class ExactMembershipSearch implements Search {
 
 	@Override
 	public int find(int value) {
+		final int[] counts = this.counts;
 		final int countIndex = icount(value, k);
 		final int start = countIndex == 0 ? 0 : counts[countIndex - 1];
 		final int end = counts[countIndex];
@@ -127,13 +135,13 @@ public class ExactMembershipSearch implements Search {
 
 	private int binarySearch(int fromIndex, int toIndex, int value) {
 		final int key = value & ~kmask;
-		final NBitValueArray arr = this.values;
+		final NBitValueArray values = this.values;
 		int low = fromIndex;
 		int high = toIndex - 1;
 
 		while (low <= high) {
 			final int mid = (low + high) >>> 1;
-			final int midVal = (int) arr.getUnchecked(mid);
+			final int midVal = (int) values.getUnchecked(mid);
 
 			if (midVal < key) low = mid + 1;
 			else if (midVal > key) high = mid - 1;

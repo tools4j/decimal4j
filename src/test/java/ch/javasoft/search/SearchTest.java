@@ -11,13 +11,20 @@ public class SearchTest {
 //	private final int n = 100000000;
 //	private final int h = 100000000;
 //	private final int m = 100000000;
-//	private final int n = 20000000;
-//	private final int h = 20000000;
-//	private final int m = 20000000;
-	private final int n = 10000000;
-	private final int h = 10000000;
-	private final int m = 10000000;
+	private final int n = 20000000;
+	private final int h = 20000000;
+	private final int m = 20000000;
+//	private final int n = 10000000;
+//	private final int h = 10000000;
+//	private final int m = 10000000;
+//	private final int n = 1000000;
+//	private final int h = 1000000;
+//	private final int m = 1000000;
+//	private final int n = 100;
+//	private final int h = 100;
+//	private final int m = 100;
 	private final int maxval = 0;//Integer.MAX_VALUE;//<=0 to allow any int
+	private final int minval = -2*n;//Integer.MAX_VALUE;//<=0 to allow any int
 	
 	@Test
 	public void testBinarySearch() {
@@ -37,10 +44,39 @@ public class SearchTest {
 		testSearch(new ExactMembershipSearch(vals), vals);
 	}
 
+	@Test
+	public void testBitPatternExactMembershipSearch() {
+		final int[] vals = randomValues();
+		testSearch(new BitPatternExactMembershipSearch(vals), vals);
+	}
+
 	private int[] randomValues() {
 		final int[] vals = new int[n];
 		for (int i = 0; i < vals.length; i++) {
-			vals[i] = maxval <= 0 ? rnd.nextInt() : rnd.nextInt(maxval);
+			if (minval >= maxval) {
+				vals[i] = rnd.nextInt();
+			} else {
+				if (minval < 0) {
+					if (maxval > 0) {
+						if (minval == Integer.MIN_VALUE) {
+							if (maxval == Integer.MAX_VALUE) {
+								vals[i] = rnd.nextInt(maxval);
+							} else {
+								vals[i] = rnd.nextInt(maxval);
+								vals[i] -= rnd.nextInt(Integer.MAX_VALUE);
+								vals[i] -= rnd.nextInt(1);
+							}
+						} else {
+							vals[i] = rnd.nextInt(maxval);
+							vals[i] -= rnd.nextInt(-minval);
+						}
+					} else {
+						vals[i] = maxval + rnd.nextInt(-(minval - maxval));
+					}
+				} else {
+					vals[i] = minval + rnd.nextInt(maxval - minval);
+				}
+			}
 		}
 		return vals;
 	}
@@ -58,6 +94,7 @@ public class SearchTest {
 		while (true) {
 			for (final int v : vals) {
 				final int found = search.find(v);
+				Assert.assertTrue("should find: " + v, found >= 0);
 				Assert.assertEquals(v, search.get(found));
 				i++;
 				if (i >= h) return;

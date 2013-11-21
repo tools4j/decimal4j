@@ -18,7 +18,7 @@ public class NBitValueArray {
 		}
 		this.count = count;
 		this.bitsPerValue = bitsPerValue;
-		this.mask = 0xffffffffffffffffL >>> (64 - (bitsPerValue % 64));
+		this.mask = bitsPerValue == 0 ? 0 : 0xffffffffffffffffL >>> (64 - (bitsPerValue % 64));
 		final long totalBits = ((long)count) * bitsPerValue;
 		final long arraySize = 1 + (totalBits - 1) / 64;
 		if (arraySize > Integer.MAX_VALUE) {

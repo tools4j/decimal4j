@@ -14,6 +14,17 @@ public class NBitValueArrayTest {
 	private final Random rnd = new Random();
 
 	@Test
+	public void testZeroBits() {
+		final int n = 1000000;
+		final NBitValueArray arr = new NBitValueArray(n, 0);
+		for (int i = 0; i < n; i++) {
+			arr.set(i, rnd.nextLong());
+		}
+		for (int i = 0; i < n; i++) {
+			Assert.assertEquals("value[" + i + "]=" + 0, 0, arr.get(i));
+		}
+	}
+	@Test
 	public void testSingleBits() {
 		final int n = 1000000;
 		final NBitValueArray arr = new NBitValueArray(n, 1);
