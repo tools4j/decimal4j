@@ -6,17 +6,23 @@ import java.util.Random;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Unit test for {@link NBitValueArray}
- */
-public class NBitValueArrayTest {
+import ch.javasoft.search.util.KBitValueBuffer;
+import ch.javasoft.search.util.LongArrayKBitValueBuffer;
 
+/**
+ * Unit test for {@link KBitValueBuffer}
+ */
+public class KBitValueBufferTest {
+
+	private final KBitValueBuffer.Factory bufferFactory = LongArrayKBitValueBuffer.FACTORY;
+//	private final KBitValueBuffer.Factory bufferFactory = SingleAccessLongArrayKBitValueBuffer.FACTORY;
+	
 	private final Random rnd = new Random();
 
 	@Test
 	public void testZeroBits() {
 		final int n = 1000000;
-		final NBitValueArray arr = new NBitValueArray(n, 0);
+		final KBitValueBuffer arr = bufferFactory.create(n, 0);
 		for (int i = 0; i < n; i++) {
 			arr.set(i, rnd.nextLong());
 		}
@@ -27,7 +33,7 @@ public class NBitValueArrayTest {
 	@Test
 	public void testSingleBits() {
 		final int n = 1000000;
-		final NBitValueArray arr = new NBitValueArray(n, 1);
+		final KBitValueBuffer arr = bufferFactory.create(n, 1);
 
 		//set every bit and clear it again
 		for (int i = 0; i < n; i++) {
@@ -54,7 +60,7 @@ public class NBitValueArrayTest {
 	public void test1to64bitValues() {
 		final int n = 100000;
 		for (int b = 1; b < 64; b++) {
-			final NBitValueArray arr = new NBitValueArray(n, b);
+			final KBitValueBuffer arr = bufferFactory.create(n, b);
 			final long mask = arr.getMask();
 			Assert.assertEquals(b, Long.bitCount(mask));
 			Assert.assertEquals(1L << b, mask + 1);

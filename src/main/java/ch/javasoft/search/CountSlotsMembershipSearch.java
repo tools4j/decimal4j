@@ -2,42 +2,26 @@ package ch.javasoft.search;
 
 import java.util.Arrays;
 
-public class ExactMembershipSearch implements Search {
+import ch.javasoft.search.util.ExactMembership;
+import ch.javasoft.search.util.KBitValueBuffer;
+
+public class CountSlotsMembershipSearch implements Search {
 
 	private final int k;
 	private final int kmask;
 	private final int[] counts;
-	private final NBitValueArray values;
+	private final KBitValueBuffer values;
 
-	public ExactMembershipSearch(int... values) {
+	public CountSlotsMembershipSearch(KBitValueBuffer.Factory bufferFactory, int... values) {
 		final int[] sorted = Arrays.copyOf(values, values.length);
 		Arrays.sort(sorted);
-		this.k = Math.max(1, findBestK(sorted.length));
+		this.k = Math.max(1, ExactMembership.findBestK(sorted.length, 32));
 		this.counts = initCounts(sorted, k);
-		this.values = new NBitValueArray(values.length, 32 - k);
+		this.values = bufferFactory.create(values.length, 32 - k);
 		this.kmask = 0xffffffff ^ (int) this.values.getMask();
 		for (int i = 0; i < sorted.length; i++) {
 			this.values.set(i, sorted[i]);
 		}
-	}
-
-	private static int findBestK(int n) {
-		int bestK = 0;
-		long bestSize = sizeOf(n, bestK);
-		for (int k = 1; k <= 32; k++) {
-			final long size = sizeOf(n, k);
-			if (size < bestSize) {
-				bestSize = size;
-				bestK = k;
-			}
-		}
-		return bestK;
-	}
-
-	private static long sizeOf(int n, int k) {
-		final long slots = 1L << k;
-//		return (32L - k) * n + (slots - 1) * 32L;
-		return (32L - k) * n + slots * 32L;
 	}
 
 	private static int[] initCounts(int[] sorted, int k) {
@@ -107,7 +91,7 @@ public class ExactMembershipSearch implements Search {
 
 	@Override
 	public int get(int index) {
-		final NBitValueArray values = this.values;
+		final KBitValueBuffer values = this.values;
 		final int[] counts = this.counts;
 		if (index < 0 || index >= values.getCount()) {
 			throw new IndexOutOfBoundsException("index expected in [0, " + (values.getCount() - 1) + "] but was found to be " + index);
@@ -135,13 +119,13 @@ public class ExactMembershipSearch implements Search {
 
 	private int binarySearch(int fromIndex, int toIndex, int value) {
 		final int key = value & ~kmask;
-		final NBitValueArray values = this.values;
+		final KBitValueBuffer values = this.values;
 		int low = fromIndex;
 		int high = toIndex - 1;
 
 		while (low <= high) {
 			final int mid = (low + high) >>> 1;
-			final int midVal = (int) values.getUnchecked(mid);
+			final int midVal = (int) values.get(mid);
 
 			if (midVal < key) low = mid + 1;
 			else if (midVal > key) high = mid - 1;
