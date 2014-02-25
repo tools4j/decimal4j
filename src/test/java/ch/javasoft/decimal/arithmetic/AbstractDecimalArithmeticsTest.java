@@ -3,8 +3,6 @@ package ch.javasoft.decimal.arithmetic;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-
 /**
  * Base class for unit tests that are testing {@link DecimalArithmetics}
  * subclasses.
@@ -86,10 +84,6 @@ abstract public class AbstractDecimalArithmeticsTest {
 	}
 
 	@Test
-	public void testDivideFails() {
-		assertEquals("0.500000", arith.divide(Long.MIN_VALUE/2, Long.MIN_VALUE));
-	}
-	@Test
 	public void testDivide() {
 		assertEquals("0.001000", arith.divide(arith.parse("0.000001"), arith.parse("0.001")));
 		assertEquals("0.002000", arith.divide(arith.parse("0.000002"), arith.parse("0.001")));
@@ -97,6 +91,7 @@ abstract public class AbstractDecimalArithmeticsTest {
 		assertEquals("0.000000", arith.divide(arith.parse("0.001"), arith.parse("10000")));
 		assertEquals("10.002000", arith.divide(arith.parse("100.040004"), arith.parse("10.002")));
 		assertEquals("0.333333", arith.divide(arith.parse("1.0"), arith.parse("3.000")));
+		assertEquals("0.666666", arith.divide(arith.parse("2.0"), arith.parse("3.000")));
 		assertEquals("0.142857", arith.divide(arith.parse("1"), arith.parse("7")));
 		assertEquals("1.000000", arith.divide(Long.MAX_VALUE, Long.MAX_VALUE));
 		assertEquals("2.000000", arith.divide(Long.MAX_VALUE, Long.MAX_VALUE/2));
@@ -130,13 +125,14 @@ abstract public class AbstractDecimalArithmeticsTest {
 		assertEquals("0.000000", arith.divide(arith.parse("-0.001"), arith.parse("-10000")));
 		assertEquals("10.002000", arith.divide(arith.parse("-100.040004"), arith.parse("-10.002")));
 		assertEquals("0.333333", arith.divide(arith.parse("-1.0"), arith.parse("-3.000")));
+		assertEquals("0.666666", arith.divide(arith.parse("-2.0"), arith.parse("-3.000")));
 		assertEquals("0.142857", arith.divide(arith.parse("-1"), arith.parse("-7")));
 		assertEquals("1.000000", arith.divide(Long.MIN_VALUE, Long.MIN_VALUE));
 		assertEquals("2.000000", arith.divide(Long.MIN_VALUE, Long.MIN_VALUE/2));
 		assertEquals("2.000000", arith.divide(minLongValue, minLongValue/2));
 		assertEquals("10.000000", arith.divide(minLongValue, arith.parse("-922337203685.400000")));
 		assertEquals("1000000.000000", arith.divide(minLongValue, arith.parse("-9223372.036854")));
-//		assertEquals("0.500000", arith.divide(Long.MIN_VALUE/2, Long.MIN_VALUE));
+		assertEquals("0.500000", arith.divide(Long.MIN_VALUE/2, Long.MIN_VALUE));
 		assertEquals("0.100000", arith.divide((Long.MIN_VALUE-8)/10, Long.MIN_VALUE-8));
 		assertEquals("0.010000", arith.divide((Long.MIN_VALUE-8)/100, Long.MIN_VALUE-8));
 		assertEquals("0.001000", arith.divide((Long.MIN_VALUE-808)/1000, Long.MIN_VALUE-808));
@@ -163,6 +159,7 @@ abstract public class AbstractDecimalArithmeticsTest {
 		assertEquals("0.000000", arith.divide(arith.parse("-0.001"), arith.parse("10000")));
 		assertEquals("-10.002000", arith.divide(arith.parse("-100.040004"), arith.parse("10.002")));
 		assertEquals("-0.333333", arith.divide(arith.parse("-1.0"), arith.parse("3.000")));
+		assertEquals("-0.666666", arith.divide(arith.parse("-2.0"), arith.parse("3.000")));
 		assertEquals("-0.142857", arith.divide(arith.parse("-1"), arith.parse("7")));
 		assertEquals("-1.000000", arith.divide(-Long.MAX_VALUE, Long.MAX_VALUE));
 		assertEquals("-2.000000", arith.divide(-maxLongValue, maxLongValue/2));
@@ -195,6 +192,7 @@ abstract public class AbstractDecimalArithmeticsTest {
 		assertEquals("0.000000", arith.divide(arith.parse("0.001"), arith.parse("-10000")));
 		assertEquals("-10.002000", arith.divide(arith.parse("100.040004"), arith.parse("-10.002")));
 		assertEquals("-0.333333", arith.divide(arith.parse("1.0"), arith.parse("-3.000")));
+		assertEquals("-0.666666", arith.divide(arith.parse("2.0"), arith.parse("-3.000")));
 		assertEquals("-0.142857", arith.divide(arith.parse("1"), arith.parse("-7")));
 		assertEquals("-1.000000", arith.divide(Long.MAX_VALUE, -Long.MAX_VALUE));
 		assertEquals("-2.000000", arith.divide(Long.MIN_VALUE, -(Long.MIN_VALUE/2)));

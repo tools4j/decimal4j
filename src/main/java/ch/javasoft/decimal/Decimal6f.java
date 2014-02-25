@@ -18,39 +18,39 @@ public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
 	
 	public static final DecimalArithmetics ARITHMETICS = new RoundHalfEvenDecimalArithmetics(Scale6f.INSTANCE);
 
-	private static final long oneUnscaled = ARITHMETICS.one();
+	private static final long ONE_UNSCALED = ARITHMETICS.one();
 
 	public static final Decimal6f ZERO = new Decimal6f(0);
 	public static final Decimal6f ULP = new Decimal6f(1);
 
-	public static final Decimal6f ONE = new Decimal6f(1 * oneUnscaled);
-	public static final Decimal6f TWO = new Decimal6f(2 * oneUnscaled);
-	public static final Decimal6f THREE = new Decimal6f(3 * oneUnscaled);
-	public static final Decimal6f FOUR = new Decimal6f(4 * oneUnscaled);
-	public static final Decimal6f FIVE = new Decimal6f(5 * oneUnscaled);
-	public static final Decimal6f SIX = new Decimal6f(6 * oneUnscaled);
-	public static final Decimal6f SEVEN = new Decimal6f(7 * oneUnscaled);
-	public static final Decimal6f EIGHT = new Decimal6f(8 * oneUnscaled);
-	public static final Decimal6f NINE = new Decimal6f(9 * oneUnscaled);
+	public static final Decimal6f ONE = new Decimal6f(1 * ONE_UNSCALED);
+	public static final Decimal6f TWO = new Decimal6f(2 * ONE_UNSCALED);
+	public static final Decimal6f THREE = new Decimal6f(3 * ONE_UNSCALED);
+	public static final Decimal6f FOUR = new Decimal6f(4 * ONE_UNSCALED);
+	public static final Decimal6f FIVE = new Decimal6f(5 * ONE_UNSCALED);
+	public static final Decimal6f SIX = new Decimal6f(6 * ONE_UNSCALED);
+	public static final Decimal6f SEVEN = new Decimal6f(7 * ONE_UNSCALED);
+	public static final Decimal6f EIGHT = new Decimal6f(8 * ONE_UNSCALED);
+	public static final Decimal6f NINE = new Decimal6f(9 * ONE_UNSCALED);
 
-	public static final Decimal6f TEN = new Decimal6f(10 * oneUnscaled);
-	public static final Decimal6f HUNDRED = new Decimal6f(100 * oneUnscaled);
-	public static final Decimal6f THOUSAND = new Decimal6f(1000 * oneUnscaled);
-	public static final Decimal6f MILLION = new Decimal6f(1000000 * oneUnscaled);
-	public static final Decimal6f BILLION = new Decimal6f(1000000000 * oneUnscaled);
+	public static final Decimal6f TEN = new Decimal6f(10 * ONE_UNSCALED);
+	public static final Decimal6f HUNDRED = new Decimal6f(100 * ONE_UNSCALED);
+	public static final Decimal6f THOUSAND = new Decimal6f(1000 * ONE_UNSCALED);
+	public static final Decimal6f MILLION = new Decimal6f(1000000 * ONE_UNSCALED);
+	public static final Decimal6f BILLION = new Decimal6f(1000000000 * ONE_UNSCALED);
 
-	public static final Decimal6f HALF = new Decimal6f(oneUnscaled / 2);
-	public static final Decimal6f TENTH = new Decimal6f(oneUnscaled / 10);
-	public static final Decimal6f HUNDREDTH = new Decimal6f(oneUnscaled / 100);
-	public static final Decimal6f THOUSANDTH = new Decimal6f(oneUnscaled / 1000);
-	public static final Decimal6f MILLIONTH = new Decimal6f(oneUnscaled / 1000000);
+	public static final Decimal6f HALF = new Decimal6f(ONE_UNSCALED / 2);
+	public static final Decimal6f TENTH = new Decimal6f(ONE_UNSCALED / 10);
+	public static final Decimal6f HUNDREDTH = new Decimal6f(ONE_UNSCALED / 100);
+	public static final Decimal6f THOUSANDTH = new Decimal6f(ONE_UNSCALED / 1000);
+	public static final Decimal6f MILLIONTH = new Decimal6f(ONE_UNSCALED / 1000000);
 
-	public static final Decimal6f MINUS_ONE = new Decimal6f(-oneUnscaled);
+	public static final Decimal6f MINUS_ONE = new Decimal6f(-ONE_UNSCALED);
 
 	public static final Decimal6f MAX_VALUE = new Decimal6f(Long.MAX_VALUE);
-	public static final Decimal6f MAX_INTEGER_VALUE = new Decimal6f((Long.MAX_VALUE / oneUnscaled) * oneUnscaled);
+	public static final Decimal6f MAX_INTEGER_VALUE = new Decimal6f((Long.MAX_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 	public static final Decimal6f MIN_VALUE = new Decimal6f(Long.MIN_VALUE);
-	public static final Decimal6f MIN_INTEGER_VALUE = new Decimal6f((Long.MIN_VALUE / oneUnscaled) * oneUnscaled);
+	public static final Decimal6f MIN_INTEGER_VALUE = new Decimal6f((Long.MIN_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 
 	//must be sorted!!!
 	private static final Decimal6f[] CACHED = { MIN_VALUE, MIN_INTEGER_VALUE, MINUS_ONE, ZERO, MILLIONTH, THOUSANDTH, HUNDREDTH, TENTH, HALF, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, HUNDRED, THOUSAND, MILLION, BILLION, MAX_INTEGER_VALUE, MAX_VALUE };

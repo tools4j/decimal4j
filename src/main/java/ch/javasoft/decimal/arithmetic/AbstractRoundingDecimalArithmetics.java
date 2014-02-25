@@ -51,8 +51,18 @@ abstract public class AbstractRoundingDecimalArithmetics extends
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		//FIXME implement version with rounding
-		return super.divide(uDecimalDividend, uDecimalDivisor);
+		final long unrounded = super.divide(uDecimalDividend, uDecimalDivisor);
+		final long product = super.multiply(unrounded, uDecimalDivisor);
+		final long delta = uDecimalDividend - product;
+		if (delta != 0) {
+			final long one = one();
+			final long remainder = super.divide((delta % one) * one, uDecimalDivisor);
+			if (unrounded != 0) { 
+				return unrounded + calculateRoundingIncrement( unrounded, remainder);
+			}
+			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * calculateRoundingIncrement(unrounded, remainder); 
+		}
+		return unrounded;
 	}
 
 	@Override

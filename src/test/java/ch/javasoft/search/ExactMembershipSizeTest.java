@@ -71,6 +71,24 @@ public class ExactMembershipSizeTest {
 				final long slots = 1L<<k;
 				return (b-k)*n + (slots-1)*(b + 16*8);
 			}
+		},
+		ByteBits {
+			@Override
+			public long sizeOf(long n, int b, int k) {
+				if (k < 3 || k % 3 != 0) {
+					return Long.MAX_VALUE;
+				}
+				long size = 0;
+				for (int i = 0; i < b; i+=k) {
+					final long levelMax = 1L << i;
+					if (levelMax < k*n) {
+						size += (1L << k) * levelMax;
+					} else {
+						size += (1L << k) * n;
+					}
+				}
+				return size;
+			}
 		};
 		
 		abstract public long sizeOf(long n, int b, int k);
