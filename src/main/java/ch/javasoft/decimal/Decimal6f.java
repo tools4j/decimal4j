@@ -7,16 +7,16 @@ import java.util.Arrays;
 
 import ch.javasoft.decimal.Scale.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundHalfEvenDecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
 
 /**
- * <tt>Decimal6f</tt> represents a constant decimal number with 6 fractional 
+ * <tt>Decimal6f</tt> represents a constant decimal number with 6 fractional
  * digits.
  */
 @SuppressWarnings("serial")
 public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
-	
-	public static final DecimalArithmetics ARITHMETICS = new RoundHalfEvenDecimalArithmetics(Scale6f.INSTANCE);
+
+	public static final DecimalArithmetics ARITHMETICS = new RoundHalfEvenArithmetics(Scale6f.INSTANCE);
 
 	private static final long ONE_UNSCALED = ARITHMETICS.one();
 
@@ -80,12 +80,20 @@ public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
 		return valueOfUnscaled(ARITHMETICS.fromDouble(value));
 	}
 
+	public static Decimal6f valueOf(double value, RoundingMode roundingMode) {
+		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).fromDouble(value));
+	}
+
 	public static Decimal6f valueOf(BigInteger value) {
 		return valueOfUnscaled(ARITHMETICS.fromBigInteger(value));
 	}
 
 	public static Decimal6f valueOf(BigDecimal value) {
 		return valueOfUnscaled(ARITHMETICS.fromBigDecimal(value));
+	}
+
+	public static Decimal6f valueOf(BigDecimal value, RoundingMode roundingMode) {
+		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).fromBigDecimal(value));
 	}
 
 	/**
@@ -98,30 +106,58 @@ public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
 	 *            the unscaled decimal value to convert
 	 * @param scale
 	 *            the scale used for {@code unscaledValue}
-	 * @return the {@code Decimal6} for the specified unscaled decimal value with the given scale
+	 * @return the {@code Decimal6} for the specified unscaled decimal value
+	 *         with the given scale
 	 */
 	public static Decimal6f valueOf(long unscaledValue, int scale) {
 		return valueOfUnscaled(ARITHMETICS.fromUnscaled(unscaledValue, scale));
+	}
+
+	/**
+	 * Converts the specified unscaled decimal with the given scale to a
+	 * {@code Decimal6} value. If the given scale is more precise than the scale
+	 * for {@code Decimal6} and decimals need to be truncated, the specified
+	 * rounding mode is applied.
+	 * 
+	 * @param unscaledValue
+	 *            the unscaled decimal value to convert
+	 * @param scale
+	 *            the scale used for {@code unscaledValue}
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value needs to be truncated
+	 * @return the {@code Decimal6} for the specified unscaled decimal value
+	 *         with the given scale
+	 */
+	public static Decimal6f valueOf(long unscaledValue, int scale, RoundingMode roundingMode) {
+		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).fromUnscaled(unscaledValue, scale));
 	}
 
 	public static Decimal6f valueOf(Decimal<?> value) {
 		return valueOf(value.unscaledValue(), value.getArithmetics().getScale());
 	}
 
+	public static Decimal6f valueOf(Decimal<?> value, RoundingMode roundingMode) {
+		return valueOf(value.unscaledValue(), value.getArithmetics().getScale(), roundingMode);
+	}
+
 	public static Decimal6f valueOf(String value) {
 		return valueOfUnscaled(ARITHMETICS.parse(value));
+	}
+
+	public static Decimal6f valueOf(String value, RoundingMode roundingMode) {
+		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).parse(value));
 	}
 
 	public static Decimal6f valueOfUnscaled(long unscaledValue) {
 		final int cacheIndex = Arrays.binarySearch(CACHED_UNSCALED, unscaledValue);
 		return cacheIndex >= 0 ? CACHED[cacheIndex] : new Decimal6f(unscaledValue);
 	}
-	
+
 	@Override
 	protected Decimal6f create(long unscaled) {
 		return valueOfUnscaled(unscaled);
 	}
-	
+
 	@Override
 	public Decimal6f ulp() {
 		return ULP;

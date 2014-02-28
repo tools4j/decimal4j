@@ -1,7 +1,7 @@
 package ch.javasoft.decimal;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundHalfEvenDecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
 
 /**
  * Common base class for {@link AbstractConstantDecimal constant} and
@@ -16,14 +16,14 @@ abstract public class AbstractDecimal<S extends Scale> extends Number implements
 	private final DecimalArithmetics arithmetics;
 
 	/**
-	 * Constructor with scale using {@link RoundHalfEvenDecimalArithmetics}.
+	 * Constructor with scale using {@link RoundHalfEvenArithmetics}.
 	 * 
 	 * @param scale
 	 *            the scale for this decimal number
 	 */
 	public AbstractDecimal(S scale) {
 		this.scale = scale;
-		this.arithmetics = new RoundHalfEvenDecimalArithmetics(scale.getFractionDigits());
+		this.arithmetics = new RoundHalfEvenArithmetics(scale.getFractionDigits());
 	}
 
 	/**

@@ -5,17 +5,11 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
 
-/**
- * Round
- * @author terz
- *
- */
-public class RoundDownDecimalArithmetics extends
-		AbstractRoundingDecimalArithmetics {
+public class RoundHalfEvenArithmetics extends AbstractRoundingArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#DOWN DOWN} rounding mode and
+	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -24,12 +18,12 @@ public class RoundDownDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundDownDecimalArithmetics(int scale) {
-		super(scale, RoundingMode.DOWN);
+	public RoundHalfEvenArithmetics(int scale) {
+		super(scale, RoundingMode.HALF_EVEN);
 	}
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#DOWN DOWN} rounding mode and
+	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -38,17 +32,22 @@ public class RoundDownDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundDownDecimalArithmetics(Scale scale) {
+	public RoundHalfEvenArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
-
+	
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new RoundDownDecimalArithmetics(scale);
+		return scale == getScale() ? this : new RoundHalfEvenArithmetics(scale);
 	}
-
+	
 	@Override
 	protected int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
+		if (firstTruncatedDigit >= 5) {
+			if (firstTruncatedDigit > 5 || !zeroAfterFirstTruncatedDigit || ((truncatedValue & 0x1) != 0)) {
+				return truncatedValue < 0 ? -1 : 1;
+			}
+		}
 		return 0;
 	}
 

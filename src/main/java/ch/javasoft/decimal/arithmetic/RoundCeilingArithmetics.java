@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
 
-public class RoundCeilingDecimalArithmetics extends
-		AbstractRoundingDecimalArithmetics {
+public class RoundCeilingArithmetics extends
+		AbstractRoundingArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
@@ -19,7 +19,7 @@ public class RoundCeilingDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundCeilingDecimalArithmetics(int scale) {
+	public RoundCeilingArithmetics(int scale) {
 		super(scale, RoundingMode.CEILING);
 	}
 	/**
@@ -33,13 +33,13 @@ public class RoundCeilingDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundCeilingDecimalArithmetics(Scale scale) {
+	public RoundCeilingArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new RoundCeilingDecimalArithmetics(scale);
+		return scale == getScale() ? this : new RoundCeilingArithmetics(scale);
 	}
 
 	@Override

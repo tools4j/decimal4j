@@ -5,12 +5,23 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
 
-public class RoundFloorDecimalArithmetics extends
-		AbstractRoundingDecimalArithmetics {
+/**
+ * An arithmetic implementation which rounds the last scale digit towards
+ * {@literal "nearest neighbor"} unless both neighbors are equidistant, in which
+ * case round up. Behaves as for {@link RoundingMode#UP} if the discarded
+ * fraction is &ge; 0.5; otherwise, behaves as for {@link RoundingMode#DOWN}.
+ * Note that this is the rounding mode commonly taught at school.
+ * <p>
+ * The result of an operation that leads to an overflow is silently truncated.
+ * 
+ * @see RoundingMode#HALF_UP
+ */
+public class RoundHalfUpArithmetics extends
+		AbstractRoundingArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#FLOOR FLOOR} rounding mode and
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -19,12 +30,12 @@ public class RoundFloorDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundFloorDecimalArithmetics(int scale) {
-		super(scale, RoundingMode.FLOOR);
+	public RoundHalfUpArithmetics(int scale) {
+		super(scale, RoundingMode.HALF_UP);
 	}
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#FLOOR FLOOR} rounding mode and
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -33,21 +44,19 @@ public class RoundFloorDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundFloorDecimalArithmetics(Scale scale) {
+	public RoundHalfUpArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new RoundFloorDecimalArithmetics(scale);
+		return scale == getScale() ? this : new RoundHalfUpArithmetics(scale);
 	}
 
 	@Override
 	protected int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-		if (truncatedValue < 0) {
-			if (firstTruncatedDigit > 0 || !zeroAfterFirstTruncatedDigit) {
-				return -1;
-			}
+		if (firstTruncatedDigit >= 5) {
+			return truncatedValue < 0 ? -1 : 1;
 		}
 		return 0;
 	}

@@ -13,7 +13,7 @@ import ch.javasoft.decimal.Scale;
  * digit without rounding; the result of an operation that leads to an overflow 
  * is silently truncated.
  */
-public class TruncatingDecimalArithmetics implements DecimalArithmetics {
+public class TruncatingArithmetics implements DecimalArithmetics {
 
 	private final int scale;
 	private final long one;//10^scale
@@ -28,11 +28,11 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 	 *            the scale, a non-negative integer denoting the number of
 	 *            digits to the right of the decimal point
 	 * @throws IllegalArgumentException
-	 *             if scale is negative or uneven
+	 *             if scale is negative, zero or uneven
 	 */
-	public TruncatingDecimalArithmetics(int scale) {
-		if (scale < 0) {
-			throw new IllegalArgumentException("scale cannot be negative: " + scale);
+	public TruncatingArithmetics(int scale) {
+		if (scale < 1) {
+			throw new IllegalArgumentException("scale cannot be zero or negative: " + scale);
 		}
 		if (scale % 2 != 0) {
 			throw new IllegalArgumentException("uneven scale currently not supported: " + scale);
@@ -68,7 +68,7 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 	 * @throws IllegalArgumentException
 	 *             if scale is negative or uneven
 	 */
-	public TruncatingDecimalArithmetics(Scale scale) {
+	public TruncatingArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
 
@@ -89,7 +89,7 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new TruncatingDecimalArithmetics(scale);
+		return scale == getScale() ? this : new TruncatingArithmetics(scale);
 	}
 	
 	@Override
@@ -100,22 +100,22 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 		}
 		switch (roundingMode) {
 		case UP:
-			return new RoundUpDecimalArithmetics(getScale());
+			return new RoundUpArithmetics(getScale());
 		case DOWN:
-			return new TruncatingDecimalArithmetics(getScale());
+			return new TruncatingArithmetics(getScale());
 //			return new RoundDownDecimalArithmetics(getScale());
 		case CEILING:
-			return new RoundCeilingDecimalArithmetics(getScale());
+			return new RoundCeilingArithmetics(getScale());
 		case FLOOR:
-			return new RoundFloorDecimalArithmetics(getScale());
+			return new RoundFloorArithmetics(getScale());
 		case HALF_UP:
-			return new RoundHalfUpDecimalArithmetics(getScale());
+			return new RoundHalfUpArithmetics(getScale());
 		case HALF_DOWN:
-			return new RoundHalfDownDecimalArithmetics(getScale());
+			return new RoundHalfDownArithmetics(getScale());
 		case HALF_EVEN:
-			return new RoundHalfEvenDecimalArithmetics(getScale());
+			return new RoundHalfEvenArithmetics(getScale());
 		case UNNECESSARY:
-			return new RoundUnnecessaryDecimalArithmetics(getScale());
+			return new RoundUnnecessaryArithmetics(getScale());
 		default:
 			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
 		}
@@ -281,8 +281,11 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 
 	@Override
 	public long pow(long uDecimal, int exponent) {
+		return pow(this, uDecimal, exponent);
+	}
+	static long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
 		if (exponent == 0) {
-			return one();
+			return arithmetics.one();
 		}
 		long base;
 		int exp;
@@ -290,18 +293,19 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 			base = uDecimal;
 			exp = exponent;
 		} else {/* exponent < 0 */
-			base = invert(uDecimal);
+			base = arithmetics.invert(uDecimal);
 			exp = -exponent;
 		}
 		long result = base;
+		//TODO eliminate repeated truncation with multiplications in loop
 		while (exp != 1 && result != 0) {
 			if (exp % 2 == 0) {
 				//even
-				result = multiply(result, result);
+				result = arithmetics.multiply(result, result);
 				exp >>>= 1;
 			} else {
 				//odd
-				result = multiply(result, base);
+				result = arithmetics.multiply(result, base);
 				exp--;
 			}
 		}
@@ -394,8 +398,8 @@ public class TruncatingDecimalArithmetics implements DecimalArithmetics {
 			throw new ArithmeticException("cannot convert double to decimal: " + value);
 		}
 		final long one = one();
-		final double iValue = Math.rint(value);
-		final double fValue = value - iValue;
+		final double iValue = value >= 0 ? Math.floor(value) : Math.ceil(value);
+		final double fValue = value - iValue + Math.signum(value) * Math.ulp(value) / 2;//add ulp/2 to eliminate noise after subtraction
 		return ((long) iValue) * one + (long) (fValue * one);
 	}
 

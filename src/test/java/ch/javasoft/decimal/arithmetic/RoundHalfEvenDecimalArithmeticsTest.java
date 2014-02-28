@@ -4,16 +4,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundHalfEvenDecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
 
 /**
- * Unit test for {@link RoundHalfEvenDecimalArithmetics} and subclasses.
+ * Unit test for {@link RoundHalfEvenArithmetics} and subclasses.
  */
 public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new RoundHalfEvenDecimalArithmetics(6);
+		return new RoundHalfEvenArithmetics(6);
 	}
 	
 	@Override

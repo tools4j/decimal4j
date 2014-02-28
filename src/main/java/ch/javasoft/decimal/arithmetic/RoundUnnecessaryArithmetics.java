@@ -5,11 +5,11 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
 
-public class RoundHalfEvenDecimalArithmetics extends AbstractRoundingDecimalArithmetics {
+public class RoundUnnecessaryArithmetics extends AbstractRoundingArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode and
+	 * {@link RoundingMode#UNNECESSARY UNNECESSARY} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -18,12 +18,12 @@ public class RoundHalfEvenDecimalArithmetics extends AbstractRoundingDecimalArit
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundHalfEvenDecimalArithmetics(int scale) {
-		super(scale, RoundingMode.HALF_EVEN);
+	public RoundUnnecessaryArithmetics(int scale) {
+		super(scale, RoundingMode.UNNECESSARY);
 	}
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode and
+	 * {@link RoundingMode#UNNECESSARY UNNECESSARY} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -32,21 +32,19 @@ public class RoundHalfEvenDecimalArithmetics extends AbstractRoundingDecimalArit
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundHalfEvenDecimalArithmetics(Scale scale) {
+	public RoundUnnecessaryArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new RoundHalfEvenDecimalArithmetics(scale);
+		return scale == getScale() ? this : new RoundUnnecessaryArithmetics(scale);
 	}
 
 	@Override
 	protected int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-		if (firstTruncatedDigit >= 5) {
-			if (firstTruncatedDigit > 5 || !zeroAfterFirstTruncatedDigit || ((truncatedValue & 0x1) != 0)) {
-				return truncatedValue < 0 ? -1 : 1;
-			}
+		if (firstTruncatedDigit != 0 || !zeroAfterFirstTruncatedDigit) {
+			throw new ArithmeticException("rounding necessary for: " + truncatedValue + "." + firstTruncatedDigit + (zeroAfterFirstTruncatedDigit ? "" : "..."));
 		}
 		return 0;
 	}

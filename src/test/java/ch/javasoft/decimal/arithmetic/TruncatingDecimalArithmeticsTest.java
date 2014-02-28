@@ -4,16 +4,16 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.TruncatingDecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
 
 /**
- * Unit test for {@link TruncatingDecimalArithmetics} and subclasses.
+ * Unit test for {@link TruncatingArithmetics} and subclasses.
  */
 public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new TruncatingDecimalArithmetics(6);
+		return new TruncatingArithmetics(6);
 	}
 	
 	@Override
@@ -201,7 +201,7 @@ public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmetics
 			Assert.assertEquals(value + noise, arith.toDouble(arith.fromDouble(value + noise)), noise);
 			Assert.assertEquals(value - noise, arith.toDouble(arith.fromDouble(value - noise)), noise);
 		} catch (AssertionError e) {
-			throw new AssertionError(e + "[decimal=" + arith.toString(arith.fromDouble(value)) + "]", e);
+			throw new AssertionError(e + "[decimal=" + arith.toString(arith.fromDouble(value)) + ", noise=" + noise + "]", e);
 		}
 	}
 	private void assertFromToDoubleExact(double value, double noise) {

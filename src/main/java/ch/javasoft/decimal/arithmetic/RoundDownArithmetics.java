@@ -6,17 +6,17 @@ import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
 
 /**
- * An arithmetic implementation which rounds the last scale digit away from zero
- * (see {@link RoundingMode#UP}). The result of an operation that leads to an
- * overflow is silently truncated.
+ * Round
+ * @author terz
+ *
  */
-public class RoundUpDecimalArithmetics extends
-		AbstractRoundingDecimalArithmetics {
+public class RoundDownArithmetics extends
+		AbstractRoundingArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#UP UP} rounding mode and {@link OverflowMode#SILENT
-	 * SILENT} overflow mode.
+	 * {@link RoundingMode#DOWN DOWN} rounding mode and
+	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
 	 *            the scale, a non-negative integer denoting the number of
@@ -24,13 +24,13 @@ public class RoundUpDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundUpDecimalArithmetics(int scale) {
-		super(scale, RoundingMode.UP);
+	public RoundDownArithmetics(int scale) {
+		super(scale, RoundingMode.DOWN);
 	}
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#UP UP} rounding mode and {@link OverflowMode#SILENT
-	 * SILENT} overflow mode.
+	 * {@link RoundingMode#DOWN DOWN} rounding mode and
+	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
 	 *            the scale, a non-negative integer denoting the number of
@@ -38,20 +38,17 @@ public class RoundUpDecimalArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundUpDecimalArithmetics(Scale scale) {
+	public RoundDownArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new RoundUpDecimalArithmetics(scale);
+		return scale == getScale() ? this : new RoundDownArithmetics(scale);
 	}
 
 	@Override
 	protected int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-		if (firstTruncatedDigit > 0 || !zeroAfterFirstTruncatedDigit) {
-			return truncatedValue < 0 ? -1 : 1;
-		}
 		return 0;
 	}
 

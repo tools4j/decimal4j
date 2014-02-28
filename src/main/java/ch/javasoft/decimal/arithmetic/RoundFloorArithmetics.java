@@ -5,11 +5,12 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
 
-public class RoundUnnecessaryDecimalArithmetics extends AbstractRoundingDecimalArithmetics {
+public class RoundFloorArithmetics extends
+		AbstractRoundingArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#UNNECESSARY UNNECESSARY} rounding mode and
+	 * {@link RoundingMode#FLOOR FLOOR} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -18,12 +19,12 @@ public class RoundUnnecessaryDecimalArithmetics extends AbstractRoundingDecimalA
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundUnnecessaryDecimalArithmetics(int scale) {
-		super(scale, RoundingMode.UNNECESSARY);
+	public RoundFloorArithmetics(int scale) {
+		super(scale, RoundingMode.FLOOR);
 	}
 	/**
 	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#UNNECESSARY UNNECESSARY} rounding mode and
+	 * {@link RoundingMode#FLOOR FLOOR} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
@@ -32,19 +33,21 @@ public class RoundUnnecessaryDecimalArithmetics extends AbstractRoundingDecimalA
 	 * @throws IllegalArgumentException
 	 *             if scale is negative
 	 */
-	public RoundUnnecessaryDecimalArithmetics(Scale scale) {
+	public RoundFloorArithmetics(Scale scale) {
 		this(scale.getFractionDigits());
 	}
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new RoundUnnecessaryDecimalArithmetics(scale);
+		return scale == getScale() ? this : new RoundFloorArithmetics(scale);
 	}
 
 	@Override
 	protected int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-		if (firstTruncatedDigit != 0 || !zeroAfterFirstTruncatedDigit) {
-			throw new ArithmeticException("rounding necessary for: " + truncatedValue + "." + firstTruncatedDigit + (zeroAfterFirstTruncatedDigit ? "" : "..."));
+		if (truncatedValue < 0) {
+			if (firstTruncatedDigit > 0 || !zeroAfterFirstTruncatedDigit) {
+				return -1;
+			}
 		}
 		return 0;
 	}
