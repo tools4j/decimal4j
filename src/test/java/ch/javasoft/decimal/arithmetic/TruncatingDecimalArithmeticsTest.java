@@ -208,7 +208,7 @@ public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmetics
 		final double precision = Math.pow(10, -arith.getScale()); 
 		final double tolerance = precision*2 - Math.ulp(precision);//max tolerable noise for decimal
 		assertFromToDoubleExact(value);
-		assertFromToDoubleWithTolerance(value + noise, tolerance);
-		assertFromToDoubleWithTolerance(value - noise, tolerance);
+		assertFromToDoubleWithTolerance(value + noise, tolerance, noise);
+		assertFromToDoubleWithTolerance(value - noise, tolerance, noise);
 	}
 }

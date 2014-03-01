@@ -34,9 +34,6 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 		if (scale < 1) {
 			throw new IllegalArgumentException("scale cannot be zero or negative: " + scale);
 		}
-		if (scale % 2 != 0) {
-			throw new IllegalArgumentException("uneven scale currently not supported: " + scale);
-		}
 		if (scale > 18) {
 			throw new IllegalArgumentException("scale is too large: " + scale);
 		}
@@ -397,10 +394,37 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 		if (Double.isNaN(value) || Double.isInfinite(value)) {
 			throw new ArithmeticException("cannot convert double to decimal: " + value);
 		}
-		final long one = one();
-		final double iValue = value >= 0 ? Math.floor(value) : Math.ceil(value);
-		final double fValue = value - iValue + Math.signum(value) * Math.ulp(value) / 2;//add ulp/2 to eliminate noise after subtraction
-		return ((long) iValue) * one + (long) (fValue * one);
+		final long lOne = one();
+		final double fOne = lOne;
+		final double fCeil = Math.ceil(value);
+		final double fFloor = Math.floor(value);
+		long lCeil = ((long)fCeil) * lOne;
+		long lFloor = ((long)fFloor) * lOne;
+		if (Long.signum(lCeil) != Long.signum(lFloor)) {
+			return value >= 0 ? lFloor : lCeil;
+		}
+		long lMed = (lFloor>>1) + (lCeil>>1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
+		if (value >= 0) {
+			while (lCeil - lFloor > 1) {
+				if ((lMed / fOne) <= value) {
+					lFloor = lMed;
+				} else {
+					lCeil = lMed;
+				}
+				lMed = (lFloor>>1) + (lCeil>>1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
+			}
+			return ((lCeil / fOne) <= value) ? lCeil : lFloor;
+		} else {
+			while (lCeil - lFloor > 1) {
+				if ((lMed / fOne) >= value) {
+					lCeil = lMed;
+				} else {
+					lFloor = lMed;
+				}
+				lMed = (lFloor>>1) + (lCeil>>1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
+			}
+			return ((lFloor / fOne) >= value) ? lFloor : lCeil;
+		}
 	}
 
 	@Override

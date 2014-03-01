@@ -97,7 +97,7 @@ abstract public class AbstractRoundingArithmetics extends
 		final double iValue = value >= 0 ? Math.floor(value) : Math.ceil(value);
 		final double fValue = value - iValue;
 		final double sValue = fValue * one;
-		final double tValue = fValue >= 0 ? Math.floor(fValue) : Math.ceil(fValue);
+		final double tValue = fValue >= 0 ? Math.floor(sValue) : Math.ceil(sValue);
 		final long truncatedValue = ((long) iValue) * one + (long)tValue; 
 		return truncatedValue + calculateRoundingIncrement(truncatedValue, sValue - tValue);
 	}

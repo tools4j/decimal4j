@@ -345,7 +345,7 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 			Assert.assertEquals(value + noise, arith.toDouble(arith.fromDouble(value + noise)), noise);
 			Assert.assertEquals(value - noise, arith.toDouble(arith.fromDouble(value - noise)), noise);
 		} catch (AssertionError e) {
-			throw new AssertionError(e + "[decimal=" + arith.toString(arith.fromDouble(value)) + "]", e);
+			throw new AssertionError(e + "[decimal=" + arith.toString(arith.fromDouble(value)) + ", noise=" + noise + "]", e);
 		}
 	}
 	private void assertFromToDoubleExact(double value, double noise) {

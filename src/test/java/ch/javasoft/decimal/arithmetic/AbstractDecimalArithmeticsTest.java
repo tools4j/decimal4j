@@ -279,13 +279,13 @@ abstract public class AbstractDecimalArithmeticsTest {
 	}
 
 	protected void assertFromToDoubleExact(double value) {
-		assertFromToDoubleWithTolerance(value, 0);
+		assertFromToDoubleWithTolerance(value, 0, 0);
 	}
-	protected void assertFromToDoubleWithTolerance(double value, double tolerance) {
+	protected void assertFromToDoubleWithTolerance(double value, double tolerance, double noise) {
 		try {
 			Assert.assertEquals(value, arith.toDouble(arith.fromDouble(value)), tolerance);
 		} catch (AssertionError e) {
-			throw new AssertionError(e + "[decimal=" + arith.toString(arith.fromDouble(value)) + ", tolerance=" + tolerance + "]", e);
+			throw new AssertionError(e + "[decimal=" + arith.toString(arith.fromDouble(value)) + ", tolerance=" + tolerance + ", noise=" + noise + "]", e);
 		}
 	}
 }
