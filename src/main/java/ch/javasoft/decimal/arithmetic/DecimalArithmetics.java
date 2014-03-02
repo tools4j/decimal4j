@@ -62,10 +62,19 @@ public interface DecimalArithmetics {
 	 * @param roundingMode
 	 *            the rounding mode for the new decimal arithmetics
 	 * @return a new decimal arithmetics object for the given rounding mode
-	 * @throws IllegalArgumentException
-	 *             if the given rounding mode is not supported
 	 */
 	DecimalArithmetics derive(RoundingMode roundingMode);
+
+	/**
+	 * Returns a new decimal arithmetics object with the same
+	 * {@link #getScale() scale} and {@link #getRoundingMode() rounding mode}
+	 * but for the new overflow mode specified here.
+	 * 
+	 * @param overflowMode
+	 *            the overflow mode for the new decimal arithmetics
+	 * @return a new decimal arithmetics object for the given overflow mode
+	 */
+	DecimalArithmetics derive(OverflowMode overflowMode);
 
 	/**
 	 * Returns the unscaled decimal for the decimal value {@code 1}. One is the
@@ -338,9 +347,9 @@ public interface DecimalArithmetics {
 
 	/**
 	 * Converts the specified unscaled decimal value {@code uDecimal} into a
-	 * long value and returns it. The arithmetic's {@link #getRoundingMode() rounding mode}
-	 * is applied if rounding is necessary.
-	 *  
+	 * long value and returns it. The arithmetic's {@link #getRoundingMode()
+	 * rounding mode} is applied if rounding is necessary.
+	 * 
 	 * @param uDecimal
 	 *            the unscaled decimal value convert into a long value
 	 * @return the {@code uDecimal} value converted into a long value, possibly
@@ -355,7 +364,5 @@ public interface DecimalArithmetics {
 	BigDecimal toBigDecimal(long uDecimal, int scale);
 
 	String toString(long uDecimal);
-
-	String toString(long uDecimal, int precision);
 
 }

@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
 
 /**
  * Base class for mutable {@link Decimal} classes of different scales.
@@ -17,17 +16,6 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 		AbstractDecimal<S> {
 
 	private long unscaled;
-
-	/**
-	 * Constructor with scale using {@link RoundHalfEvenArithmetics}.
-	 * 
-	 * @param scale
-	 *            the scale for this decimal number
-	 */
-	public AbstractMutableDecimal(long unscaled, S scale) {
-		super(scale);
-		this.unscaled = unscaled;
-	}
 
 	/**
 	 * Constructor with specified scale using the given {@code arithmetics}.

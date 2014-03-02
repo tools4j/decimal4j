@@ -1,8 +1,6 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
@@ -10,14 +8,11 @@ import ch.javasoft.decimal.Scale;
 
 /**
  * An arithmetic implementation which truncates digits after the last scale
- * digit without rounding; the result of an operation that leads to an overflow 
+ * digit without rounding; the result of an operation that leads to an overflow
  * is silently truncated.
  */
-public class TruncatingArithmetics implements DecimalArithmetics {
-
-	private final int scale;
-	private final long one;//10^scale
-	protected final long sqrtOne;//10^(scale/2) = sqrt(10^scale)
+public class TruncatingArithmetics extends AbstractArithmetics implements
+		DecimalArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -31,27 +26,7 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 	 *             if scale is negative, zero or uneven
 	 */
 	public TruncatingArithmetics(int scale) {
-		if (scale < 1) {
-			throw new IllegalArgumentException("scale cannot be zero or negative: " + scale);
-		}
-		if (scale > 18) {
-			throw new IllegalArgumentException("scale is too large: " + scale);
-		}
-		this.scale = scale;
-		long sqrtOne = 1;
-		for (int i = 0; i < scale / 2; i++) {
-			sqrtOne *= 10;
-		}
-		long one = sqrtOne;
-		for (int i = scale / 2; i < scale; i++) {
-			one *= 10;
-		}
-		if (Long.MAX_VALUE / one < one) {
-			//one * one must still fit in a long for our computations in this class
-			throw new IllegalArgumentException("scale is too large: " + scale);
-		}
-		this.one = one;
-		this.sqrtOne = sqrtOne;
+		super(scale);
 	}
 
 	/**
@@ -66,12 +41,7 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 	 *             if scale is negative or uneven
 	 */
 	public TruncatingArithmetics(Scale scale) {
-		this(scale.getFractionDigits());
-	}
-
-	@Override
-	public int getScale() {
-		return scale;
+		super(scale);
 	}
 
 	@Override
@@ -80,73 +50,32 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public OverflowMode getOverflowMode() {
-		return OverflowMode.SILENT;
-	}
-
-	@Override
 	public DecimalArithmetics derive(int scale) {
 		return scale == getScale() ? this : new TruncatingArithmetics(scale);
 	}
-	
+
 	@Override
 	public DecimalArithmetics derive(RoundingMode roundingMode) {
-		final RoundingMode current = getRoundingMode();
-		if (roundingMode == current) {
+		if (roundingMode == getRoundingMode()) {
 			return this;
 		}
-		switch (roundingMode) {
-		case UP:
-			return new RoundUpArithmetics(getScale());
-		case DOWN:
-			return new TruncatingArithmetics(getScale());
-//			return new RoundDownDecimalArithmetics(getScale());
-		case CEILING:
-			return new RoundCeilingArithmetics(getScale());
-		case FLOOR:
-			return new RoundFloorArithmetics(getScale());
-		case HALF_UP:
-			return new RoundHalfUpArithmetics(getScale());
-		case HALF_DOWN:
-			return new RoundHalfDownArithmetics(getScale());
-		case HALF_EVEN:
-			return new RoundHalfEvenArithmetics(getScale());
-		case UNNECESSARY:
-			return new RoundUnnecessaryArithmetics(getScale());
-		default:
-			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
+		return new RoundingArithmetics(getScale(), roundingMode);
+	}
+
+	@Override
+	public DecimalArithmetics derive(OverflowMode overflowMode) {
+		if (overflowMode == getOverflowMode()) {
+			return this;
 		}
-	}
-
-	@Override
-	public long one() {
-		return one;
-	}
-
-	@Override
-	public int signum(long uDecimal) {
-		return uDecimal > 0 ? 1 : uDecimal == 0 ? 0 : -1;
-	}
-
-	@Override
-	public int compare(long uDecimal1, long uDecimal2) {
-		return (uDecimal1 < uDecimal2) ? -1 : ((uDecimal1 == uDecimal2) ? 0 : 1);
-	}
-
-	@Override
-	public long add(long uDecimal1, long uDecimal2) {
-		return uDecimal1 + uDecimal2;
-	}
-
-	@Override
-	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
-		return uDecimalMinuend - uDecimalSubtrahend;
+		//FIXME implement overflow mode derivative
+		throw new RuntimeException("overflow mode not supported yet: " + overflowMode);
 	}
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		final long one = one();
-		final long sqrtOne = this.sqrtOne;
+		return multiply(uDecimal1, uDecimal2, one(), sqrtOne);
+	}
+	static long multiply(long uDecimal1, long uDecimal2, long one, long sqrtOne) {
 		final long i1 = uDecimal1 / sqrtOne;
 		final long i2 = uDecimal2 / sqrtOne;
 		final long f1 = uDecimal1 % sqrtOne;
@@ -156,10 +85,13 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		final long one = one();
+		return divide(uDecimalDividend, uDecimalDivisor, getScale(), one());
+	}
+
+	public static long divide(long uDecimalDividend, long uDecimalDivisor, int scale, long one) {
 		//special cases first
 		if (uDecimalDivisor == 0) {
-			throw new ArithmeticException("division by zero: " + toString(uDecimalDividend) + "/" + toString(uDecimalDivisor));
+			throw new ArithmeticException("division by zero: " + toString(uDecimalDividend, scale) + "/" + toString(uDecimalDivisor, scale));
 		}
 		if (uDecimalDividend == 0) {
 			return 0;
@@ -180,14 +112,14 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 		}
 		//128 bit multiplication and division now
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
- 		final long[] prod = unsignedMul128(Math.abs(uDecimalDividend), one);
+		final long[] prod = unsignedMul128(Math.abs(uDecimalDividend), one);
 		final long result = unsignedDiv128(prod, Math.abs(uDecimalDivisor));
 		return negative ? -result : result;
 	}
 
 	//see http://svn.gnucash.org/docs/head/group__Math128.html
 	//no negative values!
-	private long[] unsignedMul128(long a, long b) {
+	private static long[] unsignedMul128(long a, long b) {
 		long[] prod = new long[2];
 		long a0, a1;
 		long b0, b1;
@@ -237,7 +169,7 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 
 	//see http://svn.gnucash.org/docs/head/group__Math128.html
 	//no negative values!
-	private long unsignedDiv128(long[] dividend, long divisor) {
+	private static long unsignedDiv128(long[] dividend, long divisor) {
 		long lo = dividend[0];
 		long hi = dividend[1];
 		long remainder = 0;
@@ -251,23 +183,13 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 			if (lo < 0) hi |= 1;
 			lo <<= 1;
 			//remainder
-			if ((remainder > 0 && remainder >= divisor) || (remainder < 0 && (divisor >0 || remainder <= divisor))) {
+			if ((remainder > 0 && remainder >= divisor) || (remainder < 0 && (divisor > 0 || remainder <= divisor))) {
 				remainder -= divisor;
 				lo |= 1;
 			}
 		}
 
 		return divisor < 0 ? -lo : lo;//divisor could be Long.MIN_VALUE since abs(Long.MIN_VALUE) is still Long.MIN_VALUE
-	}
-
-	@Override
-	public long abs(long uDecimal) {
-		return Math.abs(uDecimal);
-	}
-
-	@Override
-	public long negate(long uDecimal) {
-		return -uDecimal;
 	}
 
 	@Override
@@ -280,6 +202,7 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 	public long pow(long uDecimal, int exponent) {
 		return pow(this, uDecimal, exponent);
 	}
+
 	static long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
 		if (exponent == 0) {
 			return arithmetics.one();
@@ -310,86 +233,6 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public double toDouble(long uDecimal) {
-		return Double.valueOf(toString(uDecimal));
-	}
-
-	@Override
-	public BigDecimal toBigDecimal(long uDecimal) {
-		return BigDecimal.valueOf(uDecimal, getScale());
-	}
-
-	@Override
-	public String toString(long uDecimal) {
-		return toString(uDecimal, getScale());
-	}
-
-	@Override
-	public String toString(long uDecimal, int precision) {
-		if (precision < 0) {
-			throw new IllegalArgumentException("precision cannot be negative: " + precision);
-		}
-		final int negativeOffset = uDecimal < 0 ? 1 : 0;
-		final StringBuilder sb = new StringBuilder(precision + 2 + negativeOffset);
-		sb.append(uDecimal);
-		final int len = sb.length();
-		if (len <= precision + negativeOffset) {
-			//Long.MAX_VALUE = 9,223,372,036,854,775,807
-			sb.insert(negativeOffset, "0.00000000000000000000", 0, 2 + precision - len + negativeOffset);
-		} else {
-			sb.insert(len - precision, '.');
-		}
-		return sb.toString();
-	}
-
-	@Override
-	public long shiftLeft(long uDecimal, int positions) {
-		return uDecimal << positions;
-	}
-
-	@Override
-	public long shiftRight(long uDecimal, int positions) {
-		return uDecimal >> positions;
-	}
-
-	@Override
-	public long movePointLeft(long uDecimal, int positions) {
-		if (positions >= 0) {
-			long result = uDecimal;
-			//NOTE: this is not very efficient
-			for (int i = 0; i < positions && result != 0; i++) {
-				result /= 10;
-			}
-			return result;
-		} else {
-			if (positions < Integer.MIN_VALUE) {
-				return movePointRight(uDecimal, -positions);
-			}
-			long halfResult = movePointRight(uDecimal, -(positions / 2));
-			return movePointRight(halfResult, -(positions / 2));
-		}
-	}
-
-	@Override
-	public long movePointRight(long uDecimal, int positions) {
-		if (positions >= 0) {
-			long result = uDecimal;
-			//NOTE: this is not very efficient
-			for (int i = 0; i < positions && result != 0; i++) {
-				result *= 10;
-			}
-			return result;
-		} else {
-			return movePointLeft(uDecimal, -positions);
-		}
-	}
-
-	@Override
-	public long fromLong(long value) {
-		return value * one();
-	}
-
-	@Override
 	public long fromDouble(double value) {
 		if (Double.isNaN(value) || Double.isInfinite(value)) {
 			throw new ArithmeticException("cannot convert double to decimal: " + value);
@@ -398,12 +241,12 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 		final double fOne = lOne;
 		final double fCeil = Math.ceil(value);
 		final double fFloor = Math.floor(value);
-		long lCeil = ((long)fCeil) * lOne;
-		long lFloor = ((long)fFloor) * lOne;
+		long lCeil = ((long) fCeil) * lOne;
+		long lFloor = ((long) fFloor) * lOne;
 		if (Long.signum(lCeil) != Long.signum(lFloor)) {
 			return value >= 0 ? lFloor : lCeil;
 		}
-		long lMed = (lFloor>>1) + (lCeil>>1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
+		long lMed = (lFloor >> 1) + (lCeil >> 1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
 		if (value >= 0) {
 			while (lCeil - lFloor > 1) {
 				if ((lMed / fOne) <= value) {
@@ -411,7 +254,7 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 				} else {
 					lCeil = lMed;
 				}
-				lMed = (lFloor>>1) + (lCeil>>1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
+				lMed = (lFloor >> 1) + (lCeil >> 1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
 			}
 			return ((lCeil / fOne) <= value) ? lCeil : lFloor;
 		} else {
@@ -421,15 +264,10 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 				} else {
 					lFloor = lMed;
 				}
-				lMed = (lFloor>>1) + (lCeil>>1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
+				lMed = (lFloor >> 1) + (lCeil >> 1) + ((lFloor & lCeil) & 0x1);//(lFloor + lCeil) / 2 --- but avoid overflow
 			}
 			return ((lFloor / fOne) >= value) ? lFloor : lCeil;
 		}
-	}
-
-	@Override
-	public long fromBigInteger(BigInteger value) {
-		return value.multiply(BigInteger.valueOf(one())).longValue();
 	}
 
 	@Override
@@ -484,16 +322,6 @@ public class TruncatingArithmetics implements DecimalArithmetics {
 		}
 		final boolean negative = iValue < 0 || value.startsWith("-");
 		return iValue * one() + (negative ? -fValue : fValue);
-	}
-
-	@Override
-	public long toLong(long uDecimal) {
-		return uDecimal / one();
-	}
-
-	@Override
-	public BigDecimal toBigDecimal(long uDecimal, int scale) {
-		return toBigDecimal(uDecimal).round(new MathContext(scale));
 	}
 
 }

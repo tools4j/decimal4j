@@ -7,7 +7,8 @@ import java.util.Arrays;
 
 import ch.javasoft.decimal.Scale.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
+import ch.javasoft.decimal.arithmetic.DecimalRounding;
+import ch.javasoft.decimal.arithmetic.RoundingArithmetics;
 
 /**
  * <tt>Decimal6f</tt> represents a constant decimal number with 6 fractional
@@ -16,7 +17,7 @@ import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
 @SuppressWarnings("serial")
 public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
 
-	public static final DecimalArithmetics ARITHMETICS = new RoundHalfEvenArithmetics(Scale6f.INSTANCE);
+	public static final DecimalArithmetics ARITHMETICS = new RoundingArithmetics(Scale6f.INSTANCE, DecimalRounding.HALF_EVEN);
 
 	private static final long ONE_UNSCALED = ARITHMETICS.one();
 

@@ -1,17 +1,16 @@
 package ch.javasoft.decimal.arithmetic;
 
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundDownArithmetics;
+import java.math.RoundingMode;
 
 /**
- * Unit test for {@link RoundDownArithmetics} and subclasses.
+ * Unit test for {@link RoundingArithmetics} with {@link RoundingMode#DOWN}.
  */
 public class RoundDownDecimalArithmeticsTest extends
 		TruncatingDecimalArithmeticsTest {
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new RoundDownArithmetics(6);
+		return new RoundingArithmetics(6, RoundingMode.DOWN);
 	}
 
 }

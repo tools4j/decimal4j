@@ -46,6 +46,12 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 		final DecimalArithmetics derivedDelegate = delegate.derive(roundingMode);
 		return delegate == derivedDelegate ? this : new ExceptionOnOverflowArithmetics(derivedDelegate);
 	}
+	
+	@Override
+	public DecimalArithmetics derive(OverflowMode overflowMode) {
+		final DecimalArithmetics derivedDelegate = delegate.derive(overflowMode);
+		return delegate == derivedDelegate ? this : new ExceptionOnOverflowArithmetics(derivedDelegate);
+	}
 
 	@Override
 	public long one() {
@@ -255,11 +261,6 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	@Override
 	public String toString(long uDecimal) {
 		return delegate.toString(uDecimal);
-	}
-
-	@Override
-	public String toString(long uDecimal, int precision) {
-		return delegate.toString(uDecimal, precision);
 	}
 
 }

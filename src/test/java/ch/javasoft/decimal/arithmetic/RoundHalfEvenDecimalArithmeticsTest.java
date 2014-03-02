@@ -1,19 +1,18 @@
 package ch.javasoft.decimal.arithmetic;
 
+import java.math.RoundingMode;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundHalfEvenArithmetics;
-
 /**
- * Unit test for {@link RoundHalfEvenArithmetics} and subclasses.
+ * Unit test for {@link RoundingArithmetics} with {@link RoundingMode#HALF_EVEN}.
  */
 public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new RoundHalfEvenArithmetics(6);
+		return new RoundingArithmetics(6, RoundingMode.HALF_EVEN);
 	}
 	
 	@Override

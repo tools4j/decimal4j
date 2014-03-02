@@ -9,10 +9,6 @@ abstract public class AbstractConstantDecimal<S extends Scale> extends AbstractD
 	
 	private final long unscaled;
 	
-	public AbstractConstantDecimal(long unscaled, S scale) {
-		super(scale);
-		this.unscaled = unscaled;
-	}
 	public AbstractConstantDecimal(long unscaled, S scale, DecimalArithmetics arithmetics) {
 		super(scale, arithmetics);
 		this.unscaled = unscaled;

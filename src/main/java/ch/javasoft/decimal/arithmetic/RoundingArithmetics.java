@@ -5,35 +5,97 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
+import ch.javasoft.decimal.Scale;
 
 /**
  * Base class for arithmetic implementations which involve rounding strategies.
  * The result of an operation that leads to an overflow is silently truncated.
  */
-abstract public class AbstractRoundingArithmetics extends
-		TruncatingArithmetics {
+public class RoundingArithmetics extends AbstractArithmetics {
 
-	private final RoundingMode roundingMode;
+	private final DecimalRounding rounding;
 
 	/**
-	 * Constructor for silent decimal arithmetics with given scale,
-	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode and
+	 * Constructor for decimal arithmetics with given scale, rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
 	 * @param scale
 	 *            the scale, a non-negative integer denoting the number of
 	 *            digits to the right of the decimal point
+	 * @param roundingMode
+	 *            the rounding mode to use for all decimal arithmetics
 	 * @throws IllegalArgumentException
 	 *             if scale is negative or zero
 	 */
-	public AbstractRoundingArithmetics(int scale, RoundingMode roundingMode) {
+	public RoundingArithmetics(int scale, RoundingMode roundingMode) {
+		this(scale, DecimalRounding.valueOf(roundingMode));
+	}
+
+	/**
+	 * Constructor for decimal arithmetics with given scale, rounding mode and
+	 * {@link OverflowMode#SILENT SILENT} overflow mode.
+	 * 
+	 * @param scale
+	 *            the scale, a non-negative integer denoting the number of
+	 *            digits to the right of the decimal point
+	 * @param rounding
+	 *            the rounding mode to use for all decimal arithmetics
+	 * @throws IllegalArgumentException
+	 *             if scale is negative or zero
+	 */
+	public RoundingArithmetics(int scale, DecimalRounding rounding) {
 		super(scale);
-		this.roundingMode = roundingMode;
+		this.rounding = rounding;
+	}
+
+	/**
+	 * Constructor for decimal arithmetics with given scale, rounding mode and
+	 * {@link OverflowMode#SILENT SILENT} overflow mode.
+	 * 
+	 * @param scale
+	 *            the scale
+	 * @param rounding
+	 *            the rounding mode to use for all decimal arithmetics
+	 */
+	public RoundingArithmetics(Scale scale, DecimalRounding rounding) {
+		super(scale);
+		this.rounding = rounding;
+	}
+
+	public DecimalRounding getDecimalRounding() {
+		return rounding;
 	}
 
 	@Override
 	public final RoundingMode getRoundingMode() {
-		return roundingMode;
+		return getDecimalRounding().getRoundingMode();
+	}
+
+	@Override
+	public DecimalArithmetics derive(int scale) {
+		if (scale == getScale()) {
+			return this;
+		}
+		return new RoundingArithmetics(scale, getDecimalRounding());
+	}
+
+	@Override
+	public DecimalArithmetics derive(RoundingMode roundingMode) {
+		if (roundingMode == getRoundingMode()) {
+			return this;
+		}
+		if (roundingMode == RoundingMode.DOWN) {
+			return new TruncatingArithmetics(getScale());
+		}
+		return new RoundingArithmetics(getScale(), roundingMode);
+	}
+
+	@Override
+	public DecimalArithmetics derive(OverflowMode overflowMode) {
+		if (overflowMode == getOverflowMode()) {
+			return this;
+		}
+		return new ExceptionOnOverflowArithmetics(this);
 	}
 
 	@Override
@@ -51,12 +113,13 @@ abstract public class AbstractRoundingArithmetics extends
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		final long unrounded = super.divide(uDecimalDividend, uDecimalDivisor);
-		final long product = super.multiply(unrounded, uDecimalDivisor);
+		final int scale = getScale();
+		final long one = one();
+		final long unrounded = TruncatingArithmetics.divide(uDecimalDividend, uDecimalDivisor, scale, one);
+		final long product = TruncatingArithmetics.multiply(unrounded, uDecimalDivisor, one, sqrtOne);
 		final long delta = uDecimalDividend - product;
 		if (delta != 0) {
-			final long one = one();
-			final long remainder = super.divide((delta % one) * one, uDecimalDivisor);
+			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);
 			if (unrounded != 0) {
 				return unrounded + calculateRoundingIncrement(unrounded, remainder);
 			}
@@ -98,14 +161,13 @@ abstract public class AbstractRoundingArithmetics extends
 		final double fValue = value - iValue;
 		final double sValue = fValue * one;
 		final double tValue = fValue >= 0 ? Math.floor(sValue) : Math.ceil(sValue);
-		final long truncatedValue = ((long) iValue) * one + (long)tValue; 
+		final long truncatedValue = ((long) iValue) * one + (long) tValue;
 		return truncatedValue + calculateRoundingIncrement(truncatedValue, sValue - tValue);
 	}
-	
+
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(BigDecimal.valueOf(one())).
-				setScale(0, getRoundingMode()).longValue();
+		return value.multiply(BigDecimal.valueOf(one())).setScale(0, getRoundingMode()).longValue();
 	}
 
 	@Override
@@ -128,7 +190,7 @@ abstract public class AbstractRoundingArithmetics extends
 				result /= 10;
 			}
 			//rounding
-			result += calculateRoundingIncrement(result, lastDigit, zeroAfterLastDigit);
+			result += rounding.calculateRoundingIncrement(result, lastDigit, zeroAfterLastDigit);
 		}
 		return result;
 	}
@@ -163,7 +225,7 @@ abstract public class AbstractRoundingArithmetics extends
 				fractionDigits /= 10;
 			}
 			//rounding
-			fractionDigits += calculateRoundingIncrement(fractionDigits, lastDigit, zeroAfterLastDigit);
+			fractionDigits += rounding.calculateRoundingIncrement(fractionDigits, lastDigit, zeroAfterLastDigit);
 			fValue = fractionDigits;
 		} else {
 			fValue = 0;
@@ -201,7 +263,7 @@ abstract public class AbstractRoundingArithmetics extends
 		final double nonNegativeTruncatedPart = Math.abs(truncatedPart);
 		final int firstTruncatedDigit = (int) (nonNegativeTruncatedPart * 10);
 		final boolean zeroAfterFirstTruncatedDigit = 0 == (nonNegativeTruncatedPart - firstTruncatedDigit / 10d);
-		return calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, zeroAfterFirstTruncatedDigit);
+		return rounding.calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, zeroAfterFirstTruncatedDigit);
 	}
 
 	/**
@@ -222,24 +284,7 @@ abstract public class AbstractRoundingArithmetics extends
 		final long oneDivBy10 = one() / 10;
 		final int firstTruncatedDigit = (int) (nonNegativeTruncatedDigits / oneDivBy10);
 		final long truncatedDigitsAfterFirst = nonNegativeTruncatedDigits % oneDivBy10;
-		return calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
+		return rounding.calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
 	}
-
-	/**
-	 * Returns the rounding increment appropriate for the
-	 * {@link #getRoundingMode()} of this arithmetics. The returned value is one
-	 * of -1, 0 or 1.
-	 * 
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param firstTruncatedDigit
-	 *            the first truncated digit, must be in {@code [0, 1, ..., 9]}
-	 * @param zeroAfterFirstTruncatedDigit
-	 *            true if all truncated digits after the first truncated digit
-	 *            are zero, and false otherwise
-	 * @return the value to add to {@code truncatedValue} to get the rounded
-	 *         result, one of -1, 0 or 1
-	 */
-	abstract protected int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit);
 
 }
