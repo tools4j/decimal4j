@@ -24,21 +24,25 @@ public class Int128 {
 		return hi64 == 0 || (hi64 == -1 && lo64 < 0);
 	}
 	
+	public boolean isNegative() {
+		return hi64 < 0;
+	}
 	public int signum() {
-		if (hi64 > 0) return 1; 
 		if (hi64 < 0) return -1;
-		return lo64 == 0 ? 0 : 1;
+		return (hi64 > 0 || lo64 != 0) ? 1 : 0; 
 	}
 	
 	public Int128 neg() {
-		final long notLo64 = ~this.lo64;
-		final long notHi64 = ~this.hi64;
-		final long negLo64 = notLo64 + 1;
-		final long negHi64 = Math.signum(notLo64) == Math.signum(negLo64) ? notHi64 : notHi64 + 1;
-		return new Int128(negHi64, negLo64);
+		return new Int128((~hi64) + (lo64 == 0 ? 1 : 0), (~lo64) + 1);
+	}
+	private static long negHi64(long hi64, long lo64) {
+		return (~hi64) + (lo64 == 0 ? 1 : 0);
+	}
+	private static long negLo64(long hi64, long lo64) {
+		return (~lo64) + 1;
 	}
 	public Int128 abs() {
-		return signum() >= 0 ? this : neg();
+		return isNegative() ? neg() : this;
 	}
 
 	public static Int128 add(long value1, long value2) {
@@ -52,15 +56,63 @@ public class Int128 {
 	}
 	
 	public static Int128 multiply(long value1, long value2) {
+		int sgn = 1;
+		if (value1 < 0) {
+			value1 = (~value1) + 1;
+			sgn = -sgn;
+		} else if (value1 == 0) {
+			sgn = 0;
+		}
+		if (value2 < 0) {
+			value2 = (~value2) + 1;
+			sgn = -sgn;
+		} else if (value2 == 0) {
+			sgn = 0;
+		}
 		final long lo32_1 = value1 & 0x00000000ffffffffL;
 		final long lo32_2 = value2 & 0x00000000ffffffffL;
 		final long hi32_1 = value1 >>> 32;
 		final long hi32_2 = value2 >>> 32;
-		final long lo64 = lo32_1 * lo32_2;
+		final long lo64 = lo32_1 * lo32_2 + ((lo32_1 * hi32_2) << 32) + ((lo32_2 * hi32_1) << 32);
 		final long hi64 = hi32_1 * hi32_2 + ((lo32_1 * hi32_2) >>> 32) + ((lo32_2 * hi32_1) >>> 32);
+		if (sgn < 0) {
+			return new Int128(negHi64(hi64, lo64), negLo64(hi64, lo64));
+		}
 		return new Int128(hi64, lo64);
 	}
 	
+	public Int128 divideBy(long divisor) {
+		final boolean isNeg = isNegative();
+		long hi = isNeg ? negHi64(hi64, lo64) : hi64;
+		long lo = isNeg ? negLo64(hi64, lo64) : lo64;
+		long remainder = 0;
+
+		/* Use grade-school long division algorithm */
+		for (int i = 0; i < 128; i++) {
+			remainder <<= 1;
+			if (hi < 0) remainder |= 1;
+			//leftshift by 1, i.e. multiply by 2
+			hi <<= 1;
+			if (lo < 0) hi |= 1;
+			lo <<= 1;
+			//remainder
+			if ((remainder > 0 && remainder >= divisor) || (remainder < 0 && (divisor > 0 || remainder <= divisor))) {
+				remainder -= divisor;
+				lo |= 1;
+			}
+		}
+
+		if (divisor < 0) {
+			hi = -hi;
+			lo = -lo;
+		}
+		if (isNeg) {
+			hi = negHi64(hi, lo);
+			lo = negLo64(hi, lo);
+		}
+		return new Int128(hi, lo);
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -80,7 +132,6 @@ public class Int128 {
 		if (lo64 != other.lo64) return false;
 		return true;
 	}
-	
 	private static final String UINT128_MAXVALUE = "340282366920938463463374607431768211456";
 	@Override
 	public String toString() {
