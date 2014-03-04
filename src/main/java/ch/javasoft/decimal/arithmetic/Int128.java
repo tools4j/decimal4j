@@ -133,8 +133,110 @@ public class Int128 {
 		return true;
 	}
 	private static final String UINT128_MAXVALUE = "340282366920938463463374607431768211456";
+	//                             Long.MAX_VALUE = 9223372036854775807
+	private static final long DEC_LIMIT           = 1000000000000000000L;
+	private static final String ZEROS             = "000000000000000000";
+	private static final long UINT128_MAXVALUE_LO = 374607431768211456L;
+	private static final long UINT128_MAXVALUE_MI = 282366920938463463L;
+	private static final long UINT128_MAXVALUE_HI = 340L;
 	@Override
 	public String toString() {
+		final int sgn = signum();
+		long hi = hi64;
+		long lo = lo64;
+		long decHi = 0;
+		long decMi = 0;
+		long decLo = 0;
+		for (int i = 0; i < 128; i++) {
+		    final long carry = (hi >>> 63);
+		    hi = (hi << 1) + (lo >>> 63); // shift left, plus carry 
+		    lo = (lo << 1);
+
+		    decLo <<= 1;
+		    decMi <<= 1;
+		    decHi <<= 1;
+		    decLo += carry;
+		    if (decLo >= DEC_LIMIT) {
+		    	decLo -= DEC_LIMIT;
+		    	decMi++;
+		    }
+		    if (decMi >= DEC_LIMIT) {
+		    	decMi -= DEC_LIMIT;
+		    	decHi++;
+		    }
+		    //decHi should not ever overflow
+		}
+		if (sgn < 0) {
+			//subtract 2^128 to get actual signed result
+			decLo -= UINT128_MAXVALUE_LO;
+			decMi -= UINT128_MAXVALUE_MI;
+			decHi -= UINT128_MAXVALUE_HI;
+			
+			//handle overflows now
+			if (decHi >= 0) {
+				//if most significant is positive, all should be positive
+				if (decLo < 0) {
+					decLo += DEC_LIMIT;
+					decMi--;
+				}
+				if (decMi < 0) {
+					decMi += DEC_LIMIT;
+					decHi--;
+				}
+			}
+			if (decHi < 0) {//test also if it was positive before, see decHi--
+				//if most significant is negative, all should be negative
+				if (decLo <= 0) {
+					//ok but we want no sign char
+					decLo = -decLo;
+				} else {
+					decLo = DEC_LIMIT - decLo;
+					decMi++;
+				}
+				if (decMi <= 0) {
+					//ok but we want no sign char
+					decMi = -decMi;
+				} else {
+					decMi = DEC_LIMIT - decMi;
+					decHi++;
+				}
+				
+				//we want the negative sign at the most significant of the 3 longs
+				if (decHi == 0) {
+					if (decMi == 0) {
+						decLo = -decLo;
+					} else {
+						decMi = -decMi;
+					}
+				}
+			}
+		}
+		
+		//convert to string now
+		int off;
+		final int zlen = ZEROS.length();
+		final StringBuilder sb = new StringBuilder(UINT128_MAXVALUE.length() + 1);
+		if (decHi != 0) {
+			sb.append(decHi);
+		}
+		if (decHi != 0 || decMi != 0) {
+			off = sb.length();
+			sb.append(decMi);
+			if (decHi != 0) {
+				sb.insert(off, ZEROS, 0, zlen - (sb.length() - off));
+			}
+		}
+		off = sb.length();
+		sb.append(decLo);
+		if (decHi != 0 || decMi != 0) {
+			sb.insert(off, ZEROS, 0, ZEROS.length() - (sb.length() - off));
+		}
+		return sb.toString();
+	}
+	
+	//nice but slower than above toString()
+	@SuppressWarnings("unused")
+	private String toStringWithDecimalArithmetics() {
 		final int len = UINT128_MAXVALUE.length();
 		final StringBuilder sb = new StringBuilder(len + 1);//maxlen + sign
 		for (int i = 0; i < len; i++) {

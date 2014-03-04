@@ -33,6 +33,31 @@ public class Int128Test {
 				}
 			}
 		}
+		
+		//some loops
+		for (long i = -255; i < 255; i++) {
+			for (long j = -255; j < 255; j++) {
+				//small value combinations
+				assertEquals(i + " * " + j, i*j, Int128.multiply(i, j).getLo64());
+				assertEquals(i + " * " + j, i*j < 0 ? -1 : 0, Int128.multiply(i, j).getHi64());
+
+				assertEquals(i + " * " + j, String.valueOf(i*j), Int128.multiply(i, j).toString());
+
+				//small/large value combinations
+				for (long k : new long[] {Short.MIN_VALUE, Short.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Long.MIN_VALUE, Long.MAX_VALUE}) {
+					if (i != 0 && !((k+j) == Long.MIN_VALUE && i == -1)) {
+						long l = (k+j)/i;
+						assertEquals(i + " * " + l, i*l, Int128.multiply(i, l).getLo64());
+						assertEquals(i + " * " + l, (i >= 0) != (l >= 0) ? -1 : 0, Int128.multiply(i, l).getHi64());
+
+						assertEquals(i + " * " + l, String.valueOf(i*l), Int128.multiply(i, l).toString());
+					}
+				}
+			}
+		}
+		
+		//large special values
+		
 	}
 
 	@Test
@@ -53,5 +78,14 @@ public class Int128Test {
 		assertEquals("-2", new Int128(0xFFFFFFFFFFFFFFFFL, 0xFFFFFFFFFFFFFFFeL).toString());
 		assertEquals("-9223372036854775808", new Int128(0xFFFFFFFFFFFFFFFFL, 0x8000000000000000L).toString());
 		assertEquals("-18446744073709551616", new Int128(0xFFFFFFFFFFFFFFFFL, 0x0000000000000000L).toString());
+		
+		assertEquals("1000000000000000000000000000000000000", new Int128( 0x00c097ce7bc90715L, 0xb34b9f1000000000L).toString());
+		assertEquals("-1000000000000000000000000000000000000", new Int128(0xff3f68318436f8eaL, 0x4cb460efffffffffL + 1).toString());
+		assertEquals("1000000000000000000000000000000000001", new Int128( 0x00c097ce7bc90715L, 0xb34b9f1000000000L + 1).toString());
+		assertEquals("-1000000000000000000000000000000000001", new Int128(0xff3f68318436f8eaL, 0x4cb460efffffffffL).toString());
+		assertEquals("999999999999999999999999999999999999", new Int128( 0x00c097ce7bc90715L, 0xb34b9f1000000000L - 1).toString());
+		assertEquals("-999999999999999999999999999999999999", new Int128(0xff3f68318436f8eaL, 0x4cb460efffffffffL + 2).toString());
+		assertEquals("2000000000000000000000000000000000000", new Int128( (0x00c097ce7bc90715L << 1) + 1, 0xb34b9f1000000000L << 1).toString());
+		assertEquals("-2000000000000000000000000000000000000", new Int128(0xff3f68318436f8eaL << 1, (0x4cb460efffffffffL + 1) << 1).toString());
 	}
 }
