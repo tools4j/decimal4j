@@ -18,6 +18,9 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	private final int scale;
 	private final long one;//10^scale
 	protected final long sqrtOne;//10^(scale/2) = sqrt(10^scale)
+	
+	private volatile BigInteger oneBigInteger;
+	private volatile BigDecimal oneBigDecimal;
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -82,6 +85,19 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	@Override
 	public long one() {
 		return one;
+	}
+	
+	protected BigInteger oneBigInteger() {
+		if (oneBigInteger == null) {
+			oneBigInteger = BigInteger.valueOf(one());
+		}
+		return oneBigInteger;
+	}
+	protected BigDecimal oneBigDecimal() {
+		if (oneBigDecimal == null) {
+			oneBigDecimal = BigDecimal.valueOf(one());
+		}
+		return oneBigDecimal;
 	}
 
 	@Override
@@ -233,7 +249,15 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
-		return value.multiply(BigInteger.valueOf(one())).longValue();
+		return value.multiply(oneBigInteger()).longValue();
+	}
+
+	@Override
+	public long fromDouble(double value) {
+		if (Double.isNaN(value) || Double.isInfinite(value)) {
+			throw new ArithmeticException("cannot convert double to decimal: " + value);
+		}
+		return fromBigDecimal(BigDecimal.valueOf(value));
 	}
 
 	@Override

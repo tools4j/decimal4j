@@ -259,6 +259,7 @@ public class Scale {
 	/**
 	 * Returns the scale factor, which is 10<sup>f</sup> where {@code f} stands
 	 * for the number of {@code #getFractionDigits() fraction digits}.
+	 * @return the scale factor
 	 */
 	public long getScaleFactor() {
 		int factor = 1;

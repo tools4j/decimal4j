@@ -81,6 +81,9 @@ public class MutableDecimal6f extends AbstractMutableDecimal<Scale6f> {
 	 *            the unscaled decimal value to convert
 	 * @param scale
 	 *            the scale used for {@code unscaledValue}
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted into a decimal number
 	 */
 	public MutableDecimal6f(long unscaledValue, int scale, RoundingMode roundingMode) {
 		this();

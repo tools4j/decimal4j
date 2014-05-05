@@ -38,7 +38,7 @@ public class Int128 {
 	private static long negHi64(long hi64, long lo64) {
 		return (~hi64) + (lo64 == 0 ? 1 : 0);
 	}
-	private static long negLo64(long hi64, long lo64) {
+	private static long negLo64(long lo64) {
 		return (~lo64) + 1;
 	}
 	public Int128 abs() {
@@ -55,6 +55,54 @@ public class Int128 {
 		return new Int128(lo64 >= 0 ? 0 : -1, lo64);
 	}
 	
+	public static long umullo(long value1, long value2) {
+		final long lo32_1 = value1 & 0x00000000ffffffffL;
+		final long lo32_2 = value2 & 0x00000000ffffffffL;
+		final long hi32_1 = value1 >>> 32;
+		final long hi32_2 = value2 >>> 32;
+		return lo32_1 * lo32_2 + ((lo32_1 * hi32_2) << 32) + ((lo32_2 * hi32_1) << 32);
+	}
+	public static long mullo(long value1, long value2) {
+		int sgn = 1;
+		if (value1 < 0) {
+			value1 = (~value1) + 1;
+			sgn = -sgn;
+		} else if (value1 == 0) {
+			sgn = 0;
+		}
+		if (value2 < 0) {
+			value2 = (~value2) + 1;
+			sgn = -sgn;
+		} else if (value2 == 0) {
+			sgn = 0;
+		}
+		final long lo64 = umullo(value1, value2);
+		return sgn >= 0 ? lo64 : negLo64(lo64);
+	}
+	public static long umulhi(long value1, long value2) {
+		final long lo32_1 = value1 & 0x00000000ffffffffL;
+		final long lo32_2 = value2 & 0x00000000ffffffffL;
+		final long hi32_1 = value1 >>> 32;
+		final long hi32_2 = value2 >>> 32;
+		return hi32_1 * hi32_2 + ((lo32_1 * hi32_2) >>> 32) + ((lo32_2 * hi32_1) >>> 32);
+	}
+	public static long mulhi(long value1, long value2) {
+		int sgn = 1;
+		if (value1 < 0) {
+			value1 = (~value1) + 1;
+			sgn = -sgn;
+		} else if (value1 == 0) {
+			sgn = 0;
+		}
+		if (value2 < 0) {
+			value2 = (~value2) + 1;
+			sgn = -sgn;
+		} else if (value2 == 0) {
+			sgn = 0;
+		}
+		final long hi64 = umulhi(value1, value2);
+		return sgn >= 0 ? hi64 : negHi64(hi64, umullo(value1, value2));
+	}
 	public static Int128 multiply(long value1, long value2) {
 		int sgn = 1;
 		if (value1 < 0) {
@@ -76,7 +124,7 @@ public class Int128 {
 		final long lo64 = lo32_1 * lo32_2 + ((lo32_1 * hi32_2) << 32) + ((lo32_2 * hi32_1) << 32);
 		final long hi64 = hi32_1 * hi32_2 + ((lo32_1 * hi32_2) >>> 32) + ((lo32_2 * hi32_1) >>> 32);
 		if (sgn < 0) {
-			return new Int128(negHi64(hi64, lo64), negLo64(hi64, lo64));
+			return new Int128(negHi64(hi64, lo64), negLo64(lo64));
 		}
 		return new Int128(hi64, lo64);
 	}
@@ -84,16 +132,15 @@ public class Int128 {
 	public Int128 divideBy(long divisor) {
 		final boolean isNeg = isNegative();
 		long hi = isNeg ? negHi64(hi64, lo64) : hi64;
-		long lo = isNeg ? negLo64(hi64, lo64) : lo64;
+		long lo = isNeg ? negLo64(lo64) : lo64;
 		long remainder = 0;
 
 		/* Use grade-school long division algorithm */
 		for (int i = 0; i < 128; i++) {
 			remainder <<= 1;
-			if (hi < 0) remainder |= 1;
-			//leftshift by 1, i.e. multiply by 2
+			remainder += (hi >>> 63);//carry
 			hi <<= 1;
-			if (lo < 0) hi |= 1;
+			hi += (lo >>> 63);//carry
 			lo <<= 1;
 			//remainder
 			if ((remainder > 0 && remainder >= divisor) || (remainder < 0 && (divisor > 0 || remainder <= divisor))) {
@@ -108,7 +155,7 @@ public class Int128 {
 		}
 		if (isNeg) {
 			hi = negHi64(hi, lo);
-			lo = negLo64(hi, lo);
+			lo = negLo64(lo);
 		}
 		return new Int128(hi, lo);
 	}

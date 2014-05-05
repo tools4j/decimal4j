@@ -81,6 +81,8 @@ public class TruncatingArithmetics extends AbstractArithmetics implements
 		final long f1 = uDecimal1 % sqrtOne;
 		final long f2 = uDecimal2 % sqrtOne;
 		return i1 * i2 + (i1 * f2 * sqrtOne + i2 * f1 * sqrtOne + f1 * f2) / one;
+//		final Int128 prod = Int128.multiply(uDecimal1, uDecimal2);
+//		return prod.divideBy(one).getLo64();
 	}
 
 	@Override
@@ -177,10 +179,9 @@ public class TruncatingArithmetics extends AbstractArithmetics implements
 		/* Use grade-school long division algorithm */
 		for (int i = 0; i < 128; i++) {
 			remainder <<= 1;
-			if (hi < 0) remainder |= 1;
-			//leftshift by 1, i.e. multiply by 2
+			remainder += (hi >>> 63);//carry
 			hi <<= 1;
-			if (lo < 0) hi |= 1;
+			hi += (lo >>> 63);//carry
 			lo <<= 1;
 			//remainder
 			if ((remainder > 0 && remainder >= divisor) || (remainder < 0 && (divisor > 0 || remainder <= divisor))) {
@@ -232,15 +233,15 @@ public class TruncatingArithmetics extends AbstractArithmetics implements
 		return result;
 	}
 
-	@Override
-	public long fromDouble(double value) {
+	@SuppressWarnings("unused")
+	private long fromDoubleBisect(double value) {
 		if (Double.isNaN(value) || Double.isInfinite(value)) {
 			throw new ArithmeticException("cannot convert double to decimal: " + value);
 		}
 		final long lOne = one();
 		final double fOne = lOne;
-		final double fCeil = Math.ceil(value);
-		final double fFloor = Math.floor(value);
+		double fCeil = Math.ceil(value);
+		double fFloor = Math.floor(value);
 		long lCeil = ((long) fCeil) * lOne;
 		long lFloor = ((long) fFloor) * lOne;
 		if (Long.signum(lCeil) != Long.signum(lFloor)) {
@@ -272,7 +273,7 @@ public class TruncatingArithmetics extends AbstractArithmetics implements
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(BigDecimal.valueOf(one())).longValue();
+		return value.multiply(oneBigDecimal()).longValue();
 	}
 
 	@Override

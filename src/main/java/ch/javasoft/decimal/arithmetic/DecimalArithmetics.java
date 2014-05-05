@@ -88,6 +88,8 @@ public interface DecimalArithmetics {
 	/**
 	 * Returns the signum function of the specified unscaled decimal.
 	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal
 	 * @return -1, 0, or 1 as the value of the specified unscaled decimal is
 	 *         negative, zero, or positive.
 	 */
@@ -222,7 +224,7 @@ public interface DecimalArithmetics {
 	 * @return {@code uDecimal << n}
 	 * @see #shiftRight
 	 */
-	long shiftLeft(long uDecimal, int positions);
+	long shiftLeft(long uDecimal, int n);
 
 	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimal >> n)}. Sign
@@ -239,7 +241,7 @@ public interface DecimalArithmetics {
 	 *             if the shift distance is {@code Integer.MIN_VALUE}.
 	 * @see #shiftLeft
 	 */
-	long shiftRight(long uDecimal, int positions);
+	long shiftRight(long uDecimal, int n);
 
 	/**
 	 * Returns an unscaled decimal which is equivalent to {@code uDecimal} with
@@ -248,13 +250,15 @@ public interface DecimalArithmetics {
 	 * unscaled decimal value returned by this call has value <tt>(this &times;
 	 * 10<sup>-n</sup>)</tt>.
 	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal whose decimal point to move left
 	 * @param n
 	 *            number of places to move the decimal point to the left.
 	 * @return an unscaled decimal which is equivalent to {@code uDecimal} with
 	 *         the decimal point moved {@code n} places to the left.
 	 * @see #movePointRight(long, int)
 	 */
-	long movePointLeft(long uDecimal, int positions);
+	long movePointLeft(long uDecimal, int n);
 
 	/**
 	 * Returns an unscaled decimal which is equivalent to {@code uDecimal} with
@@ -263,13 +267,15 @@ public interface DecimalArithmetics {
 	 * unscaled decimal value returned by this call has value <tt>(this
 	 * &times; 10<sup>n</sup>)</tt>.
 	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal whose decimal point to move right
 	 * @param n
 	 *            number of places to move the decimal point to the right.
 	 * @return an unscaled decimal which is equivalent to {@code uDecimal} with
 	 *         the decimal point moved {@code n} places to the right.
 	 * @see #movePointLeft(long, int)
 	 */
-	long movePointRight(long uDecimal, int positions);
+	long movePointRight(long uDecimal, int n);
 
 	/**
 	 * Converts the specified long value to an unscaled decimal.

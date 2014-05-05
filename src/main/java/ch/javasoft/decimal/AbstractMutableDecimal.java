@@ -10,6 +10,9 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Base class for mutable {@link Decimal} classes of different scales.
  * Arithmetic operations of mutable decimals modify the state of {@code this}
  * {@code Decimal} and return {@code this} as result value.
+ * 
+ * @param <S>
+ *            the scale subclass type associated with this decimal
  */
 @SuppressWarnings("serial")
 abstract public class AbstractMutableDecimal<S extends Scale> extends
@@ -20,8 +23,10 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 	/**
 	 * Constructor with specified scale using the given {@code arithmetics}.
 	 * 
+	 * @param unscaled
+	 *            the unscaled decimal value
 	 * @param scale
-	 *            the scale for this decimal number
+	 *            the scale used for {@code unscaledValue}
 	 * @param arithmetics
 	 *            the arithmetics used for operations with decimals
 	 * @throws IllegalArgumentException

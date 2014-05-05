@@ -6,6 +6,9 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Common base class for {@link AbstractConstantDecimal constant} and
  * {@link AbstractMutableDecimal mutable} {@link Decimal} numbers of different
  * scales.
+ * 
+ * @param <S>
+ *            the scale subclass type associated with this decimal
  */
 @SuppressWarnings("serial")
 abstract public class AbstractDecimal<S extends Scale> extends Number implements

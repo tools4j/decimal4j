@@ -152,22 +152,8 @@ public class RoundingArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public long fromDouble(double value) {
-		if (Double.isNaN(value) || Double.isInfinite(value)) {
-			throw new ArithmeticException("cannot convert double to decimal: " + value);
-		}
-		final long one = one();
-		final double iValue = value >= 0 ? Math.floor(value) : Math.ceil(value);
-		final double fValue = value - iValue;
-		final double sValue = fValue * one;
-		final double tValue = fValue >= 0 ? Math.floor(sValue) : Math.ceil(sValue);
-		final long truncatedValue = ((long) iValue) * one + (long) tValue;
-		return truncatedValue + calculateRoundingIncrement(truncatedValue, sValue - tValue);
-	}
-
-	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(BigDecimal.valueOf(one())).setScale(0, getRoundingMode()).longValue();
+		return value.multiply(oneBigDecimal()).setScale(0, getRoundingMode()).longValue();
 	}
 
 	@Override
