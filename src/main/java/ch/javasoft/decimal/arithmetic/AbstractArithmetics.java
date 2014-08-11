@@ -17,10 +17,9 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	private final int scale;
 	private final long one;//10^scale
-	protected final long sqrtOne;//10^(scale/2) = sqrt(10^scale)
 	
-	private volatile BigInteger oneBigInteger;
-	private volatile BigDecimal oneBigDecimal;
+	private transient BigInteger oneBigInteger;
+	private transient BigDecimal oneBigDecimal;
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -41,12 +40,8 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			throw new IllegalArgumentException("scale is too large: " + scale);
 		}
 		this.scale = scale;
-		long sqrtOne = 1;
-		for (int i = 0; i < scale / 2; i++) {
-			sqrtOne *= 10;
-		}
-		long one = sqrtOne;
-		for (int i = scale / 2; i < scale; i++) {
+		long one = 1;
+		for (int i = 0; i < scale; i++) {
 			one *= 10;
 		}
 		if (Long.MAX_VALUE / one < one) {
@@ -54,7 +49,6 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			throw new IllegalArgumentException("scale is too large: " + scale);
 		}
 		this.one = one;
-		this.sqrtOne = sqrtOne;
 	}
 
 	/**

@@ -11,11 +11,11 @@ import ch.javasoft.decimal.arithmetic.DecimalRounding;
 import ch.javasoft.decimal.arithmetic.RoundingArithmetics;
 
 /**
- * <tt>Decimal6f</tt> represents a constant decimal number with 6 fractional
+ * <tt>Decimal6f</tt> represents a immutable decimal number with 6 fractional
  * digits.
  */
 @SuppressWarnings("serial")
-public class Decimal6f extends AbstractConstantDecimal<Scale6f> {
+public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 
 	public static final DecimalArithmetics ARITHMETICS = new RoundingArithmetics(Scale6f.INSTANCE, DecimalRounding.HALF_EVEN);
 

@@ -75,7 +75,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 		final int sgn2 = Long.signum(uDecimal2);
 		if (sgn1 == sgn2) {
 			if (Long.signum(result) != sgn1) {
-				throw new ArithmeticException("overflow: " + uDecimal1 + " + " + uDecimal2 + " = " + result);
+				throw new ArithmeticException("overflow: " + toString(uDecimal1) + " + " + toString(uDecimal2) + " = " + toString(result));
 			}
 		}
 		return result;
@@ -88,16 +88,16 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 		final int sgn2 = Long.signum(uDecimalSubtrahend);
 		if (sgn1 != sgn2) {
 			if (Long.signum(result) != sgn1) {
-				throw new ArithmeticException("overflow: " + uDecimalMinuend + " - " + uDecimalSubtrahend + " = " + result);
+				throw new ArithmeticException("overflow: " + toString(uDecimalMinuend) + " - " + toString(uDecimalSubtrahend) + " = " + toString(result));
 			}
 		}
 		return result;
 	}
 
-	private static long checkedMultiplication(long a, long b) {
+	private long checkedMultiplication(long a, long b) {
 		final long max = Long.signum(a) == Long.signum(b) ? Long.MAX_VALUE : Long.MIN_VALUE;
 		if (a != 0 && (b > 0 && b > max / a || b < 0 && b < max / a)) {
-			throw new ArithmeticException("overflow: " + a + " * " + b + " = " + (a * b));
+			throw new ArithmeticException("overflow: " + toString(a) + " * " + toString(b) + " = " + toString(a * b));
 		}
 		return a*b;
 	}
@@ -118,7 +118,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	public long abs(long uDecimal) {
 		final long abs = delegate.abs(uDecimal);
 		if (abs < 0) {
-			throw new ArithmeticException("overflow: abs(" + uDecimal + ") = " + abs);
+			throw new ArithmeticException("overflow: abs(" + toString(uDecimal) + ") = " + toString(abs));
 		}
 		return abs;
 	}
@@ -127,7 +127,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	public long negate(long uDecimal) {
 		final long neg = delegate.negate(uDecimal);
 		if (neg != 0 && Long.signum(uDecimal) == Long.signum(neg)) {
-			throw new ArithmeticException("overflow: -" + uDecimal + " = " + neg);
+			throw new ArithmeticException("overflow: -" + toString(uDecimal) + " = " + toString(neg));
 		}
 		return neg;
 	}
@@ -157,7 +157,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 			final long pow2 = 1L << positions;
 			return checkedMultiplication(uDecimal, pow2);
 		}
-		throw new ArithmeticException("overflow: " + uDecimal + " << " + positions + " = " + (uDecimal << positions));
+		throw new ArithmeticException("overflow: " + toString(uDecimal) + " << " + toString(positions) + " = " + toString(uDecimal << positions));
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 			if (positions != Integer.MIN_VALUE) {
 				return shiftLeft(uDecimal, -positions);
 			}
-			throw new ArithmeticException("overflow: " + uDecimal + " << " + positions + " = " + (uDecimal << positions));
+			throw new ArithmeticException("overflow: " + toString(uDecimal) + " << " + toString(positions) + " = " + toString(uDecimal << positions));
 		}
 		//no overflow possible
 		return delegate.shiftRight(uDecimal, positions);

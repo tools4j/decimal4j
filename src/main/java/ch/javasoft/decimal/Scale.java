@@ -262,7 +262,7 @@ public class Scale {
 	 * @return the scale factor
 	 */
 	public long getScaleFactor() {
-		int factor = 1;
+		int factor = 1;//FIXME should be long
 		for (int i = 0; i < fractionDigits; i++) {
 			factor *= 10;
 		}

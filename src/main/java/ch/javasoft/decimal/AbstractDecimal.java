@@ -3,7 +3,7 @@ package ch.javasoft.decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
- * Common base class for {@link AbstractConstantDecimal constant} and
+ * Common base class for {@link AbstractImmutableDecimal immutable} and
  * {@link AbstractMutableDecimal mutable} {@link Decimal} numbers of different
  * scales.
  * 

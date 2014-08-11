@@ -101,14 +101,13 @@ public class RoundingArithmetics extends AbstractArithmetics {
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
 		final long one = one();
-		final long sqrtOne = this.sqrtOne;
-		final long i1 = uDecimal1 / sqrtOne;
-		final long i2 = uDecimal2 / sqrtOne;
-		final long f1 = uDecimal1 % sqrtOne;
-		final long f2 = uDecimal2 % sqrtOne;
-		final long rest = i1 * f2 * sqrtOne + i2 * f1 * sqrtOne + f1 * f2;
-		final long unrounded = i1 * i2 + rest / one;
-		return unrounded + calculateRoundingIncrement(unrounded, rest % one);
+		final long i1 = uDecimal1 / one;
+		final long i2 = uDecimal2 / one;
+		final long f1 = uDecimal1 % one;
+		final long f2 = uDecimal2 % one;
+		final long reminder = f1 * f2;
+		final long unrounded = i1 * i2 * one + i1 * f2 + i2 * f1 + reminder / one;
+		return unrounded + calculateRoundingIncrement(unrounded, reminder % one);
 	}
 
 	@Override
@@ -116,7 +115,7 @@ public class RoundingArithmetics extends AbstractArithmetics {
 		final int scale = getScale();
 		final long one = one();
 		final long unrounded = TruncatingArithmetics.divide(uDecimalDividend, uDecimalDivisor, scale, one);
-		final long product = TruncatingArithmetics.multiply(unrounded, uDecimalDivisor, one, sqrtOne);
+		final long product = TruncatingArithmetics.multiply(unrounded, uDecimalDivisor, one);
 		final long delta = uDecimalDividend - product;
 		if (delta != 0) {
 			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);

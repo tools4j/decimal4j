@@ -73,16 +73,14 @@ public class TruncatingArithmetics extends AbstractArithmetics implements
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		return multiply(uDecimal1, uDecimal2, one(), sqrtOne);
+		return multiply(uDecimal1, uDecimal2, one());
 	}
-	static long multiply(long uDecimal1, long uDecimal2, long one, long sqrtOne) {
-		final long i1 = uDecimal1 / sqrtOne;
-		final long i2 = uDecimal2 / sqrtOne;
-		final long f1 = uDecimal1 % sqrtOne;
-		final long f2 = uDecimal2 % sqrtOne;
-		return i1 * i2 + (i1 * f2 * sqrtOne + i2 * f1 * sqrtOne + f1 * f2) / one;
-//		final Int128 prod = Int128.multiply(uDecimal1, uDecimal2);
-//		return prod.divideBy(one).getLo64();
+	static long multiply(long uDecimal1, long uDecimal2, long one) {
+		final long i1 = uDecimal1 / one;
+		final long i2 = uDecimal2 / one;
+		final long f1 = uDecimal1 % one;
+		final long f2 = uDecimal2 % one;
+		return i1 * i2 * one + i1 * f2 + i2 * f1 + (f1 * f2) / one;
 	}
 
 	@Override
