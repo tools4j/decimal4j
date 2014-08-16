@@ -20,7 +20,12 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * <p>
  * The {@link #getArithmetics() arithmetics} object defines {@link RoundingMode}
  * applied to methods which involve rounding as well as the {@link OverflowMode}
- * used when an operation results in an overflow.
+ * used when an operation results in an overflow. The arithmetics of
+ * {@code this} decimal always determines the arithmetics of the result
+ * irrespective of rounding mode arguments and potentially different arithmetics
+ * of other operands. Note that this may lead to a violation of the commutative
+ * property inherent to certain mathematical operations if operands are used
+ * with another arithmetic than that of {@code this} decimal value.
  * 
  * @param <S>
  *            the scale subclass type associated with this decimal
@@ -380,8 +385,8 @@ public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
 	/**
 	 * Compares this object to the specified object. The result is {@code true}
 	 * if and only if the argument is not {@code null} and is a {@code Decimal}
-	 * object that contains the same value as this object with the same
-	 * underlying arithmetics.
+	 * object that contains the same value as this object and if the two
+	 * decimals have the same {@link #getScale() scale}.
 	 * 
 	 * @param obj
 	 *            the object to compare with.
