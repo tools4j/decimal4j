@@ -11,7 +11,7 @@ import ch.javasoft.decimal.Scale;
  * digit without rounding; the result of an operation that leads to an overflow
  * is silently truncated.
  */
-public class TruncatingArithmetics extends AbstractArithmetics implements
+public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		DecimalArithmetics {
 
 	/**
@@ -51,7 +51,7 @@ public class TruncatingArithmetics extends AbstractArithmetics implements
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : new TruncatingArithmetics(scale);
+		return scale == getScale() ? this : scale == 0 ? LongArithmetics.INSTANCE : new TruncatingArithmetics(scale);
 	}
 
 	@Override

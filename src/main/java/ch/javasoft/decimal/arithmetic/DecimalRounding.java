@@ -369,6 +369,83 @@ public enum DecimalRounding {
 	 */
 	abstract public int calculateRoundingIncrement(long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit);
 	
+	/**
+	 * Returns the rounding increment appropriate for this decimal rounding
+	 * given the remaining truncated digits truncated by modulo one. The
+	 * returned value is one of -1, 0 or 1.
+	 * 
+	 * @param truncatedValue
+	 *            the truncated result before rounding is applied
+	 * @param truncatedDigits
+	 *            the truncated part of a double, must be {@code >-one} and
+	 *            {@code <one}
+	 * @param one
+	 *            the value representing 1 which is {@code 10^scale}, must be
+	 *            {@code >= 10}
+	 * @return the value to add to {@code truncatedValue} to get the rounded
+	 *         result, one of -1, 0 or 1
+	 */
+	int calculateRoundingIncrement(long truncatedValue, long truncatedDigits, long one) {
+		final long nonNegativeTruncatedDigits = Math.abs(truncatedDigits);
+		final long oneDivBy10 = one / 10;
+		final int firstTruncatedDigit = (int) (nonNegativeTruncatedDigits / oneDivBy10);
+		final long truncatedDigitsAfterFirst = nonNegativeTruncatedDigits % oneDivBy10;
+		return calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
+	}
+
+	/**
+	 * Returns the rounding increment appropriate for this decimal rounding
+	 * given the remaining truncated digits truncated by a given divisor. The
+	 * returned value is one of -1, 0 or 1.
+	 * 
+	 * @param truncatedValue
+	 *            the truncated result before rounding is applied
+	 * @param truncatedDigits
+	 *            the truncated part of a double, it most hold that
+	 *            {@code abs(truncatedDigits) < abs(divisor)}
+	 * @param divisor
+	 *            the divisor that led to the truncated digits
+	 * @return the value to add to {@code truncatedValue} to get the rounded
+	 *         result, one of -1, 0 or 1
+	 */
+	int calculateRoundingIncrementForDivision(long truncatedValue, long truncatedDigits, long divisor) {
+		if (truncatedDigits == 0) {
+			return 0;
+		}
+		final long absTruncatedDigits = Math.abs(truncatedDigits);
+		final long absDivisor = Math.abs(divisor);
+
+		final int firstTruncatedDigit;
+		final boolean zeroAfterFirstTruncatedDigit;
+		if (absTruncatedDigits < 922337203685477581L /* ceil(Long.MAX_VALUE/10) */) {
+			final long nonNgativeTruncatedDigitsX10 = absTruncatedDigits * 10;
+			firstTruncatedDigit = (int) (nonNgativeTruncatedDigitsX10 / absDivisor);
+			zeroAfterFirstTruncatedDigit = (nonNgativeTruncatedDigitsX10 % absDivisor) == 0;
+		} else {
+			final long absDivisorBy10 = absDivisor / 10;
+			final long absDivisorMod10 = absDivisor % 10;
+			long div = absTruncatedDigits / absDivisorBy10;
+			int cmp;
+			div++;
+			do {
+				div--;
+				long mul = div * absDivisorBy10;
+				long del = absTruncatedDigits - mul;
+				long rem = div * absDivisorMod10;
+				cmp = Long.compare(del, rem / 10);
+				if (cmp == 0 && (rem % 10) != 0) cmp = -1;
+			} while (cmp < 0);
+			firstTruncatedDigit = (int) div;
+
+			final long p0 = absDivisorBy10 * div;
+			final long p1x10 = absDivisorMod10 * div;
+			final long p1 = p1x10 / 10;
+			final long p1r = p1x10 % 10;
+			zeroAfterFirstTruncatedDigit = p1r == 0 && absTruncatedDigits == (p0 + p1);
+		}
+		return calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, zeroAfterFirstTruncatedDigit);
+	}
+
 	private static final DecimalRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();
 	
 	/**

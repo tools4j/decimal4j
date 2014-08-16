@@ -2,10 +2,12 @@ package ch.javasoft.decimal;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import ch.javasoft.decimal.arithmetic.Int128;
 
+@Ignore
 public class Int128Test {
 	
 	@Test

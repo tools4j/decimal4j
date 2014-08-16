@@ -77,21 +77,21 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("0.100000", arith.divide(maxLongValue/10, maxLongValue));
 		assertEquals("0.010000", arith.divide(maxLongValue/100, maxLongValue));
 		assertEquals("0.001000", arith.divide(maxLongValue/1000, maxLongValue));
-//		assertEquals("0.000100", arith.divide(maxLongValue/10000, maxLongValue));
-//		assertEquals("0.000010", arith.divide(maxLongValue/100000, maxLongValue));
+		assertEquals("0.000100", arith.divide(maxLongValue/10000, maxLongValue));
+		assertEquals("0.000010", arith.divide(maxLongValue/100000, maxLongValue));
 		assertEquals("0.000001", arith.divide(maxLongValue/1000000, maxLongValue));
-//		assertEquals("0.000002", arith.divide(maxLongValue/500000, maxLongValue));
-//		assertEquals("0.000005", arith.divide(maxLongValue/200000, maxLongValue));
+		assertEquals("0.000002", arith.divide(maxLongValue/500000, maxLongValue));
+		assertEquals("0.000005", arith.divide(maxLongValue/200000, maxLongValue));
 //		assertEquals("0.000001", arith.divide(maxLongValue/1000000/2, maxLongValue));//ROUNDED
 		assertEquals("0.500000", arith.divide((Long.MAX_VALUE-1)/2, (Long.MAX_VALUE-1)));
 		assertEquals("0.100000", arith.divide((Long.MAX_VALUE-7)/10, Long.MAX_VALUE-7));
 		assertEquals("0.010000", arith.divide((Long.MAX_VALUE-7)/100, Long.MAX_VALUE-7));
 		assertEquals("0.001000", arith.divide((Long.MAX_VALUE-807)/1000, Long.MAX_VALUE-807));
-//		assertEquals("0.000100", arith.divide((Long.MAX_VALUE-5807)/10000, Long.MAX_VALUE-5807));
-//		assertEquals("0.000010", arith.divide((Long.MAX_VALUE-75807)/100000, Long.MAX_VALUE-75807));
+		assertEquals("0.000100", arith.divide((Long.MAX_VALUE-5807)/10000, Long.MAX_VALUE-5807));
+		assertEquals("0.000010", arith.divide((Long.MAX_VALUE-75807)/100000, Long.MAX_VALUE-75807));
 		assertEquals("0.000001", arith.divide((Long.MAX_VALUE-775807)/1000000, Long.MAX_VALUE-775807));
-//		assertEquals("0.000002", arith.divide((Long.MAX_VALUE-775807)/500000, Long.MAX_VALUE-775807));
-//		assertEquals("0.000005", arith.divide((Long.MAX_VALUE-775807)/200000, Long.MAX_VALUE-775807));
+		assertEquals("0.000002", arith.divide((Long.MAX_VALUE-775807)/500000, Long.MAX_VALUE-775807));
+		assertEquals("0.000005", arith.divide((Long.MAX_VALUE-775807)/200000, Long.MAX_VALUE-775807));
 //		assertEquals("0.000001", arith.divide((Long.MAX_VALUE-4775807)/1000000/2, Long.MAX_VALUE-4775807));//ROUNDED
 
 		assertEquals("0.001000", arith.divide(arith.parse("-0.000001"), arith.parse("-0.001")));
@@ -111,21 +111,21 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("0.100000", arith.divide((Long.MIN_VALUE-8)/10, Long.MIN_VALUE-8));
 		assertEquals("0.010000", arith.divide((Long.MIN_VALUE-8)/100, Long.MIN_VALUE-8));
 		assertEquals("0.001000", arith.divide((Long.MIN_VALUE-808)/1000, Long.MIN_VALUE-808));
-//		assertEquals("0.000100", arith.divide((Long.MIN_VALUE-5808)/10000, Long.MIN_VALUE-5808));
-//		assertEquals("0.000010", arith.divide((Long.MIN_VALUE-75808)/100000, Long.MIN_VALUE-75808));
+		assertEquals("0.000100", arith.divide((Long.MIN_VALUE-5808)/10000, Long.MIN_VALUE-5808));
+		assertEquals("0.000010", arith.divide((Long.MIN_VALUE-75808)/100000, Long.MIN_VALUE-75808));
 		assertEquals("0.000001", arith.divide((Long.MIN_VALUE-775808)/1000000, Long.MIN_VALUE-775808));
-//		assertEquals("0.000002", arith.divide((Long.MIN_VALUE-775808)/500000, Long.MIN_VALUE-775808));
-//		assertEquals("0.000005", arith.divide((Long.MIN_VALUE-775808)/200000, Long.MIN_VALUE-775808));
+		assertEquals("0.000002", arith.divide((Long.MIN_VALUE-775808)/500000, Long.MIN_VALUE-775808));
+		assertEquals("0.000005", arith.divide((Long.MIN_VALUE-775808)/200000, Long.MIN_VALUE-775808));
 //		assertEquals("0.000001", arith.divide((Long.MIN_VALUE-4775808)/1000000/2, Long.MIN_VALUE-4775808));//ROUNDED
 		assertEquals("0.500000", arith.divide(minLongValue/2, minLongValue));
 		assertEquals("0.100000", arith.divide(minLongValue/10, minLongValue));
 		assertEquals("0.010000", arith.divide(minLongValue/100, minLongValue));
 		assertEquals("0.001000", arith.divide(minLongValue/1000, minLongValue));
-//		assertEquals("0.000100", arith.divide(minLongValue/10000, minLongValue));
-//		assertEquals("0.000010", arith.divide(minLongValue/100000, minLongValue));
+		assertEquals("0.000100", arith.divide(minLongValue/10000, minLongValue));
+		assertEquals("0.000010", arith.divide(minLongValue/100000, minLongValue));
 		assertEquals("0.000001", arith.divide(minLongValue/1000000, minLongValue));
-//		assertEquals("0.000002", arith.divide(minLongValue/500000, minLongValue));
-//		assertEquals("0.000005", arith.divide(minLongValue/200000, minLongValue));
+		assertEquals("0.000002", arith.divide(minLongValue/500000, minLongValue));
+		assertEquals("0.000005", arith.divide(minLongValue/200000, minLongValue));
 //		assertEquals("0.000001", arith.divide(minLongValue/1000000/2, minLongValue));//ROUNDED
 
 		assertEquals("-0.001000", arith.divide(arith.parse("-0.000001"), arith.parse("0.001")));
@@ -144,21 +144,21 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("-0.100000", arith.divide(-(Long.MAX_VALUE-7)/10, Long.MAX_VALUE-7));
 		assertEquals("-0.010000", arith.divide(-(Long.MAX_VALUE-7)/100, Long.MAX_VALUE-7));
 		assertEquals("-0.001000", arith.divide(-(Long.MAX_VALUE-807)/1000, Long.MAX_VALUE-807));
-//		assertEquals("-0.000100", arith.divide(-(Long.MAX_VALUE-5807)/10000, Long.MAX_VALUE-5807));
-//		assertEquals("-0.000010", arith.divide(-(Long.MAX_VALUE-75807)/100000, Long.MAX_VALUE-75807));
+		assertEquals("-0.000100", arith.divide(-(Long.MAX_VALUE-5807)/10000, Long.MAX_VALUE-5807));
+		assertEquals("-0.000010", arith.divide(-(Long.MAX_VALUE-75807)/100000, Long.MAX_VALUE-75807));
 		assertEquals("-0.000001", arith.divide(-(Long.MAX_VALUE-775807)/1000000, Long.MAX_VALUE-775807));
-//		assertEquals("-0.000002", arith.divide(-(Long.MAX_VALUE-775807)/500000, Long.MAX_VALUE-775807));
-//		assertEquals("-0.000005", arith.divide(-(Long.MAX_VALUE-775807)/200000, Long.MAX_VALUE-775807));
+		assertEquals("-0.000002", arith.divide(-(Long.MAX_VALUE-775807)/500000, Long.MAX_VALUE-775807));
+		assertEquals("-0.000005", arith.divide(-(Long.MAX_VALUE-775807)/200000, Long.MAX_VALUE-775807));
 //		assertEquals("-0.000001", arith.divide(-(Long.MAX_VALUE-4775807)/1000000/2, Long.MAX_VALUE-4775807));//ROUNDED
 		assertEquals("-0.500000", arith.divide(-maxLongValue/2, maxLongValue));
 		assertEquals("-0.100000", arith.divide(-maxLongValue/10, maxLongValue));
 		assertEquals("-0.010000", arith.divide(-maxLongValue/100, maxLongValue));
 		assertEquals("-0.001000", arith.divide(-maxLongValue/1000, maxLongValue));
-//		assertEquals("-0.000100", arith.divide(-maxLongValue/10000, maxLongValue));
-//		assertEquals("-0.000010", arith.divide(-maxLongValue/100000, maxLongValue));
+		assertEquals("-0.000100", arith.divide(-maxLongValue/10000, maxLongValue));
+		assertEquals("-0.000010", arith.divide(-maxLongValue/100000, maxLongValue));
 		assertEquals("-0.000001", arith.divide(-maxLongValue/1000000, maxLongValue));
-//		assertEquals("-0.000002", arith.divide(-maxLongValue/500000, maxLongValue));
-//		assertEquals("-0.000005", arith.divide(-maxLongValue/200000, maxLongValue));
+		assertEquals("-0.000002", arith.divide(-maxLongValue/500000, maxLongValue));
+		assertEquals("-0.000005", arith.divide(-maxLongValue/200000, maxLongValue));
 //		assertEquals("-0.000001", arith.divide(-maxLongValue/1000000/2, maxLongValue));//ROUNDED
 
 		assertEquals("-0.001000", arith.divide(arith.parse("0.000001"), arith.parse("-0.001")));
@@ -178,21 +178,21 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("-0.100000", arith.divide((Long.MAX_VALUE-7)/10, -(Long.MAX_VALUE-7)));
 		assertEquals("-0.010000", arith.divide((Long.MAX_VALUE-7)/100, -(Long.MAX_VALUE-7)));
 		assertEquals("-0.001000", arith.divide((Long.MAX_VALUE-807)/1000, -(Long.MAX_VALUE-807)));
-//		assertEquals("-0.000100", arith.divide((Long.MAX_VALUE-5807)/10000, -(Long.MAX_VALUE-5807)));
-//		assertEquals("-0.000010", arith.divide((Long.MAX_VALUE-75807)/100000, -(Long.MAX_VALUE-75807)));
+		assertEquals("-0.000100", arith.divide((Long.MAX_VALUE-5807)/10000, -(Long.MAX_VALUE-5807)));
+		assertEquals("-0.000010", arith.divide((Long.MAX_VALUE-75807)/100000, -(Long.MAX_VALUE-75807)));
 		assertEquals("-0.000001", arith.divide((Long.MAX_VALUE-775807)/1000000, -(Long.MAX_VALUE-775807)));
-//		assertEquals("-0.000002", arith.divide((Long.MAX_VALUE-775807)/500000, -(Long.MAX_VALUE-775807)));
-//		assertEquals("-0.000005", arith.divide((Long.MAX_VALUE-775807)/200000, -(Long.MAX_VALUE-775807)));
+		assertEquals("-0.000002", arith.divide((Long.MAX_VALUE-775807)/500000, -(Long.MAX_VALUE-775807)));
+		assertEquals("-0.000005", arith.divide((Long.MAX_VALUE-775807)/200000, -(Long.MAX_VALUE-775807)));
 //		assertEquals("-0.000001", arith.divide((Long.MAX_VALUE-4775807)/1000000/2, -(Long.MAX_VALUE-4775807)));//ROUNDED
 		assertEquals("-0.500000", arith.divide(maxLongValue/2, -maxLongValue));
 		assertEquals("-0.100000", arith.divide(maxLongValue/10, -maxLongValue));
 		assertEquals("-0.010000", arith.divide(maxLongValue/100, -maxLongValue));
 		assertEquals("-0.001000", arith.divide(maxLongValue/1000, -maxLongValue));
-//		assertEquals("-0.000100", arith.divide(maxLongValue/10000, -maxLongValue));
-//		assertEquals("-0.000010", arith.divide(maxLongValue/100000, -maxLongValue));
+		assertEquals("-0.000100", arith.divide(maxLongValue/10000, -maxLongValue));
+		assertEquals("-0.000010", arith.divide(maxLongValue/100000, -maxLongValue));
 		assertEquals("-0.000001", arith.divide(maxLongValue/1000000, -maxLongValue));
-//		assertEquals("-0.000002", arith.divide(maxLongValue/500000, -maxLongValue));
-//		assertEquals("-0.000005", arith.divide(maxLongValue/200000, -maxLongValue));
+		assertEquals("-0.000002", arith.divide(maxLongValue/500000, -maxLongValue));
+		assertEquals("-0.000005", arith.divide(maxLongValue/200000, -maxLongValue));
 //		assertEquals("-0.000001", arith.divide(maxLongValue/1000000/2, -maxLongValue));//ROUNDED
 
 		//test around Long.MAX_VALUE

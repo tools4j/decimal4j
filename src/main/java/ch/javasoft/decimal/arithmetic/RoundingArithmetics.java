@@ -11,7 +11,7 @@ import ch.javasoft.decimal.Scale;
  * Base class for arithmetic implementations which involve rounding strategies.
  * The result of an operation that leads to an overflow is silently truncated.
  */
-public class RoundingArithmetics extends AbstractArithmetics {
+public class RoundingArithmetics extends AbstractScaledArithmetics {
 
 	private final DecimalRounding rounding;
 
@@ -107,7 +107,7 @@ public class RoundingArithmetics extends AbstractArithmetics {
 		final long f2 = uDecimal2 % one;
 		final long reminder = f1 * f2;
 		final long unrounded = i1 * i2 * one + i1 * f2 + i2 * f1 + reminder / one;
-		return unrounded + calculateRoundingIncrement(unrounded, reminder % one);
+		return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder % one, one);
 	}
 
 	@Override
@@ -118,11 +118,13 @@ public class RoundingArithmetics extends AbstractArithmetics {
 		final long product = TruncatingArithmetics.multiply(unrounded, uDecimalDivisor, one);
 		final long delta = uDecimalDividend - product;
 		if (delta != 0) {
-			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);
+//			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);
 			if (unrounded != 0) {
-				return unrounded + calculateRoundingIncrement(unrounded, remainder);
+//				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
+				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
 			}
-			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * calculateRoundingIncrement(unrounded, remainder);
+//			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
+			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
 		}
 		return unrounded;
 	}
@@ -141,7 +143,7 @@ public class RoundingArithmetics extends AbstractArithmetics {
 		final long oneSquare = one * one;
 		final long truncatedValue = oneSquare / uDecimal;
 		final long truncatedDigits = oneSquare % uDecimal;
-		return truncatedValue + calculateRoundingIncrement(truncatedValue, truncatedDigits);
+		return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimal);
 	}
 
 	@Override
@@ -223,53 +225,11 @@ public class RoundingArithmetics extends AbstractArithmetics {
 	public long toLong(long uDecimal) {
 		final long one = one();
 		final long truncated = uDecimal / one;
-		return truncated + calculateRoundingIncrement(truncated, uDecimal % one);
+		return truncated + rounding.calculateRoundingIncrement(truncated, uDecimal % one, one);
 	}
 
 	@Override
 	public BigDecimal toBigDecimal(long uDecimal, int scale) {
 		return toBigDecimal(uDecimal).round(new MathContext(scale, getRoundingMode()));
 	}
-
-	/**
-	 * Returns the rounding increment appropriate for the
-	 * {@link #getRoundingMode()} of this arithmetics. The returned value is one
-	 * of -1, 0 or 1.
-	 * 
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param truncatedPart
-	 *            the truncated part of a double, must be {@code >-1} and
-	 *            {@code <1}
-	 * @return the value to add to {@code truncatedValue} to get the rounded
-	 *         result, one of -1, 0 or 1
-	 */
-	protected int calculateRoundingIncrement(long truncatedValue, double truncatedPart) {
-		final double nonNegativeTruncatedPart = Math.abs(truncatedPart);
-		final int firstTruncatedDigit = (int) (nonNegativeTruncatedPart * 10);
-		final boolean zeroAfterFirstTruncatedDigit = 0 == (nonNegativeTruncatedPart - firstTruncatedDigit / 10d);
-		return rounding.calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, zeroAfterFirstTruncatedDigit);
-	}
-
-	/**
-	 * Returns the rounding increment appropriate for the
-	 * {@link #getRoundingMode()} of this arithmetics. The returned value is one
-	 * of -1, 0 or 1.
-	 * 
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param truncatedDigits
-	 *            the truncated part of a double, must be {@code >-one()} and
-	 *            {@code <one()}
-	 * @return the value to add to {@code truncatedValue} to get the rounded
-	 *         result, one of -1, 0 or 1
-	 */
-	protected int calculateRoundingIncrement(long truncatedValue, long truncatedDigits) {
-		final long nonNegativeTruncatedDigits = Math.abs(truncatedDigits);
-		final long oneDivBy10 = one() / 10;
-		final int firstTruncatedDigit = (int) (nonNegativeTruncatedDigits / oneDivBy10);
-		final long truncatedDigitsAfterFirst = nonNegativeTruncatedDigits % oneDivBy10;
-		return rounding.calculateRoundingIncrement(truncatedValue, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
-	}
-
 }
