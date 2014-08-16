@@ -69,6 +69,21 @@ public class DecimalRoundingTest {
 		{-1.61,	-2,	-1,	-1,	-2,	-2,	-2,	-2,	Double.NaN},
 		{-2.51,	-3,	-2,	-2,	-3,	-3,	-3,	-3,	Double.NaN},
 		{-5.51,	-6,	-5,	-5,	-6,	-6,	-6,	-6,	Double.NaN},
+		//also interesting the special case with a leading zero
+		{0.61,	1,	0,	1,	0,	1,	1,	1,	Double.NaN},
+		{0.6,	1,	0,	1,	0,	1,	1,	1,	Double.NaN},
+		{0.51,	1,	0,	1,	0,	1,	1,	1,	Double.NaN},
+		{0.5,	1,	0,	1,	0,	1,	0,	0,	Double.NaN},
+		{0.1,	1,	0,	1,	0,	0,	0,	0,	Double.NaN},
+		{0.01,	1,	0,	1,	0,	0,	0,	0,	Double.NaN},
+		{0.0,	0,	0,	0,	0,	0,	0,	0,	0},
+		{-0.0,	0,	0,	0,	0,	0,	0,	0,	0},
+		{-0.01,	-1,	0,	0,	-1,	0,	0,	0,	Double.NaN},
+		{-0.1,	-1,	0,	0,	-1,	0,	0,	0,	Double.NaN},
+		{-0.5,	-1,	0,	0,	-1,	-1,	0,	0,	Double.NaN},
+		{-0.51,	-1,	0,	0,	-1,	-1,	-1,	-1,	Double.NaN},
+		{-0.6,	-1,	0,	0,	-1,	-1,	-1,	-1,	Double.NaN},
+		{-0.61,	-1,	0,	0,	-1,	-1,	-1,	-1,	Double.NaN},
 	};
 	private static final DecimalRounding[] DATA_COLS = new DecimalRounding[] {
 		null, UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY
@@ -108,15 +123,16 @@ public class DecimalRoundingTest {
 	public void shouldCalculateRoundingIncrement() {
 		final long inputTimes100 = Math.round(input * 100);
 		final long truncated = inputTimes100 / 100;
-		final int remainder = (int)Math.abs(inputTimes100 - truncated * 100);
-		final int firstTruncDigit = remainder / 10;
-		final boolean anyAfterFirstTruncDigit = 0 == remainder - 10 * (remainder / 10);
+		final int reminder = (int)(inputTimes100 - truncated * 100);
+		final int absReminder = Math.abs(reminder);
+		final int firstTruncDigit = absReminder / 10;
+		final boolean anyAfterFirstTruncDigit = 0 == absReminder - 10 * (absReminder / 10);
 		if (Double.isNaN(expected)) {
 			thrown.expect(ArithmeticException.class);
 			thrown.expectMessage("necessary");
-			rounding.calculateRoundingIncrement(truncated, firstTruncDigit, anyAfterFirstTruncDigit);
+			rounding.calculateRoundingIncrement(truncated, reminder < 0, firstTruncDigit, anyAfterFirstTruncDigit);
 		} else {
-			final int increment = rounding.calculateRoundingIncrement(truncated, firstTruncDigit, anyAfterFirstTruncDigit);
+			final int increment = rounding.calculateRoundingIncrement(truncated, reminder < 0, firstTruncDigit, anyAfterFirstTruncDigit);
 			final double actual = ((long)input) + increment;
 			assertEquals("wrong rounding for " + input + " " + rounding, expected, actual, 0);
 		}

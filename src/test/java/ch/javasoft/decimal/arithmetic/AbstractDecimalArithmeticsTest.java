@@ -53,22 +53,18 @@ abstract public class AbstractDecimalArithmeticsTest {
 	public void testMultiply() {
 		assertEquals("0.000001", arith.multiply(arith.parse("0.001"), arith.parse("0.001")));
 		assertEquals("0.000002", arith.multiply(arith.parse("0.001"), arith.parse("0.002")));
-		assertEquals("0.000000", arith.multiply(arith.parse("0.001"), arith.parse("0.0001")));
 		assertEquals("100.040004", arith.multiply(arith.parse("10.002"), arith.parse("10.002")));
 
 		assertEquals("0.000001", arith.multiply(arith.parse("-0.001"), arith.parse("-0.001")));
 		assertEquals("0.000002", arith.multiply(arith.parse("-0.001"), arith.parse("-0.002")));
-		assertEquals("0.000000", arith.multiply(arith.parse("-0.001"), arith.parse("-0.0001")));
 		assertEquals("100.040004", arith.multiply(arith.parse("-10.002"), arith.parse("-10.002")));
 		
 		assertEquals("-0.000001", arith.multiply(arith.parse("-0.001"), arith.parse("0.001")));
 		assertEquals("-0.000002", arith.multiply(arith.parse("-0.001"), arith.parse("0.002")));
-		assertEquals("0.000000", arith.multiply(arith.parse("-0.001"), arith.parse("0.0001")));
 		assertEquals("-100.040004", arith.multiply(arith.parse("-10.002"), arith.parse("10.002")));
 		
 		assertEquals("-0.000001", arith.multiply(arith.parse("0.001"), arith.parse("-0.001")));
 		assertEquals("-0.000002", arith.multiply(arith.parse("0.001"), arith.parse("-0.002")));
-		assertEquals("0.000000", arith.multiply(arith.parse("0.001"), arith.parse("-0.0001")));
 		assertEquals("-100.040004", arith.multiply(arith.parse("10.002"), arith.parse("-10.002")));
 		
 		//test around Long.MAX_VALUE

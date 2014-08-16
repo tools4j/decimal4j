@@ -80,7 +80,7 @@ public class RoundingLongArithmetics extends LongArithmetics {
 		final long abs = Math.abs(uDecimal);
 		final int firstTruncatedDigit = (int)(10 / abs);
 		final long remainder = 10 - abs * firstTruncatedDigit;
-		return Long.signum(uDecimal) * rounding.calculateRoundingIncrement(0, firstTruncatedDigit, remainder == 0);
+		return Long.signum(uDecimal) * rounding.calculateRoundingIncrement(0, false, firstTruncatedDigit, remainder == 0);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class RoundingLongArithmetics extends LongArithmetics {
 				result /= 10;
 			}
 			//rounding
-			result += rounding.calculateRoundingIncrement(result, lastDigit, zeroAfterLastDigit);
+			result += rounding.calculateRoundingIncrement(result, unscaledValue < 0, lastDigit, zeroAfterLastDigit);
 		}
 		return result;
 	}

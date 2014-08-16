@@ -45,6 +45,12 @@ public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmetics
 	public void testMultiply() {
 		super.testMultiply();
 		
+		//truncated
+		assertEquals("0.000000", arith.multiply(arith.parse("0.001"), arith.parse("0.0001")));
+		assertEquals("0.000000", arith.multiply(arith.parse("-0.001"), arith.parse("-0.0001")));
+		assertEquals("0.000000", arith.multiply(arith.parse("-0.001"), arith.parse("0.0001")));
+		assertEquals("0.000000", arith.multiply(arith.parse("0.001"), arith.parse("-0.0001")));
+
 		//truncated, not rounded correctly
 		assertEquals("0.000000", arith.multiply(arith.parse("0.0009"), arith.parse("0.0009")));
 		assertEquals("100.018000", arith.multiply(arith.parse("10.0009"), arith.parse("10.0009")));

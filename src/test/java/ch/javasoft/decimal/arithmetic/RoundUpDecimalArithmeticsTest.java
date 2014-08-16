@@ -8,11 +8,11 @@ import org.junit.Test;
 /**
  * Unit test for {@link RoundingArithmetics} with {@link RoundingMode#HALF_EVEN}.
  */
-public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
+public class RoundUpDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new RoundingArithmetics(6, RoundingMode.HALF_EVEN);
+		return new RoundingArithmetics(6, RoundingMode.UP);
 	}
 	
 	@Override
@@ -43,17 +43,17 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("-100.018001", arith.multiply(arith.parse("10.0009"), arith.parse("-10.0009")));
 
 		//rounded half-even
-		assertEquals("0.000000", arith.multiply(arith.parse("0.0007"), arith.parse("0.0007")));
-		assertEquals("0.000000", arith.multiply(arith.parse("0.0005"), arith.parse("0.001")));
+		assertEquals("0.000001", arith.multiply(arith.parse("0.0007"), arith.parse("0.0007")));
+		assertEquals("0.000001", arith.multiply(arith.parse("0.0005"), arith.parse("0.001")));
 		assertEquals("0.000002", arith.multiply(arith.parse("0.0015"), arith.parse("0.001")));
-		assertEquals("0.000000", arith.multiply(arith.parse("-0.0007"), arith.parse("-0.0007")));
-		assertEquals("0.000000", arith.multiply(arith.parse("-0.0005"), arith.parse("-0.001")));
+		assertEquals("0.000001", arith.multiply(arith.parse("-0.0007"), arith.parse("-0.0007")));
+		assertEquals("0.000001", arith.multiply(arith.parse("-0.0005"), arith.parse("-0.001")));
 		assertEquals("0.000002", arith.multiply(arith.parse("-0.0015"), arith.parse("-0.001")));
-		assertEquals("0.000000", arith.multiply(arith.parse("-0.0007"), arith.parse("0.0007")));
-		assertEquals("0.000000", arith.multiply(arith.parse("-0.0005"), arith.parse("0.001")));
+		assertEquals("-0.000001", arith.multiply(arith.parse("-0.0007"), arith.parse("0.0007")));
+		assertEquals("-0.000001", arith.multiply(arith.parse("-0.0005"), arith.parse("0.001")));
 		assertEquals("-0.000002", arith.multiply(arith.parse("-0.0015"), arith.parse("0.001")));
-		assertEquals("0.000000", arith.multiply(arith.parse("0.0007"), arith.parse("-0.0007")));
-		assertEquals("0.000000", arith.multiply(arith.parse("0.0005"), arith.parse("-0.001")));
+		assertEquals("-0.000001", arith.multiply(arith.parse("0.0007"), arith.parse("-0.0007")));
+		assertEquals("-0.000001", arith.multiply(arith.parse("0.0005"), arith.parse("-0.001")));
 		assertEquals("-0.000002", arith.multiply(arith.parse("0.0015"), arith.parse("-0.001")));
 	}
 
@@ -63,13 +63,13 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("0.001000", arith.divide(arith.parse("0.000001"), arith.parse("0.001")));
 		assertEquals("0.002000", arith.divide(arith.parse("0.000002"), arith.parse("0.001")));
 		assertEquals("0.000001", arith.divide(arith.parse("0.001"), arith.parse("1000")));
-		assertEquals("0.000000", arith.divide(arith.parse("0.001"), arith.parse("10000")));
+		assertEquals("0.000001", arith.divide(arith.parse("0.001"), arith.parse("10000")));//ROUNDED
 		assertEquals("10.002000", arith.divide(arith.parse("100.040004"), arith.parse("10.002")));
-		assertEquals("0.333333", arith.divide(arith.parse("1.0"), arith.parse("3.000")));
+		assertEquals("0.333334", arith.divide(arith.parse("1.0"), arith.parse("3.000")));
 		assertEquals("0.666667", arith.divide(arith.parse("2.0"), arith.parse("3.000")));//ROUNDED
-		assertEquals("0.142857", arith.divide(arith.parse("1"), arith.parse("7")));
+		assertEquals("0.142858", arith.divide(arith.parse("1"), arith.parse("7")));
 		assertEquals("1.000000", arith.divide(Long.MAX_VALUE, Long.MAX_VALUE));
-		assertEquals("2.000000", arith.divide(Long.MAX_VALUE, Long.MAX_VALUE/2));
+		assertEquals("2.000001", arith.divide(Long.MAX_VALUE, Long.MAX_VALUE/2));
 		assertEquals("2.000000", arith.divide(maxLongValue, maxLongValue/2));
 		assertEquals("10.000000", arith.divide(maxLongValue, arith.parse("922337203685.400000")));
 		assertEquals("1000000.000000", arith.divide(maxLongValue, arith.parse("9223372.036854")));
@@ -82,7 +82,7 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("0.000001", arith.divide(maxLongValue/1000000, maxLongValue));
 		assertEquals("0.000002", arith.divide(maxLongValue/500000, maxLongValue));
 		assertEquals("0.000005", arith.divide(maxLongValue/200000, maxLongValue));
-		assertEquals("0.000000", arith.divide(maxLongValue/1000000/2, maxLongValue));//ROUNDED
+		assertEquals("0.000001", arith.divide(maxLongValue/1000000/2, maxLongValue));//ROUNDED
 		assertEquals("0.500000", arith.divide((Long.MAX_VALUE-1)/2, (Long.MAX_VALUE-1)));
 		assertEquals("0.100000", arith.divide((Long.MAX_VALUE-7)/10, Long.MAX_VALUE-7));
 		assertEquals("0.010000", arith.divide((Long.MAX_VALUE-7)/100, Long.MAX_VALUE-7));
@@ -97,11 +97,11 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("0.001000", arith.divide(arith.parse("-0.000001"), arith.parse("-0.001")));
 		assertEquals("0.002000", arith.divide(arith.parse("-0.000002"), arith.parse("-0.001")));
 		assertEquals("0.000001", arith.divide(arith.parse("-0.001"), arith.parse("-1000")));
-		assertEquals("0.000000", arith.divide(arith.parse("-0.001"), arith.parse("-10000")));
+		assertEquals("0.000001", arith.divide(arith.parse("-0.001"), arith.parse("-10000")));
 		assertEquals("10.002000", arith.divide(arith.parse("-100.040004"), arith.parse("-10.002")));
-		assertEquals("0.333333", arith.divide(arith.parse("-1.0"), arith.parse("-3.000")));
+		assertEquals("0.333334", arith.divide(arith.parse("-1.0"), arith.parse("-3.000")));
 		assertEquals("0.666667", arith.divide(arith.parse("-2.0"), arith.parse("-3.000")));//ROUNDED
-		assertEquals("0.142857", arith.divide(arith.parse("-1"), arith.parse("-7")));
+		assertEquals("0.142858", arith.divide(arith.parse("-1"), arith.parse("-7")));
 		assertEquals("1.000000", arith.divide(Long.MIN_VALUE, Long.MIN_VALUE));
 		assertEquals("2.000000", arith.divide(Long.MIN_VALUE, Long.MIN_VALUE/2));
 		assertEquals("2.000000", arith.divide(minLongValue, minLongValue/2));
@@ -131,11 +131,11 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("-0.001000", arith.divide(arith.parse("-0.000001"), arith.parse("0.001")));
 		assertEquals("-0.002000", arith.divide(arith.parse("-0.000002"), arith.parse("0.001")));
 		assertEquals("-0.000001", arith.divide(arith.parse("-0.001"), arith.parse("1000")));
-		assertEquals("0.000000", arith.divide(arith.parse("-0.001"), arith.parse("10000")));
+		assertEquals("-0.000001", arith.divide(arith.parse("-0.001"), arith.parse("10000")));
 		assertEquals("-10.002000", arith.divide(arith.parse("-100.040004"), arith.parse("10.002")));
-		assertEquals("-0.333333", arith.divide(arith.parse("-1.0"), arith.parse("3.000")));
+		assertEquals("-0.333334", arith.divide(arith.parse("-1.0"), arith.parse("3.000")));
 		assertEquals("-0.666667", arith.divide(arith.parse("-2.0"), arith.parse("3.000")));//ROUNDED
-		assertEquals("-0.142857", arith.divide(arith.parse("-1"), arith.parse("7")));
+		assertEquals("-0.142858", arith.divide(arith.parse("-1"), arith.parse("7")));
 		assertEquals("-1.000000", arith.divide(-Long.MAX_VALUE, Long.MAX_VALUE));
 		assertEquals("-2.000000", arith.divide(-maxLongValue, maxLongValue/2));
 		assertEquals("-10.000000", arith.divide(-maxLongValue, arith.parse("922337203685.400000")));
@@ -164,11 +164,11 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 		assertEquals("-0.001000", arith.divide(arith.parse("0.000001"), arith.parse("-0.001")));
 		assertEquals("-0.002000", arith.divide(arith.parse("0.000002"), arith.parse("-0.001")));
 		assertEquals("-0.000001", arith.divide(arith.parse("0.001"), arith.parse("-1000")));
-		assertEquals("0.000000", arith.divide(arith.parse("0.001"), arith.parse("-10000")));
+		assertEquals("-0.000001", arith.divide(arith.parse("0.001"), arith.parse("-10000")));
 		assertEquals("-10.002000", arith.divide(arith.parse("100.040004"), arith.parse("-10.002")));
-		assertEquals("-0.333333", arith.divide(arith.parse("1.0"), arith.parse("-3.000")));
+		assertEquals("-0.333334", arith.divide(arith.parse("1.0"), arith.parse("-3.000")));
 		assertEquals("-0.666667", arith.divide(arith.parse("2.0"), arith.parse("-3.000")));//ROUNDED
-		assertEquals("-0.142857", arith.divide(arith.parse("1"), arith.parse("-7")));
+		assertEquals("-0.142858", arith.divide(arith.parse("1"), arith.parse("-7")));
 		assertEquals("-1.000000", arith.divide(Long.MAX_VALUE, -Long.MAX_VALUE));
 		assertEquals("-2.000000", arith.divide(Long.MIN_VALUE, -(Long.MIN_VALUE/2)));
 		assertEquals("-2.000000", arith.divide(maxLongValue, -maxLongValue/2));
@@ -274,64 +274,64 @@ public class RoundHalfEvenDecimalArithmeticsTest extends AbstractDecimalArithmet
 	}
 	
 	@Test 
-	public void testParseRoundHalfEven() {
+	public void testParseRoundUp() {
 		/*
-		 * @see RoundingMode#HALF_EVEN;
+		 * @see RoundingMode#UP;
          *<tr align=right><td>5.5</td>  <td>6</td>
-         *<tr align=right><td>2.5</td>  <td>2</td>
+         *<tr align=right><td>2.5</td>  <td>3</td>
          *<tr align=right><td>1.6</td>  <td>2</td>
-         *<tr align=right><td>1.1</td>  <td>1</td>
+         *<tr align=right><td>1.1</td>  <td>2</td>
          *<tr align=right><td>1.0</td>  <td>1</td>
          *<tr align=right><td>-1.0</td> <td>-1</td>
-         *<tr align=right><td>-1.1</td> <td>-1</td>
+         *<tr align=right><td>-1.1</td> <td>-2</td>
          *<tr align=right><td>-1.6</td> <td>-2</td>
-         *<tr align=right><td>-2.5</td> <td>-2</td>
+         *<tr align=right><td>-2.5</td> <td>-3</td>
          *<tr align=right><td>-5.5</td> <td>-6</td>
 		 */
 		final int s = arith.getScale();
 		Assert.assertEquals(arith.fromUnscaled(6, s), arith.parse("0.000005501"));
 		Assert.assertEquals(arith.fromUnscaled(6, s), arith.parse("0.0000055"));
 		Assert.assertEquals(arith.fromUnscaled(3, s), arith.parse("0.000002501"));
-		Assert.assertEquals(arith.fromUnscaled(2, s), arith.parse("0.0000025"));
+		Assert.assertEquals(arith.fromUnscaled(3, s), arith.parse("0.0000025"));
 		Assert.assertEquals(arith.fromUnscaled(2, s), arith.parse("0.0000016"));
-		Assert.assertEquals(arith.fromUnscaled(1, s), arith.parse("0.0000011"));
+		Assert.assertEquals(arith.fromUnscaled(2, s), arith.parse("0.0000011"));
 		Assert.assertEquals(arith.fromUnscaled(1, s), arith.parse("0.0000010"));
 		Assert.assertEquals(arith.fromUnscaled(-1, s), arith.parse("-0.0000010"));
-		Assert.assertEquals(arith.fromUnscaled(-1, s), arith.parse("-0.0000011"));
+		Assert.assertEquals(arith.fromUnscaled(-2, s), arith.parse("-0.0000011"));
 		Assert.assertEquals(arith.fromUnscaled(-2, s), arith.parse("-0.0000016"));
-		Assert.assertEquals(arith.fromUnscaled(-2, s), arith.parse("-0.0000025"));
+		Assert.assertEquals(arith.fromUnscaled(-3, s), arith.parse("-0.0000025"));
 		Assert.assertEquals(arith.fromUnscaled(-3, s), arith.parse("-0.000002501"));
 		Assert.assertEquals(arith.fromUnscaled(-6, s), arith.parse("-0.0000055"));
 		Assert.assertEquals(arith.fromUnscaled(-6, s), arith.parse("-0.000005501"));
 	}
 
 	@Test 
-	public void testFromUnscaledRoundHalfEven() {
+	public void testFromUnscaledRoundUp() {
 		/*
-		 * @see RoundingMode#HALF_EVEN;
+		 * @see RoundingMode#UP;
          *<tr align=right><td>5.5</td>  <td>6</td>
-         *<tr align=right><td>2.5</td>  <td>2</td>
+         *<tr align=right><td>2.5</td>  <td>3</td>
          *<tr align=right><td>1.6</td>  <td>2</td>
-         *<tr align=right><td>1.1</td>  <td>1</td>
+         *<tr align=right><td>1.1</td>  <td>2</td>
          *<tr align=right><td>1.0</td>  <td>1</td>
          *<tr align=right><td>-1.0</td> <td>-1</td>
-         *<tr align=right><td>-1.1</td> <td>-1</td>
+         *<tr align=right><td>-1.1</td> <td>-2</td>
          *<tr align=right><td>-1.6</td> <td>-2</td>
-         *<tr align=right><td>-2.5</td> <td>-2</td>
+         *<tr align=right><td>-2.5</td> <td>-3</td>
          *<tr align=right><td>-5.5</td> <td>-6</td>
 		 */
 		final int s = arith.getScale();
 		Assert.assertEquals(arith.fromUnscaled(6, s), arith.fromUnscaled(5501, s+3));
 		Assert.assertEquals(arith.fromUnscaled(6, s), arith.fromUnscaled(55, s+1));
 		Assert.assertEquals(arith.fromUnscaled(3, s), arith.fromUnscaled(2501, s+3));
-		Assert.assertEquals(arith.fromUnscaled(2, s), arith.fromUnscaled(25, s+1));
+		Assert.assertEquals(arith.fromUnscaled(3, s), arith.fromUnscaled(25, s+1));
 		Assert.assertEquals(arith.fromUnscaled(2, s), arith.fromUnscaled(16, s+1));
-		Assert.assertEquals(arith.fromUnscaled(1, s), arith.fromUnscaled(11, s+1));
+		Assert.assertEquals(arith.fromUnscaled(2, s), arith.fromUnscaled(11, s+1));
 		Assert.assertEquals(arith.fromUnscaled(1, s), arith.fromUnscaled(10, s+1));
 		Assert.assertEquals(arith.fromUnscaled(-1, s), arith.fromUnscaled(-10, s+1));
-		Assert.assertEquals(arith.fromUnscaled(-1, s), arith.fromUnscaled(-11, s+1));
+		Assert.assertEquals(arith.fromUnscaled(-2, s), arith.fromUnscaled(-11, s+1));
 		Assert.assertEquals(arith.fromUnscaled(-2, s), arith.fromUnscaled(-16, s+1));
-		Assert.assertEquals(arith.fromUnscaled(-2, s), arith.fromUnscaled(-25, s+1));
+		Assert.assertEquals(arith.fromUnscaled(-3, s), arith.fromUnscaled(-25, s+1));
 		Assert.assertEquals(arith.fromUnscaled(-3, s), arith.fromUnscaled(-2501, s+3));
 		Assert.assertEquals(arith.fromUnscaled(-6, s), arith.fromUnscaled(-55, s+1));
 		Assert.assertEquals(arith.fromUnscaled(-6, s), arith.fromUnscaled(-5501, s+3));

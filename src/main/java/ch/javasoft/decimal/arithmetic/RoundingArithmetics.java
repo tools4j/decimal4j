@@ -118,13 +118,14 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		final long product = TruncatingArithmetics.multiply(unrounded, uDecimalDivisor, one);
 		final long delta = uDecimalDividend - product;
 		if (delta != 0) {
-//			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);
-			if (unrounded != 0) {
-//				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
-				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
-			}
-//			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
-			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
+			return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
+////			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);
+//			if (unrounded != 0) {
+////				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
+//				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
+//			}
+////			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
+//			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
 		}
 		return unrounded;
 	}
@@ -177,7 +178,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 				result /= 10;
 			}
 			//rounding
-			result += rounding.calculateRoundingIncrement(result, lastDigit, zeroAfterLastDigit);
+			result += rounding.calculateRoundingIncrement(result, unscaledValue < 0, lastDigit, zeroAfterLastDigit);
 		}
 		return result;
 	}
@@ -212,7 +213,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 				fractionDigits /= 10;
 			}
 			//rounding
-			fractionDigits += rounding.calculateRoundingIncrement(fractionDigits, lastDigit, zeroAfterLastDigit);
+			fractionDigits += rounding.calculateRoundingIncrement(fractionDigits, false, lastDigit, zeroAfterLastDigit);
 			fValue = fractionDigits;
 		} else {
 			fValue = 0;
