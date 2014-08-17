@@ -72,6 +72,11 @@ abstract public class AbstractImmutableDecimal<S extends Scale> extends
 	}
 
 	@Override
+	public Decimal<S> abs() {
+		return unscaledValue() < 0 ? negate() : this;
+	}
+
+	@Override
 	public AbstractImmutableDecimal<S> invert() {
 		return create(getArithmetics().invert(unscaled));
 	}

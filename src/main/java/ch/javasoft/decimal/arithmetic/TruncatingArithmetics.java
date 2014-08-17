@@ -112,11 +112,75 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		}
 		//128 bit multiplication and division now
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
-		final long[] prod = unsignedMul128(Math.abs(uDecimalDividend), one);
-		final long result = unsignedDiv128(prod, Math.abs(uDecimalDivisor));
+//		final long[] prod = unsignedMul128(Math.abs(uDecimalDividend), one);
+//		final long result = unsignedDiv128(prod, Math.abs(uDecimalDivisor));
+		final long result = unsignedMulDiv128(Math.abs(uDecimalDividend), one, Math.abs(uDecimalDivisor));
 		return negative ? -result : result;
 	}
 
+	//see http://svn.gnucash.org/docs/head/group__Math128.html
+	//no negative values!
+	private static long unsignedMulDiv128(long a, long b, long divisor) {
+		long a0, a1;
+		long b0, b1;
+		long d, d0, d1;
+		long e, e0, e1;
+		long f, f0, f1;
+		long g, g0, g1;
+		long sum, carry, roll, pmax;
+
+		a1 = a >>> 32;
+		a0 = a - (a1 << 32);
+
+		b1 = b >>> 32;
+		b0 = b - (b1 << 32);
+
+		d = a0 * b0;
+		d1 = d >>> 32;
+		d0 = d - (d1 << 32);
+
+		e = a0 * b1;
+		e1 = e >>> 32;
+		e0 = e - (e1 << 32);
+
+		f = a1 * b0;
+		f1 = f >>> 32;
+		f0 = f - (f1 << 32);
+
+		g = a1 * b1;
+		g1 = g >>> 32;
+		g0 = g - (g1 << 32);
+
+		sum = d1 + e0 + f0;
+		carry = 0;
+		roll = 1L << 32;
+
+		pmax = roll - 1;
+		while (pmax < sum) {
+			sum -= roll;
+			carry++;
+		}
+
+		long lo = d0 + (sum << 32);
+		long hi = carry + e1 + f1 + g0 + (g1 << 32);
+		long remainder = 0;
+
+		/* Use grade-school long division algorithm */
+		for (int i = 0; i < 128; i++) {
+			remainder <<= 1;
+			remainder += (hi >>> 63);//carry
+			hi <<= 1;
+			hi += (lo >>> 63);//carry
+			lo <<= 1;
+			//remainder
+			if ((remainder > 0 && remainder >= divisor) || (remainder < 0 && (divisor > 0 || remainder <= divisor))) {
+				remainder -= divisor;
+				lo |= 1;
+			}
+		}
+
+		return divisor < 0 ? -lo : lo;//divisor could be Long.MIN_VALUE since abs(Long.MIN_VALUE) is still Long.MIN_VALUE
+	}
 	//see http://svn.gnucash.org/docs/head/group__Math128.html
 	//no negative values!
 	private static long[] unsignedMul128(long a, long b) {

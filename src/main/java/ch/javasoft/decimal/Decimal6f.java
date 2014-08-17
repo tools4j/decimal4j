@@ -3,7 +3,6 @@ package ch.javasoft.decimal;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.Arrays;
 
 import ch.javasoft.decimal.Scale.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
@@ -18,6 +17,7 @@ import ch.javasoft.decimal.arithmetic.RoundingArithmetics;
 public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 
 	public static final DecimalArithmetics ARITHMETICS = new RoundingArithmetics(Scale6f.INSTANCE, DecimalRounding.HALF_EVEN);
+//	public static final DecimalArithmetics ARITHMETICS = new TruncatingArithmetics(Scale6f.INSTANCE);
 
 	private static final long ONE_UNSCALED = ARITHMETICS.one();
 
@@ -53,24 +53,12 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 	public static final Decimal6f MIN_VALUE = new Decimal6f(Long.MIN_VALUE);
 	public static final Decimal6f MIN_INTEGER_VALUE = new Decimal6f((Long.MIN_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 
-	//must be sorted!!!
-	private static final Decimal6f[] CACHED = { MIN_VALUE, MIN_INTEGER_VALUE, MINUS_ONE, ZERO, MILLIONTH, THOUSANDTH, HUNDREDTH, TENTH, HALF, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, HUNDRED, THOUSAND, MILLION, BILLION, MAX_INTEGER_VALUE, MAX_VALUE };
-	private static final long[] CACHED_UNSCALED = toUnscaled(CACHED);
-
 	public Decimal6f(long unscaled) {
 		super(unscaled, Scale6f.INSTANCE, ARITHMETICS);
 	}
 
 	public Decimal6f(String value) {
 		super(ARITHMETICS.parse(value), Scale6f.INSTANCE, ARITHMETICS);
-	}
-
-	private static long[] toUnscaled(Decimal6f... decimals) {
-		final long[] unscaled = new long[decimals.length];
-		for (int i = 0; i < unscaled.length; i++) {
-			unscaled[i] = decimals[i].unscaledValue();
-		}
-		return unscaled;
 	}
 
 	public static Decimal6f valueOf(long value) {
@@ -150,8 +138,16 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 	}
 
 	public static Decimal6f valueOfUnscaled(long unscaledValue) {
-		final int cacheIndex = Arrays.binarySearch(CACHED_UNSCALED, unscaledValue);
-		return cacheIndex >= 0 ? CACHED[cacheIndex] : new Decimal6f(unscaledValue);
+		if (unscaledValue == 0) {
+			return ZERO;
+		}
+		if (unscaledValue == 1) {
+			return ULP;
+		}
+		if (unscaledValue == ONE_UNSCALED) {
+			return ONE;
+		}
+		return new Decimal6f(unscaledValue);
 	}
 
 	@Override

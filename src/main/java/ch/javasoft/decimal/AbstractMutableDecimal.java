@@ -474,6 +474,7 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 		unscaled = arith.multiply(unscaled, arith.fromBigDecimal(multiplicand));
 		return this;
 	}
+
 	public AbstractMutableDecimal<S> multiply(long unscaledMultiplicand, int scale) {
 		final DecimalArithmetics arith = getArithmetics();
 		unscaledMultiplicand = arith.multiply(unscaled, arith.fromUnscaled(unscaledMultiplicand, scale));
@@ -572,6 +573,7 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 		unscaled = arith.divide(unscaled, arith.fromDouble(divisor));
 		return this;
 	}
+
 	/**
 	 * Divides {@code this} decimal by the specified {@code divisor} and returns
 	 * {@code this} now representing the result of the division.
@@ -580,8 +582,8 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 	 *            value to by which this {@code Decimal} is to be divided
 	 * @param roundingMode
 	 *            the rounding mode to apply if rounding becomes necessary
-	 *            either when converting the {@code divisor} argument into
-	 *            a decimal number or after the multiplication
+	 *            either when converting the {@code divisor} argument into a
+	 *            decimal number or after the multiplication
 	 * @return {@code this} decimal after performing the operation
 	 *         {@code this = this / multiplicand}
 	 */
@@ -605,6 +607,7 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 		unscaled = arith.divide(unscaled, arith.fromBigInteger(divisor));
 		return this;
 	}
+
 	/**
 	 * Divides {@code this} decimal by the specified {@code divisor} and returns
 	 * {@code this} now representing the result of the division.
@@ -636,6 +639,7 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 		unscaled = arith.divide(unscaled, arith.fromBigDecimal(divisor));
 		return this;
 	}
+
 	/**
 	 * Divides {@code this} decimal by the specified {@code divisor} and returns
 	 * {@code this} now representing the result of the division.
@@ -644,8 +648,8 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 	 *            value to by which this {@code Decimal} is to be divided
 	 * @param roundingMode
 	 *            the rounding mode to apply if rounding becomes necessary
-	 *            either when converting the {@code divisor} argument into
-	 *            a decimal number or after the multiplication
+	 *            either when converting the {@code divisor} argument into a
+	 *            decimal number or after the multiplication
 	 * @return {@code this} decimal after performing the operation
 	 *         {@code this = this / multiplicand}
 	 */
@@ -687,6 +691,17 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 	public AbstractMutableDecimal<S> negate() {
 		unscaled = getArithmetics().negate(unscaled);
 		return this;
+	}
+
+	/**
+	 * Returns {@code this} decimal after negating it if negative.
+	 * 
+	 * @return {@code this} decimal after performing the operation
+	 *         {@code this = |this|}
+	 */
+	@Override
+	public AbstractMutableDecimal<S> abs() {
+		return unscaledValue() < 0 ? negate() : this;
 	}
 
 	/**

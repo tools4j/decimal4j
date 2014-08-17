@@ -67,11 +67,6 @@ abstract public class AbstractDecimal<S extends Scale> extends Number implements
 	}
 
 	@Override
-	public Decimal<S> abs() {
-		return unscaledValue() < 0 ? negate() : this;
-	}
-
-	@Override
 	public int signum() {
 		return Long.signum(unscaledValue());
 	}

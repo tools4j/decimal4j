@@ -11,7 +11,7 @@ import ch.javasoft.decimal.OverflowMode;
  * {@link #getOverflowMode()} returns {@link OverflowMode#SILENT SILENT}.
  */
 abstract public class AbstractArithmetics implements DecimalArithmetics {
-
+	
 	@Override
 	public OverflowMode getOverflowMode() {
 		return OverflowMode.SILENT;

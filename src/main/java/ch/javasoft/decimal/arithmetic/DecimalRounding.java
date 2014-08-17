@@ -677,11 +677,18 @@ public enum DecimalRounding {
 	 *         result, one of -1, 0 or 1
 	 */
 	int calculateRoundingIncrement(long truncatedValue, long truncatedDigits, long one) {
+//		final long nonNegativeTruncatedDigits = Math.abs(truncatedDigits);
+//		final long oneDivBy10 = one / 10;
+//		final int firstTruncatedDigit = (int) (nonNegativeTruncatedDigits / oneDivBy10);
+//		final long truncatedDigitsAfterFirst = nonNegativeTruncatedDigits % oneDivBy10;
+//		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
+		if (truncatedDigits == 0) {
+			return 0;
+		}
 		final long nonNegativeTruncatedDigits = Math.abs(truncatedDigits);
-		final long oneDivBy10 = one / 10;
-		final int firstTruncatedDigit = (int) (nonNegativeTruncatedDigits / oneDivBy10);
-		final long truncatedDigitsAfterFirst = nonNegativeTruncatedDigits % oneDivBy10;
-		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
+		final int compare = Long.compare(nonNegativeTruncatedDigits << 1, one);
+		final int firstTruncatedDigit = compare < 0 ? 4 : compare > 0 ? 6 : 5;//FIXME make this nicer
+		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, firstTruncatedDigit, true);
 	}
 
 	/**
@@ -708,10 +715,15 @@ public enum DecimalRounding {
 
 		final int firstTruncatedDigit;
 		final boolean zeroAfterFirstTruncatedDigit;
-		if (absTruncatedDigits < 922337203685477581L /* ceil(Long.MAX_VALUE/10) */) {
-			final long nonNgativeTruncatedDigitsX10 = absTruncatedDigits * 10;
-			firstTruncatedDigit = (int) (nonNgativeTruncatedDigitsX10 / absDivisor);
-			zeroAfterFirstTruncatedDigit = (nonNgativeTruncatedDigitsX10 % absDivisor) == 0;
+//		if (absTruncatedDigits < 922337203685477581L /* ceil(Long.MAX_VALUE/10) */) {
+//			final long nonNgativeTruncatedDigitsX10 = absTruncatedDigits * 10;
+//			firstTruncatedDigit = (int) (nonNgativeTruncatedDigitsX10 / absDivisor);
+//			zeroAfterFirstTruncatedDigit = (nonNgativeTruncatedDigitsX10 % absDivisor) == 0;
+//		} else {
+		if (absTruncatedDigits < (Long.MAX_VALUE >> 1)) {
+			final int compare = Long.compare(absTruncatedDigits << 1, absDivisor);
+			firstTruncatedDigit = compare < 0 ? 4 : compare > 0 ? 6 : 5;//FIXME make this nicer
+			zeroAfterFirstTruncatedDigit = true;
 		} else {
 			final long absDivisorBy10 = absDivisor / 10;
 			final long absDivisorMod10 = absDivisor % 10;
