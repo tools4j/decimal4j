@@ -1,12 +1,15 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.math;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import ch.javasoft.decimal.arithmetic.Int128;
+import ch.javasoft.decimal.math.Int128;
 
+/**
+ * Unit test for {@link Int128}
+ */
 @Ignore
 public class Int128Test {
 	

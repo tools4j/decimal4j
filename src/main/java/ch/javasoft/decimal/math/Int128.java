@@ -1,4 +1,5 @@
-package ch.javasoft.decimal.arithmetic;
+package ch.javasoft.decimal.math;
+
 
 /**
  * Represents a signed 128 bit integer stored with two longs. 
@@ -56,11 +57,43 @@ public class Int128 {
 	}
 	
 	public static long umullo(long value1, long value2) {
-		final long lo32_1 = value1 & 0x00000000ffffffffL;
-		final long lo32_2 = value2 & 0x00000000ffffffffL;
-		final long hi32_1 = value1 >>> 32;
-		final long hi32_2 = value2 >>> 32;
-		return lo32_1 * lo32_2 + ((lo32_1 * hi32_2) << 32) + ((lo32_2 * hi32_1) << 32);
+//		final long lo32_1 = value1 & 0x00000000ffffffffL;
+//		final long lo32_2 = value2 & 0x00000000ffffffffL;
+//		final long hi32_1 = value1 >>> 32;
+//		final long hi32_2 = value2 >>> 32;
+//		return lo32_1 * lo32_2 + ((lo32_1 * hi32_2) << 32) + ((lo32_2 * hi32_1) << 32);
+//
+		final long mask = 0x00000000ffffffffL;
+		final long m0_lo = value1 & mask;
+		final long m1_lo = value2 & mask;
+		final long m0_hi = value1 >>> 32;
+		final long m1_hi = value2 >>> 32;
+//        int rsign = 1;
+//        if(x < 0) {
+//            x = -x;
+//            rsign = -1;
+//        }
+//        if(y < 0) {
+//            y = -y;
+//            rsign *= -1;
+//        }
+        long product = m0_lo * m1_lo;
+        long m0 = product & mask;
+        long m1 = product >>> 32;
+        product = m0_hi * m1_lo + m1;
+        m1 = product & mask;
+//        long m2 = product >>> 32;
+        product = m0_lo * m1_hi + m1;
+        m1 = product & mask;
+//        m2 += product >>> 32;
+//        long m3 = m2>>>32;
+//        m2 &= mask;
+//        product = m0_hi*m1_hi + m2;
+//        m2 = product & mask;
+//        m3 = ((product>>>32) + m3) & mask;
+//        final long mHi = m3<<32 | m2;
+        final long mLo = m1<<32 | m0;
+        return mLo;
 	}
 	public static long mullo(long value1, long value2) {
 		int sgn = 1;

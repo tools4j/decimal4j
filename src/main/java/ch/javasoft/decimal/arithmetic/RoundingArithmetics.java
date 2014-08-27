@@ -105,9 +105,11 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		final long i2 = uDecimal2 / one;
 		final long f1 = uDecimal1 % one;
 		final long f2 = uDecimal2 % one;
-		final long reminder = f1 * f2;
-		final long unrounded = i1 * i2 * one + i1 * f2 + i2 * f1 + reminder / one;
-		return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder % one, one);
+		final long f1xf2 = f1 * f2;
+		final long inc = f1xf2 / one;
+		final long rem = f1xf2 - inc * one;
+		final long unrounded = i1 * i2 * one + i1 * f2 + i2 * f1 + inc;
+		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, one);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ public class MutableDecimal6f extends AbstractMutableDecimal<Scale6f> {
 	public MutableDecimal6f(long value, boolean unscaled) {
 		super(value, Scale6f.INSTANCE, Decimal6f.ARITHMETICS);
 		if (!unscaled) {
-			reset().add(value);
+			setZero().add(value);
 		}
 	}
 

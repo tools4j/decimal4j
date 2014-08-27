@@ -39,12 +39,235 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 	}
 
 	/**
-	 * Resets this mutable decimal to the value zero.
+	 * Sets {@code this} decimal to 0 and returns {@code this} now representing
+	 * zero.
 	 * 
-	 * @return {@code this} decimal after resetting the value to {@code 0}
+	 * @return {@code this} decimal after assigning {@code this = 0}
 	 */
-	public AbstractMutableDecimal<S> reset() {
+	public AbstractMutableDecimal<S> setZero() {
 		unscaled = 0;
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to 1 and returns {@code this} now representing
+	 * one.
+	 * 
+	 * @return {@code this} decimal after assigning {@code this = 1}
+	 */
+	public AbstractMutableDecimal<S> setOne() {
+		unscaled = getArithmetics().one();
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to 10 and returns {@code this} now representing
+	 * ten.
+	 * 
+	 * @return {@code this} decimal after assigning {@code this = 10}
+	 */
+	public AbstractMutableDecimal<S> setTen() {
+		unscaled = 10 * getArithmetics().one();
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to -1 and returns {@code this} now representing
+	 * minus one.
+	 * 
+	 * @return {@code this} decimal after assigning {@code this = -1}
+	 */
+	public AbstractMutableDecimal<S> setMinusOne() {
+		unscaled = -getArithmetics().one();
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the smallest positive value representable by
+	 * this mutable decimal and returns {@code this} now representing one ULP.
+	 * 
+	 * @return {@code this} decimal after assigning {@code this = ULP}
+	 */
+	public AbstractMutableDecimal<S> setUlp() {
+		unscaled = 1;
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(Decimal<S> value) {
+		return setUnscaled(value.unscaledValue());
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> setDecimal(Decimal<?> value) {
+		return set(value.unscaledValue(), value.getArithmetics().getScale());
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted to the appropriate scale
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> setDecimal(Decimal<?> value, RoundingMode roundingMode) {
+		return set(value.unscaledValue(), value.getArithmetics().getScale(), roundingMode);
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(long value) {
+		unscaled = getArithmetics().fromLong(value);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(double value) {
+		unscaled = getArithmetics().fromDouble(value);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted into a decimal number
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(double value, RoundingMode roundingMode) {
+		unscaled = getArithmetics().derive(roundingMode).fromDouble(value);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(BigInteger value) {
+		unscaled = getArithmetics().fromBigInteger(value);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(BigDecimal value) {
+		unscaled = getArithmetics().fromBigDecimal(value);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted into a decimal number
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	public AbstractMutableDecimal<S> set(BigDecimal value, RoundingMode roundingMode) {
+		unscaled = getArithmetics().derive(roundingMode).fromBigDecimal(value);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
+	 * given {@code scale} and returns {@code this} now representing
+	 * <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 * 
+	 * @param unscaledValue
+	 *            value to be set
+	 * @param scale
+	 *            the scale used for {@code unscaledValue}
+	 * @return {@code this} decimal after assigning
+	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 */
+	public AbstractMutableDecimal<S> set(long unscaledValue, int scale) {
+		unscaled = getArithmetics().fromUnscaled(unscaledValue, scale);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
+	 * given {@code scale} and returns {@code this} now representing
+	 * <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 * 
+	 * @param unscaledValue
+	 *            value to be set
+	 * @param scale
+	 *            the scale used for {@code unscaledValue}
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted into a decimal number
+	 * @return {@code this} decimal after assigning
+	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 */
+	public AbstractMutableDecimal<S> set(long unscaledValue, int scale, RoundingMode roundingMode) {
+		unscaled = getArithmetics().derive(roundingMode).fromUnscaled(unscaledValue, scale);
+		return this;
+	}
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code unscaledValue} and
+	 * returns {@code this} now representing
+	 * <code>this = unscaledValue * 10<sup>-scale</sup></code> where scale is
+	 * the scale factor of this mutable decimal.
+	 * 
+	 * @param unscaledValue
+	 *            value to be set
+	 * @return {@code this} decimal after assigning
+	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 * @see #getScale()
+	 * @see Scale#getScaleFactor()
+	 */
+	public AbstractMutableDecimal<S> setUnscaled(long unscaledValue) {
+		unscaled = unscaledValue;
 		return this;
 	}
 
@@ -189,13 +412,13 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 
 	public AbstractMutableDecimal<S> add(long unscaledAugend, int scale) {
 		final DecimalArithmetics arith = getArithmetics();
-		unscaledAugend = arith.add(unscaled, arith.fromUnscaled(unscaledAugend, scale));
+		unscaled = arith.add(unscaled, arith.fromUnscaled(unscaledAugend, scale));
 		return this;
 	}
 
 	public AbstractMutableDecimal<S> add(long unscaledAugend, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmetics();
-		unscaledAugend = arith.add(unscaled, arith.derive(roundingMode).fromUnscaled(unscaledAugend, scale));
+		unscaled = arith.add(unscaled, arith.derive(roundingMode).fromUnscaled(unscaledAugend, scale));
 		return this;
 	}
 
@@ -323,13 +546,13 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 
 	public AbstractMutableDecimal<S> subtract(long unscaledSubtrahend, int scale) {
 		final DecimalArithmetics arith = getArithmetics();
-		unscaledSubtrahend = arith.subtract(unscaled, arith.fromUnscaled(unscaledSubtrahend, scale));
+		unscaled = arith.subtract(unscaled, arith.fromUnscaled(unscaledSubtrahend, scale));
 		return this;
 	}
 
 	public AbstractMutableDecimal<S> subtract(long unscaledSubtrahend, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmetics();
-		unscaledSubtrahend = arith.subtract(unscaled, arith.derive(roundingMode).fromUnscaled(unscaledSubtrahend, scale));
+		unscaled = arith.subtract(unscaled, arith.derive(roundingMode).fromUnscaled(unscaledSubtrahend, scale));
 		return this;
 	}
 
@@ -477,13 +700,13 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 
 	public AbstractMutableDecimal<S> multiply(long unscaledMultiplicand, int scale) {
 		final DecimalArithmetics arith = getArithmetics();
-		unscaledMultiplicand = arith.multiply(unscaled, arith.fromUnscaled(unscaledMultiplicand, scale));
+		unscaled = arith.multiply(unscaled, arith.fromUnscaled(unscaledMultiplicand, scale));
 		return this;
 	}
 
 	public AbstractMutableDecimal<S> multiply(long unscaledMultiplicand, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmetics().derive(roundingMode);
-		unscaledMultiplicand = arith.multiply(unscaled, arith.fromUnscaled(unscaledMultiplicand, scale));
+		unscaled = arith.multiply(unscaled, arith.fromUnscaled(unscaledMultiplicand, scale));
 		return this;
 	}
 
@@ -661,13 +884,13 @@ abstract public class AbstractMutableDecimal<S extends Scale> extends
 
 	public AbstractMutableDecimal<S> divide(long unscaledDivisor, int scale) {
 		final DecimalArithmetics arith = getArithmetics();
-		unscaledDivisor = arith.divide(unscaled, arith.fromUnscaled(unscaledDivisor, scale));
+		unscaled = arith.divide(unscaled, arith.fromUnscaled(unscaledDivisor, scale));
 		return this;
 	}
 
 	public AbstractMutableDecimal<S> divide(long unscaledDivisor, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmetics().derive(roundingMode);
-		unscaledDivisor = arith.divide(unscaled, arith.fromUnscaled(unscaledDivisor, scale));
+		unscaled = arith.divide(unscaled, arith.fromUnscaled(unscaledDivisor, scale));
 		return this;
 	}
 

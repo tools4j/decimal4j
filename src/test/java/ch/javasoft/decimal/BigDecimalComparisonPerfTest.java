@@ -18,8 +18,20 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  */
 public class BigDecimalComparisonPerfTest {
 
-	private final int R = 4096;
-	private final int N = 1024;
+//	private final int R = 1024>>4;
+//	private final int N = 4096<<4;
+//	private final int R = 1024;
+//	private final int N = 4096;
+//		private final int R = 4096;
+//		private final int N = 1024;
+		private final int R = 4096<<2;
+		private final int N = 256;
+	//	private final int R = 4096<<4;
+	//	private final int N = 64;
+//		private final int R = 4096<<6;
+//		private final int N = 16;
+//	private final int R = 4096*1024;
+//	private final int N = 1;
 
 	private final Random rnd = new Random();
 	private final DecimalArithmetics arithmetics = initArithmetics();
@@ -38,6 +50,8 @@ public class BigDecimalComparisonPerfTest {
 
 		long tBigDec = 0;
 		long tDec6f = 0;
+		long tMut6f = 0;
+		long tNat6f = 0;
 
 		long cnt = 0;
 
@@ -46,6 +60,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
 
 		for (int j = 0; j < r; j++) {
 			//prepare input values
@@ -66,18 +81,34 @@ public class BigDecimalComparisonPerfTest {
 				cnt += aDec6f[i].add(bDec6f[i]).signum();
 			}
 
-			//assert
+			//MutableDecimal6f
 			final long t2 = System.currentTimeMillis();
+			for (int i = 0; i < n; i++) {
+				mutable.set(aDec6f[i]).add(bDec6f[i]);
+				cnt += mutable.signum();
+			}
+
+			//native Decimal6f
+			final long t3 = System.currentTimeMillis();
+			final DecimalArithmetics arith = Decimal6f.ARITHMETICS;
+			for (int i = 0; i < n; i++) {
+				cnt += arith.signum(arith.add(aDec6f[i].unscaledValue(), bDec6f[i].unscaledValue()));
+			}
+
+			//assert
+			final long t4 = System.currentTimeMillis();
 			for (int i = 0; i < n; i++) {
 				assertEquals("test[" + i + "]: " + aDec6f[i] + " + " + bDec6f[i], Decimal6f.valueOf(aBigDec[i].add(bBigDec[i])), aDec6f[i].add(bDec6f[i]));
 			}
 
 			tBigDec += (t1 - t0);
 			tDec6f += (t2 - t1);
+			tMut6f += (t3 - t2);
+			tNat6f += (t4 - t3);
 		}
 
 		//report times
-		logTime("add of " + (r * n) + " values", tBigDec, tDec6f);
+		logTime("add of " + (r * n) + " values", tBigDec, tDec6f, tMut6f, tNat6f);
 		if (cnt > 0) {
 			return;
 		}
@@ -90,6 +121,8 @@ public class BigDecimalComparisonPerfTest {
 
 		long tBigDec = 0;
 		long tDec6f = 0;
+		long tMut6f = 0;
+		long tNat6f = 0;
 
 		long cnt = 0;
 
@@ -98,6 +131,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
 
 		for (int j = 0; j < r; j++) {
 			//prepare input values
@@ -118,18 +152,34 @@ public class BigDecimalComparisonPerfTest {
 				cnt += aDec6f[i].subtract(bDec6f[i]).signum();
 			}
 
-			//assert
+			//MutableDecimal6f
 			final long t2 = System.currentTimeMillis();
+			for (int i = 0; i < n; i++) {
+				mutable.set(aDec6f[i]).subtract(bDec6f[i]);
+				cnt += mutable.signum();
+			}
+
+			//native Decimal6f
+			final long t3 = System.currentTimeMillis();
+			final DecimalArithmetics arith = Decimal6f.ARITHMETICS;
+			for (int i = 0; i < n; i++) {
+				cnt += arith.signum(arith.subtract(aDec6f[i].unscaledValue(), bDec6f[i].unscaledValue()));
+			}
+
+			//assert
+			final long t4 = System.currentTimeMillis();
 			for (int i = 0; i < n; i++) {
 				assertEquals("test[" + i + "]: " + aDec6f[i] + " - " + bDec6f[i], Decimal6f.valueOf(aBigDec[i].subtract(bBigDec[i])), aDec6f[i].subtract(bDec6f[i]));
 			}
 
 			tBigDec += (t1 - t0);
 			tDec6f += (t2 - t1);
+			tMut6f += (t3 - t2);
+			tNat6f += (t4 - t3);
 		}
 
 		//report times
-		logTime("sub of " + (r * n) + " values", tBigDec, tDec6f);
+		logTime("sub of " + (r * n) + " values", tBigDec, tDec6f, tMut6f, tNat6f);
 		if (cnt > 0) {
 			return;
 		}
@@ -142,6 +192,8 @@ public class BigDecimalComparisonPerfTest {
 
 		long tBigDec = 0;
 		long tDec6f = 0;
+		long tMut6f = 0;
+		long tNat6f = 0;
 
 		long cnt = 0;
 
@@ -150,6 +202,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
 
 		for (int j = 0; j < r; j++) {
 
@@ -171,8 +224,22 @@ public class BigDecimalComparisonPerfTest {
 				cnt += aDec6f[i].multiply(bDec6f[i]).signum();
 			}
 
-			//assert
+			//MutableDecimal6f
 			final long t2 = System.currentTimeMillis();
+			for (int i = 0; i < n; i++) {
+				mutable.set(aDec6f[i]).multiply(bDec6f[i]);
+				cnt += mutable.signum();
+			}
+
+			//native Decimal6f
+			final long t3 = System.currentTimeMillis();
+			final DecimalArithmetics arith = Decimal6f.ARITHMETICS;
+			for (int i = 0; i < n; i++) {
+				cnt += arith.signum(arith.multiply(aDec6f[i].unscaledValue(), bDec6f[i].unscaledValue()));
+			}
+
+			//assert
+			final long t4 = System.currentTimeMillis();
 			for (int i = 0; i < n; i++) {
 				//			assertEquals("test[" + i + "]: " + aDec6f[i] + " * " + bDec6f[i], Decimal6f.valueOf(aBigDec[i].multiply(bBigDec[i], mathContext)), aDec6f[i].multiply(bDec6f[i]));
 				assertEquals("test[" + i + "]: " + aDec6f[i] + " * " + bDec6f[i], aBigDec[i].multiply(bBigDec[i], unlimited).setScale(6, arithmetics.getRoundingMode()).toString(), aDec6f[i].multiply(bDec6f[i]).toString());
@@ -180,10 +247,12 @@ public class BigDecimalComparisonPerfTest {
 
 			tBigDec += (t1 - t0);
 			tDec6f += (t2 - t1);
+			tMut6f += (t3 - t2);
+			tNat6f += (t4 - t3);
 		}
 
 		//report times
-		logTime("mul of " + (r * n) + " values", tBigDec, tDec6f);
+		logTime("mul of " + (r * n) + " values", tBigDec, tDec6f, tMut6f, tNat6f);
 		if (cnt > 0) {
 			return;
 		}
@@ -196,6 +265,8 @@ public class BigDecimalComparisonPerfTest {
 
 		long tBigDec = 0;
 		long tDec6f = 0;
+		long tMut6f = 0;
+		long tNat6f = 0;
 
 		long cnt = 0;
 
@@ -204,6 +275,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
 
 		for (int j = 0; j < r; j++) {
 			//prepare input values
@@ -224,25 +296,41 @@ public class BigDecimalComparisonPerfTest {
 				cnt += aDec6f[i].divide(bDec6f[i]).signum();
 			}
 
-			//assert
+			//MutableDecimal6f
 			final long t2 = System.currentTimeMillis();
+			for (int i = 0; i < n; i++) {
+				mutable.set(aDec6f[i]).divide(bDec6f[i]);
+				cnt += mutable.signum();
+			}
+
+			//native Decimal6f
+			final long t3 = System.currentTimeMillis();
+			final DecimalArithmetics arith = Decimal6f.ARITHMETICS;
+			for (int i = 0; i < n; i++) {
+				cnt += arith.signum(arith.divide(aDec6f[i].unscaledValue(), bDec6f[i].unscaledValue()));
+			}
+
+			//assert
+			final long t4 = System.currentTimeMillis();
 			for (int i = 0; i < n; i++) {
 				assertEquals("test[" + i + "]: " + aDec6f[i] + " / " + bDec6f[i], aBigDec[i].divide(bBigDec[i], decimal128).setScale(6, arithmetics.getRoundingMode()).toString(), aDec6f[i].divide(bDec6f[i]).toString());
 			}
 
 			tBigDec += (t1 - t0);
 			tDec6f += (t2 - t1);
+			tMut6f += (t3 - t2);
+			tNat6f += (t4 - t3);
 		}
 
 		//report times
-		logTime("div of " + (r * n) + " values", tBigDec, tDec6f);
+		logTime("div of " + (r * n) + " values", tBigDec, tDec6f, tMut6f, tNat6f);
 		if (cnt > 0) {
 			return;
 		}
 	}
 
-	private void logTime(String msg, long tBigDec, long tDec6f) {
-		System.out.println(msg + ":\tBigDecimal=" + tBigDec + "ms, Decimal6f=" + tDec6f + "ms, relative=" + ((100f * tDec6f) / tBigDec) + "%");
+	private void logTime(String msg, long tBigDec, long tDec6f, long tMut6f, long tNat6f) {
+		System.out.println(msg + ", trounding=" + Decimal6f.ARITHMETICS.getRoundingMode() + ": BigDecimal=" + tBigDec + "ms, Decimal6f=" + tDec6f + "ms, mutable=" + tMut6f + "ms, native=" + tNat6f + "ms, relative=" + ((100f * tDec6f) / tBigDec) + "% / " + ((100f * tMut6f) / tBigDec) + "% / " + +((100f * tNat6f) / tBigDec) + "%");
 	}
 
 	private BigDecimal[] randomLongBigDecimals(BigDecimal[] values) {

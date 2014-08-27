@@ -1,10 +1,12 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.Scale;
+import ch.javasoft.decimal.math.MutableBigInteger;
 
 /**
  * An arithmetic implementation which truncates digits after the last scale
@@ -75,11 +77,12 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	public long multiply(long uDecimal1, long uDecimal2) {
 		return multiply(uDecimal1, uDecimal2, one());
 	}
+
 	static long multiply(long uDecimal1, long uDecimal2, long one) {
 		final long i1 = uDecimal1 / one;
 		final long i2 = uDecimal2 / one;
-		final long f1 = uDecimal1 % one;
-		final long f2 = uDecimal2 % one;
+		final long f1 = uDecimal1 - i1 * one;
+		final long f2 = uDecimal2 - i2 * one;
 		return i1 * i2 * one + i1 * f2 + i2 * f1 + (f1 * f2) / one;
 	}
 
@@ -106,56 +109,58 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			return one;
 		}
 		//WE WANT: uDecimalDividend * one / uDecimalDivisor
-		if (uDecimalDividend <= Long.MAX_VALUE / one && uDecimalDividend >= Long.MIN_VALUE / one) {
-			//just do it, multiplication result fits in long
-			return (uDecimalDividend * one) / uDecimalDivisor;
-		}
+//		if (uDecimalDividend <= Long.MAX_VALUE / one && uDecimalDividend >= Long.MIN_VALUE / one) {
+//			//just do it, multiplication result fits in long
+//			return (uDecimalDividend * one) / uDecimalDivisor;
+//		}
 		//128 bit multiplication and division now
+		//		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
+		//		final long[] prod = unsignedMul128(Math.abs(uDecimalDividend), one);
+		//		final long result = unsignedDiv128(prod, Math.abs(uDecimalDivisor));
+		//		final long result = unsignedMulDiv128(Math.abs(uDecimalDividend), one, Math.abs(uDecimalDivisor));
+		//		return negative ? -result : result;
+
+//		return BigInteger.valueOf(uDecimalDividend).multiply(BigInteger.valueOf(one)).divide(BigInteger.valueOf(uDecimalDivisor)).longValue();
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
-//		final long[] prod = unsignedMul128(Math.abs(uDecimalDividend), one);
-//		final long result = unsignedDiv128(prod, Math.abs(uDecimalDivisor));
-		final long result = unsignedMulDiv128(Math.abs(uDecimalDividend), one, Math.abs(uDecimalDivisor));
-		return negative ? -result : result;
+		final MutableBigInteger mDividend = new MutableBigInteger(Math.abs(uDecimalDividend));
+		final MutableBigInteger mOne = new MutableBigInteger(one);
+		final MutableBigInteger mResult = new MutableBigInteger(Long.MAX_VALUE);
+		mDividend.multiply(mOne, mResult);
+		mResult.divide(Math.abs(uDecimalDivisor), mOne);
+		return negative ? -mOne.longValue() : mOne.longValue();
+//		return BigInteger.valueOf(uDecimalDividend).multiply(BigInteger.valueOf(one)).divide(BigInteger.valueOf(uDecimalDivisor)).longValue();
 	}
 
 	//see http://svn.gnucash.org/docs/head/group__Math128.html
 	//no negative values!
 	private static long unsignedMulDiv128(long a, long b, long divisor) {
-		long a0, a1;
-		long b0, b1;
-		long d, d0, d1;
-		long e, e0, e1;
-		long f, f0, f1;
-		long g, g0, g1;
-		long sum, carry, roll, pmax;
+		final long a1 = a >>> 32;
+		final long a0 = a - (a1 << 32);
 
-		a1 = a >>> 32;
-		a0 = a - (a1 << 32);
+		final long b1 = b >>> 32;
+		final long b0 = b - (b1 << 32);
 
-		b1 = b >>> 32;
-		b0 = b - (b1 << 32);
+		final long d = a0 * b0;
+		final long d1 = d >>> 32;
+		final long d0 = d - (d1 << 32);
 
-		d = a0 * b0;
-		d1 = d >>> 32;
-		d0 = d - (d1 << 32);
+		final long e = a0 * b1;
+		final long e1 = e >>> 32;
+		final long e0 = e - (e1 << 32);
 
-		e = a0 * b1;
-		e1 = e >>> 32;
-		e0 = e - (e1 << 32);
+		final long f = a1 * b0;
+		final long f1 = f >>> 32;
+		final long f0 = f - (f1 << 32);
 
-		f = a1 * b0;
-		f1 = f >>> 32;
-		f0 = f - (f1 << 32);
+		final long g = a1 * b1;
+		final long g1 = g >>> 32;
+		final long g0 = g - (g1 << 32);
 
-		g = a1 * b1;
-		g1 = g >>> 32;
-		g0 = g - (g1 << 32);
+		long sum = d1 + e0 + f0;
+		long carry = 0;
+		long roll = 1L << 32;
 
-		sum = d1 + e0 + f0;
-		carry = 0;
-		roll = 1L << 32;
-
-		pmax = roll - 1;
+		long pmax = roll - 1;
 		while (pmax < sum) {
 			sum -= roll;
 			carry++;
@@ -181,6 +186,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 
 		return divisor < 0 ? -lo : lo;//divisor could be Long.MIN_VALUE since abs(Long.MIN_VALUE) is still Long.MIN_VALUE
 	}
+
 	//see http://svn.gnucash.org/docs/head/group__Math128.html
 	//no negative values!
 	private static long[] unsignedMul128(long a, long b) {
