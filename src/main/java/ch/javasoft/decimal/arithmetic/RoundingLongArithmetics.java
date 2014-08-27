@@ -1,15 +1,17 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.Scale.Scale0f;
+import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.ScaleMetrics.Scale0f;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
  */
-public class RoundingLongArithmetics extends LongArithmetics {
+public class RoundingLongArithmetics extends AbstractArithmetics {
 	
 	private final DecimalRounding rounding;
 	
@@ -17,6 +19,7 @@ public class RoundingLongArithmetics extends LongArithmetics {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
 	public RoundingLongArithmetics(DecimalRounding rounding) {
+		super(Scale0f.INSTANCE);
 		this.rounding = rounding;
 	}
 	
@@ -30,8 +33,21 @@ public class RoundingLongArithmetics extends LongArithmetics {
 	}
 
 	@Override
+	public int getScale() {
+		return 0;
+	}
+
+	@Override
+	public long one() {
+		return 1L;
+	}
+	
+	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == 0 ? this : new RoundingArithmetics(scale, getDecimalRounding());
+		if (scale == getScale()) {
+			return this;
+		}
+		return ScaleMetrics.valueOf(scale).getTruncatingArithmetics().derive(getRoundingMode());
 	}
 
 	@Override
@@ -39,18 +55,20 @@ public class RoundingLongArithmetics extends LongArithmetics {
 		if (roundingMode == getRoundingMode()) {
 			return this;
 		}
-		if (roundingMode == RoundingMode.DOWN) {
-			return LongArithmetics.INSTANCE;
-		}
-		return new RoundingLongArithmetics(roundingMode);
+		return getScaleMetrics().getTruncatingArithmetics().derive(roundingMode);
 	}
-
+	
 	@Override
 	public DecimalArithmetics derive(OverflowMode overflowMode) {
 		if (overflowMode == getOverflowMode()) {
 			return this;
 		}
 		return new ExceptionOnOverflowArithmetics(this);
+	}
+
+	@Override
+	public long multiply(long uDecimal1, long uDecimal2) {
+		return uDecimal1 * uDecimal2;
 	}
 
 	@Override
@@ -65,6 +83,41 @@ public class RoundingLongArithmetics extends LongArithmetics {
 			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, delta, uDecimalDivisor);
 		}
 		return unrounded;
+	}
+
+	@Override
+	public long fromLong(long value) {
+		return value;
+	}
+
+	@Override
+	public long fromDouble(double value) {
+		return (long)value;
+	}
+
+	@Override
+	public long fromBigInteger(BigInteger value) {
+		return value.longValue();
+	}
+
+	@Override
+	public long parse(String value) {
+		return Long.parseLong(value);
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		return (double)uDecimal;
+	}
+
+	@Override
+	public BigDecimal toBigDecimal(long uDecimal) {
+		return BigDecimal.valueOf(uDecimal);
+	}
+
+	@Override
+	public String toString(long uDecimal) {
+		return Long.toString(uDecimal);
 	}
 
 	@Override
@@ -86,7 +139,7 @@ public class RoundingLongArithmetics extends LongArithmetics {
 	@Override
 	public long pow(long uDecimal, int exponent) {
 		//FIXME implement with rounding (not only on multiplications!)
-		return super.pow(uDecimal, exponent);
+		throw new RuntimeException("not implemented");
 	}
 
 	@Override

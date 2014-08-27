@@ -4,22 +4,20 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.Scale.Scale6f;
+import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.DecimalRounding;
-import ch.javasoft.decimal.arithmetic.RoundingArithmetics;
 
 /**
  * <tt>Decimal6f</tt> represents a immutable decimal number with 6 fractional
  * digits.
  */
 @SuppressWarnings("serial")
-public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
+public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, MutableDecimal6f> {
 
-	public static final DecimalArithmetics ARITHMETICS = new RoundingArithmetics(Scale6f.INSTANCE, DecimalRounding.HALF_EVEN);
-//	public static final DecimalArithmetics ARITHMETICS = new TruncatingArithmetics(Scale6f.INSTANCE);
+	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.HALF_EVEN);
+//	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics();
 
-	private static final long ONE_UNSCALED = ARITHMETICS.one();
+	public static final long ONE_UNSCALED = ARITHMETICS.one();
 
 	public static final Decimal6f ZERO = new Decimal6f(0);
 	public static final Decimal6f ULP = new Decimal6f(1);
@@ -53,12 +51,38 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 	public static final Decimal6f MIN_VALUE = new Decimal6f(Long.MIN_VALUE);
 	public static final Decimal6f MIN_INTEGER_VALUE = new Decimal6f((Long.MIN_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 
-	public Decimal6f(long unscaled) {
+	Decimal6f(long unscaled, DecimalArithmetics arithmetics) {
+		super(unscaled, Scale6f.INSTANCE, arithmetics);
+	}
+	private Decimal6f(long unscaled) {
 		super(unscaled, Scale6f.INSTANCE, ARITHMETICS);
 	}
 
 	public Decimal6f(String value) {
 		super(ARITHMETICS.parse(value), Scale6f.INSTANCE, ARITHMETICS);
+	}
+
+	@Override
+	protected Decimal6f self() {
+		return this;
+	}
+
+	@Override
+	public Decimal6f convert(RoundingMode roundingMode) {
+		final DecimalArithmetics arith = getArithmetics();
+		if (roundingMode == arith.getRoundingMode()) {
+			return this;
+		}
+		return new Decimal6f(unscaledValue(), arith.derive(roundingMode));
+	}
+	
+	@Override
+	public Decimal6f convert(OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmetics();
+		if (overflowMode == arith.getOverflowMode()) {
+			return this;
+		}
+		return new Decimal6f(unscaledValue(), arith.derive(overflowMode));
 	}
 
 	public static Decimal6f valueOf(long value) {
@@ -69,6 +93,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 		return valueOfUnscaled(ARITHMETICS.fromDouble(value));
 	}
 
+	//FIXME apply rounding mode to decimal or not?
 	public static Decimal6f valueOf(double value, RoundingMode roundingMode) {
 		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).fromDouble(value));
 	}
@@ -81,6 +106,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 		return valueOfUnscaled(ARITHMETICS.fromBigDecimal(value));
 	}
 
+	//FIXME apply rounding mode to decimal or not?
 	public static Decimal6f valueOf(BigDecimal value, RoundingMode roundingMode) {
 		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).fromBigDecimal(value));
 	}
@@ -117,6 +143,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 	 * @return the {@code Decimal6} for the specified unscaled decimal value
 	 *         with the given scale
 	 */
+	//FIXME apply rounding mode to decimal or not?
 	public static Decimal6f valueOf(long unscaledValue, int scale, RoundingMode roundingMode) {
 		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).fromUnscaled(unscaledValue, scale));
 	}
@@ -125,6 +152,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 		return valueOf(value.unscaledValue(), value.getArithmetics().getScale());
 	}
 
+	//FIXME apply rounding mode to decimal or not?
 	public static Decimal6f valueOf(Decimal<?> value, RoundingMode roundingMode) {
 		return valueOf(value.unscaledValue(), value.getArithmetics().getScale(), roundingMode);
 	}
@@ -133,6 +161,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 		return valueOfUnscaled(ARITHMETICS.parse(value));
 	}
 
+	//FIXME apply rounding mode to decimal or not?
 	public static Decimal6f valueOf(String value, RoundingMode roundingMode) {
 		return valueOfUnscaled(ARITHMETICS.derive(roundingMode).parse(value));
 	}
@@ -156,12 +185,8 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f> {
 	}
 
 	@Override
-	public Decimal6f ulp() {
-		return ULP;
-	}
-
-	@Override
-	public MutableDecimal6f toMutableValue() {
+	public MutableDecimal6f toMutableDecimal() {
 		return new MutableDecimal6f(this);
 	}
+
 }

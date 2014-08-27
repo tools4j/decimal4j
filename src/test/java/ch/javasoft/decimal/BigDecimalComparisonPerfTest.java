@@ -9,7 +9,7 @@ import java.util.Random;
 
 import org.junit.Test;
 
-import ch.javasoft.decimal.Scale.Scale6f;
+import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
@@ -60,7 +60,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
-		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableDecimal();
 
 		for (int j = 0; j < r; j++) {
 			//prepare input values
@@ -131,7 +131,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
-		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableDecimal();
 
 		for (int j = 0; j < r; j++) {
 			//prepare input values
@@ -202,7 +202,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
-		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableDecimal();
 
 		for (int j = 0; j < r; j++) {
 
@@ -275,7 +275,7 @@ public class BigDecimalComparisonPerfTest {
 		final BigDecimal[] bBigDec = new BigDecimal[n];
 		final Decimal<Scale6f>[] aDec6f = new Decimal6f[n];
 		final Decimal<Scale6f>[] bDec6f = new Decimal6f[n];
-		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableValue();
+		final MutableDecimal6f mutable = Decimal6f.ZERO.toMutableDecimal();
 
 		for (int j = 0; j < r; j++) {
 			//prepare input values

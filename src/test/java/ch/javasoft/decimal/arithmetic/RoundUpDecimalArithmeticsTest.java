@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import org.junit.Assert;
 import org.junit.Test;
 
+import ch.javasoft.decimal.ScaleMetrics.Scale6f;
+
 /**
  * Unit test for {@link RoundingArithmetics} with {@link RoundingMode#HALF_EVEN}.
  */
@@ -12,7 +14,7 @@ public class RoundUpDecimalArithmeticsTest extends AbstractDecimalArithmeticsTes
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new RoundingArithmetics(6, RoundingMode.UP);
+		return Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.UP);
 	}
 	
 	@Override

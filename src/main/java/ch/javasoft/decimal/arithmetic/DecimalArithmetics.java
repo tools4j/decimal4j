@@ -4,20 +4,34 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.Scale;
+import ch.javasoft.decimal.ScaleMetrics;
 
 public interface DecimalArithmetics {
 	/**
-	 * Returns the <i>scale</i> applied to all unscaled decimal values passed to
-	 * and returned by this {@code DecimalArithmetics}. The scale is the number
-	 * of digits to the right of the decimal point (cannot be negative).
+	 * Returns the scale {@code f} applied to all unscaled decimal values passed
+	 * to and returned by this {@code DecimalArithmetics}. Corresponds to the
+	 * number of digits to the right of the decimal point (cannot be negative).
+	 * <p>
+	 * A given {@link Decimal} value multiplied with <code>10<sup>f</sup></code>
+	 * results in an unscaled long value. Conversely, a {@code Decimal} value
+	 * {@code d} can be computed from the unscaled value {@code u} as
+	 * <code>d = u*10<sup>-f</sup></code>.
 	 * 
-	 * @return the non-negative scale applied to unscaled decimal values within
-	 *         this {@code DecimalArithmetics} object
-	 * @see Scale#getFractionDigits()
+	 * @return the non-negative scale {@code f} applied to unscaled decimal
+	 *         values within this {@code DecimalArithmetics} object
+	 * @see ScaleMetrics#getScale()
 	 */
 	int getScale();
+
+	/**
+	 * Returns the scale metrics associated with this decimal arithmetics
+	 * object.
+	 * 
+	 * @return the scale metrics
+	 */
+	ScaleMetrics getScaleMetrics();
 
 	/**
 	 * Returns the <i>rounding mode</i> applied to operations of this

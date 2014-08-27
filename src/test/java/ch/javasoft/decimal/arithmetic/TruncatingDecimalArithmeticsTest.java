@@ -3,8 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
+import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 
 /**
  * Unit test for {@link TruncatingArithmetics} and subclasses.
@@ -13,7 +12,7 @@ public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmetics
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return new TruncatingArithmetics(6);
+		return Scale6f.INSTANCE.getTruncatingArithmetics();
 	}
 	
 	@Override

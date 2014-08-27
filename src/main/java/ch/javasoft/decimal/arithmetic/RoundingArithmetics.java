@@ -5,7 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.Scale;
+import ch.javasoft.decimal.ScaleMetrics;
 
 /**
  * Base class for arithmetic implementations which involve rounding strategies.
@@ -19,46 +19,26 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	 * Constructor for decimal arithmetics with given scale, rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
-	 * @param scale
-	 *            the scale, a non-negative integer denoting the number of
-	 *            digits to the right of the decimal point
+	 * @param scaleMetrics
+	 *            the scale metrics for this decimal arithmetics
 	 * @param roundingMode
 	 *            the rounding mode to use for all decimal arithmetics
-	 * @throws IllegalArgumentException
-	 *             if scale is negative or zero
 	 */
-	public RoundingArithmetics(int scale, RoundingMode roundingMode) {
-		this(scale, DecimalRounding.valueOf(roundingMode));
+	RoundingArithmetics(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
+		this(scaleMetrics, DecimalRounding.valueOf(roundingMode));
 	}
 
 	/**
 	 * Constructor for decimal arithmetics with given scale, rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
-	 * @param scale
-	 *            the scale, a non-negative integer denoting the number of
-	 *            digits to the right of the decimal point
-	 * @param rounding
-	 *            the rounding mode to use for all decimal arithmetics
-	 * @throws IllegalArgumentException
-	 *             if scale is negative or zero
-	 */
-	public RoundingArithmetics(int scale, DecimalRounding rounding) {
-		super(scale);
-		this.rounding = rounding;
-	}
-
-	/**
-	 * Constructor for decimal arithmetics with given scale, rounding mode and
-	 * {@link OverflowMode#SILENT SILENT} overflow mode.
-	 * 
-	 * @param scale
-	 *            the scale
+	 * @param scaleMetrics
+	 *            the scale metrics for this decimal arithmetics
 	 * @param rounding
 	 *            the rounding mode to use for all decimal arithmetics
 	 */
-	public RoundingArithmetics(Scale scale, DecimalRounding rounding) {
-		super(scale);
+	RoundingArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
+		super(scaleMetrics);
 		this.rounding = rounding;
 	}
 
@@ -76,7 +56,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		if (scale == getScale()) {
 			return this;
 		}
-		return new RoundingArithmetics(scale, getDecimalRounding());
+		return ScaleMetrics.valueOf(scale).getTruncatingArithmetics().derive(getRoundingMode());
 	}
 
 	@Override
@@ -84,10 +64,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		if (roundingMode == getRoundingMode()) {
 			return this;
 		}
-		if (roundingMode == RoundingMode.DOWN) {
-			return new TruncatingArithmetics(getScale());
-		}
-		return new RoundingArithmetics(getScale(), roundingMode);
+		return getScaleMetrics().getTruncatingArithmetics().derive(roundingMode);
 	}
 
 	@Override

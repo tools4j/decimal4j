@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 import ch.javasoft.decimal.OverflowMode;
+import ch.javasoft.decimal.ScaleMetrics;
 
 /**
  * Base class for arithmetic implementations implementing those functions where
@@ -12,6 +13,20 @@ import ch.javasoft.decimal.OverflowMode;
  */
 abstract public class AbstractArithmetics implements DecimalArithmetics {
 	
+	private final ScaleMetrics scaleMetrics;
+
+	public AbstractArithmetics(ScaleMetrics scaleMetrics) {
+		this.scaleMetrics = scaleMetrics;
+	}
+	
+	@Override
+	public ScaleMetrics getScaleMetrics() {
+		return scaleMetrics;
+	}
+	@Override
+	public int getScale() {
+		return scaleMetrics.getScale();
+	}
 	@Override
 	public OverflowMode getOverflowMode() {
 		return OverflowMode.SILENT;

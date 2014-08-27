@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
+import ch.javasoft.decimal.ScaleMetrics;
 
 /**
  * Throws an exception on overflows as indicated by {@link #getOverflowMode()}
@@ -18,6 +19,10 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 
 	public ExceptionOnOverflowArithmetics(DecimalArithmetics delegate) {
 		this.delegate = delegate;
+	}
+
+	public ScaleMetrics getScaleMetrics() {
+		return delegate.getScaleMetrics();
 	}
 
 	@Override

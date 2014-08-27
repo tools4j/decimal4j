@@ -8,29 +8,41 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 /**
  * Mutable or immutable fixed-precision signed decimal numbers similar to
  * {@link BigDecimal}. A {@code Decimal} consists of an <i>unscaled long
- * value</i> and a {@link #getScale() scale}. The scale defines the number of
+ * value</i> and a {@link #getScaleMetrics() scale}. The scale defines the number of
  * digits to the right of the decimal point. The value of the number represented
- * by the {@code Decimal} is <tt>(unscaledValue &times; 10<sup>-n</sup>)</tt>
- * with {@code n} {@link Scale#getFractionDigits() fraction digits}.
+ * by the {@code Decimal} is <tt>(unscaledValue &times; 10<sup>-f</sup>)</tt>
+ * with scale {@code f}.
  * <p>
- * Scale is a generic parameter of the <tt>Decimal</tt> to ensure that only
- * decimal numbers of the same scale can directly be combined in arithmetic
- * operations (without conversion); the {@link Scale} class provides scale
- * subclasses to support this principle.
+ * The generic {@link ScaleMetrics} parameter of the <tt>Decimal</tt> enforces
+ * that only decimal numbers of the same scale can be combined directly in
+ * arithmetic operations (without conversion); the {@link ScaleMetrics} class
+ * defines all supported scale metrics subclasses and singleton constants.
  * <p>
- * The {@link #getArithmetics() arithmetics} object defines {@link RoundingMode}
- * applied to methods which involve rounding as well as the {@link OverflowMode}
- * used when an operation results in an overflow. The arithmetics of
- * {@code this} decimal always determines the arithmetics of the result
- * irrespective of rounding mode arguments and potentially different arithmetics
- * of other operands. Note that this may lead to a violation of the commutative
- * property inherent to certain mathematical operations if operands are used
- * with another arithmetic than that of {@code this} decimal value.
+ * The {@link #getArithmetics() arithmetics} object defines the
+ * {@link RoundingMode} applied to methods that involve rounding. It also
+ * determines an {@link OverflowMode} which defines the behavior in case of an
+ * overflow. The arithmetics of {@code this} decimal always determines the
+ * arithmetics of the result irrespective of rounding mode arguments and
+ * potentially different arithmetics of other operands. Note that this may lead
+ * to a violation of the commutative property inherent to certain mathematical
+ * operations if operands are used with another arithmetic than that of
+ * {@code this} decimal value. Values with a different arithmetics type can be
+ * derived through one of the {@code convert(..)} methods.
  * 
  * @param <S>
- *            the scale subclass type associated with this decimal
+ *            the scale metrics type associated with this decimal
  */
-public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
+public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> {
+
+	/**
+	 * Returns the scale associated with this decimal. The scale defines the
+	 * number of {@link ScaleMetrics#getScale() fraction digits} and the
+	 * {@link ScaleMetrics#getScaleFactor() scale factor} applied to the
+	 * {@code long} value underlying this <tt>Decimal</tt>.
+	 * 
+	 * @return the scale object
+	 */
+	S getScaleMetrics();
 
 	/**
 	 * Decimal arithmetics used for arithmetic operations and conversions using
@@ -45,14 +57,62 @@ public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
 	DecimalArithmetics getArithmetics();
 
 	/**
-	 * Returns the scale associated with this decimal. The scale defines the
-	 * number of {@link Scale#getFractionDigits() fraction digits} and the
-	 * {@link Scale#getScaleFactor() scale factor} applied to the {@code long}
-	 * value underlying this <tt>Decimal</tt>.
+	 * Returns a {@code Decimal} whose value {@link #getArithmetics()
+	 * arithmetics} is altered to use the specified rounding mode for future
+	 * operations. The value itself does not change but the method usually
+	 * returns a new decimal instance unless the specified rounding mode is the
+	 * same as that of this decimal value.
 	 * 
-	 * @return the scale object
+	 * @param roundingMode
+	 *            the rounding mode to use for arithmetic operations performed
+	 *            on the returned value
+	 * @return a decimal instance with the same value as {@code this} decimal
+	 *         using arithmetics with the given {@code roundingMode} for future
+	 *         arithmetic operations performed on the value
 	 */
-	S getScale();
+	Decimal<S> convert(RoundingMode roundingMode);
+
+	/**
+	 * Returns a {@code Decimal} whose value {@link #getScaleMetrics() scale} is
+	 * changed to the give value. If the scale change involves rounding, the
+	 * standard rounding mode of this decimal's {@link #getArithmetics()
+	 * arithmetics} is applied.
+	 * 
+	 * @param scale
+	 *            the scale to use for the result
+	 * @return a decimal instance with the given new scale
+	 */
+	Decimal<?> convert(int scale);
+
+	/**
+	 * Returns a {@code Decimal} whose value {@link #getScaleMetrics() scale} is
+	 * changed to the give value. If the scale change involves rounding, the
+	 * specified {@code roundingMode} is applied.
+	 * 
+	 * @param scale
+	 *            the scale to use for the result
+	 * @param roundingMode
+	 *            the rounding mode to apply if the scale change involves
+	 *            rounding
+	 * @return a decimal instance with the given new scale
+	 */
+	Decimal<?> convert(int scale, RoundingMode roundingMode);
+
+	/**
+	 * Returns a {@code Decimal} whose value {@link #getArithmetics()
+	 * arithmetics} is altered to use the specified overflow mode for future
+	 * operations. The value itself does not change but the method usually
+	 * returns a new decimal instance unless the specified overflow mode is the
+	 * same as that of this decimal value.
+	 * 
+	 * @param overflowMode
+	 *            the overflow mode to use for arithmetic operations performed
+	 *            on the returned value
+	 * @return a decimal instance with the same value as {@code this} decimal
+	 *         using arithmetics with the given {@code overflowMode} for future
+	 *         arithmetic operations performed on the value
+	 */
+	Decimal<S> convert(OverflowMode overflowMode);
 
 	/**
 	 * Returns the value of this <tt>Decimal</tt> as a <code>byte</code>. This
@@ -119,13 +179,13 @@ public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
 	 * value of this {@code Decimal} is
 	 * <tt>(unscaledValue &times; 10<sup>-n</sup>)</tt>, the returned value
 	 * equals <tt>(this &times; 10<sup>n</sup>)</tt> with {@code n} standing for
-	 * the number of {@link Scale#getFractionDigits() fraction digits}.
+	 * the number of {@link ScaleMetrics#getScale() fraction digits}.
 	 * 
 	 * @return the unscaled numeric value represented by this object when to
 	 *         type <code>long</code>
-	 * @see #getScale()
-	 * @see Scale#getFractionDigits()
-	 * @see Scale#getScaleFactor()
+	 * @see #getScaleMetrics()
+	 * @see ScaleMetrics#getScale()
+	 * @see ScaleMetrics#getScaleFactor()
 	 */
 	long unscaledValue();
 
@@ -245,24 +305,6 @@ public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
 	 * @return {@code 1/this}
 	 */
 	Decimal<S> invert(RoundingMode roundingMode);
-
-	/**
-	 * Returns the size of an ulp, a unit in the last place, of this
-	 * {@code Decimal}. An ulp of a nonzero {@code Decimal} value is the
-	 * positive distance between this value and the {@code Decimal} value next
-	 * larger in magnitude with the same number of digits. An ulp of a zero
-	 * value is numerically equal to 1 with the scale of {@code this}. The
-	 * result is stored with the same scale as {@code this} so the result for
-	 * zero and nonzero values is equal to {@code [1,
-	 * getArithmethics().scale()]}.
-	 * <p>
-	 * Calling this method does NOT modify {@code this} instance; for constant
-	 * decimals, an ULP constant is returned; for mutable decimals, a new
-	 * mutable ULP instance is returned.
-	 * 
-	 * @return the size of an ulp of {@code this}
-	 */
-	Decimal<S> ulp();
 
 	/**
 	 * Returns the signum function of this {@code Decimal}.
@@ -386,7 +428,7 @@ public interface Decimal<S extends Scale> extends Comparable<Decimal<S>> {
 	 * Compares this object to the specified object. The result is {@code true}
 	 * if and only if the argument is not {@code null} and is a {@code Decimal}
 	 * object that contains the same value as this object and if the two
-	 * decimals have the same {@link #getScale() scale}.
+	 * decimals have the same {@link #getScaleMetrics() scale}.
 	 * 
 	 * @param obj
 	 *            the object to compare with.

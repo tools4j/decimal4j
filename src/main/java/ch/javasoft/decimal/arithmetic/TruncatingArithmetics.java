@@ -1,11 +1,11 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.EnumMap;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.Scale;
+import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.math.MutableBigInteger;
 
 /**
@@ -16,34 +16,21 @@ import ch.javasoft.decimal.math.MutableBigInteger;
 public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		DecimalArithmetics {
 
-	/**
-	 * Constructor for silent decimal arithmetics with given scale, truncating
-	 * {@link RoundingMode#DOWN DOWN} rounding mode and
-	 * {@link OverflowMode#SILENT SILENT} overflow mode.
-	 * 
-	 * @param scale
-	 *            the scale, a non-negative integer denoting the number of
-	 *            digits to the right of the decimal point
-	 * @throws IllegalArgumentException
-	 *             if scale is negative, zero or uneven
-	 */
-	public TruncatingArithmetics(int scale) {
-		super(scale);
-	}
+	private transient volatile EnumMap<DecimalRounding, DecimalArithmetics> roundingArithmetics = null;
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
 	 * {@link RoundingMode#DOWN DOWN} rounding mode and
 	 * {@link OverflowMode#SILENT SILENT} overflow mode.
 	 * 
-	 * @param scale
+	 * @param scaleMetrics
 	 *            the scale, a non-negative integer denoting the number of
 	 *            digits to the right of the decimal point
 	 * @throws IllegalArgumentException
 	 *             if scale is negative or uneven
 	 */
-	public TruncatingArithmetics(Scale scale) {
-		super(scale);
+	public TruncatingArithmetics(ScaleMetrics scaleMetrics) {
+		super(scaleMetrics);
 	}
 
 	@Override
@@ -53,15 +40,41 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 
 	@Override
 	public DecimalArithmetics derive(int scale) {
-		return scale == getScale() ? this : scale == 0 ? LongArithmetics.INSTANCE : new TruncatingArithmetics(scale);
+		if (scale == getScale()) {
+			return this;
+		}
+		return ScaleMetrics.valueOf(scale).getTruncatingArithmetics();
 	}
 
 	@Override
 	public DecimalArithmetics derive(RoundingMode roundingMode) {
-		if (roundingMode == getRoundingMode()) {
+		if (roundingMode == RoundingMode.DOWN) {
 			return this;
 		}
-		return new RoundingArithmetics(getScale(), roundingMode);
+		if (roundingArithmetics == null) {
+			synchronized(this) {
+				if (roundingArithmetics == null) {
+					roundingArithmetics = initRoundingArithmetics();
+				}
+			}
+		}
+		return roundingArithmetics.get(DecimalRounding.valueOf(roundingMode));
+	}
+
+	private EnumMap<DecimalRounding, DecimalArithmetics> initRoundingArithmetics() {
+		final EnumMap<DecimalRounding, DecimalArithmetics> result = new EnumMap<DecimalRounding, DecimalArithmetics>(DecimalRounding.class);
+		for (final DecimalRounding rounding : DecimalRounding.VALUES) {
+			if (rounding != DecimalRounding.DOWN) {
+				result.put(rounding, createDecimalArithmeticsFor(rounding));
+			} else {
+				result.put(rounding, this);
+			}
+		}
+		return result;
+	}
+	
+	protected DecimalArithmetics createDecimalArithmeticsFor(DecimalRounding rounding) {
+		return new RoundingArithmetics(getScaleMetrics(), rounding);
 	}
 
 	@Override
