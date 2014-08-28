@@ -176,7 +176,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	@Override
 	public long fromLong(long value) {
-		return value * one();
+		return getScaleMetrics().multiplyByScaleFactor(value);
 	}
 
 	@Override
@@ -189,7 +189,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	@Override
 	public long toLong(long uDecimal) {
-		return uDecimal / one();
+		return getScaleMetrics().divideByScaleFactor(uDecimal);
 	}
 
 	@Override

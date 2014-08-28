@@ -14,7 +14,8 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 @SuppressWarnings("serial")
 public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, MutableDecimal6f> {
 
-	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.HALF_EVEN);
+	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.HALF_UP);
+//	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.HALF_EVEN);
 //	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics();
 
 	public static final long ONE_UNSCALED = ARITHMETICS.one();

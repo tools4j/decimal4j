@@ -27,8 +27,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale0f extends ScaleMetrics {
 		public static final Scale0f INSTANCE = new Scale0f();
 
-		private Scale0f() {
-			super(0, 1);
+		@Override
+		public int getScale() {
+			return 0;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 1;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return 0;
 		}
 	}
 
@@ -39,8 +60,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale1f extends ScaleMetrics {
 		public static final Scale1f INSTANCE = new Scale1f();
 
-		private Scale1f() {
-			super(1, 10);
+		@Override
+		public int getScale() {
+			return 1;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 10;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 10;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 10;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 10;
 		}
 	}
 
@@ -51,8 +93,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale2f extends ScaleMetrics {
 		public static final Scale2f INSTANCE = new Scale2f();
 
-		private Scale2f() {
-			super(2, 100);
+		@Override
+		public int getScale() {
+			return 2;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 100;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 100;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 100;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 100;
 		}
 	}
 
@@ -63,8 +126,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale3f extends ScaleMetrics {
 		public static final Scale3f INSTANCE = new Scale3f();
 
-		private Scale3f() {
-			super(3, 1000);
+		@Override
+		public int getScale() {
+			return 3;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 1000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 1000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 1000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 1000;
 		}
 	}
 
@@ -75,8 +159,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale4f extends ScaleMetrics {
 		public static final Scale4f INSTANCE = new Scale4f();
 
-		private Scale4f() {
-			super(4, 10000);
+		@Override
+		public int getScale() {
+			return 4;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 10000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 10000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 10000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 10000;
 		}
 	}
 
@@ -87,8 +192,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale5f extends ScaleMetrics {
 		public static final Scale5f INSTANCE = new Scale5f();
 
-		private Scale5f() {
-			super(5, 100000);
+		@Override
+		public int getScale() {
+			return 5;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 100000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 100000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 100000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 100000;
 		}
 	}
 
@@ -99,16 +225,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale6f extends ScaleMetrics {
 		public static final Scale6f INSTANCE = new Scale6f();
 
-		private Scale6f() {
-			super(6, 1000000);
-		}
 		@Override
-		public Decimal6f createImmutable(long unscaled, RoundingMode roundingMode, OverflowMode overflowMode) {
-			return new Decimal6f(unscaled, getTruncatingArithmetics().derive(roundingMode).derive(overflowMode));
+		public int getScale() {
+			return 6;
 		}
+
 		@Override
-		public MutableDecimal6f createMutable(RoundingMode roundingMode, OverflowMode overflowMode) {
-			return new MutableDecimal6f(roundingMode, overflowMode);
+		public long getScaleFactor() {
+			return 1000000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 1000000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 1000000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 1000000;
 		}
 	}
 
@@ -119,8 +258,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale7f extends ScaleMetrics {
 		public static final Scale7f INSTANCE = new Scale7f();
 
-		private Scale7f() {
-			super(7, 10000000);
+		@Override
+		public int getScale() {
+			return 7;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 10000000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 10000000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 10000000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 10000000;
 		}
 	}
 
@@ -131,8 +291,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale8f extends ScaleMetrics {
 		public static final Scale8f INSTANCE = new Scale8f();
 
-		private Scale8f() {
-			super(8, 100000000);
+		@Override
+		public int getScale() {
+			return 8;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 100000000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 100000000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 100000000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 100000000;
 		}
 	}
 
@@ -143,8 +324,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale9f extends ScaleMetrics {
 		public static final Scale9f INSTANCE = new Scale9f();
 
-		private Scale9f() {
-			super(9, 1000000000);
+		@Override
+		public int getScale() {
+			return 9;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 1000000000;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 1000000000;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 1000000000;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 1000000000;
 		}
 	}
 
@@ -155,8 +357,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale10f extends ScaleMetrics {
 		public static final Scale10f INSTANCE = new Scale10f();
 
-		private Scale10f() {
-			super(10, 10000000000L);
+		@Override
+		public int getScale() {
+			return 10;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 10000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 10000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 10000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 10000000000L;
 		}
 	}
 
@@ -167,8 +390,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale11f extends ScaleMetrics {
 		public static final Scale11f INSTANCE = new Scale11f();
 
-		private Scale11f() {
-			super(11, 100000000000L);
+		@Override
+		public int getScale() {
+			return 11;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 100000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 100000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 100000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 100000000000L;
 		}
 	}
 
@@ -179,8 +423,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale12f extends ScaleMetrics {
 		public static final Scale12f INSTANCE = new Scale12f();
 
-		private Scale12f() {
-			super(12, 1000000000000L);
+		@Override
+		public int getScale() {
+			return 12;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 1000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 1000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 1000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 1000000000000L;
 		}
 	}
 
@@ -191,8 +456,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale13f extends ScaleMetrics {
 		public static final Scale13f INSTANCE = new Scale13f();
 
-		private Scale13f() {
-			super(13, 10000000000000L);
+		@Override
+		public int getScale() {
+			return 13;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 10000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 10000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 10000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 10000000000000L;
 		}
 	}
 
@@ -203,8 +489,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale14f extends ScaleMetrics {
 		public static final Scale14f INSTANCE = new Scale14f();
 
-		private Scale14f() {
-			super(14, 100000000000000L);
+		@Override
+		public int getScale() {
+			return 14;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 100000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 100000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 100000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 100000000000000L;
 		}
 	}
 
@@ -215,8 +522,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale15f extends ScaleMetrics {
 		public static final Scale15f INSTANCE = new Scale15f();
 
-		private Scale15f() {
-			super(15, 1000000000000000L);
+		@Override
+		public int getScale() {
+			return 15;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 1000000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 1000000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 1000000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 1000000000000000L;
 		}
 	}
 
@@ -227,8 +555,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale16f extends ScaleMetrics {
 		public static final Scale16f INSTANCE = new Scale16f();
 
-		private Scale16f() {
-			super(16, 10000000000000000L);
+		@Override
+		public int getScale() {
+			return 16;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 10000000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 10000000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 10000000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 10000000000000000L;
 		}
 	}
 
@@ -239,8 +588,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale17f extends ScaleMetrics {
 		public static final Scale17f INSTANCE = new Scale17f();
 
-		private Scale17f() {
-			super(17, 100000000000000000L);
+		@Override
+		public int getScale() {
+			return 17;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 100000000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 100000000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 100000000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 100000000000000000L;
 		}
 	}
 
@@ -251,8 +621,29 @@ abstract public class ScaleMetrics {
 	public static final class Scale18f extends ScaleMetrics {
 		public static final Scale18f INSTANCE = new Scale18f();
 
-		private Scale18f() {
-			super(18, 1000000000000000000L);
+		@Override
+		public int getScale() {
+			return 18;
+		}
+
+		@Override
+		public long getScaleFactor() {
+			return 1000000000000000000L;
+		}
+
+		@Override
+		public long multiplyByScaleFactor(long factor) {
+			return factor * 1000000000000000000L;
+		}
+
+		@Override
+		public long divideByScaleFactor(long dividend) {
+			return dividend / 1000000000000000000L;
+		}
+
+		@Override
+		public long moduloByScaleFactor(long dividend) {
+			return dividend % 1000000000000000000L;
 		}
 	}
 
@@ -263,17 +654,9 @@ abstract public class ScaleMetrics {
 	 */
 	public static final List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(Scale0f.INSTANCE, Scale1f.INSTANCE, Scale2f.INSTANCE, Scale3f.INSTANCE, Scale4f.INSTANCE, Scale5f.INSTANCE, Scale6f.INSTANCE, Scale7f.INSTANCE, Scale8f.INSTANCE, Scale9f.INSTANCE, Scale10f.INSTANCE, Scale11f.INSTANCE, Scale12f.INSTANCE, Scale13f.INSTANCE, Scale14f.INSTANCE, Scale15f.INSTANCE, Scale16f.INSTANCE, Scale17f.INSTANCE, Scale18f.INSTANCE));
 
-	//Long.MAX_VALUE: 9,223,372,036,854,775,807
-
-	private final int scale;
-	private final long scaleFactor;
-	private final TruncatingArithmetics truncatingArithmetics;
-
-	private ScaleMetrics(int scale, long scaleFactor) {
-		this.scale = scale;
-		this.scaleFactor = scaleFactor;
-		this.truncatingArithmetics = new TruncatingArithmetics(this);
-	}
+	private final long maxIntegerValue = divideByScaleFactor(Long.MAX_VALUE);
+	private final long minIntegerValue = divideByScaleFactor(Long.MIN_VALUE);
+	private final TruncatingArithmetics truncatingArithmetics = new TruncatingArithmetics(this);
 
 	/**
 	 * Returns the {@code ScaleMetrics} constant based on a given scale
@@ -298,9 +681,7 @@ abstract public class ScaleMetrics {
 	 * 
 	 * @return the scale also known as number of fraction digits
 	 */
-	public int getScale() {
-		return scale;
-	}
+	abstract public int getScale();
 
 	/**
 	 * Returns the scale factor, which is 10<sup>f</sup> where {@code f} stands
@@ -308,9 +689,54 @@ abstract public class ScaleMetrics {
 	 * 
 	 * @return the scale factor
 	 */
-	public long getScaleFactor() {
-		return scaleFactor;
+	abstract public long getScaleFactor();
+
+	/**
+	 * Returns the largest integer value that can be represented using this
+	 * scale.
+	 * 
+	 * @return {@code Long.MAX_VALUE / scaleFactor}
+	 */
+	public long getMaxIntegerValue() {
+		return maxIntegerValue;
 	}
+
+	/**
+	 * Returns the smallest integer value that can be represented using this
+	 * scale.
+	 * 
+	 * @return {@code Long.MIN_VALUE / scaleFactor}
+	 */
+	public long getMinIntegerValue() {
+		return minIntegerValue;
+	}
+
+	/**
+	 * Returns {@code factor*scaleFactor}.
+	 * 
+	 * @param factor
+	 *            the factor
+	 * @return {@code factor*scaleFactor}
+	 */
+	abstract public long multiplyByScaleFactor(long factor);
+
+	/**
+	 * Returns {@code dividend/scaleFactor}.
+	 * 
+	 * @param dividend
+	 *            the dividend
+	 * @return {@code dividend/scaleFactor}
+	 */
+	abstract public long divideByScaleFactor(long dividend);
+
+	/**
+	 * Returns {@code dividend % scaleFactor} also known as reminder.
+	 * 
+	 * @param dividend
+	 *            the dividend
+	 * @return {@code dividend % scaleFactor}
+	 */
+	abstract public long moduloByScaleFactor(long dividend);
 
 	/**
 	 * Creates and returns an immutable value.

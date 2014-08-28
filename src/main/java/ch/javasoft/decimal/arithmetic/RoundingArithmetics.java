@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.arithmetic.TruncatingArithmetics.SpecialDivisionResult;
 
 /**
  * Base class for arithmetic implementations which involve rounding strategies.
@@ -77,53 +78,58 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		final long one = one();
-		final long i1 = uDecimal1 / one;
-		final long i2 = uDecimal2 / one;
-		final long f1 = uDecimal1 % one;
-		final long f2 = uDecimal2 % one;
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
+		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
+		final long f1 = scaleMetrics.moduloByScaleFactor(uDecimal1);
+		final long f2 = scaleMetrics.moduloByScaleFactor(uDecimal2);
 		final long f1xf2 = f1 * f2;
-		final long inc = f1xf2 / one;
-		final long rem = f1xf2 - inc * one;
-		final long unrounded = i1 * i2 * one + i1 * f2 + i2 * f1 + inc;
-		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, one);
+		final long inc = scaleMetrics.divideByScaleFactor(f1xf2);
+		final long rem = scaleMetrics.moduloByScaleFactor(f1xf2);
+		final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + inc;
+		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, one());
 	}
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		final int scale = getScale();
-		final long one = one();
-		final long unrounded = TruncatingArithmetics.divide(uDecimalDividend, uDecimalDivisor, scale, one);
-		final long product = TruncatingArithmetics.multiply(unrounded, uDecimalDivisor, one);
+		//special cases first
+		final SpecialDivisionResult special = SpecialDivisionResult.getFor(this, uDecimalDividend, uDecimalDivisor);
+		if (special != null) {
+			return special.divide(this, uDecimalDividend, uDecimalDivisor);
+		}
+		return divide128(uDecimalDividend, uDecimalDivisor);
+	}
+	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final TruncatingArithmetics truncArith = scaleMetrics.getTruncatingArithmetics();
+		final long unrounded = truncArith.divide(uDecimalDividend, uDecimalDivisor);
+		final long product = truncArith.multiply(unrounded, uDecimalDivisor);
 		final long delta = uDecimalDividend - product;
 		if (delta != 0) {
-			return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
-////			final long remainder = TruncatingArithmetics.divide((delta % one) * one, uDecimalDivisor, scale, one);
-//			if (unrounded != 0) {
-////				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
-//				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
-//			}
-////			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, remainder, uDecimalDivisor);
-//			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, delta * one, uDecimalDivisor);//OVERFLOW possible
+			final long deltaScaled = scaleMetrics.multiplyByScaleFactor(delta);
+			return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, deltaScaled, uDecimalDivisor);//OVERFLOW possible
 		}
 		return unrounded;
 	}
 
 	@Override
 	public long invert(long uDecimal) {
-		final long one = one();
 		//special cases first
-		if (uDecimal == 0) {
-			throw new ArithmeticException("divide by zero");
-		} else if (uDecimal == one) {
-			return one;
-		} else if (uDecimal == -one) {
-			return -one;
+		final long one = one();
+		final SpecialDivisionResult special = SpecialDivisionResult.getFor(this, one, uDecimal);
+		if (special != null) {
+			return special.divide(this, one, uDecimal);
 		}
-		final long oneSquare = one * one;
-		final long truncatedValue = oneSquare / uDecimal;
-		final long truncatedDigits = oneSquare % uDecimal;
-		return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimal);
+		//check if one * one fits in long
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		if (scaleMetrics.getScale() <= 9) {
+			final long oneSquare = scaleMetrics.multiplyByScaleFactor(one);
+			final long truncatedValue = oneSquare / uDecimal;
+			final long truncatedDigits = oneSquare % uDecimal;
+			return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimal);
+		}
+		//too big, use divide128 now
+		return divide128(one, uDecimal);
 	}
 
 	@Override
@@ -203,9 +209,10 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 
 	@Override
 	public long toLong(long uDecimal) {
-		final long one = one();
-		final long truncated = uDecimal / one;
-		return truncated + rounding.calculateRoundingIncrement(truncated, uDecimal % one, one);
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
+		final long reminder = scaleMetrics.moduloByScaleFactor(uDecimal);
+		return truncated + rounding.calculateRoundingIncrement(truncated, reminder, one());
 	}
 
 	@Override
