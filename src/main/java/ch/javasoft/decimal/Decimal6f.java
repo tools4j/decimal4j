@@ -177,6 +177,9 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 		if (unscaledValue == ONE_UNSCALED) {
 			return ONE;
 		}
+		if (unscaledValue == -ONE_UNSCALED) {
+			return MINUS_ONE;
+		}
 		return new Decimal6f(unscaledValue);
 	}
 

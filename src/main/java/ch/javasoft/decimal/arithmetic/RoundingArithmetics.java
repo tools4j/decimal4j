@@ -6,7 +6,6 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.arithmetic.TruncatingArithmetics.SpecialDivisionResult;
 
 /**
  * Base class for arithmetic implementations which involve rounding strategies.
@@ -81,11 +80,14 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
 		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
-		final long f1 = scaleMetrics.moduloByScaleFactor(uDecimal1);
-		final long f2 = scaleMetrics.moduloByScaleFactor(uDecimal2);
+//		final long f1 = scaleMetrics.moduloByScaleFactor(uDecimal1);
+//		final long f2 = scaleMetrics.moduloByScaleFactor(uDecimal2);
+		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
+		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
 		final long f1xf2 = f1 * f2;
 		final long inc = scaleMetrics.divideByScaleFactor(f1xf2);
-		final long rem = scaleMetrics.moduloByScaleFactor(f1xf2);
+//		final long rem = scaleMetrics.moduloByScaleFactor(f1xf2);
+		final long rem = f1xf2 - scaleMetrics.multiplyByScaleFactor(inc);
 		final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + inc;
 		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, one());
 	}

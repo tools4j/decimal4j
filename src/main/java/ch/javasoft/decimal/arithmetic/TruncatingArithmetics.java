@@ -90,8 +90,10 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
 		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
-		final long f1 = scaleMetrics.moduloByScaleFactor(uDecimal1);
-		final long f2 = scaleMetrics.moduloByScaleFactor(uDecimal2);
+//		final long f1 = scaleMetrics.moduloByScaleFactor(uDecimal1);
+//		final long f2 = scaleMetrics.moduloByScaleFactor(uDecimal2);
+		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
+		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
 		return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + scaleMetrics.divideByScaleFactor(f1 * f2);
 	}
 
@@ -109,59 +111,6 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
 		}
 		return divide128(uDecimalDividend, uDecimalDivisor);
-	}
-	protected static enum SpecialDivisionResult {
-		DIVIDEND_IS_ZERO {
-			@Override
-			public long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-				return 0;
-			}
-		},
-		DIVISOR_IS_ZERO {
-			@Override
-			public long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-				throw new ArithmeticException("division by zero: " + arithmetics.toString(uDecimalDividend) + "/" + arithmetics.toString(uDecimalDivisor));
-			}
-		},
-		DIVISOR_IS_ONE {
-			@Override
-			public long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-				return uDecimalDividend;
-			}
-		},
-		DIVISOR_IS_MINUS_ONE {
-			@Override
-			public long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-				return -uDecimalDividend;
-			}
-		},
-		DIVISOR_EQUALS_DIVIDEND {
-			@Override
-			public long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-				return arithmetics.one();
-			}
-		};
-		abstract public long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor);
-		public static SpecialDivisionResult getFor(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-			//special cases first
-			if (uDecimalDividend == 0) {
-				return DIVIDEND_IS_ZERO;
-			}
-			if (uDecimalDivisor == 0) {
-				return DIVISOR_IS_ZERO;
-			}
-			final long one = arithmetics.one();
-			if (uDecimalDivisor == one) {
-				return DIVISOR_IS_ONE;
-			}
-			if (uDecimalDivisor == -one) {
-				return DIVISOR_IS_MINUS_ONE;
-			}
-			if (uDecimalDividend == uDecimalDivisor) {
-				return DIVISOR_EQUALS_DIVIDEND;
-			}
-			return null;
-		}
 	}
 	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
 //		return BigInteger.valueOf(uDecimalDividend).multiply(BigInteger.valueOf(one)).divide(BigInteger.valueOf(uDecimalDivisor)).longValue();
