@@ -6,8 +6,8 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Defines the same constants as {@link RoundingMode} and implements the functionality
- * to actually perform such rounding.
+ * Defines the same constants as {@link RoundingMode} and implements the
+ * functionality to actually perform such rounding.
  */
 public enum DecimalRounding {
 
@@ -20,9 +20,9 @@ public enum DecimalRounding {
 	 */
 	UP(RoundingMode.UP) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (firstTruncatedDigit > 0 || !zeroAfterFirstTruncatedDigit) {
-				return signedRoundingIncrement(truncatedValue, negativeTruncatedReminder);
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedPart.isGreaterThanZero()) {
+				return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
 			}
 			return 0;
 		}
@@ -37,7 +37,7 @@ public enum DecimalRounding {
 	 */
 	DOWN(RoundingMode.DOWN) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
 			return 0;
 		}
 	},
@@ -52,9 +52,9 @@ public enum DecimalRounding {
 	 */
 	CEILING(RoundingMode.CEILING) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (truncatedValue > 0 || (truncatedValue == 0 && !negativeTruncatedReminder)) {
-				if (firstTruncatedDigit > 0 || !zeroAfterFirstTruncatedDigit) {
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedValue > 0 || (truncatedValue == 0 && !negativeTruncatedPart)) {
+				if (truncatedPart.isGreaterThanZero()) {
 					return 1;
 				}
 			}
@@ -72,9 +72,9 @@ public enum DecimalRounding {
 	 */
 	FLOOR(RoundingMode.FLOOR) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (truncatedValue < 0 || (truncatedValue == 0 && negativeTruncatedReminder)) {
-				if (firstTruncatedDigit > 0 || !zeroAfterFirstTruncatedDigit) {
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedValue < 0 || (truncatedValue == 0 && negativeTruncatedPart)) {
+				if (truncatedPart.isGreaterThanZero()) {
 					return -1;
 				}
 			}
@@ -93,9 +93,9 @@ public enum DecimalRounding {
 	 */
 	HALF_UP(RoundingMode.HALF_UP) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (firstTruncatedDigit >= 5) {
-				return signedRoundingIncrement(truncatedValue, negativeTruncatedReminder);
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedPart.isGreaterEqualHalf()) {
+				return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
 			}
 			return 0;
 		}
@@ -111,9 +111,9 @@ public enum DecimalRounding {
 	 */
 	HALF_DOWN(RoundingMode.HALF_DOWN) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (firstTruncatedDigit > 5 || (firstTruncatedDigit == 5 && !zeroAfterFirstTruncatedDigit)) {
-				return signedRoundingIncrement(truncatedValue, negativeTruncatedReminder);
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedPart.isGreaterThanHalf()) {
+				return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
 			}
 			return 0;
 		}
@@ -135,10 +135,10 @@ public enum DecimalRounding {
 	 */
 	HALF_EVEN(RoundingMode.HALF_EVEN) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (firstTruncatedDigit >= 5) {
-				if (firstTruncatedDigit > 5 || !zeroAfterFirstTruncatedDigit || ((truncatedValue & 0x1) != 0)) {
-					return signedRoundingIncrement(truncatedValue, negativeTruncatedReminder);
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedPart.isGreaterEqualHalf()) {
+				if (truncatedPart.isGreaterThanHalf() || ((truncatedValue & 0x1) != 0)) {
+					return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
 				}
 			}
 			return 0;
@@ -155,9 +155,9 @@ public enum DecimalRounding {
 	 */
 	UNNECESSARY(RoundingMode.UNNECESSARY) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-			if (firstTruncatedDigit != 0 || !zeroAfterFirstTruncatedDigit) {
-				throw new ArithmeticException("rounding necessary for: " + truncatedValue + "." + firstTruncatedDigit + (zeroAfterFirstTruncatedDigit ? "" : "..."));
+		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+			if (truncatedPart.isGreaterThanZero()) {
+				throw new ArithmeticException("rounding necessary");
 			}
 			return 0;
 		}
@@ -199,13 +199,14 @@ public enum DecimalRounding {
 	 * 
 	 * @param truncatedValue
 	 *            the truncated result before rounding is applied
-	 * @param negativeTruncatedReminder
-	 *            true if the reminder is negative, important only if
+	 * @param negativeTruncatedPart
+	 *            true if the truncated part is negative, important only if
 	 *            {@code truncatedValue==0}
-	 * @return +1 or -1 to reflect a rounding increment, negative if value or reminder is negative
+	 * @return +1 or -1 to reflect a rounding increment, negative if value or
+	 *         reminder is negative
 	 */
-	private static int signedRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder) {
-		return truncatedValue < 0 || (truncatedValue == 0 && negativeTruncatedReminder) ? -1 : 1;
+	private static int signedRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart) {
+		return truncatedValue < 0 || (truncatedValue == 0 && negativeTruncatedPart) ? -1 : 1;
 	}
 
 	/**
@@ -214,8 +215,24 @@ public enum DecimalRounding {
 	 * 
 	 * @param truncatedValue
 	 *            the truncated result before rounding is applied
-	 * @param negativeTruncatedReminder
-	 *            true if the reminder is negative, important only if
+	 * @param negativeTruncatedPart
+	 *            true if the truncated part is negative, important only if
+	 *            {@code truncatedValue==0}
+	 * @param truncatedPart
+	 *            classification of the trunctated part of the value
+	 * @return the value to add to {@code truncatedValue} to get the rounded
+	 *         result, one of -1, 0 or 1
+	 */
+	abstract public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart);
+
+	/**
+	 * Returns the rounding increment appropriate for this decimal rounding. The
+	 * returned value is one of -1, 0 or 1.
+	 * 
+	 * @param truncatedValue
+	 *            the truncated result before rounding is applied
+	 * @param negativeTruncatedPart
+	 *            true if the truncated part is negative, important only if
 	 *            {@code truncatedValue==0}
 	 * @param firstTruncatedDigit
 	 *            the first truncated digit, must be in {@code [0, 1, ..., 9]}
@@ -225,7 +242,9 @@ public enum DecimalRounding {
 	 * @return the value to add to {@code truncatedValue} to get the rounded
 	 *         result, one of -1, 0 or 1
 	 */
-	abstract public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedReminder, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit);
+	public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
+		return calculateRoundingIncrement(truncatedValue, negativeTruncatedPart, TruncatedPart.valueOf(firstTruncatedDigit, zeroAfterFirstTruncatedDigit));
+	}
 
 	/**
 	 * Returns the rounding increment appropriate for this decimal rounding
@@ -244,18 +263,11 @@ public enum DecimalRounding {
 	 *         result, one of -1, 0 or 1
 	 */
 	int calculateRoundingIncrement(long truncatedValue, long truncatedDigits, long one) {
-//		final long nonNegativeTruncatedDigits = Math.abs(truncatedDigits);
-//		final long oneDivBy10 = one / 10;
-//		final int firstTruncatedDigit = (int) (nonNegativeTruncatedDigits / oneDivBy10);
-//		final long truncatedDigitsAfterFirst = nonNegativeTruncatedDigits % oneDivBy10;
-//		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, firstTruncatedDigit, truncatedDigitsAfterFirst == 0);
 		if (truncatedDigits == 0) {
 			return 0;
 		}
-		final long nonNegativeTruncatedDigits = Math.abs(truncatedDigits);
-		final int compare = Long.compare(nonNegativeTruncatedDigits << 1, one);
-		final int firstTruncatedDigit = compare < 0 ? 4 : compare > 0 ? 6 : 5;//FIXME make this nicer
-		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, firstTruncatedDigit, true);
+		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(truncatedDigits), one);
+		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, truncatedPart);
 	}
 
 	/**
@@ -273,48 +285,12 @@ public enum DecimalRounding {
 	 * @return the value to add to {@code truncatedValue} to get the rounded
 	 *         result, one of -1, 0 or 1
 	 */
-	int calculateRoundingIncrementForDivision(long truncatedValue, long truncatedDigits, long divisor) {
+	public int calculateRoundingIncrementForDivision(long truncatedValue, long truncatedDigits, long divisor) {
 		if (truncatedDigits == 0) {
 			return 0;
 		}
-		final long absTruncatedDigits = Math.abs(truncatedDigits);
-		final long absDivisor = Math.abs(divisor);
-
-		final int firstTruncatedDigit;
-		final boolean zeroAfterFirstTruncatedDigit;
-//		if (absTruncatedDigits < 922337203685477581L /* ceil(Long.MAX_VALUE/10) */) {
-//			final long nonNgativeTruncatedDigitsX10 = absTruncatedDigits * 10;
-//			firstTruncatedDigit = (int) (nonNgativeTruncatedDigitsX10 / absDivisor);
-//			zeroAfterFirstTruncatedDigit = (nonNgativeTruncatedDigitsX10 % absDivisor) == 0;
-//		} else {
-		if (absTruncatedDigits < (Long.MAX_VALUE >> 1)) {
-			final int compare = Long.compare(absTruncatedDigits << 1, absDivisor);
-			firstTruncatedDigit = compare < 0 ? 4 : compare > 0 ? 6 : 5;//FIXME make this nicer
-			zeroAfterFirstTruncatedDigit = true;
-		} else {
-			final long absDivisorBy10 = absDivisor / 10;
-			final long absDivisorMod10 = absDivisor % 10;
-			long div = absTruncatedDigits / absDivisorBy10;
-			int cmp;
-			div++;
-			do {
-				div--;
-				long mul = div * absDivisorBy10;
-				long del = absTruncatedDigits - mul;
-				long rem = div * absDivisorMod10;
-				cmp = Long.compare(del, rem / 10);
-				if (cmp == 0 && (rem % 10) != 0) cmp = -1;
-			} while (cmp < 0);
-			firstTruncatedDigit = (int) div;
-
-			final long p0 = absDivisorBy10 * div;
-			final long p1x10 = absDivisorMod10 * div;
-			final long p1 = p1x10 / 10;
-			final long p1r = p1x10 % 10;
-			zeroAfterFirstTruncatedDigit = p1r == 0 && absTruncatedDigits == (p0 + p1);
-		}
-		final boolean reminderIsNegative = truncatedDigits < 0 != divisor < 0;
-		return calculateRoundingIncrement(truncatedValue, reminderIsNegative, firstTruncatedDigit, zeroAfterFirstTruncatedDigit);
+		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(truncatedDigits), Math.abs(divisor));
+		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0 != divisor < 0, truncatedPart);
 	}
 
 	private static final DecimalRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();
