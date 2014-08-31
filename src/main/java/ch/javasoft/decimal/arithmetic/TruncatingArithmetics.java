@@ -112,15 +112,32 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		}
 		return divide128(uDecimalDividend, uDecimalDivisor);
 	}
-	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
+	private final MutableBigInteger mOne = new MutableBigInteger(one());
+	private long adivide128(long uDecimalDividend, long uDecimalDivisor) {
 //		return BigInteger.valueOf(uDecimalDividend).multiply(BigInteger.valueOf(one)).divide(BigInteger.valueOf(uDecimalDivisor)).longValue();
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
-		final MutableBigInteger mDividend = new MutableBigInteger(Math.abs(uDecimalDividend));
-		final MutableBigInteger mOne = new MutableBigInteger(one());
-		final MutableBigInteger mResult = new MutableBigInteger(Long.MAX_VALUE);
-		mDividend.multiply(mOne, mResult);
-		mResult.divide(Math.abs(uDecimalDivisor), mOne);
-		return negative ? -mOne.longValue() : mOne.longValue();
+		final MutableBigInteger mA = new MutableBigInteger(Math.abs(uDecimalDividend));
+		final MutableBigInteger mB = new MutableBigInteger(Long.MAX_VALUE);
+		mA.multiply(mOne, mB);
+		mB.divide(Math.abs(uDecimalDivisor), mA);
+		return negative ? -mA.longValue() : mA.longValue();
+	}
+	private final ThreadLocal<MutableBigInteger> tmA = new ThreadLocal<MutableBigInteger>() {
+		@Override
+		protected MutableBigInteger initialValue() {return new MutableBigInteger(Long.MAX_VALUE);}
+	};
+	private final ThreadLocal<MutableBigInteger> tmB = new ThreadLocal<MutableBigInteger>() {
+		@Override
+		protected MutableBigInteger initialValue() {return new MutableBigInteger(Long.MAX_VALUE);}
+	};
+	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
+		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
+		final MutableBigInteger mA = tmA.get();
+		final MutableBigInteger mB = tmB.get();
+		mA.set(Math.abs(uDecimalDividend));
+		mA.multiply(mOne, mB);
+		mB.divide(Math.abs(uDecimalDivisor), mA);
+		return negative ? -mA.longValue() : mA.longValue();
 	}
 
 	@Override

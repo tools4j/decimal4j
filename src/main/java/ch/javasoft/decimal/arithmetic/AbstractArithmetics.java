@@ -5,6 +5,7 @@ import java.math.MathContext;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.ScaleMetrics.Scale18f;
 
 /**
  * Base class for arithmetic implementations implementing those functions where
@@ -79,14 +80,13 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	@Override
 	public long movePointLeft(long uDecimal, int positions) {
 		if (positions >= 0) {
-			long result = uDecimal;
-			//NOTE: this is not very efficient
-			for (int i = 0; i < positions && result != 0; i++) {
-				result /= 10;
+			if (positions <= 18) {
+				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
+				return scaleMetrics.divideByScaleFactor(uDecimal);
 			}
-			return result;
+			return 0;
 		} else {
-			if (positions < Integer.MIN_VALUE) {
+			if (positions > Integer.MIN_VALUE) {
 				return movePointRight(uDecimal, -positions);
 			}
 			long halfResult = movePointRight(uDecimal, -(positions / 2));
@@ -97,14 +97,20 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	@Override
 	public long movePointRight(long uDecimal, int positions) {
 		if (positions >= 0) {
+			int pos = positions;
 			long result = uDecimal;
-			//NOTE: this is not very efficient
-			for (int i = 0; i < positions && result != 0; i++) {
-				result *= 10;
+			//NOTE: this is not very efficient for positions >> 18
+			while (pos > 18) {
+				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				pos -= 18;
 			}
-			return result;
+			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(pos);
+			return scaleMetrics.multiplyByScaleFactor(result);
 		} else {
-			return movePointLeft(uDecimal, -positions);
+			if (positions >= -18) {
+				return movePointLeft(uDecimal, -positions);
+			}
+			return 0;
 		}
 	}
 

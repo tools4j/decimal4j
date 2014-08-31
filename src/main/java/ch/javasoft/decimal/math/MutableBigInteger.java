@@ -102,16 +102,30 @@ public class MutableBigInteger {
     public MutableBigInteger(long val) {
         int highWord = (int)(val >>> 32);
         if (highWord == 0) {
-//            mag = new int[1];
-//            mag[0] = (int)val;
+        	offset = 1;
             intLen = 1;
-            value = new int[]{(int)val};
+            value = new int[]{0, (int)val};
         } else {
-//            mag = new int[2];
-//            mag[0] = highWord;
-//            mag[1] = (int)val;
+        	offset = 0;
             intLen = 2;
             value = new int[]{highWord, (int)val};
+        }
+    }
+
+    /**
+     * Constructs a BigInteger with the specified value, which may not be zero or negative.
+     */
+    public void set(long val) {
+        int highWord = (int)(val >>> 32);
+        if (highWord == 0) {
+        	offset = 1; 
+        	intLen = 1;
+            value[1] = (int)val;
+        } else {
+        	offset = 0; 
+        	intLen = 2;
+    		value[0] = highWord;
+    		value[1] = (int)val;
         }
     }
 

@@ -60,8 +60,16 @@ enum SpecialDivisionResult {
 	};
 	abstract long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor);
 
+	/**
+	 * Returns the special division case if it is one and null otherwise.
+	 * 
+	 * @param arithmetics 		the arithmetics object
+	 * @param uDecimalDividend	the dividend
+	 * @param uDecimalDivisor
+	 * @return
+	 */
 	static SpecialDivisionResult getFor(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-		//special cases first
+		//NOTE: this must be the first case because 0/0 must also throw an exception!
 		if (uDecimalDivisor == 0) {
 			return DIVISOR_IS_ZERO;
 		}

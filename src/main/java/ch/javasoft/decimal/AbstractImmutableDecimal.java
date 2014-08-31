@@ -20,7 +20,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  */
 @SuppressWarnings("serial")
 abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends AbstractImmutableDecimal<S, D, M>, M extends AbstractMutableDecimal<S, M, D>>
-		extends AbstractDecimal<S, D> {
+		extends AbstractDecimal<S, D> implements ImmutableDecimal<S, D, M> {
 
 	private final long unscaled;
 
@@ -40,14 +40,6 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	 */
 	abstract protected D create(long unscaled);
 
-	/**
-	 * Creates a new mutable value representing the same decimal as {@code this}
-	 * immutable decimal and returns it.
-	 * 
-	 * @return {@code this} as new mutable decimal value
-	 */
-	abstract public M toMutableDecimal();
-	
 	@Override
 	public AbstractImmutableDecimal<?, ?, ?> convert(int scale) {
 		return convert(scale, getArithmetics().getRoundingMode());
