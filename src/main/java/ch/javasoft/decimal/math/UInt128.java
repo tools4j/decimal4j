@@ -7,38 +7,27 @@ public class UInt128 {
 	/**
 	 * This mask is used to obtain the value of an int as if it were unsigned.
 	 */
-	private final static long LONG_MASK = 0xffffffffL;
+	private static final long LONG_MASK = 0xffffffffL;
 
-	private final ScaleMetrics scaleMetrics;
-	private final int[] one = new int[2];
-
-	public UInt128(ScaleMetrics scaleMetrics) {
-		this.scaleMetrics = scaleMetrics;
-		final long scaleFactor = scaleMetrics.getScaleFactor();
-		one[0] = (int) (scaleFactor >>> 32);
-		one[1] = (int) scaleFactor;
-	}
-
-	private final ThreadLocal<int[]> value160 = new ThreadLocal<int[]>() {
+	private static final ThreadLocal<int[]> VALUE_5W = new ThreadLocal<int[]>() {
 		@Override
 		protected int[] initialValue() {
 			return new int[5];
 		}
 	};
 
-	public long divide128(long uDecimalDividend, long uDecimalDivisor) {
+	public static long divide128(ScaleMetrics scaleMetrics, long uDecimalDividend, long uDecimalDivisor) {
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
-		final int[] val160 = value160.get();
-		multiplyByScaleFactor((int) (absDividend >> 32), (int)absDividend, val160);
+		final int[] val160 = VALUE_5W.get();
+		multiplyByScaleFactor(scaleMetrics, (int) (absDividend >> 32), (int)absDividend, val160);
 		final long quot = divide128(val160, absDivisor);
 		return negative ? -quot : quot;
 	}
 
 	//@see MutableBigInteger#multiply(MutableBigInteger y, MutableBigInteger)
-	private void multiplyByScaleFactor(int hFactor, int lFactor, int[] result160) {
-		final ScaleMetrics scaleMetrics = this.scaleMetrics;
+	private static void multiplyByScaleFactor(ScaleMetrics scaleMetrics, int hFactor, int lFactor, int[] result160) {
 		long product;
 		long carry;
 

@@ -16,7 +16,6 @@ import ch.javasoft.decimal.math.UInt128;
 public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		DecimalArithmetics {
 
-	private final UInt128 uint128;
 	private transient volatile EnumMap<DecimalRounding, DecimalArithmetics> roundingArithmetics = null;
 
 	/**
@@ -32,7 +31,6 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	 */
 	public TruncatingArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
-		this.uint128 = new UInt128(scaleMetrics);
 	}
 
 	@Override
@@ -117,7 +115,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			//just do it, multiplication result fits in long
 			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
 		}
-		return uint128.divide128(uDecimalDividend, uDecimalDivisor);
+		return UInt128.divide128(scaleMetrics, uDecimalDividend, uDecimalDivisor);
 	}
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
 		final int scaleDiff = getScale() - pow10.getScale();
@@ -154,7 +152,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			return getScaleMetrics().multiplyByScaleFactor(one()) / uDecimal;
 		}
 		//too big, use divide128 now
-		return uint128.divide128(one(), uDecimal);
+		return UInt128.divide128(scaleMetrics, one(), uDecimal);
 	}
 
 	@Override
