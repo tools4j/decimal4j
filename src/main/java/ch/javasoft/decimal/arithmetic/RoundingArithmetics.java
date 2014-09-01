@@ -99,7 +99,31 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		if (special != null) {
 			return special.divide(this, uDecimalDividend, uDecimalDivisor);
 		}
+		//div by power of 10
+		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimalDivisor));
+		if (pow10 != null) {
+			return divideByPowerOf10(uDecimalDividend, uDecimalDivisor, pow10);
+		}
 		return divide128(uDecimalDividend, uDecimalDivisor);
+	}
+	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
+		final int scaleDiff = getScale() - pow10.getScale();
+		if (scaleDiff <= 0) {
+			//divide
+			final ScaleMetrics scaler = ScaleMetrics.valueOf(-scaleDiff);
+			final long truncatedValue = scaler.divideByScaleFactor(uDecimalDividend);
+			final long truncatedDigits = uDecimalDividend - scaler.multiplyByScaleFactor(truncatedValue);
+			if (uDecimalDivisor > 0) {
+				return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimalDivisor);
+			}
+			return -truncatedValue + rounding.calculateRoundingIncrementForDivision(-truncatedValue, truncatedDigits, uDecimalDivisor);
+			
+		} else {
+			//multiply
+			final ScaleMetrics scaler = ScaleMetrics.valueOf(scaleDiff);
+			final long quot = scaler.multiplyByScaleFactor(uDecimalDividend);
+			return uDecimalDivisor > 0 ? quot : -quot;
+		}
 	}
 	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
@@ -121,6 +145,11 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(this, one, uDecimal);
 		if (special != null) {
 			return special.divide(this, one, uDecimal);
+		}
+		//div by power of 10
+		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimal));
+		if (pow10 != null) {
+			return divideByPowerOf10(one(), pow10.getScaleFactor(), pow10);
 		}
 		//check if one * one fits in long
 		final ScaleMetrics scaleMetrics = getScaleMetrics();

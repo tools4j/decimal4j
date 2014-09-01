@@ -20,6 +20,11 @@ import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
  */
 abstract public class ScaleMetrics {
 
+    /**
+     * This mask is used to obtain the value of an int as if it were unsigned.
+     */
+    private final static long LONG_MASK = 0xffffffffL;
+
 	/**
 	 * Scale class for decimals with 0 {@link #getScale() fraction digits} (aka
 	 * as integers) and {@link #getScaleFactor() scale factor} 1.
@@ -40,6 +45,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor;
+		}
+		
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return factor & LONG_MASK;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
 		}
 
 		@Override
@@ -76,6 +91,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 10;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 10;
 		}
@@ -106,6 +131,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 100;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 100;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
 		}
 
 		@Override
@@ -142,6 +177,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 1000;
 		}
@@ -172,6 +217,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 10000;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 10000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
 		}
 
 		@Override
@@ -208,6 +263,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 100000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 100000;
 		}
@@ -238,6 +303,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 1000000;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1000000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
 		}
 
 		@Override
@@ -274,6 +349,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 10000000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 10000000;
 		}
@@ -304,6 +389,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 100000000;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 100000000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
 		}
 
 		@Override
@@ -340,6 +435,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1000000000;
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return 0;
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 1000000000;
 		}
@@ -370,6 +475,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 10000000000L;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1410065408;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 2;//(scaleFactor >>> 32)
 		}
 
 		@Override
@@ -406,6 +521,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1215752192;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 23;//(scaleFactor >>> 32)
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 100000000000L;
 		}
@@ -436,6 +561,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 1000000000000L;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 3567587328L;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 232;//(scaleFactor >>> 32)
 		}
 
 		@Override
@@ -472,6 +607,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1316134912;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 2328;//(scaleFactor >>> 32)
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 10000000000000L;
 		}
@@ -502,6 +647,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 100000000000000L;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 276447232;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 23283;//(scaleFactor >>> 32)
 		}
 
 		@Override
@@ -538,6 +693,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 2764472320L;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 232830;//(scaleFactor >>> 32)
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 1000000000000000L;
 		}
@@ -568,6 +733,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long multiplyByScaleFactor(long factor) {
 			return factor * 10000000000000000L;
+		}
+
+		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1874919424;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 2328306;//(scaleFactor >>> 32)
 		}
 
 		@Override
@@ -604,6 +779,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 1569325056;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 23283064;//(scaleFactor >>> 32)
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 100000000000000000L;
 		}
@@ -637,6 +822,16 @@ abstract public class ScaleMetrics {
 		}
 
 		@Override
+		public long mulloByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 2808348672L;//(scaleFactor & LONG_MASK)
+		}
+		
+		@Override
+		public long mulhiByScaleFactor(int factor) {
+			return (factor & LONG_MASK) * 232830643;//(scaleFactor >>> 32)
+		}
+
+		@Override
 		public long divideByScaleFactor(long dividend) {
 			return dividend / 1000000000000000000L;
 		}
@@ -653,6 +848,8 @@ abstract public class ScaleMetrics {
 	 * {@code VALUES=[Scale0f.INSTANCE, Scale1f.INSTANCE, ..., Scale18f.INSTANCE]}
 	 */
 	public static final List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(Scale0f.INSTANCE, Scale1f.INSTANCE, Scale2f.INSTANCE, Scale3f.INSTANCE, Scale4f.INSTANCE, Scale5f.INSTANCE, Scale6f.INSTANCE, Scale7f.INSTANCE, Scale8f.INSTANCE, Scale9f.INSTANCE, Scale10f.INSTANCE, Scale11f.INSTANCE, Scale12f.INSTANCE, Scale13f.INSTANCE, Scale14f.INSTANCE, Scale15f.INSTANCE, Scale16f.INSTANCE, Scale17f.INSTANCE, Scale18f.INSTANCE));
+
+	private static final long[] SCALE_FACTORS = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L}; 
 
 	private final long maxIntegerValue = divideByScaleFactor(Long.MAX_VALUE);
 	private final long minIntegerValue = divideByScaleFactor(Long.MIN_VALUE);
@@ -673,6 +870,21 @@ abstract public class ScaleMetrics {
 			return VALUES.get(scale);
 		}
 		throw new IllegalArgumentException("illegal scale, must be in [0,18] but was: " + scale);
+	}
+
+	/**
+	 * Returns the {@code ScaleMetrics} constant that matches the given
+	 * {@code scaleFactor} if any and null otherwise.
+	 * 
+	 * @param scaleFactor
+	 *            the scale factor to find
+	 * @return the scale metrics constant with {@code scaleFactor} equal to
+	 *         {@link #getScaleFactor()} if it exists and null otherwise
+	 * @see #getScaleFactor()
+	 */
+	public static ScaleMetrics findByScaleFactor(long scaleFactor) {
+		final int index = Arrays.binarySearch(SCALE_FACTORS, scaleFactor);
+		return index < 0 ? null : VALUES.get(index);
 	}
 
 	/**
@@ -719,6 +931,24 @@ abstract public class ScaleMetrics {
 	 * @return {@code factor*scaleFactor}
 	 */
 	abstract public long multiplyByScaleFactor(long factor);
+
+	/**
+	 * Returns {@code factor*low32(scaleFactor)} where low32 refers to the low 32 bits of the factor.
+	 * 
+	 * @param factor
+	 *            the factor
+	 * @return {@code factor*low32(scaleFactor)}
+	 */
+	abstract public long mulloByScaleFactor(int factor);
+
+	/**
+	 * Returns {@code factor*high32(scaleFactor)} where high32 refers to the high 32 bits of the factor.
+	 * 
+	 * @param factor
+	 *            the factor
+	 * @return {@code factor*high32(scaleFactor)}
+	 */
+	abstract public long mulhiByScaleFactor(int factor);
 
 	/**
 	 * Returns {@code dividend/scaleFactor}.

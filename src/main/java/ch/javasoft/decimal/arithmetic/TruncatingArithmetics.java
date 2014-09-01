@@ -6,7 +6,7 @@ import java.util.EnumMap;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.math.MutableBigInteger;
+import ch.javasoft.decimal.math.UInt128;
 
 /**
  * An arithmetic implementation which truncates digits after the last scale
@@ -16,6 +16,7 @@ import ch.javasoft.decimal.math.MutableBigInteger;
 public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		DecimalArithmetics {
 
+	private final UInt128 uint128;
 	private transient volatile EnumMap<DecimalRounding, DecimalArithmetics> roundingArithmetics = null;
 
 	/**
@@ -31,6 +32,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	 */
 	public TruncatingArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
+		this.uint128 = new UInt128(scaleMetrics);
 	}
 
 	@Override
@@ -104,40 +106,33 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		if (special != null) {
 			return special.divide(this, uDecimalDividend, uDecimalDivisor);
 		}
+		//div by power of 10
+		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimalDivisor));
+		if (pow10 != null) {
+			return divideByPowerOf10(uDecimalDividend, uDecimalDivisor, pow10);
+		}
 		//WE WANT: uDecimalDividend * one / uDecimalDivisor
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		if (uDecimalDividend <= scaleMetrics.getMaxIntegerValue() && uDecimalDividend >= scaleMetrics.getMinIntegerValue()) {
 			//just do it, multiplication result fits in long
 			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
 		}
-		return divide128(uDecimalDividend, uDecimalDivisor);
+		return uint128.divide128(uDecimalDividend, uDecimalDivisor);
 	}
-	private final MutableBigInteger mOne = new MutableBigInteger(one());
-	private long adivide128(long uDecimalDividend, long uDecimalDivisor) {
-//		return BigInteger.valueOf(uDecimalDividend).multiply(BigInteger.valueOf(one)).divide(BigInteger.valueOf(uDecimalDivisor)).longValue();
-		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
-		final MutableBigInteger mA = new MutableBigInteger(Math.abs(uDecimalDividend));
-		final MutableBigInteger mB = new MutableBigInteger(Long.MAX_VALUE);
-		mA.multiply(mOne, mB);
-		mB.divide(Math.abs(uDecimalDivisor), mA);
-		return negative ? -mA.longValue() : mA.longValue();
-	}
-	private final ThreadLocal<MutableBigInteger> tmA = new ThreadLocal<MutableBigInteger>() {
-		@Override
-		protected MutableBigInteger initialValue() {return new MutableBigInteger(Long.MAX_VALUE);}
-	};
-	private final ThreadLocal<MutableBigInteger> tmB = new ThreadLocal<MutableBigInteger>() {
-		@Override
-		protected MutableBigInteger initialValue() {return new MutableBigInteger(Long.MAX_VALUE);}
-	};
-	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
-		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
-		final MutableBigInteger mA = tmA.get();
-		final MutableBigInteger mB = tmB.get();
-		mA.set(Math.abs(uDecimalDividend));
-		mA.multiply(mOne, mB);
-		mB.divide(Math.abs(uDecimalDivisor), mA);
-		return negative ? -mA.longValue() : mA.longValue();
+	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
+		final int scaleDiff = getScale() - pow10.getScale();
+		final long quot;
+		if (scaleDiff <= 0) {
+			//divide
+			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scaleDiff);
+			quot = scaleMetrics.divideByScaleFactor(uDecimalDividend);
+			
+		} else {
+			//multiply
+			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scaleDiff);
+			quot = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
+		}
+		return uDecimalDivisor > 0 ? quot : -quot;
 	}
 
 	@Override
@@ -148,13 +143,18 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		if (special != null) {
 			return special.divide(this, one, uDecimal);
 		}
+		//div by power of 10
+		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimal));
+		if (pow10 != null) {
+			return divideByPowerOf10(one(), pow10.getScaleFactor(), pow10);
+		}
 		//check if one * one fits in long
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		if (scaleMetrics.getScale() <= 9) {
 			return getScaleMetrics().multiplyByScaleFactor(one()) / uDecimal;
 		}
 		//too big, use divide128 now
-		return divide128(one(), uDecimal);
+		return uint128.divide128(one(), uDecimal);
 	}
 
 	@Override
