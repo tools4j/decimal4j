@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
 
 /**
@@ -20,10 +21,10 @@ import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
  */
 abstract public class ScaleMetrics {
 
-    /**
-     * This mask is used to obtain the value of an int as if it were unsigned.
-     */
-    private final static long LONG_MASK = 0xffffffffL;
+	/**
+	 * This mask is used to obtain the value of an int as if it were unsigned.
+	 */
+	private final static long LONG_MASK = 0xffffffffL;
 
 	/**
 	 * Scale class for decimals with 0 {@link #getScale() fraction digits} (aka
@@ -46,12 +47,12 @@ abstract public class ScaleMetrics {
 		public long multiplyByScaleFactor(long factor) {
 			return factor;
 		}
-		
+
 		@Override
 		public long mulloByScaleFactor(int factor) {
 			return factor & LONG_MASK;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -94,7 +95,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 10;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -137,7 +138,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 100;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -180,7 +181,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -223,7 +224,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 10000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -266,7 +267,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 100000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -309,7 +310,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1000000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -323,6 +324,16 @@ abstract public class ScaleMetrics {
 		@Override
 		public long moduloByScaleFactor(long dividend) {
 			return dividend % 1000000;
+		}
+		
+		@Override
+		public Decimal6f createImmutable(long unscaled) {
+			return Decimal6f.valueOfUnscaled(unscaled);
+		}
+		
+		@Override
+		public MutableDecimal6f createMutable(long unscaled) {
+			return new MutableDecimal6f(unscaled);
 		}
 	}
 
@@ -352,7 +363,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 10000000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -395,7 +406,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 100000000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -438,7 +449,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1000000000;
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return 0;
@@ -481,7 +492,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1410065408;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 2;//(scaleFactor >>> 32)
@@ -524,7 +535,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1215752192;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 23;//(scaleFactor >>> 32)
@@ -567,7 +578,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 3567587328L;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 232;//(scaleFactor >>> 32)
@@ -610,7 +621,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1316134912;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 2328;//(scaleFactor >>> 32)
@@ -653,7 +664,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 276447232;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 23283;//(scaleFactor >>> 32)
@@ -696,7 +707,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 2764472320L;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 232830;//(scaleFactor >>> 32)
@@ -739,7 +750,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1874919424;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 2328306;//(scaleFactor >>> 32)
@@ -782,7 +793,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 1569325056;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 23283064;//(scaleFactor >>> 32)
@@ -825,7 +836,7 @@ abstract public class ScaleMetrics {
 		public long mulloByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 2808348672L;//(scaleFactor & LONG_MASK)
 		}
-		
+
 		@Override
 		public long mulhiByScaleFactor(int factor) {
 			return (factor & LONG_MASK) * 232830643;//(scaleFactor >>> 32)
@@ -849,11 +860,12 @@ abstract public class ScaleMetrics {
 	 */
 	public static final List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(Scale0f.INSTANCE, Scale1f.INSTANCE, Scale2f.INSTANCE, Scale3f.INSTANCE, Scale4f.INSTANCE, Scale5f.INSTANCE, Scale6f.INSTANCE, Scale7f.INSTANCE, Scale8f.INSTANCE, Scale9f.INSTANCE, Scale10f.INSTANCE, Scale11f.INSTANCE, Scale12f.INSTANCE, Scale13f.INSTANCE, Scale14f.INSTANCE, Scale15f.INSTANCE, Scale16f.INSTANCE, Scale17f.INSTANCE, Scale18f.INSTANCE));
 
-	private static final long[] SCALE_FACTORS = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L}; 
+	private static final long[] SCALE_FACTORS = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L };
 
 	private final long maxIntegerValue = divideByScaleFactor(Long.MAX_VALUE);
 	private final long minIntegerValue = divideByScaleFactor(Long.MIN_VALUE);
 	private final TruncatingArithmetics truncatingArithmetics = new TruncatingArithmetics(this);
+	private final DecimalArithmetics halfUpArithmetics = truncatingArithmetics.derive(RoundingMode.HALF_UP);
 
 	/**
 	 * Returns the {@code ScaleMetrics} constant based on a given scale
@@ -933,7 +945,8 @@ abstract public class ScaleMetrics {
 	abstract public long multiplyByScaleFactor(long factor);
 
 	/**
-	 * Returns {@code factor*low32(scaleFactor)} where low32 refers to the low 32 bits of the factor.
+	 * Returns {@code factor*low32(scaleFactor)} where low32 refers to the low
+	 * 32 bits of the factor.
 	 * 
 	 * @param factor
 	 *            the factor
@@ -942,7 +955,8 @@ abstract public class ScaleMetrics {
 	abstract public long mulloByScaleFactor(int factor);
 
 	/**
-	 * Returns {@code factor*high32(scaleFactor)} where high32 refers to the high 32 bits of the factor.
+	 * Returns {@code factor*high32(scaleFactor)} where high32 refers to the
+	 * high 32 bits of the factor.
 	 * 
 	 * @param factor
 	 *            the factor
@@ -973,31 +987,21 @@ abstract public class ScaleMetrics {
 	 *
 	 * @param unscaled
 	 *            the unscaled long value
-	 * @param roundingMode
-	 *            the rounding mode to use for arithmetic operations performed
-	 *            on the returned value
-	 * @param overflowMode
-	 *            the overflow mode to use for arithmetic operations performed
-	 *            on the returned value
 	 * @return an immutable value.
 	 */
-	public AbstractImmutableDecimal<?, ?, ?> createImmutable(long unscaled, RoundingMode roundingMode, OverflowMode overflowMode) {
+	public AbstractImmutableDecimal<?, ?, ?> createImmutable(long unscaled) {
 		// FIXME impl
 		throw new RuntimeException("not implemented for " + getClass().getSimpleName());
 	}
 
 	/**
-	 * Creates and returns a mutable zero value.
+	 * Creates and returns a mutable value.
 	 *
-	 * @param roundingMode
-	 *            the rounding mode to use for arithmetic operations performed
-	 *            on the returned value
-	 * @param overflowMode
-	 *            the overflow mode to use for arithmetic operations performed
-	 *            on the returned value
+	 * @param unscaled
+	 *            the unscaled long value
 	 * @return an mutable value.
 	 */
-	public AbstractMutableDecimal<?, ?, ?> createMutable(RoundingMode roundingMode, OverflowMode overflowMode) {
+	public AbstractMutableDecimal<?, ?, ?> createMutable(long unscaled) {
 		// FIXME impl
 		throw new RuntimeException("not implemented for " + getClass().getSimpleName());
 	}
@@ -1011,5 +1015,28 @@ abstract public class ScaleMetrics {
 	 */
 	public TruncatingArithmetics getTruncatingArithmetics() {
 		return truncatingArithmetics;
+	}
+
+	/**
+	 * Returns the arithmetics for this scale that performs all operations with
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * 
+	 * @return arithmetics for this scale with HALF_UP rounding
+	 * @see RoundingMode#HALF_UP
+	 */
+	public DecimalArithmetics getHalfUpArithmetics() {
+		return halfUpArithmetics;
+	}
+
+	/**
+	 * Returns the arithmetics for this scale that performs all operations with
+	 * the specified {@code roundingMode}.
+	 *
+	 * @param roundingMode
+	 *            the rounding mode used by the returned arithmetics
+	 * @return arithmetics for this scale with specified rounding mode
+	 */
+	public DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
+		return truncatingArithmetics.derive(roundingMode);
 	}
 }

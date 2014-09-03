@@ -72,6 +72,13 @@ public class RoundingLongArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
+	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		final long quotient = uDecimalDividend / lDivisor;
+		final long remainder = uDecimalDividend - quotient * lDivisor;
+		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);
+	}
+
+	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		final long unrounded = uDecimalDividend / uDecimalDivisor;
 		final long product = unrounded * uDecimalDivisor;

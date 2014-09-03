@@ -1,6 +1,5 @@
 package ch.javasoft.decimal.arithmetic;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.junit.Assert;

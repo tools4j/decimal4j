@@ -2,8 +2,6 @@ package ch.javasoft.decimal;
 
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-
 /**
  * Base class for immutable {@link Decimal} classes of different scales.
  * Arithmetic operations of immutable decimals return a new decimal instance as
@@ -24,91 +22,109 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 
 	private final long unscaled;
 
-	public AbstractImmutableDecimal(long unscaled, S scale, DecimalArithmetics arithmetics) {
-		super(scale, arithmetics);
+	public AbstractImmutableDecimal(long unscaled, S scale) {
+		super(scale);
 		this.unscaled = unscaled;
 	}
 
 	/**
-	 * Creates a new decimal instance based on the given unscaled value and
-	 * returns it.
+	 * Returns a new {@code Decimal} whose value is
+	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>.
 	 * 
 	 * @param unscaled
-	 *            the unscaled value
-	 * @return a new decimal value representing
-	 *         <code>unscaled*10<sup>-scale</sup></code>
+	 *            unscaled value to be returned as a new {@code Decimal}
+	 * @return a new decimal instance representing
+	 *         <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>
 	 */
-	abstract protected D create(long unscaled);
+	@Override
+	abstract protected D createOrAssign(long unscaled);
 
 	@Override
-	public AbstractImmutableDecimal<?, ?, ?> convert(int scale) {
-		return convert(scale, getArithmetics().getRoundingMode());
+	public ImmutableDecimal<?, ?, ?> scale(int scale) {
+		return scale(scale, RoundingMode.HALF_UP);
 	}
 
 	@Override
-	public AbstractImmutableDecimal<?, ?, ?> convert(int scale, RoundingMode roundingMode) {
-		final int curScale = getScaleMetrics().getScale();
-		if (scale == curScale) {
+	@SuppressWarnings("hiding")
+	public <S extends ScaleMetrics> ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?, ?>, ? extends MutableDecimal<S, ?, ?>> scale(S scaleMetrics) {
+		return scale(scaleMetrics, RoundingMode.HALF_UP);
+	}
+
+	@Override
+	public ImmutableDecimal<?, ?, ?> scale(int scale, RoundingMode roundingMode) {
+		final int myScale = getScale();
+		if (scale == myScale) {
 			return this;
 		}
-		final DecimalArithmetics curArith = getArithmetics();
-		final RoundingMode curRounding = curArith.getRoundingMode();
-		final OverflowMode curOverflow = curArith.getOverflowMode();
-		final ScaleMetrics newMetrics = ScaleMetrics.valueOf(scale);
-		final DecimalArithmetics conversionArith = newMetrics.getTruncatingArithmetics().derive(roundingMode).derive(curOverflow);
-		final long newUnscaled = conversionArith.fromUnscaled(unscaledValue(), curScale);
-		return newMetrics.createImmutable(newUnscaled, curRounding, curOverflow);
+		final ScaleMetrics targetMetrics = ScaleMetrics.valueOf(scale);
+		final long targetUnscaled = targetMetrics.getArithmetics(roundingMode).fromUnscaled(unscaledValue(), myScale);
+		return targetMetrics.createImmutable(targetUnscaled);
 	}
 
 	@Override
+	@SuppressWarnings("hiding")
+	public <S extends ScaleMetrics> ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?, ?>, ? extends MutableDecimal<S, ?, ?>> scale(S scaleMetrics, RoundingMode roundingMode) {
+		final ImmutableDecimal<?, ?, ?> value;
+		if (scaleMetrics == getScaleMetrics()) {
+			value = this;
+		} else {
+			final long targetUnscaled = scaleMetrics.getArithmetics(roundingMode).fromUnscaled(unscaledValue(), getScale());
+			value = scaleMetrics.createImmutable(targetUnscaled);
+		}
+		@SuppressWarnings("unchecked")//safe: we know it is the same scale metrics
+		final ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?, ?>, ? extends MutableDecimal<S, ?, ?>> result = (ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?, ?>, ? extends MutableDecimal<S, ?, ?>>) value;
+		return result;
+	}
+	
+	@Override
 	public D add(Decimal<S> augend) {
-		return create(getArithmetics().add(unscaled, augend.unscaledValue()));
+		return createOrAssign(getDefaultArithmetics().add(unscaled, augend.unscaledValue()));
 	}
 
 	@Override
 	public D subtract(Decimal<S> subtrahend) {
-		return create(getArithmetics().subtract(unscaled, subtrahend.unscaledValue()));
+		return createOrAssign(getDefaultArithmetics().subtract(unscaled, subtrahend.unscaledValue()));
 	}
 
 	@Override
 	public D multiply(Decimal<S> multiplicand) {
-		return create(getArithmetics().multiply(unscaled, multiplicand.unscaledValue()));
+		return createOrAssign(getDefaultArithmetics().multiply(unscaled, multiplicand.unscaledValue()));
 	}
 
 	@Override
 	public D multiply(Decimal<S> multiplicand, RoundingMode roundingMode) {
-		return create(getArithmetics().derive(roundingMode).multiply(unscaled, multiplicand.unscaledValue()));
+		return createOrAssign(getArithmeticsFor(roundingMode).multiply(unscaled, multiplicand.unscaledValue()));
 	}
 
 	@Override
 	public D divide(Decimal<S> divisor) {
-		return create(getArithmetics().divide(unscaled, divisor.unscaledValue()));
+		return createOrAssign(getDefaultArithmetics().divide(unscaled, divisor.unscaledValue()));
 	}
 
 	@Override
 	public D divide(Decimal<S> divisor, RoundingMode roundingMode) {
-		return create(getArithmetics().derive(roundingMode).divide(unscaled, divisor.unscaledValue()));
+		return createOrAssign(getArithmeticsFor(roundingMode).divide(unscaled, divisor.unscaledValue()));
 	}
 
 	@Override
 	public D negate() {
-		return create(getArithmetics().negate(unscaled));
+		return createOrAssign(getDefaultArithmetics().negate(unscaled));
 	}
 
 	@Override
 	public D invert() {
-		return create(getArithmetics().invert(unscaled));
+		return createOrAssign(getDefaultArithmetics().invert(unscaled));
 	}
 
 	@Override
 	public D invert(RoundingMode roundingMode) {
-		return create(getArithmetics().derive(roundingMode).invert(unscaled));
+		return createOrAssign(getArithmeticsFor(roundingMode).invert(unscaled));
 	}
 
 	@Override
 	public D movePointLeft(int n) {
 		if (n > 0) {
-			return create(getArithmetics().movePointLeft(unscaled, n));
+			return createOrAssign(getDefaultArithmetics().movePointLeft(unscaled, n));
 		}
 		return n == 0 ? self() : movePointRight(-n);
 	}
@@ -116,7 +132,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	@Override
 	public D movePointLeft(int n, RoundingMode roundingMode) {
 		if (n > 0) {
-			return create(getArithmetics().derive(roundingMode).movePointLeft(unscaled, n));
+			return createOrAssign(getArithmeticsFor(roundingMode).movePointLeft(unscaled, n));
 		}
 		return n == 0 ? self() : movePointRight(-n, roundingMode);
 	}
@@ -124,7 +140,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	@Override
 	public D movePointRight(int n) {
 		if (n > 0) {
-			return create(getArithmetics().movePointRight(unscaled, n));
+			return createOrAssign(getDefaultArithmetics().movePointRight(unscaled, n));
 		}
 		return n == 0 ? self() : movePointLeft(-n);
 	}
@@ -132,19 +148,19 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	@Override
 	public D movePointRight(int n, RoundingMode roundingMode) {
 		if (n > 0) {
-			return create(getArithmetics().derive(roundingMode).movePointRight(unscaled, n));
+			return createOrAssign(getArithmeticsFor(roundingMode).movePointRight(unscaled, n));
 		}
 		return n == 0 ? self() : movePointLeft(-n, roundingMode);
 	}
 
 	@Override
 	public D pow(int n) {
-		return create(getArithmetics().pow(unscaled, n));
+		return createOrAssign(getDefaultArithmetics().pow(unscaled, n));
 	}
 
 	@Override
 	public D pow(int n, RoundingMode roundingMode) {
-		return create(getArithmetics().derive(roundingMode).pow(unscaled, n));
+		return createOrAssign(getArithmeticsFor(roundingMode).pow(unscaled, n));
 	}
 
 	@Override

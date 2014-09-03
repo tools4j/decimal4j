@@ -66,6 +66,10 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
 		return uDecimalMinuend - uDecimalSubtrahend;
 	}
+	@Override
+	public long multiplyWithLong(long uDecimal, long lValue) {
+		return uDecimal * lValue;
+	}
 
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {

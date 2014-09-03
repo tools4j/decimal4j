@@ -98,6 +98,11 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	}
 
 	@Override
+	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		return uDecimalDividend / lDivisor;
+	}
+
+	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(this, uDecimalDividend, uDecimalDivisor);

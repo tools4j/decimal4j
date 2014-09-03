@@ -28,10 +28,18 @@ public interface ImmutableDecimal<S extends ScaleMetrics, D extends ImmutableDec
 	M toMutableDecimal();
 
 	@Override
-	ImmutableDecimal<?, ?, ?> convert(int scale);
+	ImmutableDecimal<?, ?, ?> scale(int scale);
 
 	@Override
-	ImmutableDecimal<?, ?, ?> convert(int scale, RoundingMode roundingMode);
+	@SuppressWarnings("hiding")
+	<S extends ScaleMetrics> ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?, ?>, ? extends MutableDecimal<S, ?, ?>> scale(S scaleMetrics);
+
+	@Override
+	ImmutableDecimal<?, ?, ?> scale(int scale, RoundingMode roundingMode);
+
+	@Override
+	@SuppressWarnings("hiding")
+	<S extends ScaleMetrics> ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?, ?>, ? extends MutableDecimal<S, ?, ?>> scale(S scaleMetrics, RoundingMode roundingMode);
 
 	@Override
 	D add(Decimal<S> augend);

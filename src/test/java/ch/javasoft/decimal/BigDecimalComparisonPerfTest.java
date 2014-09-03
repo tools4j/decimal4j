@@ -364,7 +364,7 @@ public class BigDecimalComparisonPerfTest {
 		final long tDec6f = timer.getTimeMillis(2);
 		final long tMut6f = timer.getTimeMillis(3);
 		final long tNat6f = timer.getTimeMillis(4);
-		System.out.println(msg + ", trounding=" + Decimal6f.ARITHMETICS.getRoundingMode() + ": BigDecimal=" + tBigDec + "ms, double=" + tDouble + "ms, Decimal6f=" + tDec6f + "ms, mutable=" + tMut6f + "ms, native=" + tNat6f + "ms, relative=" //
+		System.out.println(msg + ", rounding=" + Decimal6f.ARITHMETICS.getRoundingMode() + ": BigDecimal=" + tBigDec + "ms, double=" + tDouble + "ms, Decimal6f=" + tDec6f + "ms, mutable=" + tMut6f + "ms, native=" + tNat6f + "ms, relative=" //
 				+ ((100f * tDouble) / tBigDec) + "% / " + ((100f * tDec6f) / tBigDec) + "% / " + ((100f * tMut6f) / tBigDec) + "% / " + +((100f * tNat6f) / tBigDec) + "%");
 	}
 

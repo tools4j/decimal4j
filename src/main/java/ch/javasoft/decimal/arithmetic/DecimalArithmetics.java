@@ -159,21 +159,52 @@ public interface DecimalArithmetics {
 	long multiply(long uDecimal1, long uDecimal2);
 
 	/**
-	 * Returns an unscaled decimal whose value is {@code (dividend / divisor)}.
-	 * If rounding must be performed, this arithmetic's
-	 * {@link #getRoundingMode() rounding mode} is applied.
+	 * Returns an unscaled decimal whose value is <tt>(uDecimal &times;
+	 * lValue)} where the second argument is a true long value instead of an unscaled decimal.
+	 * 
+	 * @param uDecimal
+	 *            unscaled decimal value to be multiplied
+	 * @param lValue
+	 *            long value to be multiplied
+	 * @return {@code uDecimal * value}
+	 */
+	long multiplyWithLong(long uDecimal, long lValue);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * {@code (uDecimalDividend / uDecimalDivisor)}. If rounding must be
+	 * performed, this arithmetic's {@link #getRoundingMode() rounding mode} is
+	 * applied.
 	 * 
 	 * @param uDecimalDividend
 	 *            value to be divided.
 	 * @param uDecimalDivisor
 	 *            value by which the dividend is to be divided.
-	 * @return {@code dividend / divisor} as unscaled decimal
+	 * @return {@code uDecimalDividend / uDecimalDivisor} as unscaled decimal
 	 * @throws ArithmeticException
 	 *             if {@code divisor} is zero or if an overflow occurs and the
 	 *             {@link #getOverflowMode() overflow mode} is set to throw an
 	 *             exception
 	 */
 	long divide(long uDecimalDividend, long uDecimalDivisor);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * {@code (uDecimalDividend / lDivisor)} where the second argument is a true
+	 * long value instead of an unscaled decimal. If rounding must be performed,
+	 * this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
+	 * 
+	 * @param uDecimalDividend
+	 *            value to be divided.
+	 * @param lDivisor
+	 *            long value by which the dividend is to be divided.
+	 * @return {@code uDecimalDividend / lDivisor} as unscaled decimal
+	 * @throws ArithmeticException
+	 *             if {@code divisor} is zero or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long divideByLong(long uDecimalDividend, long lDivisor);
 
 	/**
 	 * Returns the non-negative value {@code abs(uDecimal)}, which is the value

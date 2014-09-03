@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.ScaleMetrics.Scale6f;
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 @SuppressWarnings("serial")
 public class MutableDecimal6f extends
@@ -16,45 +15,17 @@ public class MutableDecimal6f extends
 	 * Creates a new {@code MutableDecimal6f} with value zero.
 	 */
 	public MutableDecimal6f() {
-		super(0, Scale6f.INSTANCE, Decimal6f.ARITHMETICS);
+		super(0, Scale6f.INSTANCE);
 	}
 
-	/**
-	 * Creates a new {@code MutableDecimal6f} with value zero and the specified
-	 * rounding mode.
-	 * 
-	 * @param roundingMode
-	 *            the rounding mode to use for arithmetic operations performed
-	 *            on this decimal
-	 */
-	public MutableDecimal6f(RoundingMode roundingMode) {
-		super(0, Scale6f.INSTANCE, Scale6f.INSTANCE.getTruncatingArithmetics().derive(roundingMode));
-	}
-
-	/**
-	 * Creates a new {@code MutableDecimal6f} with value zero and the specified
-	 * rounding and overflow mode.
-	 * 
-	 * @param roundingMode
-	 *            the rounding mode to use for arithmetic operations performed
-	 *            on this decimal
-	 * @param overflowMode
-	 *            the overflow mode to use for arithmetic operations performed
-	 *            on this decimal
-	 */
-	public MutableDecimal6f(RoundingMode roundingMode, OverflowMode overflowMode) {
-		super(0, Scale6f.INSTANCE, Scale6f.INSTANCE.getTruncatingArithmetics().derive(roundingMode).derive(overflowMode));
-	}
-
-	private MutableDecimal6f(long unscaledValue, DecimalArithmetics arithmetics) {
-		super(unscaledValue, Scale6f.INSTANCE, arithmetics);
+	private MutableDecimal6f(long unscaledValue, Scale6f scale) {
+		super(unscaledValue, scale);
 	}
 
 	public MutableDecimal6f(String value) {
 		this(Decimal6f.ARITHMETICS.parse(value));
 	}
 
-	//FIXME apply rounding mode to decimal or not?
 	public MutableDecimal6f(String value, RoundingMode roundingMode) {
 		this(Decimal6f.ARITHMETICS.derive(roundingMode).parse(value));
 	}
@@ -69,7 +40,6 @@ public class MutableDecimal6f extends
 		add(value);
 	}
 
-	//FIXME apply rounding mode to decimal or not?
 	public MutableDecimal6f(double value, RoundingMode roundingMode) {
 		this();
 		add(value, roundingMode);
@@ -80,7 +50,6 @@ public class MutableDecimal6f extends
 		add(value);
 	}
 
-	//FIXME apply rounding mode to decimal or not?
 	public MutableDecimal6f(BigDecimal value, RoundingMode roundingMode) {
 		this();
 		add(value, roundingMode);
@@ -99,7 +68,7 @@ public class MutableDecimal6f extends
 	 */
 	public MutableDecimal6f(long unscaledValue, int scale) {
 		this();
-		add(unscaledValue, scale);
+		addUnscaled(unscaledValue, scale);
 	}
 
 	/**
@@ -116,16 +85,15 @@ public class MutableDecimal6f extends
 	 *            the rounding mode to apply if the value argument needs to be
 	 *            truncated when converted into a decimal number
 	 */
-	//FIXME apply rounding mode to decimal or not?
 	public MutableDecimal6f(long unscaledValue, int scale, RoundingMode roundingMode) {
 		this();
-		add(unscaledValue, scale, roundingMode);
+		addUnscaled(unscaledValue, scale, roundingMode);
 	}
 
 	public MutableDecimal6f(Decimal<Scale6f> value) {
-		this(value.unscaledValue(), value.getArithmetics());
+		this(value.unscaledValue(), value.getScaleMetrics());
 	}
-
+	
 	@Override
 	protected MutableDecimal6f self() {
 		return this;
@@ -136,26 +104,8 @@ public class MutableDecimal6f extends
 		return new MutableDecimal6f(this);
 	}
 
-	@Override
-	public MutableDecimal6f convert(RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getArithmetics();
-		if (roundingMode == arith.getRoundingMode()) {
-			return this;
-		}
-		return new MutableDecimal6f(unscaledValue(), arith.derive(roundingMode));
-	}
-
-	@Override
-	public MutableDecimal6f convert(OverflowMode overflowMode) {
-		final DecimalArithmetics arith = getArithmetics();
-		if (overflowMode == arith.getOverflowMode()) {
-			return this;
-		}
-		return new MutableDecimal6f(unscaledValue(), arith.derive(overflowMode));
-	}
-
 	public static MutableDecimal6f unscaled(long unscaledValue) {
-		return new MutableDecimal6f(unscaledValue, Decimal6f.ARITHMETICS);
+		return new MutableDecimal6f(unscaledValue, Scale6f.INSTANCE);
 	}
 
 	public static MutableDecimal6f zero() {
@@ -248,10 +198,7 @@ public class MutableDecimal6f extends
 
 	@Override
 	public Decimal6f toImmutableDecimal() {
-		if (getArithmetics() == Decimal6f.ARITHMETICS) {
-			return Decimal6f.valueOf(this);
-		}
-		return new Decimal6f(unscaledValue(), getArithmetics());
+		return Decimal6f.valueOf(this);
 	}
 
 }

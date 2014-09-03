@@ -91,6 +91,13 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + inc;
 		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, one());
 	}
+	
+	@Override
+	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		final long quotient = uDecimalDividend / lDivisor;
+		final long remainder = uDecimalDividend - quotient * lDivisor;
+		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);
+	}
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {

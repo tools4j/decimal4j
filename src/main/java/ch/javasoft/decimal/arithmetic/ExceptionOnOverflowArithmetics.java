@@ -21,6 +21,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 		this.delegate = delegate;
 	}
 
+	@Override
 	public ScaleMetrics getScaleMetrics() {
 		return delegate.getScaleMetrics();
 	}
@@ -106,6 +107,11 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 		}
 		return a*b;
 	}
+	
+	@Override
+	public long multiplyWithLong(long uDecimal, long lValue) {
+		return checkedMultiplication(uDecimal, lValue);
+	}
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
@@ -117,6 +123,14 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		//FIXME this can overflow e.g. division by very small number
 		return delegate.divide(uDecimalDividend, uDecimalDivisor);
+	}
+	
+	@Override
+	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		if (lDivisor == -1 && uDecimalDividend == Long.MIN_VALUE) {
+			throw new ArithmeticException("overflow: " + toString(uDecimalDividend) + " / " + lDivisor + " = " + toString(Long.MIN_VALUE));
+		}
+		return delegate.divide(uDecimalDividend, lDivisor);
 	}
 
 	@Override
