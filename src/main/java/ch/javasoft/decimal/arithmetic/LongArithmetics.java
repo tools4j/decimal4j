@@ -10,18 +10,8 @@ import ch.javasoft.decimal.ScaleMetrics.Scale0f;
  */
 public class LongArithmetics extends TruncatingArithmetics {
 	
-	/**
-	 * Default singleton instance
-	 */
-	public static final LongArithmetics INSTANCE = new LongArithmetics();
-	
-	private LongArithmetics() {
-		super(Scale0f.INSTANCE);
-	}
-	
-	@Override
-	protected DecimalArithmetics createDecimalArithmeticsFor(DecimalRounding rounding) {
-		return new RoundingLongArithmetics(rounding);
+	public LongArithmetics(Scale0f scale0f) {
+		super(scale0f);
 	}
 
 	@Override

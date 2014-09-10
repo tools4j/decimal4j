@@ -243,19 +243,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public D multiplyWith(Decimal<?> multiplicand) {
+	public D multiplyBy(Decimal<?> multiplicand) {
 		return multiplyUnscaled(multiplicand.unscaledValue(), multiplicand.getScale());
 	}
 
 	@Override
-	public D multiplyWith(Decimal<?> multiplicand, RoundingMode roundingMode) {
+	public D multiplyBy(Decimal<?> multiplicand, RoundingMode roundingMode) {
 		return multiplyUnscaled(multiplicand.unscaledValue(), multiplicand.getScale(), roundingMode);
 	}
 
 	@Override
 	public D multiply(long multiplicand) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.multiplyWithLong(unscaledValue(), multiplicand));
+		return createOrAssign(arith.multiplyByLong(unscaledValue(), multiplicand));
 	}
 
 	@Override
@@ -317,6 +317,16 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		final ScaleMetrics targetMetrics = ScaleMetrics.valueOf(targetScale);
 		return targetMetrics.createMutable(unscaledValue() * multiplicand.unscaledValue());
 	}
+
+	@Override
+	public D multiplyByPowerOfTen(int n) {
+		return createOrAssign(getDefaultArithmetics().multiplyByPowerOf10(unscaledValue(), n));
+	}
+
+	@Override
+	public D multiplyByPowerOfTen(int n, RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).multiplyByPowerOf10(unscaledValue(), n));
+	}	
 
 	/* ------------------------------ divide ------------------------------ */
 
@@ -421,6 +431,21 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return divide(divisor, RoundingMode.UNNECESSARY);
 	}
 	
+	@Override
+	public D divideTruncate(Decimal<S> divisor) {
+		return divide(divisor, RoundingMode.DOWN);
+	}
+
+	@Override
+	public D divideByPowerOfTen(int n) {
+		return createOrAssign(getDefaultArithmetics().divideByPowerOf10(unscaledValue(), n));
+	}
+
+	@Override
+	public D divideByPowerOfTen(int n, RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).divideByPowerOf10(unscaledValue(), n));
+	}
+
 	/* ------------------------- other arithmetic  ------------------------- */
 	
 	@Override
@@ -449,23 +474,23 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public D movePointLeft(int n) {
-		return createOrAssign(getDefaultArithmetics().movePointLeft(unscaledValue(), n));
+	public D shiftLeft(int n) {
+		return createOrAssign(getDefaultArithmetics().shiftLeft(unscaledOne(), n));
 	}
 
 	@Override
-	public D movePointLeft(int n, RoundingMode roundingMode) {
-		return createOrAssign(getArithmeticsFor(roundingMode).movePointLeft(unscaledValue(), n));
+	public D shiftLeft(int n, RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).shiftLeft(unscaledOne(), n));
 	}
 
 	@Override
-	public D movePointRight(int n) {
-		return createOrAssign(getDefaultArithmetics().movePointRight(unscaledValue(), n));
+	public D shiftRight(int n) {
+		return createOrAssign(getDefaultArithmetics().shiftRight(unscaledOne(), n));
 	}
 
 	@Override
-	public D movePointRight(int n, RoundingMode roundingMode) {
-		return createOrAssign(getArithmeticsFor(roundingMode).movePointRight(unscaledValue(), n));
+	public D shiftRight(int n, RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).shiftRight(unscaledOne(), n));
 	}
 
 	@Override

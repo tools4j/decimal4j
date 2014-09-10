@@ -42,24 +42,6 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public DecimalArithmetics derive(int scale) {
-		final DecimalArithmetics derivedDelegate = delegate.derive(scale);
-		return delegate == derivedDelegate ? this : new ExceptionOnOverflowArithmetics(derivedDelegate);
-	}
-
-	@Override
-	public DecimalArithmetics derive(RoundingMode roundingMode) {
-		final DecimalArithmetics derivedDelegate = delegate.derive(roundingMode);
-		return delegate == derivedDelegate ? this : new ExceptionOnOverflowArithmetics(derivedDelegate);
-	}
-	
-	@Override
-	public DecimalArithmetics derive(OverflowMode overflowMode) {
-		final DecimalArithmetics derivedDelegate = delegate.derive(overflowMode);
-		return delegate == derivedDelegate ? this : new ExceptionOnOverflowArithmetics(derivedDelegate);
-	}
-
-	@Override
 	public long one() {
 		return delegate.one();
 	}
@@ -109,7 +91,7 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	}
 	
 	@Override
-	public long multiplyWithLong(long uDecimal, long lValue) {
+	public long multiplyByLong(long uDecimal, long lValue) {
 		return checkedMultiplication(uDecimal, lValue);
 	}
 
@@ -193,15 +175,15 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public long movePointLeft(long uDecimal, int positions) {
+	public long divideByPowerOf10(long uDecimal, int positions) {
 		//TODO impl
-		return delegate.movePointLeft(uDecimal, positions);
+		return delegate.divideByPowerOf10(uDecimal, positions);
 	}
 
 	@Override
-	public long movePointRight(long uDecimal, int positions) {
+	public long multiplyByPowerOf10(long uDecimal, int positions) {
 		//TODO impl
-		return delegate.movePointRight(uDecimal, positions);
+		return delegate.multiplyByPowerOf10(uDecimal, positions);
 	}
 
 	@Override

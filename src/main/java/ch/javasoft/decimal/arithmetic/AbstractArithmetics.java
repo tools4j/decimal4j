@@ -67,7 +67,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 		return uDecimalMinuend - uDecimalSubtrahend;
 	}
 	@Override
-	public long multiplyWithLong(long uDecimal, long lValue) {
+	public long multiplyByLong(long uDecimal, long lValue) {
 		return uDecimal * lValue;
 	}
 
@@ -82,7 +82,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public long movePointLeft(long uDecimal, int positions) {
+	public long divideByPowerOf10(long uDecimal, int positions) {
 		if (positions >= 0) {
 			if (positions <= 18) {
 				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
@@ -91,15 +91,15 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			return 0;
 		} else {
 			if (positions > Integer.MIN_VALUE) {
-				return movePointRight(uDecimal, -positions);
+				return multiplyByPowerOf10(uDecimal, -positions);
 			}
-			long halfResult = movePointRight(uDecimal, -(positions / 2));
-			return movePointRight(halfResult, -(positions / 2));
+			long halfResult = multiplyByPowerOf10(uDecimal, -(positions / 2));
+			return multiplyByPowerOf10(halfResult, -(positions / 2));
 		}
 	}
 
 	@Override
-	public long movePointRight(long uDecimal, int positions) {
+	public long multiplyByPowerOf10(long uDecimal, int positions) {
 		if (positions >= 0) {
 			int pos = positions;
 			long result = uDecimal;
@@ -112,7 +112,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			return scaleMetrics.multiplyByScaleFactor(result);
 		} else {
 			if (positions >= -18) {
-				return movePointLeft(uDecimal, -positions);
+				return divideByPowerOf10(uDecimal, -positions);
 			}
 			return 0;
 		}
@@ -128,7 +128,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			return arithmetics.one();
 		}
 		long base;
-		int exp;
+		long exp;//long to hold -Integer.MIN_VALUE
 		if (exponent > 0) {
 			base = uDecimal;
 			exp = exponent;

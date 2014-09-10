@@ -2,7 +2,6 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.EnumMap;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
@@ -15,8 +14,6 @@ import ch.javasoft.decimal.math.UInt128;
  */
 public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		DecimalArithmetics {
-
-	private transient volatile EnumMap<DecimalRounding, DecimalArithmetics> roundingArithmetics = null;
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -36,53 +33,6 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	@Override
 	public RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
-	}
-
-	@Override
-	public DecimalArithmetics derive(int scale) {
-		if (scale == getScale()) {
-			return this;
-		}
-		return ScaleMetrics.valueOf(scale).getTruncatingArithmetics();
-	}
-
-	@Override
-	public DecimalArithmetics derive(RoundingMode roundingMode) {
-		if (roundingMode == RoundingMode.DOWN) {
-			return this;
-		}
-		if (roundingArithmetics == null) {
-			synchronized(this) {
-				if (roundingArithmetics == null) {
-					roundingArithmetics = initRoundingArithmetics();
-				}
-			}
-		}
-		return roundingArithmetics.get(DecimalRounding.valueOf(roundingMode));
-	}
-
-	private EnumMap<DecimalRounding, DecimalArithmetics> initRoundingArithmetics() {
-		final EnumMap<DecimalRounding, DecimalArithmetics> result = new EnumMap<DecimalRounding, DecimalArithmetics>(DecimalRounding.class);
-		for (final DecimalRounding rounding : DecimalRounding.VALUES) {
-			if (rounding != DecimalRounding.DOWN) {
-				result.put(rounding, createDecimalArithmeticsFor(rounding));
-			} else {
-				result.put(rounding, this);
-			}
-		}
-		return result;
-	}
-	
-	protected DecimalArithmetics createDecimalArithmeticsFor(DecimalRounding rounding) {
-		return new RoundingArithmetics(getScaleMetrics(), rounding);
-	}
-
-	@Override
-	public DecimalArithmetics derive(OverflowMode overflowMode) {
-		if (overflowMode == getOverflowMode()) {
-			return this;
-		}
-		return new ExceptionOnOverflowArithmetics(this);
 	}
 
 	@Override
@@ -196,7 +146,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(oneBigDecimal()).longValue();
+		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).longValue();
 	}
 
 	@Override

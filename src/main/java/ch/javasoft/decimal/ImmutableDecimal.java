@@ -69,16 +69,16 @@ public interface ImmutableDecimal<S extends ScaleMetrics, D extends ImmutableDec
 	D invert(RoundingMode roundingMode);
 
 	@Override
-	D movePointLeft(int n);
+	D divideByPowerOfTen(int n);
 
 	@Override
-	D movePointLeft(int n, RoundingMode roundingMode);
+	D divideByPowerOfTen(int n, RoundingMode roundingMode);
 
 	@Override
-	D movePointRight(int n);
+	D multiplyByPowerOfTen(int n);
 
 	@Override
-	D movePointRight(int n, RoundingMode roundingMode);
+	D multiplyByPowerOfTen(int n, RoundingMode roundingMode);
 
 	@Override
 	D pow(int n);

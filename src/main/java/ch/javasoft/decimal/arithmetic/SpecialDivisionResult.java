@@ -37,7 +37,7 @@ enum SpecialDivisionResult {
 	DIVISOR_IS_MINUS_ONE {
 		@Override
 		long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-			return -uDecimalDividend;
+			return arithmetics.negate(uDecimalDividend);//we must go through arithmetics because overflow is possible
 		}
 	},
 	/**

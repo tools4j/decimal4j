@@ -4,22 +4,24 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.ScaleMetrics.Scale0f;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
  */
-public class RoundingLongArithmetics extends AbstractArithmetics {
+public class LongRoundingArithmetics extends AbstractArithmetics {
 	
 	private final DecimalRounding rounding;
 	
-	public RoundingLongArithmetics(RoundingMode roundingMode) {
+	public LongRoundingArithmetics(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
-	public RoundingLongArithmetics(DecimalRounding rounding) {
+	public LongRoundingArithmetics(DecimalRounding rounding) {
 		super(Scale0f.INSTANCE);
+		this.rounding = rounding;
+	}
+	public LongRoundingArithmetics(Scale0f scale0f, DecimalRounding rounding) {
+		super(scale0f);
 		this.rounding = rounding;
 	}
 	
@@ -40,30 +42,6 @@ public class RoundingLongArithmetics extends AbstractArithmetics {
 	@Override
 	public long one() {
 		return 1L;
-	}
-	
-	@Override
-	public DecimalArithmetics derive(int scale) {
-		if (scale == getScale()) {
-			return this;
-		}
-		return ScaleMetrics.valueOf(scale).getTruncatingArithmetics().derive(getRoundingMode());
-	}
-
-	@Override
-	public DecimalArithmetics derive(RoundingMode roundingMode) {
-		if (roundingMode == getRoundingMode()) {
-			return this;
-		}
-		return getScaleMetrics().getTruncatingArithmetics().derive(roundingMode);
-	}
-	
-	@Override
-	public DecimalArithmetics derive(OverflowMode overflowMode) {
-		if (overflowMode == getOverflowMode()) {
-			return this;
-		}
-		return new ExceptionOnOverflowArithmetics(this);
 	}
 
 	@Override

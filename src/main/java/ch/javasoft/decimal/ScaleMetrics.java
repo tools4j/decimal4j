@@ -1,11 +1,18 @@
 package ch.javasoft.decimal;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.DecimalRounding;
+import ch.javasoft.decimal.arithmetic.LongArithmetics;
+import ch.javasoft.decimal.arithmetic.LongRoundingArithmetics;
+import ch.javasoft.decimal.arithmetic.RoundingArithmetics;
 import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
 
 /**
@@ -32,6 +39,20 @@ abstract public class ScaleMetrics {
 	 */
 	public static final class Scale0f extends ScaleMetrics {
 		public static final Scale0f INSTANCE = new Scale0f();
+
+		@Override
+		protected EnumMap<RoundingMode, DecimalArithmetics> initArithmetics() {
+			final EnumMap<RoundingMode, DecimalArithmetics> map = new EnumMap<RoundingMode, DecimalArithmetics>(RoundingMode.class);
+			for (final DecimalRounding dr : DecimalRounding.VALUES) {
+				final RoundingMode roundingMode = dr.getRoundingMode();
+				if (roundingMode == RoundingMode.DOWN) {
+					map.put(roundingMode, new LongArithmetics(this));
+				} else {
+					map.put(roundingMode, new LongRoundingArithmetics(this, dr));
+				}
+			}
+			return map;
+		}
 
 		@Override
 		public int getScale() {
@@ -864,8 +885,10 @@ abstract public class ScaleMetrics {
 
 	private final long maxIntegerValue = divideByScaleFactor(Long.MAX_VALUE);
 	private final long minIntegerValue = divideByScaleFactor(Long.MIN_VALUE);
-	private final TruncatingArithmetics truncatingArithmetics = new TruncatingArithmetics(this);
-	private final DecimalArithmetics halfUpArithmetics = truncatingArithmetics.derive(RoundingMode.HALF_UP);
+	private final BigInteger biScaleFactor = BigInteger.valueOf(getScaleFactor());
+	private final BigDecimal bdScaleFactor = new BigDecimal(biScaleFactor);
+
+	private final EnumMap<RoundingMode, DecimalArithmetics> roundingModeToArithmetics = initArithmetics();
 
 	/**
 	 * Returns the {@code ScaleMetrics} constant based on a given scale
@@ -882,6 +905,23 @@ abstract public class ScaleMetrics {
 			return VALUES.get(scale);
 		}
 		throw new IllegalArgumentException("illegal scale, must be in [0,18] but was: " + scale);
+	}
+
+	/**
+	 * Initialises the arithmetics map. {@link Scale0f} overrides this method.
+	 * @return the rounding mode to arithmetics map
+	 */
+	protected EnumMap<RoundingMode, DecimalArithmetics> initArithmetics() {
+		final EnumMap<RoundingMode, DecimalArithmetics> map = new EnumMap<RoundingMode, DecimalArithmetics>(RoundingMode.class);
+		for (final DecimalRounding dr : DecimalRounding.VALUES) {
+			final RoundingMode roundingMode = dr.getRoundingMode();
+			if (roundingMode == RoundingMode.DOWN) {
+				map.put(roundingMode, new TruncatingArithmetics(this));
+			} else {
+				map.put(roundingMode, new RoundingArithmetics(this, dr));
+			}
+		}
+		return map;
 	}
 
 	/**
@@ -914,6 +954,26 @@ abstract public class ScaleMetrics {
 	 * @return the scale factor
 	 */
 	abstract public long getScaleFactor();
+	
+	/**
+	 * Returns the {@link #getScaleFactor() scale factor} as a {@link BigInteger}
+	 * value.
+	 * 
+	 * @return the scale factor as big integer
+	 */
+	public BigInteger getScaleFactorAsBigInteger() {
+		return biScaleFactor;
+	}
+
+	/**
+	 * Returns the {@link #getScaleFactor() scale factor} as a {@link BigDecimal}
+	 * value.
+	 * 
+	 * @return the scale factor as big decimal
+	 */
+	public BigDecimal getScaleFactorAsBigDecimal() {
+		return bdScaleFactor;
+	}
 
 	/**
 	 * Returns the largest integer value that can be represented using this
@@ -1013,8 +1073,8 @@ abstract public class ScaleMetrics {
 	 * @return truncating arithmetics for this scale
 	 * @see RoundingMode#DOWN
 	 */
-	public TruncatingArithmetics getTruncatingArithmetics() {
-		return truncatingArithmetics;
+	public DecimalArithmetics getTruncatingArithmetics() {
+		return getArithmetics(RoundingMode.DOWN);
 	}
 
 	/**
@@ -1025,7 +1085,7 @@ abstract public class ScaleMetrics {
 	 * @see RoundingMode#HALF_UP
 	 */
 	public DecimalArithmetics getHalfUpArithmetics() {
-		return halfUpArithmetics;
+		return getArithmetics(RoundingMode.HALF_UP);
 	}
 
 	/**
@@ -1037,6 +1097,6 @@ abstract public class ScaleMetrics {
 	 * @return arithmetics for this scale with specified rounding mode
 	 */
 	public DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
-		return truncatingArithmetics.derive(roundingMode);
+		return roundingModeToArithmetics.get(roundingMode);
 	}
 }

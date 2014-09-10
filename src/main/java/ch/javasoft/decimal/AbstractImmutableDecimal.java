@@ -122,35 +122,35 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	}
 
 	@Override
-	public D movePointLeft(int n) {
+	public D divideByPowerOfTen(int n) {
 		if (n > 0) {
-			return createOrAssign(getDefaultArithmetics().movePointLeft(unscaled, n));
+			return createOrAssign(getDefaultArithmetics().divideByPowerOf10(unscaled, n));
 		}
-		return n == 0 ? self() : movePointRight(-n);
+		return n == 0 ? self() : multiplyByPowerOfTen(-n);
 	}
 
 	@Override
-	public D movePointLeft(int n, RoundingMode roundingMode) {
+	public D divideByPowerOfTen(int n, RoundingMode roundingMode) {
 		if (n > 0) {
-			return createOrAssign(getArithmeticsFor(roundingMode).movePointLeft(unscaled, n));
+			return createOrAssign(getArithmeticsFor(roundingMode).divideByPowerOf10(unscaled, n));
 		}
-		return n == 0 ? self() : movePointRight(-n, roundingMode);
+		return n == 0 ? self() : multiplyByPowerOfTen(-n, roundingMode);
 	}
 
 	@Override
-	public D movePointRight(int n) {
+	public D multiplyByPowerOfTen(int n) {
 		if (n > 0) {
-			return createOrAssign(getDefaultArithmetics().movePointRight(unscaled, n));
+			return createOrAssign(getDefaultArithmetics().multiplyByPowerOf10(unscaled, n));
 		}
-		return n == 0 ? self() : movePointLeft(-n);
+		return n == 0 ? self() : divideByPowerOfTen(-n);
 	}
 
 	@Override
-	public D movePointRight(int n, RoundingMode roundingMode) {
+	public D multiplyByPowerOfTen(int n, RoundingMode roundingMode) {
 		if (n > 0) {
-			return createOrAssign(getArithmeticsFor(roundingMode).movePointRight(unscaled, n));
+			return createOrAssign(getArithmeticsFor(roundingMode).multiplyByPowerOf10(unscaled, n));
 		}
-		return n == 0 ? self() : movePointLeft(-n, roundingMode);
+		return n == 0 ? self() : divideByPowerOfTen(-n, roundingMode);
 	}
 
 	@Override

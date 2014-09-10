@@ -12,7 +12,7 @@ public class RoundDownDecimalArithmeticsTest extends
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.DOWN);
+		return Scale6f.INSTANCE.getArithmetics(RoundingMode.DOWN);
 	}
 
 }

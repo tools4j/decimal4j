@@ -1,6 +1,5 @@
 package ch.javasoft.decimal.arithmetic;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import ch.javasoft.decimal.OverflowMode;
@@ -15,9 +14,6 @@ abstract public class AbstractScaledArithmetics extends AbstractArithmetics {
 
 	private final int scale;
 	private final long one;//10^scale
-	
-	private transient BigInteger oneBigInteger;
-	private transient BigDecimal oneBigDecimal;
 	
 	public AbstractScaledArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
@@ -34,23 +30,10 @@ abstract public class AbstractScaledArithmetics extends AbstractArithmetics {
 	public long one() {
 		return one;
 	}
-	
-	protected BigInteger oneBigInteger() {
-		if (oneBigInteger == null) {
-			oneBigInteger = BigInteger.valueOf(one());
-		}
-		return oneBigInteger;
-	}
-	protected BigDecimal oneBigDecimal() {
-		if (oneBigDecimal == null) {
-			oneBigDecimal = BigDecimal.valueOf(one());
-		}
-		return oneBigDecimal;
-	}
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
-		return value.multiply(oneBigInteger()).longValue();
+		return value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()).longValue();
 	}
 
 }

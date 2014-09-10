@@ -27,7 +27,7 @@ public class MutableDecimal6f extends
 	}
 
 	public MutableDecimal6f(String value, RoundingMode roundingMode) {
-		this(Decimal6f.ARITHMETICS.derive(roundingMode).parse(value));
+		this(Scale6f.INSTANCE.getArithmetics(roundingMode).parse(value));
 	}
 
 	public MutableDecimal6f(long value) {

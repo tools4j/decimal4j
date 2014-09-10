@@ -436,9 +436,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> multiply(Decimal<S> multiplicand, RoundingMode roundingMode);
 
-	Decimal<S> multiplyWith(Decimal<?> multiplicand);
+	Decimal<S> multiplyBy(Decimal<?> multiplicand);
 
-	Decimal<S> multiplyWith(Decimal<?> multiplicand, RoundingMode roundingMode);
+	Decimal<S> multiplyBy(Decimal<?> multiplicand, RoundingMode roundingMode);
 
 	Decimal<?> multiplyExact(Decimal<?> multiplicand);
 
@@ -462,6 +462,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode);
 
+	Decimal<S> multiplyByPowerOfTen(int n);
+	
+	Decimal<S> multiplyByPowerOfTen(int n, RoundingMode roundingMode);
+
 	Decimal<S> divide(Decimal<S> divisor);
 
 	Decimal<S> divide(Decimal<S> divisor, RoundingMode roundingMode);
@@ -469,6 +473,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> divideBy(Decimal<?> divisor);
 
 	Decimal<S> divideBy(Decimal<?> divisor, RoundingMode roundingMode);
+
+	Decimal<S> divideTruncate(Decimal<S> divisor);
 
 	Decimal<S> divideExact(Decimal<S> divisor);
 
@@ -495,6 +501,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale);
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode);
+	
+	Decimal<S> divideByPowerOfTen(int n);
+
+	Decimal<S> divideByPowerOfTen(int n, RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
@@ -544,75 +554,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	int signum();
 
-	/**
-	 * Returns a {@code Decimal} which is equivalent to this one with the
-	 * decimal point moved {@code n} places to the left. If {@code n} is
-	 * negative, the call is equivalent to {@code movePointRight(-n)}. The
-	 * {@code Decimal} returned by this call has value <tt>(this &times;
-	 * 10<sup>-n</sup>)</tt>.
-	 * 
-	 * @param n
-	 *            number of places to move the decimal point to the left.
-	 * @return a {@code Decimal} which is equivalent to this one with the
-	 *         decimal point moved {@code n} places to the left.
-	 * @throws ArithmeticException
-	 *             if scale overflows.
-	 */
-	Decimal<S> movePointLeft(int n);
+	Decimal<S> shiftLeft(int n);
+	
+	Decimal<S> shiftLeft(int n, RoundingMode roundingMode);
 
-	/**
-	 * Returns a {@code Decimal} which is equivalent to this one with the
-	 * decimal point moved {@code n} places to the left. If {@code n} is
-	 * negative, the call is equivalent to {@code movePointRight(-n)}. The
-	 * {@code Decimal} returned by this call has value <tt>(this &times;
-	 * 10<sup>-n</sup>)</tt>. The specified rounding mode is applied if rounding
-	 * is necessary.
-	 * 
-	 * @param n
-	 *            number of places to move the decimal point to the left.
-	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
-	 * @return a {@code Decimal} which is equivalent to this one with the
-	 *         decimal point moved {@code n} places to the left.
-	 * @throws ArithmeticException
-	 *             if scale overflows.
-	 */
-	Decimal<S> movePointLeft(int n, RoundingMode roundingMode);
+	Decimal<S> shiftRight(int n);
 
-	/**
-	 * Returns a {@code Decimal} which is equivalent to this one with the
-	 * decimal point moved {@code n} places to the right. If {@code n} is
-	 * negative, the call is equivalent to {@code movePointLeft(-n)}. The
-	 * {@code Decimal} returned by this call has value <tt>(this
-	 * &times; 10<sup>n</sup>)</tt>.
-	 * 
-	 * @param n
-	 *            number of places to move the decimal point to the right.
-	 * @return a {@code Decimal} which is equivalent to this one with the
-	 *         decimal point moved {@code n} places to the right.
-	 * @throws ArithmeticException
-	 *             if scale overflows.
-	 */
-	Decimal<S> movePointRight(int n);
-
-	/**
-	 * Returns a {@code Decimal} which is equivalent to this one with the
-	 * decimal point moved {@code n} places to the right. If {@code n} is
-	 * negative, the call is equivalent to {@code movePointLeft(-n)}. The
-	 * {@code Decimal} returned by this call has value <tt>(this
-	 * &times; 10<sup>n</sup>)</tt>. The specified rounding mode is applied if
-	 * rounding is necessary.
-	 * 
-	 * @param n
-	 *            number of places to move the decimal point to the right.
-	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
-	 * @return a {@code Decimal} which is equivalent to this one with the
-	 *         decimal point moved {@code n} places to the right.
-	 * @throws ArithmeticException
-	 *             if scale overflows.
-	 */
-	Decimal<S> movePointRight(int n, RoundingMode roundingMode);
+	Decimal<S> shiftRight(int n, RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} whose value is <tt>(this<sup>n</sup>)</tt>.

@@ -54,43 +54,6 @@ public interface DecimalArithmetics {
 	OverflowMode getOverflowMode();
 
 	/**
-	 * Returns a new decimal arithmetics object with the same
-	 * {@link #getRoundingMode() rounding mode} and {@link #getOverflowMode()
-	 * overflow mode} but for the new {@code scale} specified here.
-	 * 
-	 * @param scale
-	 *            the scale for the new decimal arithmetics, a non-negative
-	 *            integer denoting the number of digits to the right of the
-	 *            decimal point
-	 * @return a new decimal arithmetics object for the given scale
-	 * @throws IllegalArgumentException
-	 *             if scale is negative
-	 */
-	DecimalArithmetics derive(int scale);
-
-	/**
-	 * Returns a new decimal arithmetics object with the same
-	 * {@link #getScale() scale} and {@link #getOverflowMode() overflow mode}
-	 * but for the new rounding mode specified here.
-	 * 
-	 * @param roundingMode
-	 *            the rounding mode for the new decimal arithmetics
-	 * @return a new decimal arithmetics object for the given rounding mode
-	 */
-	DecimalArithmetics derive(RoundingMode roundingMode);
-
-	/**
-	 * Returns a new decimal arithmetics object with the same
-	 * {@link #getScale() scale} and {@link #getRoundingMode() rounding mode}
-	 * but for the new overflow mode specified here.
-	 * 
-	 * @param overflowMode
-	 *            the overflow mode for the new decimal arithmetics
-	 * @return a new decimal arithmetics object for the given overflow mode
-	 */
-	DecimalArithmetics derive(OverflowMode overflowMode);
-
-	/**
 	 * Returns the unscaled decimal for the decimal value {@code 1}. One is the
 	 * value <code>10<sup>scale</sup></code> which is also the multiplier used
 	 * to get the unscaled decimal from the true decimal value.
@@ -131,6 +94,9 @@ public interface DecimalArithmetics {
 	 * @param uDecimal2
 	 *            second unscaled decimal value to be added
 	 * @return {@code uDecimal1 + uDecimal2}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 */
 	long add(long uDecimal1, long uDecimal2);
 
@@ -143,6 +109,9 @@ public interface DecimalArithmetics {
 	 * @param uDecimalSubtrahend
 	 *            unscaled decimal value to subtract from the minuend
 	 * @return {@code uDecimalMinuend + uDecimalSubtrahend}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 */
 	long subtract(long uDecimalMinuend, long uDecimalSubtrahend);
 
@@ -155,6 +124,9 @@ public interface DecimalArithmetics {
 	 * @param uDecimal2
 	 *            second unscaled decimal value to be multiplied
 	 * @return {@code uDecimal1 * uDecimal2}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 */
 	long multiply(long uDecimal1, long uDecimal2);
 
@@ -167,8 +139,32 @@ public interface DecimalArithmetics {
 	 * @param lValue
 	 *            long value to be multiplied
 	 * @return {@code uDecimal * value}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 */
-	long multiplyWithLong(long uDecimal, long lValue);
+	long multiplyByLong(long uDecimal, long lValue);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * <code>(uDecimal &times; 10<sup>n</sup>)</code>.
+	 * <p>
+	 * The power, {@code n}, may be negative, in which case this method performs
+	 * a multiplication by a power of ten. If rounding must be performed (for
+	 * negative n), this arithmetic's {@link #getRoundingMode() rounding mode}
+	 * is applied.
+	 * 
+	 * @param uDecimal
+	 *            value to be divided.
+	 * @param n
+	 *            the power of ten
+	 * @return <code>(uDecimal &times; 10<sup>n</sup>)</code> as unscaled
+	 *         decimal
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
+	 */
+	long multiplyByPowerOf10(long uDecimal, int n);
 
 	/**
 	 * Returns an unscaled decimal whose value is
@@ -182,7 +178,9 @@ public interface DecimalArithmetics {
 	 *            value by which the dividend is to be divided.
 	 * @return {@code uDecimalDividend / uDecimalDivisor} as unscaled decimal
 	 * @throws ArithmeticException
-	 *             if {@code divisor} is zero or if an overflow occurs and the
+	 *             if {@code uDecimalDividend} is zero, if
+	 *             {@link #getRoundingMode() rounding mode} is UNNECESSARY and
+	 *             rounding is necessary or if an overflow occurs and the
 	 *             {@link #getOverflowMode() overflow mode} is set to throw an
 	 *             exception
 	 */
@@ -200,11 +198,34 @@ public interface DecimalArithmetics {
 	 *            long value by which the dividend is to be divided.
 	 * @return {@code uDecimalDividend / lDivisor} as unscaled decimal
 	 * @throws ArithmeticException
-	 *             if {@code divisor} is zero or if an overflow occurs and the
+	 *             if {@code uDecimalDividend} is zero, if
+	 *             {@link #getRoundingMode() rounding mode} is UNNECESSARY and
+	 *             rounding is necessary or if an overflow occurs and the
 	 *             {@link #getOverflowMode() overflow mode} is set to throw an
 	 *             exception
 	 */
 	long divideByLong(long uDecimalDividend, long lDivisor);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * <code>(uDecimal / 10<sup>n</sup>)</code>. If rounding must be performed,
+	 * this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
+	 * <p>
+	 * The power, {@code n}, may be negative, in which case this method performs
+	 * a multiplication by a power of ten.
+	 * 
+	 * @param uDecimal
+	 *            value to be divided.
+	 * @param n
+	 *            the power of ten
+	 * @return <code>(uDecimal / 10<sup>n</sup>)</code> as unscaled decimal
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long divideByPowerOf10(long uDecimal, int n);
 
 	/**
 	 * Returns the non-negative value {@code abs(uDecimal)}, which is the value
@@ -215,6 +236,9 @@ public interface DecimalArithmetics {
 	 *            the unscaled decimal value
 	 * @return {@code uDecimal} if {@code uDecimal>=0} and {@code -uDecimal}
 	 *         otherwise
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 */
 	long abs(long uDecimal);
 
@@ -225,6 +249,9 @@ public interface DecimalArithmetics {
 	 * @param uDecimal
 	 *            the unscaled decimal value to negate
 	 * @return {@code -uDecimal} as unscaled decimal value
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 */
 	long negate(long uDecimal);
 
@@ -236,7 +263,10 @@ public interface DecimalArithmetics {
 	 *            the unscaled decimal value to invert
 	 * @return {@code 1/uDecimal} as unscaled decimal value
 	 * @throws ArithmeticException
-	 *             if {@code uDecmial} is zero
+	 *             if {@code uDecimal} is zero, if {@link #getRoundingMode()
+	 *             rounding mode} is UNNECESSARY and rounding is necessary or if
+	 *             an overflow occurs and the {@link #getOverflowMode() overflow
+	 *             mode} is set to throw an exception
 	 */
 	long invert(long uDecimal);
 
@@ -251,22 +281,29 @@ public interface DecimalArithmetics {
 	 *            exponent to which {@code uDecimalBase} is to be raised.
 	 * @return <tt>uDecimalBase<sup>exponent</sup></tt>
 	 * @throws ArithmeticException
-	 *             {@code uDecimalBase==0} and {@code exponent} is negative.
-	 *             (This would cause a division by zero.)
+	 *             if {@code uDecimalBase==0} and {@code exponent} is negative.
+	 *             (This would cause a division by zero.), if
+	 *             {@link #getRoundingMode() rounding mode} is UNNECESSARY and
+	 *             rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
 	 */
 	long pow(long uDecimalBase, int exponent);
 
 	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimal << n)}. The
 	 * shift distance, {@code n}, may be negative, in which case this method
-	 * performs a right shift. (Computes
-	 * <tt>floor(uDecimal * 2<sup>n</sup>)</tt>.)
+	 * performs a right shift. The result is <tt>(uDecimal * 2<sup>n</sup>)</tt>
+	 * .
 	 * 
 	 * @param uDecimal
 	 *            the unscaled decimal value to shift
 	 * @param n
 	 *            shift distance, in bits.
 	 * @return {@code uDecimal << n}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
 	 * @see #shiftRight
 	 */
 	long shiftLeft(long uDecimal, int n);
@@ -274,8 +311,8 @@ public interface DecimalArithmetics {
 	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimal >> n)}. Sign
 	 * extension is performed. The shift distance, {@code n}, may be negative,
-	 * in which case this method performs a left shift. (Computes
-	 * <tt>floor(this / 2<sup>n</sup>)</tt>.)
+	 * in which case this method performs a left shift. The result is
+	 * <tt>floor(this / 2<sup>n</sup>)</tt>.
 	 * 
 	 * @param uDecimal
 	 *            the unscaled decimal value to shift
@@ -283,44 +320,13 @@ public interface DecimalArithmetics {
 	 *            shift distance, in bits.
 	 * @return {@code this >> n}
 	 * @throws ArithmeticException
-	 *             if the shift distance is {@code Integer.MIN_VALUE}.
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
 	 * @see #shiftLeft
 	 */
 	long shiftRight(long uDecimal, int n);
-
-	/**
-	 * Returns an unscaled decimal which is equivalent to {@code uDecimal} with
-	 * the decimal point moved {@code n} places to the left. If {@code n} is
-	 * negative, the call is equivalent to {@code movePointRight(-n)}. The
-	 * unscaled decimal value returned by this call has value <tt>(this &times;
-	 * 10<sup>-n</sup>)</tt>.
-	 * 
-	 * @param uDecimal
-	 *            the unscaled decimal whose decimal point to move left
-	 * @param n
-	 *            number of places to move the decimal point to the left.
-	 * @return an unscaled decimal which is equivalent to {@code uDecimal} with
-	 *         the decimal point moved {@code n} places to the left.
-	 * @see #movePointRight(long, int)
-	 */
-	long movePointLeft(long uDecimal, int n);
-
-	/**
-	 * Returns an unscaled decimal which is equivalent to {@code uDecimal} with
-	 * the decimal point moved {@code n} places to the right. If {@code n} is
-	 * negative, the call is equivalent to {@code movePointLeft(-n)}. The
-	 * unscaled decimal value returned by this call has value <tt>(this
-	 * &times; 10<sup>n</sup>)</tt>.
-	 * 
-	 * @param uDecimal
-	 *            the unscaled decimal whose decimal point to move right
-	 * @param n
-	 *            number of places to move the decimal point to the right.
-	 * @return an unscaled decimal which is equivalent to {@code uDecimal} with
-	 *         the decimal point moved {@code n} places to the right.
-	 * @see #movePointLeft(long, int)
-	 */
-	long movePointRight(long uDecimal, int n);
 
 	/**
 	 * Converts the specified long value to an unscaled decimal.
@@ -341,7 +347,10 @@ public interface DecimalArithmetics {
 	 *         double value
 	 * @throws ArithmeticException
 	 *             if value is {@link Double#NaN} or {@link Double#isInfinite()
-	 *             infinite}
+	 *             infinite}, if {@link #getRoundingMode() rounding mode} is
+	 *             UNNECESSARY and rounding is necessary or if an overflow
+	 *             occurs and the {@link #getOverflowMode() overflow mode} is
+	 *             set to throw an exception
 	 */
 	long fromDouble(double value);
 
@@ -351,7 +360,9 @@ public interface DecimalArithmetics {
 	 * @param value
 	 *            the value to convert
 	 * @return the unscaled decimal representing the same value as the given big
-	 *         integer value
+	 *         integer value, or if an overflow occurs and the
+	 *         {@link #getOverflowMode() overflow mode} is set to throw an
+	 *         exception
 	 */
 	long fromBigInteger(BigInteger value);
 
@@ -361,7 +372,10 @@ public interface DecimalArithmetics {
 	 * @param value
 	 *            the value to convert
 	 * @return the unscaled decimal representing the same value as the given big
-	 *         decimal value
+	 *         decimal value, if {@link #getRoundingMode() rounding mode} is
+	 *         UNNECESSARY and rounding is necessary or if an overflow occurs
+	 *         and the {@link #getOverflowMode() overflow mode} is set to throw
+	 *         an exception
 	 */
 	long fromBigDecimal(BigDecimal value);
 
@@ -375,7 +389,10 @@ public interface DecimalArithmetics {
 	 *            the scale used for {@code unscaledValue}
 	 * @return the unscaled decimal representing the same value as the given
 	 *         unscaled decimal with the new scale defined by this arithmetic
-	 *         object
+	 *         object, if {@link #getRoundingMode() rounding mode} is
+	 *         UNNECESSARY and rounding is necessary or if an overflow occurs
+	 *         and the {@link #getOverflowMode() overflow mode} is set to throw
+	 *         an exception
 	 */
 	long fromUnscaled(long unscaledValue, int scale);
 

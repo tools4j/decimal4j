@@ -14,7 +14,7 @@ public class RoundHalfUpDecimalArithmeticsTest extends AbstractDecimalArithmetic
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.HALF_UP);
+		return Scale6f.INSTANCE.getArithmetics(RoundingMode.HALF_UP);
 	}
 	
 	@Override
