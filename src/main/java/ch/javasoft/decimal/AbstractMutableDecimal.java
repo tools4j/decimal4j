@@ -24,15 +24,12 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	private long unscaled;
 
 	/**
-	 * Constructor with specified unscaled value and scale metrics.
+	 * Constructor with specified unscaled value.
 	 * 
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @param scaleMetrics
-	 *            the scale metrics for this decimal number
 	 */
-	public AbstractMutableDecimal(long unscaled, S scaleMetrics) {
-		super(scaleMetrics);
+	public AbstractMutableDecimal(long unscaled) {
 		this.unscaled = unscaled;
 	}
 

@@ -14,9 +14,8 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 @SuppressWarnings("serial")
 public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, MutableDecimal6f> {
 
-	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getHalfUpArithmetics();
-//	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics().derive(RoundingMode.HALF_EVEN);
-//	public static final DecimalArithmetics ARITHMETICS = Scale6f.INSTANCE.getTruncatingArithmetics();
+	public static final Scale6f SCALE = Scale6f.INSTANCE;
+	public static final DecimalArithmetics ARITHMETICS = SCALE.getHalfUpArithmetics();
 
 	public static final long ONE_UNSCALED = ARITHMETICS.one();
 
@@ -53,11 +52,20 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 	public static final Decimal6f MIN_INTEGER_VALUE = new Decimal6f((Long.MIN_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 
 	private Decimal6f(long unscaled) {
-		super(unscaled, Scale6f.INSTANCE);
+		super(unscaled);
 	}
 
 	public Decimal6f(String value) {
-		super(ARITHMETICS.parse(value), Scale6f.INSTANCE);
+		super(ARITHMETICS.parse(value));
+	}
+	
+	@Override
+	public Scale6f getScaleMetrics() {
+		return SCALE;
+	}
+	@Override
+	protected DecimalArithmetics getDefaultArithmetics() {
+		return ARITHMETICS;
 	}
 
 	@Override
@@ -160,6 +168,11 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 
 	@Override
 	protected Decimal6f createOrAssign(long unscaled) {
+		return valueOfUnscaled(unscaled);
+	}
+	
+	@Override
+	protected Decimal6f create(long unscaled) {
 		return valueOfUnscaled(unscaled);
 	}
 

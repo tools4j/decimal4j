@@ -425,6 +425,8 @@ public interface DecimalArithmetics {
 	 */
 	long toLong(long uDecimal);
 
+	float toFloat(long uDecimal);
+	
 	double toDouble(long uDecimal);
 
 	BigDecimal toBigDecimal(long uDecimal);

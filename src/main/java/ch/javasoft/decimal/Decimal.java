@@ -10,11 +10,11 @@ import java.math.RoundingMode;
  * value</i> and a {@link #getScaleMetrics() scale}. The scale defines the
  * number of digits to the right of the decimal point. The value of the number
  * represented by the {@code Decimal} is
- * <tt>(unscaledValue &times; 10<sup>-f</sup>)</tt> with scale {@code f}.
+ * <code>(unscaledValue &times; 10<sup>-f</sup>)</code> with scale {@code f}.
  * <p>
- * Certain operations can only be performed with other <tt>Decimal</tt> numbers
+ * Certain operations can only be performed with other {@code Decimal} numbers
  * of the same scale. Scale compatibility of such operations is enforced through
- * the generic {@link ScaleMetrics} parameter of the <tt>Decimal</tt>. The
+ * the generic {@link ScaleMetrics} parameter of the {@code Decimal}. The
  * {@link ScaleMetrics} class defines all supported scale metrics subclasses
  * each with a singleton constant.
  * <p>
@@ -30,7 +30,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns the metrics associated with the scale of this decimal. Scale
 	 * defines the number of fraction digits and the scale factor applied to the
-	 * {@code long} value underlying this <tt>Decimal</tt>.
+	 * {@code long} value underlying this {@code Decimal}.
 	 * 
 	 * @return the scale metrics object
 	 * @see ScaleMetrics#getScale()
@@ -41,7 +41,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns the scale associated with this decimal. The scale defines the
 	 * number of fraction digits applied to the {@code long} value underlying
-	 * this <tt>Decimal</tt>.
+	 * this {@code Decimal}.
 	 * <p>
 	 * This is a shortcut for {@link ScaleMetrics#getScale()}.
 	 * 
@@ -52,79 +52,201 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	int getScale();
 
 	/**
-	 * Returns the value of this <tt>Decimal</tt> as a <tt>byte</tt>. This may
-	 * involve rounding or truncation.
+	 * Returns the unscaled value underlying this {@code Decimal}. This
+	 * {@code Decimal} is <code>(unscaledValue &times; 10<sup>-n</sup>)</code>
+	 * with {@code n} representing the {@link #getScale() scale}, hence the
+	 * returned value equals <code>(this &times; 10<sup>n</sup>)</code>.
 	 * 
-	 * @return the numeric value represented by this object after conversion to
-	 *         type <tt>byte</tt>.
+	 * @return the unscaled numeric value, same as this decimal without applying
+	 *         the scale factor
+	 * @see #getScale()
+	 * @see ScaleMetrics#getScaleFactor()
+	 */
+	long unscaledValue();
+
+	//some methods "inherited" from Number and BigDecimal
+
+	/**
+	 * Returns the value of this {@code Decimal} as a {@code byte} after a
+	 * narrowing primitive conversion.
+	 * 
+	 * @return this {@code Decimal} converted to an {@code byte}.
 	 * @see Number#byteValue()
 	 */
 	byte byteValue();
 
 	/**
-	 * Returns the value of this <tt>Decimal</tt> as a <tt>short</tt>. This may
-	 * involve rounding or truncation.
+	 * Converts this {@code Decimal} to a {@code byte}, checking for lost
+	 * information. If this {@code Decimal} has a nonzero fractional part or is
+	 * out of the possible range for a {@code byte} result then an
+	 * {@code ArithmeticException} is thrown.
+	 *
+	 * @return this {@code Decimal} converted to a {@code byte}.
+	 * @throws ArithmeticException
+	 *             if {@code this} has a nonzero fractional part, or will not
+	 *             fit in a {@code byte}.
+	 */
+	byte byteValueExact();
+
+	/**
+	 * Returns the value of this {@code Decimal} as a {@code short} after a
+	 * narrowing primitive conversion.
 	 * 
-	 * @return the numeric value represented by this object after conversion to
-	 *         type <tt>short</tt>.
+	 * @return this {@code Decimal} converted to an {@code short}.
 	 * @see Number#shortValue()
 	 */
 	short shortValue();
 
 	/**
-	 * Returns the value of this <tt>Decimal</tt> as an <tt>int</tt>. This may
-	 * involve rounding or truncation.
-	 * 
-	 * @return the numeric value represented by this object after conversion to
-	 *         type <tt>int</tt>.
+	 * Converts this {@code Decimal} to a {@code short}, checking for lost
+	 * information. If this {@code Decimal} has a nonzero fractional part or is
+	 * out of the possible range for a {@code short} result then an
+	 * {@code ArithmeticException} is thrown.
+	 *
+	 * @return this {@code Decimal} converted to a {@code short}.
+	 * @throws ArithmeticException
+	 *             if {@code this} has a nonzero fractional part, or will not
+	 *             fit in a {@code short}.
+	 */
+	short shortValueExact();
+
+	/**
+	 * Converts this {@code Decimal} to an {@code int}. This conversion is
+	 * analogous to the <i>narrowing primitive conversion</i> from
+	 * {@code double} to {@code short} as defined in section 5.1.3 of <cite>The
+	 * Java&trade; Language Specification</cite>: any fractional part of this
+	 * {@code Decimal} will be discarded, and if the resulting "{@code long}" is
+	 * too big to fit in an {@code int}, only the low-order 32 bits are
+	 * returned. Note that this conversion can lose information about the
+	 * overall magnitude and precision of this {@code Decimal} value as well as
+	 * return a result with the opposite sign.
+	 *
+	 * @return this {@code Decimal} converted to an {@code int}.
 	 * @see Number#intValue()
 	 */
 	int intValue();
 
 	/**
-	 * Returns the value of this <tt>Decimal</tt> as a <tt>long</tt>. This may
-	 * involve rounding.
-	 * 
-	 * @return the numeric value represented by this object after conversion to
-	 *         type <tt>long</tt>.
+	 * Converts this {@code Decimal} to an {@code int}, checking for lost
+	 * information. If this {@code Decimal} has a nonzero fractional part or is
+	 * out of the possible range for an {@code int} result then an
+	 * {@code ArithmeticException} is thrown.
+	 *
+	 * @return this {@code Decimal} converted to an {@code int}.
+	 * @throws ArithmeticException
+	 *             if {@code this} has a nonzero fractional part, or will not
+	 *             fit in an {@code int}.
+	 */
+	int intValueExact();
+
+	/**
+	 * Converts this {@code Decimal} to a {@code long}. This conversion is
+	 * analogous to the <i>narrowing primitive conversion</i> from
+	 * {@code double} to {@code short} as defined in section 5.1.3 of <cite>The
+	 * Java&trade; Language Specification</cite>: any fractional part of this
+	 * {@code Decimal} will be discarded, and if the resulting "
+	 * {@code BigInteger}" is too big to fit in a {@code long}, only the
+	 * low-order 64 bits are returned. Note that this conversion can lose
+	 * information about the overall magnitude and precision of this
+	 * {@code Decimal} value as well as return a result with the opposite sign.
+	 *
+	 * @return this {@code Decimal} converted to a {@code long}.
 	 * @see Number#longValue()
 	 */
 	long longValue();
 
 	/**
-	 * Returns the value of this <tt>Decimal</tt> as a <tt>float</tt>. This may
-	 * involve rounding.
-	 * 
-	 * @return the numeric value represented by this object after conversion to
-	 *         type <tt>float</tt>.
-	 * @see Number#floatValue()
+	 * Converts this {@code Decimal} to a {@code long}, checking for lost
+	 * information. If this {@code Decimal} has a nonzero fractional part or is
+	 * out of the possible range for a {@code long} result then an
+	 * {@code ArithmeticException} is thrown.
+	 *
+	 * @return this {@code Decimal} converted to a {@code long}.
+	 * @throws ArithmeticException
+	 *             if {@code this} has a nonzero fractional part, or will not
+	 *             fit in a {@code long}.
+	 */
+	long longValueExact();
+
+	/**
+	 * Converts this {@code Decimal} to a {@code float}. This conversion is
+	 * similar to the <i>narrowing primitive conversion</i> from {@code double}
+	 * to {@code float} as defined in section 5.1.3 of <cite>The Java&trade;
+	 * Language Specification</cite>. Note that this conversion can lose
+	 * information about the precision of the {@code Decimal} value.
+	 *
+	 * @return this {@code Decimal} converted to a {@code float}.
 	 */
 	float floatValue();
 
 	/**
-	 * Returns the value of this <tt>Decimal</tt> as a <tt>double</tt>. This may
-	 * involve rounding.
-	 * 
-	 * @return the numeric value represented by this object after conversion to
-	 *         type <tt>double</tt>.
-	 * @see Number#doubleValue()
+	 * Converts this {@code Decimal} to a {@code double}. This conversion is
+	 * similar to the <i>narrowing primitive conversion</i> from {@code double}
+	 * to {@code float} as defined in section 5.1.3 of <cite>The Java&trade;
+	 * Language Specification</cite>. Note that this conversion can lose
+	 * information about the precision of the {@code Decimal} value.
+	 *
+	 * @return this {@code Decimal} converted to a {@code double}.
 	 */
 	double doubleValue();
 
 	/**
-	 * Returns the unscaled value underlying this <tt>Decimal</tt>. Since the
-	 * value of this {@code Decimal} is
-	 * <tt>(unscaledValue &times; 10<sup>-n</sup>)</tt>, the returned value
-	 * equals <tt>(this &times; 10<sup>n</sup>)</tt> with {@code n} standing for
-	 * the number of {@link ScaleMetrics#getScale() fraction digits}.
-	 * 
-	 * @return the unscaled numeric value represented by this object when to
-	 *         type <tt>long</tt>
-	 * @see #getScaleMetrics()
-	 * @see ScaleMetrics#getScale()
-	 * @see ScaleMetrics#getScaleFactor()
+	 * Converts this {@code Decimal} to a {@code BigInteger}. This conversion is
+	 * analogous to the <i>narrowing primitive conversion</i> from
+	 * {@code double} to {@code long} as defined in section 5.1.3 of <cite>The
+	 * Java&trade; Language Specification</cite>: any fractional part of this
+	 * {@code Decimal} will be discarded. Note that this conversion can lose
+	 * information about the precision of the {@code Decimal} value.
+	 * <p>
+	 * To have an exception thrown if the conversion is inexact (in other words
+	 * if a nonzero fractional part is discarded), use the
+	 * {@link #toBigIntegerExact()} method.
+	 *
+	 * @return this {@code Decimal} converted to a {@code BigInteger}.
 	 */
-	long unscaledValue();
+	BigInteger toBigInteger();
+
+	/**
+	 * Converts this {@code Decimal} to a {@code BigInteger}, checking for lost
+	 * information. An exception is thrown if this {@code Decimal} has a nonzero
+	 * fractional part.
+	 *
+	 * @return this {@code Decimal} converted to a {@code BigInteger}.
+	 * @throws ArithmeticException
+	 *             if {@code this} has a nonzero fractional part.
+	 */
+	BigInteger toBigIntegerExact();
+
+	/**
+	 * Converts this {@code Decimal} to a {@code BigDecimal} using the same
+	 * {@link #getScale() scale} as this decimal value.
+	 *
+	 * @return this {@code Decimal} converted to a {@code BigDecimal} with the
+	 *         same scale as this decimal value.
+	 * @throws ArithmeticException
+	 *             if {@code this} has a nonzero fractional part.
+	 */
+	BigDecimal toBigDecimal();
+
+	//some conversion methods with rounding mode
+
+	int intValue(RoundingMode roundingMode);
+
+	long longValue(RoundingMode roundingMode);
+
+	float floatValue(RoundingMode roundingMode);
+
+	double doubleValue(RoundingMode roundingMode);
+
+	BigInteger toBigInteger(RoundingMode roundingMode);
+
+	BigDecimal toBigDecimal(int scale, RoundingMode roundingMode);
+	
+	Decimal<S> integralPart();
+	
+	Decimal<S> fractionalPart();
+
+	//methods to change the scale
 
 	/**
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
@@ -185,6 +307,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	@SuppressWarnings("hiding")
 	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
+
+	//add
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
@@ -340,7 +464,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>(this + unscaledAugend &times; 10<sup>-scale</sup>)</tt>.
+	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -357,7 +481,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param scale
 	 *            the scale to apply to {@code unscaledAugend}, must be in
 	 *            {@code [0,18]}
-	 * @return <tt>this + unscaledAugend &times; 10<sup>-scale</sup></tt>
+	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
 	 */
@@ -365,7 +489,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>(this + unscaledAugend &times; 10<sup>-scale</sup>)</tt>.
+	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -386,7 +510,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the rounding mode to apply if the augend argument needs to be
 	 *            truncated when converted into a decimal number of the same
 	 *            scale as {@code this} decimal
-	 * @return <tt>this + unscaledAugend &times; 10<sup>-scale</sup></tt>
+	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
 	 * @throws ArithmeticException
@@ -396,7 +520,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>(this + unscaledAugend &times; 10<sup>-scale</sup>)</tt> with the
+	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code> with the
 	 * {@link #getScale() scale} of this decimal.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
@@ -406,9 +530,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * 
 	 * @param unscaledAugend
 	 *            value to be added to this {@code Decimal}
-	 * @return <tt>this + unscaledAugend &times; 10<sup>-scale</sup></tt>
+	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
 	 */
 	Decimal<S> addUnscaled(long unscaledAugend);
+
+	//subtract
 
 	Decimal<S> subtract(Decimal<S> subtrahend);
 
@@ -431,6 +557,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend);
+
+	//multiply
 
 	Decimal<S> multiply(Decimal<S> multiplicand);
 
@@ -463,8 +591,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode);
 
 	Decimal<S> multiplyByPowerOfTen(int n);
-	
+
 	Decimal<S> multiplyByPowerOfTen(int n, RoundingMode roundingMode);
+
+	//divide
 
 	Decimal<S> divide(Decimal<S> divisor);
 
@@ -501,10 +631,58 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale);
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode);
-	
+
 	Decimal<S> divideByPowerOfTen(int n);
 
 	Decimal<S> divideByPowerOfTen(int n, RoundingMode roundingMode);
+
+    /**
+     * Returns a {@code Decimal} whose value is the integer part
+     * of the quotient {@code (this / divisor)} rounded down.
+     *
+     * @param  divisor value by which this {@code Decimal} is to be divided.
+     * @return The integer part of {@code this / divisor}.
+     * @throws ArithmeticException if {@code divisor==0}
+     */
+    Decimal<S> divideToIntegralValue(Decimal<S> divisor);
+    
+    /**
+     * Returns a two-element {@code Decimal} array containing the
+     * result of {@code divideToIntegralValue} followed by the result of
+     * {@code remainder} on the two operands.
+     *
+     * <p>Note that if both the integer quotient and remainder are
+     * needed, this method is faster than using the
+     * {@code divideToIntegralValue} and {@code remainder} methods
+     * separately because the division need only be carried out once.
+     *
+     * @param  divisor value by which this {@code Decimal} is to be divided,
+     *         and the remainder computed.
+     * @return a two element {@code Decimal} array: the quotient
+     *         (the result of {@code divideToIntegralValue}) is the initial element
+     *         and the remainder is the final element.
+     * @throws ArithmeticException if {@code divisor==0}
+     * @see    #divideToIntegralValue(Decimal)
+     * @see    #remainder(Decimal)
+     */
+    Decimal<S>[] divideAndRemainder(Decimal<S> divisor);
+	
+    /**
+     * Returns a {@code Decimal} whose value is {@code (this % divisor)}.
+     *
+     * <p>The remainder is given by
+     * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}.
+     * Note that this is not the modulo operation (the result can be
+     * negative).
+     *
+     * @param  divisor value by which this {@code Decimal} is to be divided.
+     * @return {@code this % divisor}.
+     * @throws ArithmeticException if {@code divisor==0}
+     * @see    #divideToIntegralValue(Decimal)
+     */
+    Decimal<S> remainder(Decimal<S> divisor);
+	
+	//other arithmetic operations
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
@@ -555,7 +733,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	int signum();
 
 	Decimal<S> shiftLeft(int n);
-	
+
 	Decimal<S> shiftLeft(int n, RoundingMode roundingMode);
 
 	Decimal<S> shiftRight(int n);
@@ -563,29 +741,234 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> shiftRight(int n, RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is <tt>(this<sup>n</sup>)</tt>.
+	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to.
-	 * @return <tt>this<sup>n</sup></tt>
+	 * @return <code>this<sup>n</sup></code>
 	 * @throws ArithmeticException
 	 *             if {@code n} is negative and {@code this==0}
 	 */
 	Decimal<S> pow(int n);
 
 	/**
-	 * Returns a {@code Decimal} whose value is <tt>(this<sup>n</sup>)</tt>
+	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>
 	 * applying the specified rounding mode.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to.
 	 * @param roundingMode
 	 *            the rounding mode to apply for this operation
-	 * @return <tt>this<sup>n</sup></tt>
+	 * @return <code>this<sup>n</sup></code>
 	 * @throws ArithmeticException
 	 *             if {@code n} is negative and {@code this==0}
 	 */
 	Decimal<S> pow(int n, RoundingMode roundingMode);
+
+	//compare and related methods
+
+	/**
+	 * Compares two {@code Decimal} objects numerically.
+	 * 
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared
+	 * @return the value {@code 0} if this {@code Decimal} is equal to the
+	 *         argument {@code Decimal}; a value less than {@code 0} if this
+	 *         {@code Decimal} is numerically less than the argument
+	 *         {@code Decimal}; and a value greater than {@code 0} if this
+	 *         {@code Decimal} is numerically greater than the argument
+	 *         {@code Decimal}
+	 */
+	@Override
+	int compareTo(Decimal<S> other);
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal} and
+	 * returns true if the two are numerically equal.
+	 * <p>
+	 * Returns true iff {@link #compareTo(Decimal)} returns 0.
+	 * 
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared
+	 * @return true this {@code Decimal} is numerically equal to {@code other}
+	 *         and false otherwise
+	 */
+	boolean isEqualTo(Decimal<S> other);
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal} and
+	 * returns true if this decimal is numerically greater than {@code other}.
+	 * <p>
+	 * Returns true iff {@link #compareTo(Decimal)} returns a value greater than
+	 * 0.
+	 * 
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared
+	 * @return true if {@code this > other}
+	 */
+	boolean isGreaterThan(Decimal<S> other);
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal} and
+	 * returns true if this decimal is numerically greater than or equal to
+	 * {@code other}.
+	 * <p>
+	 * Returns true iff {@link #compareTo(Decimal)} returns a non-negative
+	 * value.
+	 * 
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared
+	 * @return true if {@code this >= other}
+	 */
+	boolean isGreaterThanOrEqualTo(Decimal<S> other);
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal} and
+	 * returns true if this decimal is numerically less than {@code other}.
+	 * <p>
+	 * Returns true iff {@link #compareTo(Decimal)} returns a negative value.
+	 * 
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared.
+	 * @return true if {@code this < other}
+	 */
+	boolean isLessThan(Decimal<S> other);
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal} and
+	 * returns true if this decimal is numerically less than or equal to
+	 * {@code other}.
+	 * <p>
+	 * Returns true iff {@link #compareTo(Decimal)} returns a non-positive
+	 * value.
+	 * 
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared
+	 * @return true if {@code this <= other}
+	 */
+	boolean isLessThanOrEqualTo(Decimal<S> other);
+
+	/**
+	 * Returns the minimum of this {@code Decimal} and {@code val}.
+	 *
+	 * @param val
+	 *            value with which the minimum is to be computed.
+	 * @return the {@code Decimal} whose value is the lesser of this
+	 *         {@code Decimal} and {@code val}. If they are equal, as defined by
+	 *         the {@link #compareTo(Decimal) compareTo} method, {@code this} is
+	 *         returned.
+	 * @see #compareTo(Decimal)
+	 */
+	Decimal<S> min(Decimal<S> val);
+
+	/**
+	 * Returns the maximum of this {@code Decimal} and {@code val}.
+	 *
+	 * @param val
+	 *            value with which the maximum is to be computed.
+	 * @return the {@code Decimal} whose value is the greater of this
+	 *         {@code Decimal} and {@code val}. If they are equal, as defined by
+	 *         the {@link #compareTo(Decimal) compareTo} method, {@code this} is
+	 *         returned.
+	 * @see #compareTo(Decimal)
+	 */
+	Decimal<S> max(Decimal<S> val);
+
+	/**
+	 * Returns true if this {@code Decimal} is zero.
+	 * 
+	 * @return true if {@code this == 0}
+	 */
+	boolean isZero();
+
+	/**
+	 * Returns true if this {@code Decimal} is one.
+	 * 
+	 * @return true if {@code this == 1}
+	 */
+	boolean isOne();
+
+	/**
+	 * Returns true if this {@code Decimal} is equal to the smallest positive
+	 * number representable by a decimal with the current {@link #getScale()
+	 * scale}.
+	 * 
+	 * @return true if {@code unscaledValue() == 1}
+	 */
+	boolean isUlp();
+
+	/**
+	 * Returns true if this {@code Decimal} is strictly positive.
+	 * 
+	 * @return true if {@code this > 0}
+	 */
+	boolean isPositive();
+
+	/**
+	 * Returns true if this {@code Decimal} is not negative.
+	 * 
+	 * @return true if {@code this >= 0}
+	 */
+	boolean isNonNegative();
+
+	/**
+	 * Returns true if this {@code Decimal} is negative.
+	 * 
+	 * @return true if {@code this < 0}
+	 */
+	boolean isNegative();
+
+	/**
+	 * Returns true if this {@code Decimal} is not positive.
+	 * 
+	 * @return true if {@code this <= 0}
+	 */
+	boolean isNonPositive();
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal}. Two
+	 * {@code Decimal} objects that are equal in value but have a different
+	 * scale (like 2.0 and 2.00) are considered equal by this method.
+	 *
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared.
+	 * @return the value {@code 0} if this {@code Decimal} is equal to the
+	 *         argument {@code Decimal}; a value less than {@code 0} if this
+	 *         {@code Decimal} is numerically less than the argument
+	 *         {@code Decimal}; and a value greater than {@code 0} if this
+	 *         {@code Decimal} is numerically greater than the argument
+	 *         {@code Decimal}
+	 * @see #isEqualToNumerically(Decimal)
+	 * @see #compareTo(Decimal)
+	 */
+	int compareToNumerically(Decimal<?> other);
+
+	/**
+	 * Compares this {@code Decimal} with the specified {@code Decimal} and
+	 * returns true if the two are numerically equal. Two {@code Decimal}
+	 * objects that are equal in value but have a different scale (like 2.0 and
+	 * 2.00) are considered equal by this method.
+	 * <p>
+	 * Returns true iff {@link #compareToNumerically(Decimal)} returns 0.
+	 *
+	 * @param other
+	 *            {@code Decimal} to which this {@code Decimal} is to be
+	 *            compared.
+	 * @return true if this {@code Decimal} is numerically equal to
+	 *         {@code other} and false otherwise.
+	 * @see #compareToNumerically(Decimal)
+	 * @see #compareTo(Decimal)
+	 */
+	boolean isEqualToNumerically(Decimal<?> other);
+
+	//finally some basic object methods plus equals
 
 	/**
 	 * Returns a hash code for this {@code Decimal}. The result is the exclusive
@@ -616,21 +999,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	@Override
 	boolean equals(Object obj);
-
-	/**
-	 * Compares two {@code Decimal} objects numerically.
-	 * 
-	 * @param anotherDecimal
-	 *            the {@code Decimal} to be compared.
-	 * @return the value {@code 0} if this {@code Decimal} is equal to the
-	 *         argument {@code Decimal}; a value less than {@code 0} if this
-	 *         {@code Decimal} is numerically less than the argument
-	 *         {@code Decimal}; and a value greater than {@code 0} if this
-	 *         {@code Decimal} is numerically greater than the argument
-	 *         {@code Decimal} (signed comparison).
-	 */
-	@Override
-	int compareTo(Decimal<S> anotherDecimal);
 
 	/**
 	 * Returns a string representation of this {@code Decimal} object as fixed

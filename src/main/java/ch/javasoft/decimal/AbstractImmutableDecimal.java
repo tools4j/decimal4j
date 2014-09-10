@@ -22,8 +22,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 
 	private final long unscaled;
 
-	public AbstractImmutableDecimal(long unscaled, S scale) {
-		super(scale);
+	public AbstractImmutableDecimal(long unscaled) {
 		this.unscaled = unscaled;
 	}
 

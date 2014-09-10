@@ -48,6 +48,11 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	public long multiply(long uDecimal1, long uDecimal2) {
 		return uDecimal1 * uDecimal2;
 	}
+	
+	@Override
+	public long multiplyByLong(long uDecimal, long lValue) {
+		return uDecimal * lValue;
+	}
 
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
@@ -58,16 +63,17 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		final long unrounded = uDecimalDividend / uDecimalDivisor;
-		final long product = unrounded * uDecimalDivisor;
-		final long delta = uDecimalDividend - product;
-		if (delta != 0) {
-			if (unrounded != 0) {
-				return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, delta, uDecimalDivisor);
-			}
-			return Long.signum(uDecimalDividend) * Long.signum(uDecimalDivisor) * rounding.calculateRoundingIncrementForDivision(unrounded, delta, uDecimalDivisor);
-		}
-		return unrounded;
+		return divideByLong(uDecimalDividend, uDecimalDivisor);
+	}
+	
+	@Override
+	public long shiftLeft(long uDecimal, int positions) {
+		return RoundingArithmetics.shiftLeft(rounding, uDecimal, positions);
+	}
+	
+	@Override
+	public long shiftRight(long uDecimal, int positions) {
+		return RoundingArithmetics.shiftRight(rounding, uDecimal, positions);
 	}
 
 	@Override

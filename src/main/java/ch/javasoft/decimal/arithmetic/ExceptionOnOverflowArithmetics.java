@@ -245,6 +245,10 @@ public class ExceptionOnOverflowArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
+	public float toFloat(long uDecimal) {
+		return delegate.toFloat(uDecimal);
+	}
+	@Override
 	public double toDouble(long uDecimal) {
 		return delegate.toDouble(uDecimal);
 	}

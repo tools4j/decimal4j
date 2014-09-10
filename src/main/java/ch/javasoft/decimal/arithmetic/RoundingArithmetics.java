@@ -154,18 +154,24 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
+		return shiftLeft(rounding, uDecimal, positions);
+	}
+	static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
 		if (positions < 0) {
 			if (positions == Integer.MIN_VALUE) {
-				final long tmp = shiftRight(uDecimal, -(positions/2)); 
-				return shiftRight(tmp, -(positions/2)); 
+				final long tmp = shiftRight(rounding, uDecimal, -(positions/2)); 
+				return shiftRight(rounding, tmp, -(positions/2)); 
 			}
-			return super.shiftRight(uDecimal, -positions);
+			return shiftRight(rounding, uDecimal, -positions);
 		}
 		return uDecimal << positions;
 	}
 	
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
+		return shiftRight(rounding, uDecimal, positions);
+	}
+	static long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
 		if (positions > 0) {
 			//rounding may be necessary
 			if (positions < 63) {

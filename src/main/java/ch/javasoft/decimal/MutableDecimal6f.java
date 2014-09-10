@@ -15,11 +15,11 @@ public class MutableDecimal6f extends
 	 * Creates a new {@code MutableDecimal6f} with value zero.
 	 */
 	public MutableDecimal6f() {
-		super(0, Scale6f.INSTANCE);
+		super(0);
 	}
 
 	private MutableDecimal6f(long unscaledValue, Scale6f scale) {
-		super(unscaledValue, scale);
+		super(unscaledValue);
 	}
 
 	public MutableDecimal6f(String value) {
@@ -27,7 +27,7 @@ public class MutableDecimal6f extends
 	}
 
 	public MutableDecimal6f(String value, RoundingMode roundingMode) {
-		this(Scale6f.INSTANCE.getArithmetics(roundingMode).parse(value));
+		this(Decimal6f.SCALE.getArithmetics(roundingMode).parse(value));
 	}
 
 	public MutableDecimal6f(long value) {
@@ -93,10 +93,20 @@ public class MutableDecimal6f extends
 	public MutableDecimal6f(Decimal<Scale6f> value) {
 		this(value.unscaledValue(), value.getScaleMetrics());
 	}
-	
+
+	@Override
+	protected MutableDecimal6f create(long unscaled) {
+		return new MutableDecimal6f(unscaled, Decimal6f.SCALE);
+	}
+
 	@Override
 	protected MutableDecimal6f self() {
 		return this;
+	}
+	
+	@Override
+	public Scale6f getScaleMetrics() {
+		return Decimal6f.SCALE;
 	}
 
 	@Override
@@ -105,7 +115,7 @@ public class MutableDecimal6f extends
 	}
 
 	public static MutableDecimal6f unscaled(long unscaledValue) {
-		return new MutableDecimal6f(unscaledValue, Scale6f.INSTANCE);
+		return new MutableDecimal6f(unscaledValue, Decimal6f.SCALE);
 	}
 
 	public static MutableDecimal6f zero() {

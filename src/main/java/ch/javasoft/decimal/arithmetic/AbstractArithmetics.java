@@ -120,12 +120,8 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	@Override
 	public long pow(long uDecimal, int exponent) {
-		return pow(this, uDecimal, exponent);
-	}
-
-	static long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
 		if (exponent == 0) {
-			return arithmetics.one();
+			return one();
 		}
 		long base;
 		long exp;//long to hold -Integer.MIN_VALUE
@@ -133,7 +129,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			base = uDecimal;
 			exp = exponent;
 		} else {/* exponent < 0 */
-			base = arithmetics.invert(uDecimal);
+			base = invert(uDecimal);
 			exp = -exponent;
 		}
 		long result = base;
@@ -141,11 +137,11 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 		while (exp != 1 && result != 0) {
 			if (exp % 2 == 0) {
 				//even
-				result = arithmetics.multiply(result, result);
+				result = multiply(result, result);
 				exp >>>= 1;
 			} else {
 				//odd
-				result = arithmetics.multiply(result, base);
+				result = multiply(result, base);
 				exp--;
 			}
 		}
@@ -153,7 +149,16 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
+	public float toFloat(long uDecimal) {
+		//FIXME apply proper rounding mode
+		//NOTE: note very efficient
+		return Float.valueOf(toString(uDecimal));
+	}
+
+	@Override
 	public double toDouble(long uDecimal) {
+		//FIXME apply proper rounding mode
+		//NOTE: note very efficient
 		return Double.valueOf(toString(uDecimal));
 	}
 
