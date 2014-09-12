@@ -5,12 +5,11 @@ import java.math.MathContext;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale18f;
 
 /**
  * Base class for arithmetic implementations implementing those functions where
  * rounding is no issue. Overflow is not checked, that is,
- * {@link #getOverflowMode()} returns {@link OverflowMode#SILENT SILENT}.
+ * {@link #getOverflowMode()} returns {@link OverflowMode#STANDARD SILENT}.
  */
 abstract public class AbstractArithmetics implements DecimalArithmetics {
 	
@@ -30,7 +29,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	}
 	@Override
 	public OverflowMode getOverflowMode() {
-		return OverflowMode.SILENT;
+		return OverflowMode.STANDARD;
 	}
 
 	@Override
@@ -79,43 +78,6 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
 		return uDecimal >> positions;
-	}
-
-	@Override
-	public long divideByPowerOf10(long uDecimal, int positions) {
-		if (positions >= 0) {
-			if (positions <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			return 0;
-		} else {
-			if (positions > Integer.MIN_VALUE) {
-				return multiplyByPowerOf10(uDecimal, -positions);
-			}
-			long halfResult = multiplyByPowerOf10(uDecimal, -(positions / 2));
-			return multiplyByPowerOf10(halfResult, -(positions / 2));
-		}
-	}
-
-	@Override
-	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		if (positions >= 0) {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions >> 18
-			while (pos > 18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos -= 18;
-			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		} else {
-			if (positions >= -18) {
-				return divideByPowerOf10(uDecimal, -positions);
-			}
-			return 0;
-		}
 	}
 
 	@Override
@@ -209,6 +171,6 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	@Override
 	public BigDecimal toBigDecimal(long uDecimal, int scale) {
-		return toBigDecimal(uDecimal).round(new MathContext(scale));
+		return toBigDecimal(uDecimal).round(new MathContext(scale, getRoundingMode()));
 	}
 }

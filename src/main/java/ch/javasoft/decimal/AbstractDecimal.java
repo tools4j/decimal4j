@@ -683,6 +683,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public boolean isUlp() {
 		return unscaledValue() == 1;
 	}
+	
+	@Override
+	public boolean isMinusOne() {
+		return unscaledOne() == -unscaledOne();
+	}
 
 	@Override
 	public boolean isPositive() {
@@ -702,6 +707,28 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public boolean isNonPositive() {
 		return unscaledValue() <= 0;
+	}
+	
+	@Override
+	public boolean isIntegral() {
+		return getScaleMetrics().moduloByScaleFactor(unscaledValue()) == 0;
+	}
+
+	@Override
+	public boolean isIntegralPartZero() {
+		return getScaleMetrics().divideByScaleFactor(unscaledValue()) == 0;
+	}
+	
+	@Override
+	public boolean isBetweenZeroAndOne() {
+		final long unscaled = unscaledValue();
+		return unscaled >= 0 && getScaleMetrics().divideByScaleFactor(unscaled) == 0;
+	}
+	
+	@Override
+	public boolean isBetweenZeroAndMinusOne() {
+		final long unscaled = unscaledValue();
+		return unscaled <= 0 && getScaleMetrics().divideByScaleFactor(unscaled) == 0;
 	}
 
 	@Override

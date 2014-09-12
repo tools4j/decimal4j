@@ -346,12 +346,12 @@ abstract public class ScaleMetrics {
 		public long moduloByScaleFactor(long dividend) {
 			return dividend % 1000000;
 		}
-		
+
 		@Override
 		public Decimal6f createImmutable(long unscaled) {
 			return Decimal6f.valueOfUnscaled(unscaled);
 		}
-		
+
 		@Override
 		public MutableDecimal6f createMutable(long unscaled) {
 			return new MutableDecimal6f(unscaled);
@@ -909,6 +909,7 @@ abstract public class ScaleMetrics {
 
 	/**
 	 * Initialises the arithmetics map. {@link Scale0f} overrides this method.
+	 * 
 	 * @return the rounding mode to arithmetics map
 	 */
 	protected EnumMap<RoundingMode, DecimalArithmetics> initArithmetics() {
@@ -954,10 +955,10 @@ abstract public class ScaleMetrics {
 	 * @return the scale factor
 	 */
 	abstract public long getScaleFactor();
-	
+
 	/**
-	 * Returns the {@link #getScaleFactor() scale factor} as a {@link BigInteger}
-	 * value.
+	 * Returns the {@link #getScaleFactor() scale factor} as a
+	 * {@link BigInteger} value.
 	 * 
 	 * @return the scale factor as big integer
 	 */
@@ -966,8 +967,8 @@ abstract public class ScaleMetrics {
 	}
 
 	/**
-	 * Returns the {@link #getScaleFactor() scale factor} as a {@link BigDecimal}
-	 * value.
+	 * Returns the {@link #getScaleFactor() scale factor} as a
+	 * {@link BigDecimal} value.
 	 * 
 	 * @return the scale factor as big decimal
 	 */
@@ -1003,6 +1004,29 @@ abstract public class ScaleMetrics {
 	 * @return {@code factor*scaleFactor}
 	 */
 	abstract public long multiplyByScaleFactor(long factor);
+
+	/**
+	 * Returns {@code factor*scaleFactor}, checking for lost information. If the
+	 * result is out of the range of the {@code long} type, then an
+	 * {@code ArithmeticException} is thrown.
+	 * 
+	 * @param factor
+	 *            the factor
+	 * @return {@code factor*scaleFactor}
+	 * @throws ArithmeticException if an overflow occurs
+	 */
+	public long multiplyByScaleFactorExact(long factor) {
+		final long scaleFactor = getScaleFactor();
+		final int leadingZeros = Long.numberOfLeadingZeros(factor) + Long.numberOfLeadingZeros(~factor) + Long.numberOfLeadingZeros(scaleFactor);
+		final long result = multiplyByScaleFactor(factor);
+		if (leadingZeros > Long.SIZE + 1) {
+			return result;
+		}
+		if (leadingZeros < Long.SIZE | divideByScaleFactor(result) != factor) {
+			throw new ArithmeticException("overflow: " + factor + " * " + scaleFactor + " = " + result);
+		}
+		return result;
+	}
 
 	/**
 	 * Returns {@code factor*low32(scaleFactor)} where low32 refers to the low

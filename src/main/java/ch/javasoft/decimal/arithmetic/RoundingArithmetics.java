@@ -17,7 +17,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 
 	/**
 	 * Constructor for decimal arithmetics with given scale, rounding mode and
-	 * {@link OverflowMode#SILENT SILENT} overflow mode.
+	 * {@link OverflowMode#STANDARD SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics for this decimal arithmetics
@@ -30,7 +30,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 
 	/**
 	 * Constructor for decimal arithmetics with given scale, rounding mode and
-	 * {@link OverflowMode#SILENT SILENT} overflow mode.
+	 * {@link OverflowMode#STANDARD SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics for this decimal arithmetics
@@ -54,18 +54,32 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final int scale = scaleMetrics.getScale();
 		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
 		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
-//		final long f1 = scaleMetrics.moduloByScaleFactor(uDecimal1);
-//		final long f2 = scaleMetrics.moduloByScaleFactor(uDecimal2);
 		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
 		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
-		final long f1xf2 = f1 * f2;
-		final long inc = scaleMetrics.divideByScaleFactor(f1xf2);
-//		final long rem = scaleMetrics.moduloByScaleFactor(f1xf2);
+		final long f1xf2;
+		final long inc;
+		final long remScaleFactor;
+		if (scale <= 9) {
+			//product fits in long, multiply then divide
+			f1xf2 = f1 * f2;
+			inc = scaleMetrics.divideByScaleFactor(f1xf2);
+			remScaleFactor = scaleMetrics.getScaleFactor();
+		} else {
+			//product does not fit in long, divide first to fit, then remainder
+
+			//FIXME we loose some remainder digits here, should produce 128 bit result here
+			final ScaleMetrics m1 = ScaleMetrics.valueOf(scale - 9);
+			final ScaleMetrics m2 = ScaleMetrics.valueOf(18 - scale);
+			f1xf2 = m1.divideByScaleFactor(f1) * m1.divideByScaleFactor(f2);
+			inc = m2.divideByScaleFactor(f1xf2);
+			remScaleFactor = m2.getScaleFactor();
+		}
 		final long rem = f1xf2 - scaleMetrics.multiplyByScaleFactor(inc);
 		final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + inc;
-		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, one());
+		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, remScaleFactor);
 	}
 	
 	@Override
@@ -154,36 +168,22 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
-		return shiftLeft(rounding, uDecimal, positions);
-	}
-	static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
-		if (positions < 0) {
-			if (positions == Integer.MIN_VALUE) {
-				final long tmp = shiftRight(rounding, uDecimal, -(positions/2)); 
-				return shiftRight(rounding, tmp, -(positions/2)); 
-			}
-			return shiftRight(rounding, uDecimal, -positions);
-		}
-		return uDecimal << positions;
+		return LongRoundingArithmetics.shiftLeft(rounding, uDecimal, positions);
 	}
 	
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
-		return shiftRight(rounding, uDecimal, positions);
+		return LongRoundingArithmetics.shiftRight(rounding, uDecimal, positions);
 	}
-	static long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
-		if (positions > 0) {
-			//rounding may be necessary
-			if (positions < 63) {
-				final long truncated = uDecimal >> positions;
-				final long remainder = uDecimal - (truncated << positions);
-				final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(remainder), 1L << positions);
-				return truncated + rounding.calculateRoundingIncrement(truncated, uDecimal < 0, truncatedPart);
-			}
-			return rounding.calculateRoundingIncrement(0, uDecimal < 0, uDecimal == 0 ? TruncatedPart.ZERO : TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		}
-		//shift left or shift by 0, no rounding
-		return uDecimal >> positions;
+	
+	@Override
+	public long multiplyByPowerOf10(long uDecimal, int n) {
+		return LongRoundingArithmetics.multiplyByPowerOf10(rounding, uDecimal, n);
+	}
+	
+	@Override
+	public long divideByPowerOf10(long uDecimal, int n) {
+		return LongRoundingArithmetics.divideByPowerOf10(rounding, uDecimal, n);
 	}
 
 	@Override

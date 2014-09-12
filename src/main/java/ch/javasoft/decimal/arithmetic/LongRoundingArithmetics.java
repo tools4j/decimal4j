@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.ScaleMetrics.Scale0f;
+import ch.javasoft.decimal.ScaleMetrics.Scale18f;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
@@ -68,12 +70,102 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
-		return RoundingArithmetics.shiftLeft(rounding, uDecimal, positions);
+		return shiftLeft(rounding, uDecimal, positions);
 	}
 	
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
-		return RoundingArithmetics.shiftRight(rounding, uDecimal, positions);
+		return shiftRight(rounding, uDecimal, positions);
+	}
+
+	static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
+		if (uDecimal == 0 | positions == 0) {
+			return uDecimal;
+		}
+		if (positions < 0) {
+			if (positions > -63) {
+				return shiftRight(rounding, uDecimal, -positions);
+			}
+			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+		}
+		return uDecimal << positions;
+	}
+	static long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
+		if (uDecimal == 0 | positions == 0) {
+			return uDecimal;
+		}
+		if (positions > 0) {
+			//rounding may be necessary
+			if (positions < 63) {
+				final long truncated = uDecimal >> positions;
+				final long remainder = uDecimal - (truncated << positions);
+				final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(remainder), 1L << positions);
+				return truncated + rounding.calculateRoundingIncrement(truncated, uDecimal < 0, truncatedPart);
+			}
+			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+		}
+		//shift left, no rounding
+		return uDecimal >> positions;
+	}
+	
+	@Override
+	public long divideByPowerOf10(long uDecimal, int positions) {
+		return divideByPowerOf10(rounding, uDecimal, positions);
+	}
+	static long divideByPowerOf10(DecimalRounding rounding, long uDecimal, int positions) {
+		if (uDecimal == 0 | positions == 0) {
+			return uDecimal;
+		}
+		if (positions > 0) {
+			if (positions <= 18) {
+				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
+				return scaleMetrics.divideByScaleFactor(uDecimal);
+			}
+			//truncated part is always larger 0 (see first if) 
+			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
+			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+		} else {
+			int pos = positions;
+			long result = uDecimal;
+			//NOTE: this is not very efficient for positions << -18
+			//      but how else do we get the correct truncated value?
+			while (pos < -18) {
+				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				pos += 18;
+			}
+			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-pos);
+			return scaleMetrics.multiplyByScaleFactor(result);
+		}
+	}
+
+	@Override
+	public long multiplyByPowerOf10(long uDecimal, int positions) {
+		return multiplyByPowerOf10(rounding, uDecimal, positions);
+	}
+	static long multiplyByPowerOf10(DecimalRounding rounding, long uDecimal, int positions) {
+		if (uDecimal == 0 | positions == 0) {
+			return uDecimal;
+		}
+		if (positions > 0) {
+			int pos = positions;
+			long result = uDecimal;
+			//NOTE: this is not very efficient for positions >> 18
+			//      but how else do we get the correct truncated value?
+			while (pos > 18) {
+				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				pos -= 18;
+			}
+			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(pos);
+			return scaleMetrics.multiplyByScaleFactor(result);
+		} else {
+			if (positions >= -18) {
+				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-positions);
+				return scaleMetrics.divideByScaleFactor(uDecimal);
+			}
+			//truncated part is always larger 0 (see first if) 
+			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
+			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+		}
 	}
 
 	@Override

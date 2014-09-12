@@ -241,9 +241,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	BigInteger toBigInteger(RoundingMode roundingMode);
 
 	BigDecimal toBigDecimal(int scale, RoundingMode roundingMode);
-	
+
 	Decimal<S> integralPart();
-	
+
 	Decimal<S> fractionalPart();
 
 	//methods to change the scale
@@ -636,52 +636,60 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> divideByPowerOfTen(int n, RoundingMode roundingMode);
 
-    /**
-     * Returns a {@code Decimal} whose value is the integer part
-     * of the quotient {@code (this / divisor)} rounded down.
-     *
-     * @param  divisor value by which this {@code Decimal} is to be divided.
-     * @return The integer part of {@code this / divisor}.
-     * @throws ArithmeticException if {@code divisor==0}
-     */
-    Decimal<S> divideToIntegralValue(Decimal<S> divisor);
-    
-    /**
-     * Returns a two-element {@code Decimal} array containing the
-     * result of {@code divideToIntegralValue} followed by the result of
-     * {@code remainder} on the two operands.
-     *
-     * <p>Note that if both the integer quotient and remainder are
-     * needed, this method is faster than using the
-     * {@code divideToIntegralValue} and {@code remainder} methods
-     * separately because the division need only be carried out once.
-     *
-     * @param  divisor value by which this {@code Decimal} is to be divided,
-     *         and the remainder computed.
-     * @return a two element {@code Decimal} array: the quotient
-     *         (the result of {@code divideToIntegralValue}) is the initial element
-     *         and the remainder is the final element.
-     * @throws ArithmeticException if {@code divisor==0}
-     * @see    #divideToIntegralValue(Decimal)
-     * @see    #remainder(Decimal)
-     */
-    Decimal<S>[] divideAndRemainder(Decimal<S> divisor);
-	
-    /**
-     * Returns a {@code Decimal} whose value is {@code (this % divisor)}.
-     *
-     * <p>The remainder is given by
-     * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}.
-     * Note that this is not the modulo operation (the result can be
-     * negative).
-     *
-     * @param  divisor value by which this {@code Decimal} is to be divided.
-     * @return {@code this % divisor}.
-     * @throws ArithmeticException if {@code divisor==0}
-     * @see    #divideToIntegralValue(Decimal)
-     */
-    Decimal<S> remainder(Decimal<S> divisor);
-	
+	/**
+	 * Returns a {@code Decimal} whose value is the integer part of the quotient
+	 * {@code (this / divisor)} rounded down.
+	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided.
+	 * @return The integer part of {@code this / divisor}.
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 */
+	Decimal<S> divideToIntegralValue(Decimal<S> divisor);
+
+	/**
+	 * Returns a two-element {@code Decimal} array containing the result of
+	 * {@code divideToIntegralValue} followed by the result of {@code remainder}
+	 * on the two operands.
+	 *
+	 * <p>
+	 * Note that if both the integer quotient and remainder are needed, this
+	 * method is faster than using the {@code divideToIntegralValue} and
+	 * {@code remainder} methods separately because the division need only be
+	 * carried out once.
+	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided, and the
+	 *            remainder computed.
+	 * @return a two element {@code Decimal} array: the quotient (the result of
+	 *         {@code divideToIntegralValue}) is the initial element and the
+	 *         remainder is the final element.
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 * @see #divideToIntegralValue(Decimal)
+	 * @see #remainder(Decimal)
+	 */
+	Decimal<S>[] divideAndRemainder(Decimal<S> divisor);
+
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this % divisor)}.
+	 *
+	 * <p>
+	 * The remainder is given by
+	 * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}
+	 * . Note that this is not the modulo operation (the result can be
+	 * negative).
+	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided.
+	 * @return {@code this % divisor}.
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 * @see #divideToIntegralValue(Decimal)
+	 */
+	Decimal<S> remainder(Decimal<S> divisor);
+
 	//other arithmetic operations
 
 	/**
@@ -732,12 +740,65 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	int signum();
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this << n)}. The shift
+	 * distance, {@code n}, may be negative, in which case this method performs
+	 * a right shift.
+	 * <p>
+	 * Computes <code>floor(this * 2<sup>n</sup>)</code>.
+	 *
+	 * @param n
+	 *            shift distance, in bits.
+	 * @return {@code this << n}
+	 * @see #shiftRight
+	 */
 	Decimal<S> shiftLeft(int n);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this << n)}. The shift
+	 * distance, {@code n}, may be negative, in which case this method performs
+	 * a right shift.
+	 * <p>
+	 * Computes <code>floor(this * 2<sup>n</sup>)</code>.
+	 *
+	 * @param n
+	 *            shift distance, in bits.
+	 * @param roundingMode
+	 *            the rounding mode to use if truncation is involved for
+	 *            negative {@code n}, i.e. for right shifts
+	 * @return {@code this << n}
+	 * @see #shiftRight
+	 */
 	Decimal<S> shiftLeft(int n, RoundingMode roundingMode);
 
+	/**
+	 * Returns a BigInteger whose value is {@code (this >> n)}. Sign extension
+	 * is performed. The shift distance, {@code n}, may be negative, in which
+	 * case this method performs a left shift.
+	 * <p>
+	 * Computes <code>floor(this / 2<sup>n</sup>)</code>.
+	 *
+	 * @param n
+	 *            shift distance, in bits.
+	 * @return {@code this >> n}
+	 * @see #shiftLeft
+	 */
 	Decimal<S> shiftRight(int n);
 
+	/**
+	 * Returns a BigInteger whose value is {@code (this >> n)}. Sign extension
+	 * is performed. The shift distance, {@code n}, may be negative, in which
+	 * case this method performs a left shift.
+	 * <p>
+	 * Computes <code>floor(this / 2<sup>n</sup>)</code>.
+	 *
+	 * @param n
+	 *            shift distance, in bits.
+	 * @param roundingMode
+	 *            the rounding mode to use if truncation is involved
+	 * @return {@code this >> n}
+	 * @see #shiftLeft
+	 */
 	Decimal<S> shiftRight(int n, RoundingMode roundingMode);
 
 	/**
@@ -895,6 +956,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	boolean isOne();
 
 	/**
+	 * Returns true if this {@code Decimal} is minus one.
+	 * 
+	 * @return true if {@code this == -1}
+	 */
+	boolean isMinusOne();
+
+	/**
 	 * Returns true if this {@code Decimal} is equal to the smallest positive
 	 * number representable by a decimal with the current {@link #getScale()
 	 * scale}.
@@ -930,6 +998,41 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @return true if {@code this <= 0}
 	 */
 	boolean isNonPositive();
+
+	/**
+	 * Returns true if this {@code Decimal} number is integral, or equivalently
+	 * if its {@link #fractionalPart() fractional part} is zero.
+	 * 
+	 * @return true if {@code this} is an integer number
+	 */
+	boolean isIntegral();
+
+	/**
+	 * Returns true if the {@link #integralPart() integral part} of this
+	 * {@code Decimal} number is zero.
+	 * 
+	 * @return true if {@code -1 < this < 1}
+	 */
+	boolean isIntegralPartZero();
+
+	/**
+	 * Returns true if this {@code Decimal} is between zero (inclusive) and one
+	 * (exclusive). The result value is true if and only if this {@code Decimal}
+	 * is not negative and its {@link #integralPart() integral part} is zero.
+	 * 
+	 * @return true if {@code 0 <= this < 1}
+	 */
+	boolean isBetweenZeroAndOne();
+
+	/**
+	 * Returns true if this {@code Decimal} is between zero (inclusive) and
+	 * minus one (exclusive). The result value is true if and only if this
+	 * {@code Decimal} is not positive and its {@link #integralPart() integral
+	 * part} is zero.
+	 * 
+	 * @return true if {@code -1 < this <= 0}
+	 */
+	boolean isBetweenZeroAndMinusOne();
 
 	/**
 	 * Compares this {@code Decimal} with the specified {@code Decimal}. Two

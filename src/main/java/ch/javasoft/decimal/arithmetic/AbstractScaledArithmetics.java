@@ -8,7 +8,7 @@ import ch.javasoft.decimal.ScaleMetrics;
 /**
  * Base class for arithmetic implementations implementing those functions where
  * rounding is no issue. Overflow is not checked, that is,
- * {@link #getOverflowMode()} returns {@link OverflowMode#SILENT SILENT}.
+ * {@link #getOverflowMode()} returns {@link OverflowMode#STANDARD SILENT}.
  */
 abstract public class AbstractScaledArithmetics extends AbstractArithmetics {
 

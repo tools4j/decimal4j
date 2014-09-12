@@ -5,13 +5,12 @@ package ch.javasoft.decimal;
  */
 public enum OverflowMode {
 	/**
-	 * Operations causing an overflow silently return the truncated result; no
-	 * exception is thrown.
+	 * Operations causing an overflow silently return the truncated result (the
+	 * low order bytes of the extended result); no exception is thrown.
 	 */
-	SILENT,
+	STANDARD,
 	/**
-	 * Operations causing an overflow throw an {@link ArithmeticException};
-	 * underflow causes no exception.
+	 * Operations causing an overflow throw an {@link ArithmeticException}.
 	 */
-	EXCEPTION
+	CHECKED
 }

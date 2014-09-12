@@ -3,7 +3,9 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.ScaleMetrics.Scale0f;
+import ch.javasoft.decimal.ScaleMetrics.Scale18f;
 
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
@@ -56,15 +58,27 @@ public class LongArithmetics extends TruncatingArithmetics {
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		while (scale > 0) {
-			unscaledValue /= 10;
-			scale--;
+		if (scale == 0) {
+			return fromLong(unscaledValue);
 		}
-		while (scale < 0) {
-			unscaledValue *= 10;
-			scale++;
+		if (scale > 0) {
+			long value = unscaledValue;
+			while (scale > 18) {
+				//not very efficient for large scale, but how do we otherwise
+				//get the correct truncated value?
+				value = Scale18f.INSTANCE.multiplyByScaleFactor(value);
+				scale -= 18;
+			}
+			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scale);
+			return scaleMetrics.multiplyByScaleFactor(value);
+		} else {
+			if (scale >= -18) {
+				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scale);
+				return scaleMetrics.divideByScaleFactor(unscaledValue);
+			}
+			//truncating division leads to zero
+			return 0;
 		}
-		return unscaledValue;
 	}
 
 	@Override
