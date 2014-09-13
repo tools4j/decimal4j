@@ -8,12 +8,14 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
+import ch.javasoft.decimal.arithmetic.CheckedLongTruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.CheckedScaledTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalRounding;
-import ch.javasoft.decimal.arithmetic.LongArithmetics;
-import ch.javasoft.decimal.arithmetic.LongRoundingArithmetics;
-import ch.javasoft.decimal.arithmetic.RoundingArithmetics;
-import ch.javasoft.decimal.arithmetic.TruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedLongRoundingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedLongTruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedScaledRoundingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedScaledTruncatingArithmetics;
 
 /**
  * <tt>ScaleMetrics</tt> is associated with {@link Decimal} numbers and
@@ -46,9 +48,24 @@ abstract public class ScaleMetrics {
 			for (final DecimalRounding dr : DecimalRounding.VALUES) {
 				final RoundingMode roundingMode = dr.getRoundingMode();
 				if (roundingMode == RoundingMode.DOWN) {
-					map.put(roundingMode, new LongArithmetics(this));
+					map.put(roundingMode, UncheckedLongTruncatingArithmetics.INSTANCE);
 				} else {
-					map.put(roundingMode, new LongRoundingArithmetics(this, dr));
+					map.put(roundingMode, new UncheckedLongRoundingArithmetics(dr));
+				}
+			}
+			return map;
+		}
+
+		@Override
+		protected EnumMap<RoundingMode, DecimalArithmetics> initCheckedArithmetics() {
+			final EnumMap<RoundingMode, DecimalArithmetics> map = new EnumMap<RoundingMode, DecimalArithmetics>(RoundingMode.class);
+			for (final DecimalRounding dr : DecimalRounding.VALUES) {
+				final RoundingMode roundingMode = dr.getRoundingMode();
+				if (roundingMode == RoundingMode.DOWN) {
+					map.put(roundingMode, CheckedLongTruncatingArithmetics.INSTANCE);
+				} else {
+					//FIXME add when implemented
+					//					map.put(roundingMode, new CheckedLongRoundingArithmetics(dr));
 				}
 			}
 			return map;
@@ -829,6 +846,7 @@ abstract public class ScaleMetrics {
 		public long moduloByScaleFactor(long dividend) {
 			return dividend % 100000000000000000L;
 		}
+
 		@Override
 		public Decimal17f createImmutable(long unscaled) {
 			return Decimal17f.valueOfUnscaled(unscaled);
@@ -898,6 +916,7 @@ abstract public class ScaleMetrics {
 	private final BigDecimal bdScaleFactor = new BigDecimal(biScaleFactor);
 
 	private final EnumMap<RoundingMode, DecimalArithmetics> roundingModeToArithmetics = initArithmetics();
+	private final EnumMap<RoundingMode, DecimalArithmetics> roundingModeToCheckedArithmetics = initCheckedArithmetics();
 
 	/**
 	 * Returns the {@code ScaleMetrics} constant based on a given scale
@@ -926,9 +945,30 @@ abstract public class ScaleMetrics {
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, new TruncatingArithmetics(this));
+				map.put(roundingMode, new UncheckedScaledTruncatingArithmetics(this));
 			} else {
-				map.put(roundingMode, new RoundingArithmetics(this, dr));
+				map.put(roundingMode, new UncheckedScaledRoundingArithmetics(this, dr));
+			}
+		}
+		return map;
+	}
+
+	/**
+	 * Initialises the checked arithmetics map. {@link Scale0f} overrides this
+	 * method.
+	 * 
+	 * @return the rounding mode to checked arithmetics map
+	 * @see OverflowMode#CHECKED
+	 */
+	protected EnumMap<RoundingMode, DecimalArithmetics> initCheckedArithmetics() {
+		final EnumMap<RoundingMode, DecimalArithmetics> map = new EnumMap<RoundingMode, DecimalArithmetics>(RoundingMode.class);
+		for (final DecimalRounding dr : DecimalRounding.VALUES) {
+			final RoundingMode roundingMode = dr.getRoundingMode();
+			if (roundingMode == RoundingMode.DOWN) {
+				map.put(roundingMode, new CheckedScaledTruncatingArithmetics(this));
+			} else {
+				//FIXME add when implemented
+				//				map.put(roundingMode, new CheckedScaledRoundingArithmetics(this, dr));
 			}
 		}
 		return map;
@@ -1022,7 +1062,8 @@ abstract public class ScaleMetrics {
 	 * @param factor
 	 *            the factor
 	 * @return {@code factor*scaleFactor}
-	 * @throws ArithmeticException if an overflow occurs
+	 * @throws ArithmeticException
+	 *             if an overflow occurs
 	 */
 	public long multiplyByScaleFactorExact(long factor) {
 		final long scaleFactor = getScaleFactor();
@@ -1082,7 +1123,7 @@ abstract public class ScaleMetrics {
 	 *            the unscaled long value
 	 * @return an immutable value.
 	 */
-	public AbstractImmutableDecimal<?, ?, ?> createImmutable(long unscaled) {
+	public AbstractImmutableDecimal<?, ?> createImmutable(long unscaled) {
 		// FIXME impl
 		throw new RuntimeException("not implemented for " + this);
 	}
@@ -1094,7 +1135,7 @@ abstract public class ScaleMetrics {
 	 *            the unscaled long value
 	 * @return an mutable value.
 	 */
-	public AbstractMutableDecimal<?, ?, ?> createMutable(long unscaled) {
+	public AbstractMutableDecimal<?, ?> createMutable(long unscaled) {
 		// FIXME impl
 		throw new RuntimeException("not implemented for " + this);
 	}
@@ -1130,10 +1171,23 @@ abstract public class ScaleMetrics {
 	public DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
 		return roundingModeToArithmetics.get(roundingMode);
 	}
-	
+
+	/**
+	 * Returns the checked arithmetics for this scale that performs all
+	 * operations with the specified {@code roundingMode}.
+	 *
+	 * @param roundingMode
+	 *            the rounding mode used by the returned arithmetics
+	 * @return checked arithmetics for this scale with specified rounding mode
+	 * @see OverflowMode#CHECKED
+	 */
+	public DecimalArithmetics getCheckedArithmetics(RoundingMode roundingMode) {
+		return roundingModeToCheckedArithmetics.get(roundingMode);
+	}
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName();
 	}
-	
+
 }

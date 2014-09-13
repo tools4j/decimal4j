@@ -11,29 +11,26 @@ import ch.javasoft.decimal.ScaleMetrics.Scale18f;
 /**
  * The special case for longs with {@link Scale0f} and rounding.
  */
-public class LongRoundingArithmetics extends AbstractArithmetics {
-	
+public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmetics {
+
 	private final DecimalRounding rounding;
-	
-	public LongRoundingArithmetics(RoundingMode roundingMode) {
+
+	public UncheckedLongRoundingArithmetics(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
-	public LongRoundingArithmetics(DecimalRounding rounding) {
-		super(Scale0f.INSTANCE);
+
+	public UncheckedLongRoundingArithmetics(DecimalRounding rounding) {
 		this.rounding = rounding;
-	}
-	public LongRoundingArithmetics(Scale0f scale0f, DecimalRounding rounding) {
-		super(scale0f);
-		this.rounding = rounding;
-	}
-	
-	public DecimalRounding getDecimalRounding() {
-		return rounding;
 	}
 
 	@Override
 	public final RoundingMode getRoundingMode() {
-		return getDecimalRounding().getRoundingMode();
+		return rounding.getRoundingMode();
+	}
+
+	@Override
+	public ScaleMetrics getScaleMetrics() {
+		return Scale0f.INSTANCE;
 	}
 
 	@Override
@@ -43,17 +40,12 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 
 	@Override
 	public long one() {
-		return 1L;
+		return 1;
 	}
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
 		return uDecimal1 * uDecimal2;
-	}
-	
-	@Override
-	public long multiplyByLong(long uDecimal, long lValue) {
-		return uDecimal * lValue;
 	}
 
 	@Override
@@ -67,15 +59,25 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return divideByLong(uDecimalDividend, uDecimalDivisor);
 	}
-	
+
+	@Override
+	public long invert(long uDecimal) {
+		//special cases first
+		if (uDecimal == 0) {
+			SpecialDivisionResult.DIVISOR_IS_ZERO.divide(this, 1, uDecimal);
+		}
+		if (uDecimal == 1) {
+			return 1;
+		}
+		if (uDecimal == -1) {
+			return -1;
+		}
+		return rounding.calculateRoundingIncrementForDivision(0, 1, uDecimal);
+	}
+
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
 		return shiftLeft(rounding, uDecimal, positions);
-	}
-	
-	@Override
-	public long shiftRight(long uDecimal, int positions) {
-		return shiftRight(rounding, uDecimal, positions);
 	}
 
 	static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
@@ -90,6 +92,12 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 		}
 		return uDecimal << positions;
 	}
+
+	@Override
+	public long shiftRight(long uDecimal, int positions) {
+		return shiftRight(rounding, uDecimal, positions);
+	}
+
 	static long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
 			return uDecimal;
@@ -107,11 +115,12 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 		//shift left, no rounding
 		return uDecimal >> positions;
 	}
-	
+
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
 		return divideByPowerOf10(rounding, uDecimal, positions);
 	}
+
 	static long divideByPowerOf10(DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
 			return uDecimal;
@@ -142,6 +151,7 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
 		return multiplyByPowerOf10(rounding, uDecimal, positions);
 	}
+
 	static long multiplyByPowerOf10(DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
 			return uDecimal;
@@ -169,28 +179,24 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public long fromLong(long value) {
-		return value;
+	public long pow(long uDecimal, int exponent) {
+		//FIXME implement with rounding (not only on multiplications!)
+		return super.pow(uDecimal, exponent);
 	}
 
 	@Override
-	public long fromDouble(double value) {
-		return (long)value;
-	}
-
-	@Override
-	public long fromBigInteger(BigInteger value) {
-		return value.longValue();
-	}
-
-	@Override
-	public long parse(String value) {
-		return Long.parseLong(value);
+	public long toLong(long uDecimal) {
+		return uDecimal;
 	}
 
 	@Override
 	public double toDouble(long uDecimal) {
-		return (double)uDecimal;
+		return (double) uDecimal;
+	}
+
+	@Override
+	public float toFloat(long uDecimal) {
+		return (float) uDecimal;
 	}
 
 	@Override
@@ -199,30 +205,23 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public String toString(long uDecimal) {
-		return Long.toString(uDecimal);
+	public long fromLong(long value) {
+		return value;
 	}
 
 	@Override
-	public long invert(long uDecimal) {
-		//special cases first
-		if (uDecimal == 0) {
-			throw new ArithmeticException("divide by zero");
-		} else if (uDecimal == 1) {
-			return 1;
-		} else if (uDecimal == -1) {
-			return -1;
-		}
-		final long abs = Math.abs(uDecimal);
-		final int firstTruncatedDigit = (int)(10 / abs);
-		final long remainder = 10 - abs * firstTruncatedDigit;
-		return Long.signum(uDecimal) * rounding.calculateRoundingIncrement(0, false, firstTruncatedDigit, remainder == 0);
+	public long fromDouble(double value) {
+//		final double floor = Math.rou
+//		final long truncated = (long)value;
+//		final double delta = Math.abs(value - truncated);
+//		
+//		return truncated + rounding.calculateRoundingIncrement(truncated, value < 0, truncatedPart);
+		return (long) value;
 	}
 
 	@Override
-	public long pow(long uDecimal, int exponent) {
-		//FIXME implement with rounding (not only on multiplications!)
-		throw new RuntimeException("not implemented");
+	public long fromBigInteger(BigInteger value) {
+		return value.longValue();
 	}
 
 	@Override
@@ -255,8 +254,12 @@ public class LongRoundingArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public long toLong(long uDecimal) {
-		return uDecimal;
+	public long parse(String value) {
+		return Long.parseLong(value);
 	}
 
+	@Override
+	public String toString(long uDecimal) {
+		return Long.toString(uDecimal);
+	}
 }

@@ -942,6 +942,28 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> max(Decimal<S> val);
 
 	/**
+	 * Returns the average of this {@code Decimal} and {@code val} using the
+	 * default rounding mode if rounding is necessary.
+	 *
+	 * @param val
+	 *            value with which the average is to be computed.
+	 * @return {@code (this+val)/2} using the default rounding mode
+	 */
+	Decimal<S> average(Decimal<S> val);
+
+	/**
+	 * Returns the average of this {@code Decimal} and {@code val} using the
+	 * specified rounding mode if rounding is necessary.
+	 *
+	 * @param val
+	 *            value with which the average is to be computed.
+	 * @param roundingMode
+	 *            the rounding mode to use if rounding is necessary
+	 * @return {@code (this+val)/2} using the specified rounding mode
+	 */
+	Decimal<S> average(Decimal<S> val, RoundingMode roundingMode);
+
+	/**
 	 * Returns true if this {@code Decimal} is zero.
 	 * 
 	 * @return true if {@code this == 0}

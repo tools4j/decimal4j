@@ -6,7 +6,7 @@ import org.junit.Test;
 import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 
 /**
- * Unit test for {@link TruncatingArithmetics} and subclasses.
+ * Unit test for {@link UncheckedScaledTruncatingArithmetics} and subclasses.
  */
 public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
 	

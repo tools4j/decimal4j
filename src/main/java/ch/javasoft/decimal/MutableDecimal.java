@@ -13,12 +13,8 @@ import java.math.RoundingMode;
  *            the scale metrics type associated with this decimal
  * @param <D>
  *            the concrete class implementing this mutable decimal
- * @param <I>
- *            the concrete class implementing the immutable counterpart of this
- *            mutable decimal
  */
-public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal<S, D, I>, I extends ImmutableDecimal<S, I, D>>
-		extends Decimal<S> {
+public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal<S, D>> extends Decimal<S> {
 
 	/**
 	 * Creates a new immutable value representing the same decimal as
@@ -26,21 +22,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @return {@code this} as new immutable decimal value
 	 */
-	I toImmutableDecimal();
-
-	@Override
-	MutableDecimal<?, ?, ?> scale(int scale);
-
-	@Override
-	@SuppressWarnings("hiding")
-	<S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?, ?>, ? extends ImmutableDecimal<S, ?, ?>> scale(S scaleMetrics);
-
-	@Override
-	MutableDecimal<?, ?, ?> scale(int scale, RoundingMode roundingMode);
-
-	@Override
-	@SuppressWarnings("hiding")
-	<S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?, ?>, ? extends ImmutableDecimal<S, ?, ?>> scale(S scaleMetrics, RoundingMode roundingMode);
+	ImmutableDecimal<S, ?> toImmutableDecimal();
 
 	/**
 	 * Sets {@code this} decimal to 0 and returns {@code this} now representing
@@ -57,14 +39,6 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * @return {@code this} decimal after assigning {@code this = 1}
 	 */
 	D setOne();
-
-	/**
-	 * Sets {@code this} decimal to 10 and returns {@code this} now representing
-	 * ten.
-	 * 
-	 * @return {@code this} decimal after assigning {@code this = 10}
-	 */
-	D setTen();
 
 	/**
 	 * Sets {@code this} decimal to -1 and returns {@code this} now representing

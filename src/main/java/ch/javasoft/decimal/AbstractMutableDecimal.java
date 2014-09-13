@@ -13,13 +13,10 @@ import java.math.RoundingMode;
  *            the scale metrics type associated with this decimal
  * @param <D>
  *            the concrete class implementing this mutable decimal
- * @param <I>
- *            the concrete class implementing the immutable counterpart of this
- *            mutable decimal
  */
 @SuppressWarnings("serial")
-abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends AbstractMutableDecimal<S, D, I>, I extends AbstractImmutableDecimal<S, I, D>>
-		extends AbstractDecimal<S, D> implements MutableDecimal<S, D, I> {
+abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends AbstractMutableDecimal<S, D>>
+		extends AbstractDecimal<S, D> implements MutableDecimal<S, D> {
 
 	private long unscaled;
 
@@ -54,18 +51,18 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
-	public MutableDecimal<?, ?, ?> scale(int scale) {
+	public MutableDecimal<?, ?> scale(int scale) {
 		return scale(scale, RoundingMode.HALF_UP);
 	}
 
 	@Override
 	@SuppressWarnings("hiding")
-	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?, ?>, ? extends ImmutableDecimal<S, ?, ?>> scale(S scaleMetrics) {
+	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?>> scale(S scaleMetrics) {
 		return scale(scaleMetrics, RoundingMode.HALF_UP);
 	}
 
 	@Override
-	public MutableDecimal<?, ?, ?> scale(int scale, RoundingMode roundingMode) {
+	public MutableDecimal<?, ?> scale(int scale, RoundingMode roundingMode) {
 		if (scale == getScale()) {
 			return this;
 		}
@@ -74,15 +71,16 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 
 	@Override
 	@SuppressWarnings("hiding")
-	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?, ?>, ? extends ImmutableDecimal<S, ?, ?>> scale(S scaleMetrics, RoundingMode roundingMode) {
-		final MutableDecimal<?, ?, ?> value;
+	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?>> scale(S scaleMetrics, RoundingMode roundingMode) {
+		final MutableDecimal<?, ?> value;
 		if (scaleMetrics == getScaleMetrics()) {
 			value = this;
 		} else {
 			value = scaleMetrics.createMutable(0).set(this, roundingMode);
 		}
-		@SuppressWarnings("unchecked")//safe: we know it is the same scale metrics
-		final MutableDecimal<S, ? extends MutableDecimal<S, ?, ?>, ? extends ImmutableDecimal<S, ?, ?>> result = (MutableDecimal<S, ? extends MutableDecimal<S, ?, ?>, ? extends ImmutableDecimal<S, ?, ?>>) value;
+		@SuppressWarnings("unchecked")
+		//safe: we know it is the same scale metrics
+		final MutableDecimal<S, ? extends MutableDecimal<S, ?>> result = (MutableDecimal<S, ? extends MutableDecimal<S, ?>>) value;
 		return result;
 	}
 
@@ -95,12 +93,6 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	@Override
 	public D setOne() {
 		unscaled = unscaledOne();
-		return self();
-	}
-
-	@Override
-	public D setTen() {
-		unscaled = 10 * unscaledOne();
 		return self();
 	}
 

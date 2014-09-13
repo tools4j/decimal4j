@@ -11,7 +11,7 @@ import ch.javasoft.decimal.ScaleMetrics.Scale17f;
  * digits.
  */
 @SuppressWarnings("serial")
-public class Decimal17f extends AbstractImmutableDecimal<Scale17f, Decimal17f, MutableDecimal17f> {
+public class Decimal17f extends AbstractImmutableDecimal<Scale17f, Decimal17f> {
 
 	public static final Scale17f SCALE = Scale17f.INSTANCE;
 	

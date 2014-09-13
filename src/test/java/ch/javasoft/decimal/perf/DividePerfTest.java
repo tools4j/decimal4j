@@ -45,7 +45,7 @@ public class DividePerfTest extends AbstractPerfTest {
 	}
 	
 	@Override
-	protected <S extends ScaleMetrics> int signumOfResult(MutableDecimal<S, ?, ?> m, Decimal<S> a, Decimal<S> b) {
+	protected <S extends ScaleMetrics> int signumOfResult(MutableDecimal<S, ?> m, Decimal<S> a, Decimal<S> b) {
 		return m.set(a).divide(b).signum();
 	}
 	

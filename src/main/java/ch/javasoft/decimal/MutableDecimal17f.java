@@ -8,7 +8,7 @@ import ch.javasoft.decimal.ScaleMetrics.Scale17f;
 
 @SuppressWarnings("serial")
 public class MutableDecimal17f extends
-		AbstractMutableDecimal<Scale17f, MutableDecimal17f, Decimal17f> implements
+		AbstractMutableDecimal<Scale17f, MutableDecimal17f> implements
 		Cloneable {
 
 	/**
@@ -103,7 +103,7 @@ public class MutableDecimal17f extends
 	protected MutableDecimal17f self() {
 		return this;
 	}
-	
+
 	@Override
 	public Scale17f getScaleMetrics() {
 		return Decimal17f.SCALE;

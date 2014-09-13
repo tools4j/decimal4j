@@ -8,8 +8,7 @@ import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 
 @SuppressWarnings("serial")
 public class MutableDecimal6f extends
-		AbstractMutableDecimal<Scale6f, MutableDecimal6f, Decimal6f> implements
-		Cloneable {
+		AbstractMutableDecimal<Scale6f, MutableDecimal6f> implements Cloneable {
 
 	/**
 	 * Creates a new {@code MutableDecimal6f} with value zero.
@@ -103,7 +102,7 @@ public class MutableDecimal6f extends
 	protected MutableDecimal6f self() {
 		return this;
 	}
-	
+
 	@Override
 	public Scale6f getScaleMetrics() {
 		return Decimal6f.SCALE;

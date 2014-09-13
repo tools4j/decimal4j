@@ -8,10 +8,13 @@ import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
 
 /**
- * Base class for arithmetic implementations which involve rounding strategies.
- * The result of an operation that leads to an overflow is silently truncated.
+ * Arithmetic implementation for rounding strategies. For
+ * {@link RoundingMode#DOWN} the more efficient
+ * {@link UncheckedScaledTruncatingArithmetics} is available. If an operation
+ * leads to an overflow the result is silently truncated.
  */
-public class RoundingArithmetics extends AbstractScaledArithmetics {
+public class UncheckedScaledRoundingArithmetics extends
+		AbstractUncheckedScaledArithmetics {
 
 	private final DecimalRounding rounding;
 
@@ -24,7 +27,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	 * @param roundingMode
 	 *            the rounding mode to use for all decimal arithmetics
 	 */
-	public RoundingArithmetics(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
+	public UncheckedScaledRoundingArithmetics(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
 		this(scaleMetrics, DecimalRounding.valueOf(roundingMode));
 	}
 
@@ -37,7 +40,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	 * @param rounding
 	 *            the rounding mode to use for all decimal arithmetics
 	 */
-	public RoundingArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
+	public UncheckedScaledRoundingArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
 		super(scaleMetrics);
 		this.rounding = rounding;
 	}
@@ -81,7 +84,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + inc;
 		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, remScaleFactor);
 	}
-	
+
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
 		final long quotient = uDecimalDividend / lDivisor;
@@ -103,6 +106,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		}
 		return divide128(uDecimalDividend, uDecimalDivisor);
 	}
+
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
 		final int scaleDiff = getScale() - pow10.getScale();
 		if (scaleDiff <= 0) {
@@ -114,7 +118,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 				return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimalDivisor);
 			}
 			return -truncatedValue + rounding.calculateRoundingIncrementForDivision(-truncatedValue, truncatedDigits, uDecimalDivisor);
-			
+
 		} else {
 			//multiply
 			final ScaleMetrics scaler = ScaleMetrics.valueOf(scaleDiff);
@@ -122,6 +126,7 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 			return uDecimalDivisor > 0 ? quot : -quot;
 		}
 	}
+
 	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final DecimalArithmetics truncArith = scaleMetrics.getTruncatingArithmetics();
@@ -165,25 +170,25 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 		//FIXME implement with rounding (not only on multiplications!)
 		return super.pow(uDecimal, exponent);
 	}
-	
+
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
-		return LongRoundingArithmetics.shiftLeft(rounding, uDecimal, positions);
+		return UncheckedLongRoundingArithmetics.shiftLeft(rounding, uDecimal, positions);
 	}
-	
+
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
-		return LongRoundingArithmetics.shiftRight(rounding, uDecimal, positions);
+		return UncheckedLongRoundingArithmetics.shiftRight(rounding, uDecimal, positions);
 	}
-	
+
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int n) {
-		return LongRoundingArithmetics.multiplyByPowerOf10(rounding, uDecimal, n);
+		return UncheckedLongRoundingArithmetics.multiplyByPowerOf10(rounding, uDecimal, n);
 	}
-	
+
 	@Override
 	public long divideByPowerOf10(long uDecimal, int n) {
-		return LongRoundingArithmetics.divideByPowerOf10(rounding, uDecimal, n);
+		return UncheckedLongRoundingArithmetics.divideByPowerOf10(rounding, uDecimal, n);
 	}
 
 	@Override
@@ -266,5 +271,19 @@ public class RoundingArithmetics extends AbstractScaledArithmetics {
 	@Override
 	public BigDecimal toBigDecimal(long uDecimal, int scale) {
 		return toBigDecimal(uDecimal).round(new MathContext(scale, getRoundingMode()));
+	}
+
+	@Override
+	public float toFloat(long uDecimal) {
+		//FIXME apply proper rounding mode
+		//NOTE: note very efficient
+		return Float.valueOf(toString(uDecimal));
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		//FIXME apply proper rounding mode
+		//NOTE: note very efficient
+		return Double.valueOf(toString(uDecimal));
 	}
 }

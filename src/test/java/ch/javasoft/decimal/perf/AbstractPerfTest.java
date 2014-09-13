@@ -21,17 +21,18 @@ import ch.javasoft.decimal.Timer;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
- * Base class for tests comparing {@link Decimal}, {@link BigDecimal} and {@code double} 
- * in terms of operation performance. The subclass implements the operation to test.
+ * Base class for tests comparing {@link Decimal}, {@link BigDecimal} and
+ * {@code double} in terms of operation performance. The subclass implements the
+ * operation to test.
  */
 @RunWith(Parameterized.class)
 abstract public class AbstractPerfTest {
 
-	private static final ScaleMetrics[] SCALE_METRICES = {Scale6f.INSTANCE, Scale17f.INSTANCE};
+	private static final ScaleMetrics[] SCALE_METRICES = { Scale6f.INSTANCE, Scale17f.INSTANCE };
 
-	private final int R = 1024;	//runs
-	private final int N = 1024;	//numbers per run
-	private final int W = 256;	//warm-up runs, in addition to r, not timed
+	private final int R = 1024; //runs
+	private final int N = 1024; //numbers per run
+	private final int W = 256; //warm-up runs, in addition to r, not timed
 
 	private final Random rnd = new Random();
 
@@ -39,7 +40,7 @@ abstract public class AbstractPerfTest {
 	private final DecimalArithmetics arithmetics;
 	private final MathContext decimal64;
 	private final MathContext decimal128;
-	
+
 	public AbstractPerfTest(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.arithmetics = scaleMetrics.getDefaultArithmetics();
@@ -48,28 +49,35 @@ abstract public class AbstractPerfTest {
 	}
 
 	abstract protected String operation();
+
 	abstract protected BigDecimal expectedResult(BigDecimal a, BigDecimal b, MathContext mathContext);
+
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b);
+
 	abstract protected int signumOfResult(BigDecimal a, BigDecimal b, MathContext mathContext);
+
 	abstract protected int signumOfResult(double a, double b);
+
 	abstract protected <S extends ScaleMetrics> int signumOfResult(Decimal<S> a, Decimal<S> b);
-	abstract protected <S extends ScaleMetrics> int signumOfResult(MutableDecimal<S,?,?> m, Decimal<S> a, Decimal<S> b);
+
+	abstract protected <S extends ScaleMetrics> int signumOfResult(MutableDecimal<S, ?> m, Decimal<S> a, Decimal<S> b);
+
 	abstract protected <S extends ScaleMetrics> int signumOfResult(DecimalArithmetics arith, long a, long b);
 
-	@Parameters(name= "{index}: {0}")
-    public static Iterable<Object[]> data() {
-    	final Object[][] data = new Object[SCALE_METRICES.length][];
-    	for (int i = 0; i < data.length; i++) {
-			data[i] = new Object[] {SCALE_METRICES[i]};
+	@Parameters(name = "{index}: {0}")
+	public static Iterable<Object[]> data() {
+		final Object[][] data = new Object[SCALE_METRICES.length][];
+		for (int i = 0; i < data.length; i++) {
+			data[i] = new Object[] { SCALE_METRICES[i] };
 		}
-        return Arrays.asList(data);
-    }
-    
-    @Test
+		return Arrays.asList(data);
+	}
+
+	@Test
 	public void runPerfTest() {
 		runPerfTest(scaleMetrics);
 	}
-	
+
 	protected <S extends ScaleMetrics> void runPerfTest(S scaleMetrics) {
 		final int r = R;
 		final int n = N;
@@ -89,7 +97,7 @@ abstract public class AbstractPerfTest {
 		@SuppressWarnings("unchecked")
 		final Decimal<S>[] bDec = new Decimal[n];
 		@SuppressWarnings("unchecked")
-		final MutableDecimal<S,?,?> mutable = (MutableDecimal<S, ?, ?>) scaleMetrics.createMutable(0);
+		final MutableDecimal<S, ?> mutable = (MutableDecimal<S, ?>) scaleMetrics.createMutable(0);
 
 		for (int j = 0; j < r + w; j++) {
 
@@ -139,20 +147,17 @@ abstract public class AbstractPerfTest {
 			//assert
 			timer.stop();
 			for (int i = 0; i < n; i++) {
-				final BigDecimal expected = expectedResult(aBigDec[i], bBigDec[i], decimal128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode()); 
+				final BigDecimal expected = expectedResult(aBigDec[i], bBigDec[i], decimal128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
 				final Decimal<S> actual = actualResult(aDec[i], bDec[i]);
-//				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i], expected.toPlainString(), actual.toString());
+				//				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i], expected.toPlainString(), actual.toString());
 				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i] + " = " + expected.toPlainString(), expected.unscaledValue().longValue(), actual.unscaledValue());
 			}
 		}
 
-		//report times
-		logTime((r * n), timer);
-
 		//trick the optimizer by using cnt
-		if (cnt > 0) {
-			return;
-		}
+		final long fac = cnt / cnt;
+		//report times
+		logTime((r * n) * fac, timer);
 	}
 
 	private void logTime(long count, Timer timer) {
@@ -171,10 +176,10 @@ abstract public class AbstractPerfTest {
 		final int scale = arithmetics.getScale();
 		for (int i = 0; i < n; i++) {
 			//works for toString asserts
-//			values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
-//			values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
+			//			values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
+			//			values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
 			//works only for unscaled asserts
-//			values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
+			//			values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
 			values[i] = BigDecimal.valueOf(rnd.nextLong(), scale);
 		}
 		return values;
@@ -188,7 +193,7 @@ abstract public class AbstractPerfTest {
 		return target;
 	}
 
-	private <S extends ScaleMetrics> Decimal<S>[] toDecimal(MutableDecimal<S, ?, ?> mutable, BigDecimal[] source, Decimal<S>[] target) {
+	private <S extends ScaleMetrics> Decimal<S>[] toDecimal(MutableDecimal<S, ?> mutable, BigDecimal[] source, Decimal<S>[] target) {
 		final int n = Math.min(source.length, target.length);
 		for (int i = 0; i < n; i++) {
 			target[i] = mutable.set(source[i]).toImmutableDecimal();

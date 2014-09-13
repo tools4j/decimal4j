@@ -5,17 +5,16 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale18f;
 import ch.javasoft.decimal.ScaleMetrics.Scale9f;
 import ch.javasoft.decimal.math.UInt128;
 
 /**
- * An arithmetic implementation which truncates digits after the last scale
- * digit without rounding; the result of an operation that leads to an overflow
- * is silently truncated.
+ * An arithmetic implementation which truncates decimals after the last scale
+ * digit without rounding. Operations are unchecked, that is, the result of an
+ * operation that leads to an overflow is silently truncated.
  */
-public class TruncatingArithmetics extends AbstractScaledArithmetics implements
-		DecimalArithmetics {
+public class UncheckedScaledTruncatingArithmetics extends
+		AbstractUncheckedScaledArithmetics implements DecimalArithmetics {
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -28,7 +27,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	 * @throws IllegalArgumentException
 	 *             if scale is negative or uneven
 	 */
-	public TruncatingArithmetics(ScaleMetrics scaleMetrics) {
+	public UncheckedScaledTruncatingArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 
@@ -59,7 +58,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			final long hf2 = scale9f.divideByScaleFactor(f2);
 			final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
 			final long lf2 = f2 - scale9f.multiplyByScaleFactor(hf2);
-			
+
 			final long f1xf2 = scaleDiff18.multiplyByScaleFactor(hf1 * hf2) + scaleDiff09.divideByScaleFactor(hf1 * lf2 + hf2 * lf1 + scale9f.divideByScaleFactor(lf1 * lf2));
 			return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2;
 		}
@@ -118,101 +117,25 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		//div by power of 10
 		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimal));
 		if (pow10 != null) {
-			return divideByPowerOf10(one(), pow10.getScaleFactor(), pow10);
+			return divideByPowerOf10(one, pow10.getScaleFactor(), pow10);
 		}
 		//check if one * one fits in long
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		if (scaleMetrics.getScale() <= 9) {
-			return getScaleMetrics().multiplyByScaleFactor(one()) / uDecimal;
+			return getScaleMetrics().multiplyByScaleFactor(one) / uDecimal;
 		}
 		//too big, use divide128 now
-		return UInt128.divide128(scaleMetrics, one(), uDecimal);
-	}
-
-	@Override
-	public long pow(long uDecimal, int exponent) {
-		return pow(this, uDecimal, exponent);
-	}
-
-	static long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
-		if (exponent == 0) {
-			return arithmetics.one();
-		}
-		long base;
-		int exp;
-		if (exponent > 0) {
-			base = uDecimal;
-			exp = exponent;
-		} else {/* exponent < 0 */
-			base = arithmetics.invert(uDecimal);
-			exp = -exponent;
-		}
-		long result = base;
-		//FIXME eliminate repeated truncation with multiplications in loop
-		while (exp != 1 && result != 0) {
-			if (exp % 2 == 0) {
-				//even
-				result = arithmetics.multiply(result, result);
-				exp >>>= 1;
-			} else {
-				//odd
-				result = arithmetics.multiply(result, base);
-				exp--;
-			}
-		}
-		return result;
+		return UInt128.divide128(scaleMetrics, one, uDecimal);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions >> 18
-			//      but how else do we get the correct truncated value?
-			while (pos > 18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos -= 18;
-			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		} else {
-			if (positions >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			//truncated result is 0
-			return 0;
-		}
+		return UncheckedLongTruncatingArithmetics.multiplyByPowerOf10(this, uDecimal, positions);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			if (positions <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			//truncated result is 0
-			return 0;
-		} else {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions << -18
-			//      but how else do we get the correct truncated value?
-			while (pos < -18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos += 18;
-			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		}
+		return UncheckedLongTruncatingArithmetics.divideByPowerOf10(this, uDecimal, positions);
 	}
 
 	@Override
@@ -234,6 +157,23 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			result /= 10;
 		}
 		return result;
+	}
+
+	@Override
+	public long toLong(long uDecimal) {
+		return getScaleMetrics().divideByScaleFactor(uDecimal);
+	}
+
+	@Override
+	public float toFloat(long uDecimal) {
+		//NOTE: not very efficient
+		return Float.valueOf(toString(uDecimal));
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		//NOTE: not very efficient
+		return Double.valueOf(toString(uDecimal));
 	}
 
 	@Override

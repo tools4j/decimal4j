@@ -11,7 +11,7 @@ import ch.javasoft.decimal.ScaleMetrics.Scale6f;
  * digits.
  */
 @SuppressWarnings("serial")
-public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, MutableDecimal6f> {
+public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f> {
 
 	public static final Scale6f SCALE = Scale6f.INSTANCE;
 	

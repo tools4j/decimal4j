@@ -780,6 +780,18 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return isGreaterThanOrEqualTo(val) ? this : val;
 	}
 	
+	@Override
+	public Decimal<S> average(Decimal<S> val) {
+		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.shiftRight(arith.add(unscaledValue(), val.unscaledValue()), 1));
+	}
+	
+	@Override
+	public Decimal<S> average(Decimal<S> val, RoundingMode roundingMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.shiftRight(arith.add(unscaledValue(), val.unscaledValue()), 1));
+	}
+	
 	/* ---------------------------- equals etc. ---------------------------- */
 
 	@Override

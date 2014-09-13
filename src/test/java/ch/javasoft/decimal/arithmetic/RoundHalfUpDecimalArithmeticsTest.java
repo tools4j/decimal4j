@@ -8,7 +8,7 @@ import org.junit.Test;
 import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 
 /**
- * Unit test for {@link RoundingArithmetics} with {@link RoundingMode#HALF_EVEN}.
+ * Unit test for {@link UncheckedScaledRoundingArithmetics} with {@link RoundingMode#HALF_EVEN}.
  */
 public class RoundHalfUpDecimalArithmeticsTest extends AbstractDecimalArithmeticsTest {
 	
