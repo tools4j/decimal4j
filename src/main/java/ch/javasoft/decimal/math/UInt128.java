@@ -248,7 +248,7 @@ public class UInt128 {
 
 	/**
 	 * This method is used for division by long. Specialized version of the
-	 * method sulsub. dh is a high part of the divisor, dl is a low part
+	 * method mulsub. dh is a high part of the divisor, dl is a low part
 	 */
 	private static int mulsubLong(int[] q, int dh, int dl, int x, int offset) {
 		long xLong = x & LONG_MASK;

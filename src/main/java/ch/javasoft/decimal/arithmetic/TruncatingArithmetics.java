@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.ScaleMetrics.Scale18f;
+import ch.javasoft.decimal.ScaleMetrics.Scale9f;
 import ch.javasoft.decimal.math.UInt128;
 
 /**
@@ -40,22 +41,28 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 	public long multiply(long uDecimal1, long uDecimal2) {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
+
+		//use scale to split into 2 parts: i (integral) and f (fractional)
 		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
 		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
 		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
 		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
-		final long f1xf2;
 		if (scale <= 9) {
-			//product fits in long, multiply then divide
-			f1xf2 = scaleMetrics.divideByScaleFactor(f1 * f2);
+			//low order product f1*f2 fits in long
+			return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + scaleMetrics.divideByScaleFactor(f1 * f2);
 		} else {
-			//product does not fit in long, divide first to fit, then remainder
-			final ScaleMetrics m1 = ScaleMetrics.valueOf(scale - 9);
-			final ScaleMetrics m2 = ScaleMetrics.valueOf(18 - scale);
-			final long tmp = m1.divideByScaleFactor(f1) * m1.divideByScaleFactor(f2);
-			f1xf2 = m2.divideByScaleFactor(tmp);
+			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
+			final Scale9f scale9f = Scale9f.INSTANCE;
+			final ScaleMetrics scaleDiff09 = ScaleMetrics.valueOf(scale - 9);
+			final ScaleMetrics scaleDiff18 = ScaleMetrics.valueOf(18 - scale);
+			final long hf1 = scale9f.divideByScaleFactor(f1);
+			final long hf2 = scale9f.divideByScaleFactor(f2);
+			final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
+			final long lf2 = f2 - scale9f.multiplyByScaleFactor(hf2);
+			
+			final long f1xf2 = scaleDiff18.multiplyByScaleFactor(hf1 * hf2) + scaleDiff09.divideByScaleFactor(hf1 * lf2 + hf2 * lf1 + scale9f.divideByScaleFactor(lf1 * lf2));
+			return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2;
 		}
-		return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2;
 	}
 
 	@Override
@@ -83,6 +90,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 		}
 		return UInt128.divide128(scaleMetrics, uDecimalDividend, uDecimalDivisor);
 	}
+
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
 		final int scaleDiff = getScale() - pow10.getScale();
 		final long quot;
@@ -90,7 +98,7 @@ public class TruncatingArithmetics extends AbstractScaledArithmetics implements
 			//divide
 			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scaleDiff);
 			quot = scaleMetrics.divideByScaleFactor(uDecimalDividend);
-			
+
 		} else {
 			//multiply
 			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scaleDiff);

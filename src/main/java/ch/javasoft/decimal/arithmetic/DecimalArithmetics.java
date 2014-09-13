@@ -117,7 +117,7 @@ public interface DecimalArithmetics {
 
 	/**
 	 * Returns an unscaled decimal whose value is <tt>(uDecimal1 &times;
-	 * uDecimal2)}.
+	 * uDecimal2)</tt>.
 	 * 
 	 * @param uDecimal1
 	 *            first unscaled decimal value to be multiplied

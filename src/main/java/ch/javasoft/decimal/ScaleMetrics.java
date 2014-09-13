@@ -829,6 +829,15 @@ abstract public class ScaleMetrics {
 		public long moduloByScaleFactor(long dividend) {
 			return dividend % 100000000000000000L;
 		}
+		@Override
+		public Decimal17f createImmutable(long unscaled) {
+			return Decimal17f.valueOfUnscaled(unscaled);
+		}
+
+		@Override
+		public MutableDecimal17f createMutable(long unscaled) {
+			return new MutableDecimal17f(unscaled);
+		}
 	}
 
 	/**
@@ -1075,7 +1084,7 @@ abstract public class ScaleMetrics {
 	 */
 	public AbstractImmutableDecimal<?, ?, ?> createImmutable(long unscaled) {
 		// FIXME impl
-		throw new RuntimeException("not implemented for " + getClass().getSimpleName());
+		throw new RuntimeException("not implemented for " + this);
 	}
 
 	/**
@@ -1087,7 +1096,16 @@ abstract public class ScaleMetrics {
 	 */
 	public AbstractMutableDecimal<?, ?, ?> createMutable(long unscaled) {
 		// FIXME impl
-		throw new RuntimeException("not implemented for " + getClass().getSimpleName());
+		throw new RuntimeException("not implemented for " + this);
+	}
+
+	/**
+	 * Returns the default arithmetics for this scale.
+	 * 
+	 * @return default arithmetics for this scale
+	 */
+	public DecimalArithmetics getDefaultArithmetics() {
+		return getArithmetics(RoundingMode.DOWN);
 	}
 
 	/**
@@ -1103,17 +1121,6 @@ abstract public class ScaleMetrics {
 
 	/**
 	 * Returns the arithmetics for this scale that performs all operations with
-	 * {@link RoundingMode#HALF_UP HALF_UP} rounding.
-	 * 
-	 * @return arithmetics for this scale with HALF_UP rounding
-	 * @see RoundingMode#HALF_UP
-	 */
-	public DecimalArithmetics getHalfUpArithmetics() {
-		return getArithmetics(RoundingMode.HALF_UP);
-	}
-
-	/**
-	 * Returns the arithmetics for this scale that performs all operations with
 	 * the specified {@code roundingMode}.
 	 *
 	 * @param roundingMode
@@ -1123,4 +1130,10 @@ abstract public class ScaleMetrics {
 	public DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
 		return roundingModeToArithmetics.get(roundingMode);
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
+	}
+	
 }

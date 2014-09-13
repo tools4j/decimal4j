@@ -102,7 +102,7 @@ public class CheckedArithmetics implements DecimalArithmetics {
 		result = CheckedLongArithmetics.add(this, result, f1xf2);
 		return result;
 	}
-
+	
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		//FIXME this can overflow e.g. division by very small number

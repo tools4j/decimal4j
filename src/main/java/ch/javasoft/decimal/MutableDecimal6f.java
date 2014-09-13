@@ -23,7 +23,7 @@ public class MutableDecimal6f extends
 	}
 
 	public MutableDecimal6f(String value) {
-		this(Decimal6f.ARITHMETICS.parse(value));
+		this(Decimal6f.SCALE.getDefaultArithmetics().parse(value));
 	}
 
 	public MutableDecimal6f(String value, RoundingMode roundingMode) {

@@ -58,7 +58,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	protected DecimalArithmetics getDefaultArithmetics() {
-		return getScaleMetrics().getHalfUpArithmetics();
+		return getScaleMetrics().getDefaultArithmetics();
 	}
 
 	protected DecimalArithmetics getArithmeticsFor(RoundingMode roundingMode) {
@@ -752,7 +752,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 			final long otherRemainder = otherUnscaled - diffMetrics.multiplyByScaleFactor(otherRescaled);
 			return -arith.signum(otherRemainder);
 		} else {
-			final DecimalArithmetics arith = other.getScaleMetrics().getHalfUpArithmetics();
+			final DecimalArithmetics arith = other.getScaleMetrics().getDefaultArithmetics();
 			final ScaleMetrics diffMetrics = ScaleMetrics.valueOf(scale - otherScale);
 			final long rescaled = diffMetrics.divideByScaleFactor(unscaled);
 			final int cmp = arith.compare(rescaled, otherUnscaled);

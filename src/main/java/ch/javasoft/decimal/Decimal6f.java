@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.ScaleMetrics.Scale6f;
-import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
  * <tt>Decimal6f</tt> represents a immutable decimal number with 6 fractional
@@ -15,9 +14,8 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, MutableDecimal6f> {
 
 	public static final Scale6f SCALE = Scale6f.INSTANCE;
-	public static final DecimalArithmetics ARITHMETICS = SCALE.getHalfUpArithmetics();
-
-	public static final long ONE_UNSCALED = ARITHMETICS.one();
+	
+	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
 
 	public static final Decimal6f ZERO = new Decimal6f(0);
 	public static final Decimal6f ULP = new Decimal6f(1);
@@ -56,16 +54,12 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 	}
 
 	public Decimal6f(String value) {
-		super(ARITHMETICS.parse(value));
+		super(SCALE.getDefaultArithmetics().parse(value));
 	}
 	
 	@Override
 	public Scale6f getScaleMetrics() {
 		return SCALE;
-	}
-	@Override
-	protected DecimalArithmetics getDefaultArithmetics() {
-		return ARITHMETICS;
 	}
 
 	@Override
@@ -74,11 +68,11 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 	}
 
 	public static Decimal6f valueOf(long value) {
-		return valueOfUnscaled(ARITHMETICS.fromLong(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromLong(value));
 	}
 
 	public static Decimal6f valueOf(double value) {
-		return valueOfUnscaled(ARITHMETICS.fromDouble(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromDouble(value));
 	}
 
 	public static Decimal6f valueOf(double value, RoundingMode roundingMode) {
@@ -86,11 +80,11 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 	}
 
 	public static Decimal6f valueOf(BigInteger value) {
-		return valueOfUnscaled(ARITHMETICS.fromBigInteger(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromBigInteger(value));
 	}
 
 	public static Decimal6f valueOf(BigDecimal value) {
-		return valueOfUnscaled(ARITHMETICS.fromBigDecimal(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromBigDecimal(value));
 	}
 
 	public static Decimal6f valueOf(BigDecimal value, RoundingMode roundingMode) {
@@ -107,7 +101,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 	}
 
 	public static Decimal6f valueOf(String value) {
-		return valueOfUnscaled(ARITHMETICS.parse(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetics().parse(value));
 	}
 
 	public static Decimal6f valueOf(String value, RoundingMode roundingMode) {
@@ -128,7 +122,7 @@ public class Decimal6f extends AbstractImmutableDecimal<Scale6f, Decimal6f, Muta
 	 *         with the given scale
 	 */
 	public static Decimal6f valueOfUnscaled(long unscaledValue, int scale) {
-		return valueOfUnscaled(ARITHMETICS.fromUnscaled(unscaledValue, scale));
+		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromUnscaled(unscaledValue, scale));
 	}
 
 	/**
