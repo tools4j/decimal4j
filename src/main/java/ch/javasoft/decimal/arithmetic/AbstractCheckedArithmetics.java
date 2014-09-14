@@ -86,7 +86,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	@Override
 	public long negate(long uDecimal) {
 		final long neg = -uDecimal;
-		if (neg != 0 && Long.signum(uDecimal) == Long.signum(neg)) {
+		if (uDecimal != 0 & (uDecimal ^ neg) >= 0) {
 			throw new ArithmeticException("overflow: -" + toString(uDecimal) + " = " + toString(neg));
 		}
 		return neg;

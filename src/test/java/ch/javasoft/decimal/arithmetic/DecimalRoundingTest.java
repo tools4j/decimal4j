@@ -130,9 +130,9 @@ public class DecimalRoundingTest {
 		if (Double.isNaN(expected)) {
 			thrown.expect(ArithmeticException.class);
 			thrown.expectMessage("necessary");
-			rounding.calculateRoundingIncrement(truncated, reminder < 0, firstTruncDigit, anyAfterFirstTruncDigit);
+			rounding.calculateRoundingIncrement(Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
 		} else {
-			final int increment = rounding.calculateRoundingIncrement(truncated, reminder < 0, firstTruncDigit, anyAfterFirstTruncDigit);
+			final int increment = rounding.calculateRoundingIncrement(Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
 			final double actual = ((long)input) + increment;
 			assertEquals("wrong rounding for " + input + " " + rounding, expected, actual, 0);
 		}

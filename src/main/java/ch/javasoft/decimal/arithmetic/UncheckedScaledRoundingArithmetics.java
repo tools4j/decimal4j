@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.ScaleMetrics.Scale9f;
 
 /**
  * Arithmetic implementation for rounding strategies. For
@@ -62,27 +63,34 @@ public class UncheckedScaledRoundingArithmetics extends
 		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
 		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
 		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
-		final long f1xf2;
-		final long inc;
-		final long remScaleFactor;
 		if (scale <= 9) {
-			//product fits in long, multiply then divide
-			f1xf2 = f1 * f2;
-			inc = scaleMetrics.divideByScaleFactor(f1xf2);
-			remScaleFactor = scaleMetrics.getScaleFactor();
+			//low order product f1*f2 fits in long
+			final long f1xf2 = f1 * f2;
+			final long f1xf2d = scaleMetrics.divideByScaleFactor(f1xf2);
+			final long f1xf2r = f1xf2 - scaleMetrics.multiplyByScaleFactor(f1xf2d);
+			final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2d;
+			return unrounded + rounding.calculateRoundingIncrement(unrounded, f1xf2r, scaleMetrics.getScaleFactor());
 		} else {
-			//product does not fit in long, divide first to fit, then remainder
+			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
+			final Scale9f scale9f = Scale9f.INSTANCE;
+			final ScaleMetrics scaleDiff09 = ScaleMetrics.valueOf(scale - 9);
+			final ScaleMetrics scaleDiff18 = ScaleMetrics.valueOf(18 - scale);
+			final long hf1 = scale9f.divideByScaleFactor(f1);
+			final long hf2 = scale9f.divideByScaleFactor(f2);
+			final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
+			final long lf2 = f2 - scale9f.multiplyByScaleFactor(hf2);
 
-			//FIXME we loose some remainder digits here, should produce 128 bit result here
-			final ScaleMetrics m1 = ScaleMetrics.valueOf(scale - 9);
-			final ScaleMetrics m2 = ScaleMetrics.valueOf(18 - scale);
-			f1xf2 = m1.divideByScaleFactor(f1) * m1.divideByScaleFactor(f2);
-			inc = m2.divideByScaleFactor(f1xf2);
-			remScaleFactor = m2.getScaleFactor();
+			final long lf1xlf2 = lf1 * lf2;
+			final long lf1xlf2d = scale9f.divideByScaleFactor(lf1xlf2);
+			final long lf1xlf2r = lf1xlf2 - scale9f.multiplyByScaleFactor(lf1xlf2d);
+			final long hl_lh_ll_f1xf2 = hf1 * lf2 + hf2 * lf1 + lf1xlf2d;
+			final long hl_lh_ll_f1xf2d = scaleDiff09.divideByScaleFactor(hl_lh_ll_f1xf2);
+			final long hl_lh_ll_f1xf2r = hl_lh_ll_f1xf2 - scaleDiff09.multiplyByScaleFactor(hl_lh_ll_f1xf2d);
+			final long f1xf2 = scaleDiff18.multiplyByScaleFactor(hf1 * hf2) + hl_lh_ll_f1xf2d;
+			final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2;
+			final long reminder = scale9f.multiplyByScaleFactor(hl_lh_ll_f1xf2r) + lf1xlf2r;
+			return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder, scaleMetrics.getScaleFactor());
 		}
-		final long rem = f1xf2 - scaleMetrics.multiplyByScaleFactor(inc);
-		final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + inc;
-		return unrounded + rounding.calculateRoundingIncrement(unrounded, rem, remScaleFactor);
 	}
 
 	@Override
@@ -105,6 +113,19 @@ public class UncheckedScaledRoundingArithmetics extends
 		return divide128(uDecimalDividend, uDecimalDivisor);
 	}
 
+	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final DecimalArithmetics truncArith = scaleMetrics.getTruncatingArithmetics();
+		final long unrounded = truncArith.divide(uDecimalDividend, uDecimalDivisor);
+		final long product = truncArith.multiply(unrounded, uDecimalDivisor);//FIXME we may loose some after-decimals >= 0.5
+		final long delta = uDecimalDividend - product;
+		if (delta != 0) {
+			final long deltaScaled = scaleMetrics.multiplyByScaleFactor(delta);
+			return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, deltaScaled, uDecimalDivisor);//OVERFLOW possible
+		}
+		return unrounded;
+	}
+
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
 		final int scaleDiff = getScale() - pow10.getScale();
 		if (scaleDiff <= 0) {
@@ -123,19 +144,6 @@ public class UncheckedScaledRoundingArithmetics extends
 			final long quot = scaler.multiplyByScaleFactor(uDecimalDividend);
 			return uDecimalDivisor > 0 ? quot : -quot;
 		}
-	}
-
-	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
-		final ScaleMetrics scaleMetrics = getScaleMetrics();
-		final DecimalArithmetics truncArith = scaleMetrics.getTruncatingArithmetics();
-		final long unrounded = truncArith.divide(uDecimalDividend, uDecimalDivisor);
-		final long product = truncArith.multiply(unrounded, uDecimalDivisor);
-		final long delta = uDecimalDividend - product;
-		if (delta != 0) {
-			final long deltaScaled = scaleMetrics.multiplyByScaleFactor(delta);
-			return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, deltaScaled, uDecimalDivisor);//OVERFLOW possible
-		}
-		return unrounded;
 	}
 
 	@Override
@@ -214,7 +222,7 @@ public class UncheckedScaledRoundingArithmetics extends
 				result /= 10;
 			}
 			//rounding
-			result += rounding.calculateRoundingIncrement(result, unscaledValue < 0, lastDigit, zeroAfterLastDigit);
+			result += rounding.calculateRoundingIncrement(Long.signum(unscaledValue), result, lastDigit, zeroAfterLastDigit);
 		}
 		return result;
 	}
@@ -249,7 +257,7 @@ public class UncheckedScaledRoundingArithmetics extends
 				fractionDigits /= 10;
 			}
 			//rounding
-			fractionDigits += rounding.calculateRoundingIncrement(fractionDigits, false, lastDigit, zeroAfterLastDigit);
+			fractionDigits += rounding.calculateRoundingIncrement(1, fractionDigits, lastDigit, zeroAfterLastDigit);
 			fValue = fractionDigits;
 		} else {
 			fValue = 0;

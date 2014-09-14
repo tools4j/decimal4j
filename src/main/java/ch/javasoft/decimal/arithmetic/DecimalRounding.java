@@ -20,9 +20,9 @@ public enum DecimalRounding {
 	 */
 	UP(RoundingMode.UP) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
-				return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
+				return sgn;
 			}
 			return 0;
 		}
@@ -37,7 +37,7 @@ public enum DecimalRounding {
 	 */
 	DOWN(RoundingMode.DOWN) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			return 0;
 		}
 	},
@@ -52,8 +52,8 @@ public enum DecimalRounding {
 	 */
 	CEILING(RoundingMode.CEILING) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
-			if (truncatedValue > 0 || (truncatedValue == 0 && !negativeTruncatedPart)) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+			if (sgn > 0) {
 				if (truncatedPart.isGreaterThanZero()) {
 					return 1;
 				}
@@ -72,8 +72,8 @@ public enum DecimalRounding {
 	 */
 	FLOOR(RoundingMode.FLOOR) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
-			if (truncatedValue < 0 || (truncatedValue == 0 && negativeTruncatedPart)) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+			if (sgn < 0) {
 				if (truncatedPart.isGreaterThanZero()) {
 					return -1;
 				}
@@ -93,9 +93,9 @@ public enum DecimalRounding {
 	 */
 	HALF_UP(RoundingMode.HALF_UP) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
-				return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
+				return sgn;
 			}
 			return 0;
 		}
@@ -111,9 +111,9 @@ public enum DecimalRounding {
 	 */
 	HALF_DOWN(RoundingMode.HALF_DOWN) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanHalf()) {
-				return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
+				return sgn;
 			}
 			return 0;
 		}
@@ -135,10 +135,10 @@ public enum DecimalRounding {
 	 */
 	HALF_EVEN(RoundingMode.HALF_EVEN) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
 				if (truncatedPart.isGreaterThanHalf() || ((truncatedValue & 0x1) != 0)) {
-					return signedRoundingIncrement(truncatedValue, negativeTruncatedPart);
+					return sgn;
 				}
 			}
 			return 0;
@@ -155,7 +155,7 @@ public enum DecimalRounding {
 	 */
 	UNNECESSARY(RoundingMode.UNNECESSARY) {
 		@Override
-		public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart) {
+		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
 				throw new ArithmeticException("rounding necessary");
 			}
@@ -192,48 +192,30 @@ public enum DecimalRounding {
 	}
 
 	/**
-	 * Returns the rounding increment, either +1 or -1 depending on the given
-	 * arguments. The signed rounding increment is negative if either the
-	 * truncated value is negative or if it is zero and the truncated reminder
-	 * is negative.
-	 * 
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param negativeTruncatedPart
-	 *            true if the truncated part is negative, important only if
-	 *            {@code truncatedValue==0}
-	 * @return +1 or -1 to reflect a rounding increment, negative if value or
-	 *         reminder is negative
-	 */
-	private static int signedRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart) {
-		return truncatedValue < 0 || (truncatedValue == 0 && negativeTruncatedPart) ? -1 : 1;
-	}
-
-	/**
 	 * Returns the rounding increment appropriate for this decimal rounding. The
 	 * returned value is one of -1, 0 or 1.
 	 * 
+	 * @param sign
+	 *            the sign of the total value, either +1 or -1; determines the
+	 *            result value if rounded
 	 * @param truncatedValue
 	 *            the truncated result before rounding is applied
-	 * @param negativeTruncatedPart
-	 *            true if the truncated part is negative, important only if
-	 *            {@code truncatedValue==0}
 	 * @param truncatedPart
 	 *            classification of the trunctated part of the value
 	 * @return the value to add to {@code truncatedValue} to get the rounded
 	 *         result, one of -1, 0 or 1
 	 */
-	abstract public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, TruncatedPart truncatedPart);
+	abstract public int calculateRoundingIncrement(int sign, long truncatedValue, TruncatedPart truncatedPart);
 
 	/**
 	 * Returns the rounding increment appropriate for this decimal rounding. The
 	 * returned value is one of -1, 0 or 1.
 	 * 
+	 * @param sign
+	 *            the sign of the total value, either +1 or -1; determines the
+	 *            result value if rounded
 	 * @param truncatedValue
 	 *            the truncated result before rounding is applied
-	 * @param negativeTruncatedPart
-	 *            true if the truncated part is negative, important only if
-	 *            {@code truncatedValue==0}
 	 * @param firstTruncatedDigit
 	 *            the first truncated digit, must be in {@code [0, 1, ..., 9]}
 	 * @param zeroAfterFirstTruncatedDigit
@@ -242,8 +224,8 @@ public enum DecimalRounding {
 	 * @return the value to add to {@code truncatedValue} to get the rounded
 	 *         result, one of -1, 0 or 1
 	 */
-	public int calculateRoundingIncrement(long truncatedValue, boolean negativeTruncatedPart, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-		return calculateRoundingIncrement(truncatedValue, negativeTruncatedPart, TruncatedPart.valueOf(firstTruncatedDigit, zeroAfterFirstTruncatedDigit));
+	public int calculateRoundingIncrement(int sign, long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
+		return calculateRoundingIncrement(sign, truncatedValue, TruncatedPart.valueOf(firstTruncatedDigit, zeroAfterFirstTruncatedDigit));
 	}
 
 	/**
@@ -267,7 +249,7 @@ public enum DecimalRounding {
 			return 0;
 		}
 		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(truncatedDigits), one);
-		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0, truncatedPart);
+		return calculateRoundingIncrement(Long.signum(truncatedDigits), truncatedValue, truncatedPart);
 	}
 
 	/**
@@ -290,7 +272,7 @@ public enum DecimalRounding {
 			return 0;
 		}
 		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(truncatedDigits), Math.abs(divisor));
-		return calculateRoundingIncrement(truncatedValue, truncatedDigits < 0 != divisor < 0, truncatedPart);
+		return calculateRoundingIncrement(Long.signum(truncatedDigits ^ divisor), truncatedValue, truncatedPart);
 	}
 
 	private static final DecimalRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();

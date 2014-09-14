@@ -91,7 +91,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 			if (positions > -63) {
 				return shiftRight(rounding, uDecimal, -positions);
 			}
-			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}
 		return uDecimal << positions;
 	}
@@ -111,9 +111,9 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 				final long truncated = uDecimal >> positions;
 				final long remainder = uDecimal - (truncated << positions);
 				final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(remainder), 1L << positions);
-				return truncated + rounding.calculateRoundingIncrement(truncated, uDecimal < 0, truncatedPart);
+				return truncated + rounding.calculateRoundingIncrement(Long.signum(uDecimal), truncated, truncatedPart);
 			}
-			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}
 		//shift left, no rounding
 		return uDecimal >> positions;
@@ -135,7 +135,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
-			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		} else {
 			int pos = positions;
 			long result = uDecimal;
@@ -177,7 +177,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
-			return rounding.calculateRoundingIncrement(0, uDecimal < 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}
 	}
 
@@ -251,7 +251,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 				result /= 10;
 			}
 			//rounding
-			result += rounding.calculateRoundingIncrement(result, unscaledValue < 0, lastDigit, zeroAfterLastDigit);
+			result += rounding.calculateRoundingIncrement(Long.signum(unscaledValue), result, lastDigit, zeroAfterLastDigit);
 		}
 		return result;
 	}

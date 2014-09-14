@@ -33,8 +33,8 @@ abstract public class AbstractPerfTest {
 
 	private static final ScaleMetrics[] SCALE_METRICES = { Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE };
 
-	private static final int R = 1; //runs
-	private static final int N = 1024/16; //numbers per run
+	private static final int R = 1*4; //runs
+	private static final int N = 1024/16/4; //numbers per run
 	private static final int I = 1024*16;//iterations on the same dataset
 	private static final int W = I; //warm-up iterations;
 
@@ -208,7 +208,7 @@ abstract public class AbstractPerfTest {
 		}
 
 		//trick the optimizer by using cnt
-		final long fac = cnt / cnt;
+		final long fac = cnt == 0 ? 1 : cnt / cnt;
 		//report times
 		logTime((R * N * I) * fac, timer);
 	}
@@ -228,12 +228,17 @@ abstract public class AbstractPerfTest {
 		final int n = values.length;
 		final int scale = arithmetics.getScale();
 		for (int i = 0; i < n; i++) {
-			//works for toString asserts
-			//						values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
-			//						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
-			//works only for unscaled asserts
-			//						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
-			values[i] = BigDecimal.valueOf(rnd.nextLong(), scale);
+			long val;
+			do {
+				//works with toString asserts
+//				val = rnd.nextInt();
+	//			val = rnd.nextLong() & 0x000001ffffffffffL;
+//				val = rnd.nextLong() & 0x000001ffffffffffL;
+				//works only with unscaled asserts
+//				val = rnd.nextLong() & 0x03ffffffffffffffL;
+				val = rnd.nextLong();
+			} while (val == 0);//avoid division by 0
+			values[i] = BigDecimal.valueOf(val, scale);
 		}
 		return values;
 	}
