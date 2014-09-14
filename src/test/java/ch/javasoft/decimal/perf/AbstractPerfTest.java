@@ -44,7 +44,7 @@ abstract public class AbstractPerfTest {
 	private final MathContext mcLong128;
 
 	public AbstractPerfTest(ScaleMetrics scaleMetrics) {
-		System.out.println();//for test data output on new line
+		System.out.println("running " + getClass().getSimpleName() + ":");//for test data output on new line
 		this.scaleMetrics = scaleMetrics;
 		this.arithmetics = scaleMetrics.getDefaultArithmetics();
 		this.mcLong64 = new MathContext(19, arithmetics.getRoundingMode());
