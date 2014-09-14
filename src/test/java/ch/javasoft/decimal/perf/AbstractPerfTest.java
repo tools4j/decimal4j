@@ -5,7 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,9 +44,19 @@ abstract public class AbstractPerfTest {
 	private final DecimalArithmetics arithmetics;
 	private final MathContext mcLong64;
 	private final MathContext mcLong128;
+	
+	private static final ThreadLocal<Set<Class<?>>> tracedTestClasses = new ThreadLocal<Set<Class<?>>>() {
+		@Override
+		protected Set<Class<?>> initialValue() {
+			return new HashSet<Class<?>>();
+		};
+	};
 
 	public AbstractPerfTest(ScaleMetrics scaleMetrics) {
-		System.out.println("running " + getClass().getSimpleName() + ":");//for test data output on new line
+		if (!tracedTestClasses.get().contains(getClass())) {
+			System.out.println("running " + getClass().getSimpleName() + ":");//for test data output on new line
+			tracedTestClasses.get().add(getClass());
+		}
 		this.scaleMetrics = scaleMetrics;
 		this.arithmetics = scaleMetrics.getDefaultArithmetics();
 		this.mcLong64 = new MathContext(19, arithmetics.getRoundingMode());
