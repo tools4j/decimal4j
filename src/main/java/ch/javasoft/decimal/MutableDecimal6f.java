@@ -56,8 +56,8 @@ public class MutableDecimal6f extends
 
 	/**
 	 * Converts the specified unscaled decimal with the given scale to a
-	 * {@code Decimal6} value. If the given scale is more precise than the scale
-	 * for {@code Decimal6} and decimals need to be truncated,
+	 * {@code MutableDecimal6f} value. If the given scale is more precise than
+	 * the scale for {@code MutableDecimal6f} and decimals need to be truncated,
 	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode is applied.
 	 * 
 	 * @param unscaledValue
@@ -72,9 +72,9 @@ public class MutableDecimal6f extends
 
 	/**
 	 * Converts the specified unscaled decimal with the given scale to a
-	 * {@code Decimal6} value. If the given scale is more precise than the scale
-	 * for {@code Decimal6} and decimals need to be truncated, the specified
-	 * rounding mode is applied.
+	 * {@code MutableDecimal6f} value. If the given scale is more precise than
+	 * the scale for {@code MutableDecimal6f} and decimals need to be truncated,
+	 * the specified rounding mode is applied.
 	 * 
 	 * @param unscaledValue
 	 *            the unscaled decimal value to convert

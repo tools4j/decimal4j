@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.ScaleMetrics.Scale17f;
 
 /**
- * <tt>Decimal17f</tt> represents a immutable decimal number with 6 fractional
+ * <tt>Decimal17f</tt> represents an immutable decimal number with 6 fractional
  * digits.
  */
 @SuppressWarnings("serial")

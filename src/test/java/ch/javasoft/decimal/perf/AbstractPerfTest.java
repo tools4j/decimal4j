@@ -15,6 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.ScaleMetrics.Scale0f;
 import ch.javasoft.decimal.ScaleMetrics.Scale17f;
 import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 import ch.javasoft.decimal.Timer;
@@ -28,7 +29,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 @RunWith(Parameterized.class)
 abstract public class AbstractPerfTest {
 
-	private static final ScaleMetrics[] SCALE_METRICES = { Scale6f.INSTANCE, Scale17f.INSTANCE };
+	private static final ScaleMetrics[] SCALE_METRICES = { Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE };
 
 	private final int R = 1024; //runs
 	private final int N = 1024; //numbers per run
@@ -38,14 +39,14 @@ abstract public class AbstractPerfTest {
 
 	private final ScaleMetrics scaleMetrics;
 	private final DecimalArithmetics arithmetics;
-	private final MathContext decimal64;
-	private final MathContext decimal128;
+	private final MathContext mcLong64;
+	private final MathContext mcLong128;
 
 	public AbstractPerfTest(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.arithmetics = scaleMetrics.getDefaultArithmetics();
-		this.decimal64 = new MathContext(MathContext.DECIMAL64.getPrecision(), arithmetics.getRoundingMode());
-		this.decimal128 = new MathContext(MathContext.DECIMAL128.getPrecision(), arithmetics.getRoundingMode());
+		this.mcLong64 = new MathContext(18, arithmetics.getRoundingMode());
+		this.mcLong128 = new MathContext(38, arithmetics.getRoundingMode());
 	}
 
 	abstract protected String operation();
@@ -116,7 +117,7 @@ abstract public class AbstractPerfTest {
 			//BigDecimal
 			timer.firstAndStart();
 			for (int i = 0; i < n; i++) {
-				cnt += signumOfResult(aBigDec[i], bBigDec[i], decimal64);
+				cnt += signumOfResult(aBigDec[i], bBigDec[i], mcLong64);
 			}
 
 			//double
@@ -147,7 +148,7 @@ abstract public class AbstractPerfTest {
 			//assert
 			timer.stop();
 			for (int i = 0; i < n; i++) {
-				final BigDecimal expected = expectedResult(aBigDec[i], bBigDec[i], decimal128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
+				final BigDecimal expected = expectedResult(aBigDec[i], bBigDec[i], mcLong128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
 				final Decimal<S> actual = actualResult(aDec[i], bDec[i]);
 				//				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i], expected.toPlainString(), actual.toString());
 				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i] + " = " + expected.toPlainString(), expected.unscaledValue().longValue(), actual.unscaledValue());
@@ -176,11 +177,11 @@ abstract public class AbstractPerfTest {
 		final int scale = arithmetics.getScale();
 		for (int i = 0; i < n; i++) {
 			//works for toString asserts
-			//			values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
-			//			values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
+//						values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
+//						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
 			//works only for unscaled asserts
-			//			values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
-			values[i] = BigDecimal.valueOf(rnd.nextLong(), scale);
+						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
+//			values[i] = BigDecimal.valueOf(rnd.nextLong(), scale);
 		}
 		return values;
 	}

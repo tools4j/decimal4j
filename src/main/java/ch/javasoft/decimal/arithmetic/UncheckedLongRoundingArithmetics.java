@@ -50,6 +50,9 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		return divideByLong(rounding, uDecimalDividend, lDivisor);
+	}
+	static long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
 		final long quotient = uDecimalDividend / lDivisor;
 		final long remainder = uDecimalDividend - quotient * lDivisor;
 		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);

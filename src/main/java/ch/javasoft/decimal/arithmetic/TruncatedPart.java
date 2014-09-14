@@ -4,7 +4,7 @@ package ch.javasoft.decimal.arithmetic;
  * Represents the truncated part for instance after division. It is passed to
  * the rounding methods in {@link DecimalRounding}
  */
-public enum TruncatedPart {
+enum TruncatedPart {
 	/**
 	 * Truncated part {@code t == 0}.
 	 */
@@ -137,8 +137,8 @@ public enum TruncatedPart {
 	 * resulting from a division by the given non-negative divisor.
 	 * 
 	 * @param nonNegativeRemainder
-	 *            the remainder, not negative or LONG.MIN_VALUE --- the latter
-	 *            equal to {@code abs(Long.MIN_VALUE)}
+	 *            the remainder part, not negative and 
+	 *            {@code nonNegativeRemainder < nonNegativeDivisor}
 	 * @param nonNegativeDivisor
 	 *            the divisor, not negative or LONG.MIN_VALUE --- the latter
 	 *            equal to {@code abs(Long.MIN_VALUE)}
@@ -150,7 +150,7 @@ public enum TruncatedPart {
 		}
 		final long nonNegativeRemainderTimes2 = nonNegativeRemainder << 1;
 		if (nonNegativeRemainderTimes2 >= 0) {
-			final int compareWithHalf = Long.compare(nonNegativeRemainderTimes2, nonNegativeDivisor);
+			final int compareWithHalf = (nonNegativeRemainderTimes2 < nonNegativeDivisor) ? -1 : ((nonNegativeRemainderTimes2 == nonNegativeDivisor) ? 0 : 1); 
 			return COMPARE_HALF_VALUES[compareWithHalf + 1];
 		} else {
 			if (nonNegativeDivisor < 0) {

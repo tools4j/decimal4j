@@ -87,9 +87,7 @@ public class UncheckedScaledRoundingArithmetics extends
 
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
-		final long quotient = uDecimalDividend / lDivisor;
-		final long remainder = uDecimalDividend - quotient * lDivisor;
-		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);
+		return UncheckedLongRoundingArithmetics.divideByLong(rounding, uDecimalDividend, lDivisor);
 	}
 
 	@Override

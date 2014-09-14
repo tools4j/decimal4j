@@ -278,7 +278,7 @@ public enum DecimalRounding {
 	 * @param truncatedValue
 	 *            the truncated result before rounding is applied
 	 * @param truncatedDigits
-	 *            the truncated part of a double, it most hold that
+	 *            the truncated part, it most hold that
 	 *            {@code abs(truncatedDigits) < abs(divisor)}
 	 * @param divisor
 	 *            the divisor that led to the truncated digits

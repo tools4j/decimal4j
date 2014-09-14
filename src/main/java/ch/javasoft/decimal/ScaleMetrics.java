@@ -105,6 +105,16 @@ abstract public class ScaleMetrics {
 		public long moduloByScaleFactor(long dividend) {
 			return 0;
 		}
+
+		@Override
+		public Decimal0f createImmutable(long unscaled) {
+			return Decimal0f.valueOfUnscaled(unscaled);
+		}
+
+		@Override
+		public MutableDecimal0f createMutable(long unscaled) {
+			return MutableDecimal0f.unscaled(unscaled);
+		}
 	}
 
 	/**
@@ -371,7 +381,7 @@ abstract public class ScaleMetrics {
 
 		@Override
 		public MutableDecimal6f createMutable(long unscaled) {
-			return new MutableDecimal6f(unscaled);
+			return MutableDecimal6f.unscaled(unscaled);
 		}
 	}
 
@@ -854,7 +864,7 @@ abstract public class ScaleMetrics {
 
 		@Override
 		public MutableDecimal17f createMutable(long unscaled) {
-			return new MutableDecimal17f(unscaled);
+			return MutableDecimal17f.unscaled(unscaled);
 		}
 	}
 
