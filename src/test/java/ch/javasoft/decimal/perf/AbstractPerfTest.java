@@ -31,9 +31,10 @@ abstract public class AbstractPerfTest {
 
 	private static final ScaleMetrics[] SCALE_METRICES = { Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE };
 
-	private final int R = 1024; //runs
-	private final int N = 1024; //numbers per run
-	private final int W = 256; //warm-up runs, in addition to r, not timed
+	private static final int R = 1; //runs
+	private static final int N = 1024/16; //numbers per run
+	private static final int I = 1024*16;//iterations on the same dataset
+	private static final int W = I; //warm-up iterations;
 
 	private final Random rnd = new Random();
 
@@ -45,8 +46,8 @@ abstract public class AbstractPerfTest {
 	public AbstractPerfTest(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.arithmetics = scaleMetrics.getDefaultArithmetics();
-		this.mcLong64 = new MathContext(18, arithmetics.getRoundingMode());
-		this.mcLong128 = new MathContext(38, arithmetics.getRoundingMode());
+		this.mcLong64 = new MathContext(19, arithmetics.getRoundingMode());
+		this.mcLong128 = new MathContext(39, arithmetics.getRoundingMode());
 	}
 
 	abstract protected String operation();
@@ -80,27 +81,23 @@ abstract public class AbstractPerfTest {
 	}
 
 	protected <S extends ScaleMetrics> void runPerfTest(S scaleMetrics) {
-		final int r = R;
-		final int n = N;
-		final int w = W;
-
 		final Timer timer = new Timer(5);
 
 		long cnt = 0;
 
 		//allocate
-		final BigDecimal[] aBigDec = new BigDecimal[n];
-		final BigDecimal[] bBigDec = new BigDecimal[n];
-		final double[] aDouble = new double[n];
-		final double[] bDouble = new double[n];
+		final BigDecimal[] aBigDec = new BigDecimal[N];
+		final BigDecimal[] bBigDec = new BigDecimal[N];
+		final double[] aDouble = new double[N];
+		final double[] bDouble = new double[N];
 		@SuppressWarnings("unchecked")
-		final Decimal<S>[] aDec = new Decimal[n];
+		final Decimal<S>[] aDec = new Decimal[N];
 		@SuppressWarnings("unchecked")
-		final Decimal<S>[] bDec = new Decimal[n];
+		final Decimal<S>[] bDec = new Decimal[N];
 		@SuppressWarnings("unchecked")
 		final MutableDecimal<S, ?> mutable = (MutableDecimal<S, ?>) scaleMetrics.createMutable(0);
 
-		for (int j = 0; j < r + w; j++) {
+		for (int r = 0; r < R; r++) {
 
 			//prepare input values
 			randomBigDecimals(aBigDec);
@@ -110,55 +107,97 @@ abstract public class AbstractPerfTest {
 			toDecimal(mutable, aBigDec, aDec);
 			toDecimal(mutable, bBigDec, bDec);
 
-			if (j == w) {
-				timer.reset();
-			}
+			Runtime.getRuntime().gc();
 
 			//BigDecimal
-			timer.firstAndStart();
-			for (int i = 0; i < n; i++) {
-				cnt += signumOfResult(aBigDec[i], bBigDec[i], mcLong64);
+			for (int iW = 0; iW < W; iW++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(aBigDec[iN], bBigDec[iN], mcLong64);
+				}
 			}
+			timer.firstAndStart();
+			for (int iI = 0; iI < I; iI++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(aBigDec[iN], bBigDec[iN], mcLong64);
+				}
+			}
+			timer.stop();
+			Runtime.getRuntime().gc();
 
 			//double
-			timer.stopAndNextStart();
-			for (int i = 0; i < n; i++) {
-				cnt += signumOfResult(aDouble[i], bDouble[i]);
+			for (int iW = 0; iW < W; iW++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(aDouble[iN], bDouble[iN]);
+				}
 			}
+			timer.nextAndStart();
+			for (int iI = 0; iI < I; iI++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(aDouble[iN], bDouble[iN]);
+				}
+			}
+			timer.stop();
+			Runtime.getRuntime().gc();
 
 			//Decimal
-			timer.stopAndNextStart();
-			for (int i = 0; i < n; i++) {
-				cnt += signumOfResult(aDec[i], bDec[i]);
+			for (int iW = 0; iW < W; iW++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(aDec[iN], bDec[iN]);
+				}
 			}
+			timer.nextAndStart();
+			for (int iI = 0; iI < I; iI++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(aDec[iN], bDec[iN]);
+				}
+			}
+			timer.stop();
+			Runtime.getRuntime().gc();
 
 			//MutableDecimal
-			timer.stopAndNextStart();
-			for (int i = 0; i < n; i++) {
-				cnt += signumOfResult(mutable, aDec[i], bDec[i]);
+			for (int iW = 0; iW < W; iW++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(mutable, aDec[iN], bDec[iN]);
+				}
 			}
+			timer.nextAndStart();
+			for (int iI = 0; iI < I; iI++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(mutable, aDec[iN], bDec[iN]);
+				}
+			}
+			timer.stop();
+			Runtime.getRuntime().gc();
 
 			//native Decimal
-			timer.stopAndNextStart();
 			final DecimalArithmetics arith = arithmetics;
-			for (int i = 0; i < n; i++) {
-				cnt += signumOfResult(arith, aDec[i].unscaledValue(), bDec[i].unscaledValue());
+			for (int iW = 0; iW < W; iW++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(arith, aDec[iN].unscaledValue(), bDec[iN].unscaledValue());
+				}
 			}
+			timer.nextAndStart();
+			for (int iI = 0; iI < I; iI++) {
+				for (int iN = 0; iN < N; iN++) {
+					cnt += signumOfResult(arith, aDec[iN].unscaledValue(), bDec[iN].unscaledValue());
+				}
+			}
+			timer.stop();
+			Runtime.getRuntime().gc();
 
 			//assert
-			timer.stop();
-			for (int i = 0; i < n; i++) {
-				final BigDecimal expected = expectedResult(aBigDec[i], bBigDec[i], mcLong128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
-				final Decimal<S> actual = actualResult(aDec[i], bDec[i]);
+			for (int iN = 0; iN < N; iN++) {
+				final BigDecimal expected = expectedResult(aBigDec[iN], bBigDec[iN], mcLong128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
+				final Decimal<S> actual = actualResult(aDec[iN], bDec[iN]);
 				//				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i], expected.toPlainString(), actual.toString());
-				assertEquals("test[" + i + "]: " + aDec[i] + " " + operation() + " " + bDec[i] + " = " + expected.toPlainString(), expected.unscaledValue().longValue(), actual.unscaledValue());
+				assertEquals("test[" + iN + "]: " + aDec[iN] + " " + operation() + " " + bDec[iN] + " = " + expected.toPlainString(), expected.unscaledValue().longValue(), actual.unscaledValue());
 			}
 		}
 
 		//trick the optimizer by using cnt
 		final long fac = cnt / cnt;
 		//report times
-		logTime((r * n) * fac, timer);
+		logTime((R * N * I) * fac, timer);
 	}
 
 	private void logTime(long count, Timer timer) {
@@ -177,11 +216,11 @@ abstract public class AbstractPerfTest {
 		final int scale = arithmetics.getScale();
 		for (int i = 0; i < n; i++) {
 			//works for toString asserts
-//						values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
-//						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
+			//						values[i] = BigDecimal.valueOf(rnd.nextInt(), scale);
+			//						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x000001ffffffffffL, scale);
 			//works only for unscaled asserts
-						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
-//			values[i] = BigDecimal.valueOf(rnd.nextLong(), scale);
+			//						values[i] = BigDecimal.valueOf(rnd.nextLong() & 0x03ffffffffffffffL, scale);
+			values[i] = BigDecimal.valueOf(rnd.nextLong(), scale);
 		}
 		return values;
 	}
