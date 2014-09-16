@@ -4,7 +4,7 @@ package ch.javasoft.decimal.arithmetic;
  * Represents the truncated part for instance after division. It is passed to
  * the rounding methods in {@link DecimalRounding}
  */
-enum TruncatedPart {
+public enum TruncatedPart {
 	/**
 	 * Truncated part {@code t == 0}.
 	 */

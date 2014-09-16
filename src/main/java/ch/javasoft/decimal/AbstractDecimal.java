@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.DecimalRounding;
+import ch.javasoft.decimal.arithmetic.TruncatedPart;
 
 /**
  * Common base class for {@link AbstractImmutableDecimal immutable} and
@@ -782,14 +784,34 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	
 	@Override
 	public Decimal<S> average(Decimal<S> val) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.shiftRight(arith.add(unscaledValue(), val.unscaledValue()), 1));
+		return average(val, getDefaultArithmetics().getRoundingMode());
 	}
 	
 	@Override
 	public Decimal<S> average(Decimal<S> val, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		return createOrAssign(arith.shiftRight(arith.add(unscaledValue(), val.unscaledValue()), 1));
+		final long self = unscaledValue();
+		final long other = val.unscaledValue();
+		final long selfHalf = self >> 1;
+		final long otherHalf = other >> 1;
+		final long selfRem = self - (selfHalf << 1);
+		final long otherRem = other - (otherHalf << 1);
+		final long avg = arith.add(selfHalf, otherHalf);
+		final long rem = selfRem + otherRem;//rem is either of -2, -1, 0, 1, 2
+		if (rem == 0) {
+			return createOrAssign(avg); 
+		}
+		if ((rem & 0x1) == 0) {
+			//-2 or 2
+			return createOrAssign(arith.add(avg, rem >> 1));
+		}
+		//odd, apply rounding rules
+		if (roundingMode == RoundingMode.DOWN) {
+			return createOrAssign(avg);
+		}
+		final int sgn = avg < 0 ? -1 : avg > 0 ? 1 : (int)rem;//rem happens to be -1 or 1
+		final int inc = DecimalRounding.valueOf(roundingMode).calculateRoundingIncrement(sgn, avg, TruncatedPart.EQUAL_TO_HALF);
+		return createOrAssign(arith.add(avg, inc));
 	}
 	
 	/* ---------------------------- equals etc. ---------------------------- */

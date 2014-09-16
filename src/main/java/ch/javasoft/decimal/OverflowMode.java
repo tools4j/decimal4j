@@ -12,5 +12,13 @@ public enum OverflowMode {
 	/**
 	 * Operations causing an overflow throw an {@link ArithmeticException}.
 	 */
-	CHECKED
+	CHECKED;
+	
+	/**
+	 * Returns true if overflow leads to an {@link ArithmeticException}
+	 * @return true if {@code this == CHECKED}
+	 */
+	public boolean isChecked() {
+		return this == CHECKED;
+	}
 }
