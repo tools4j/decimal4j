@@ -39,9 +39,26 @@ abstract public class AbstractBinaryOperationTest extends
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b);
 
 	@Override
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, int index) {
+	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		final Decimal<S> dOpA = randomDecimal(scaleMetrics);
 		final Decimal<S> dOpB = randomDecimal(scaleMetrics);
+		runTest(scaleMetrics, "[" + index + "]", dOpA, dOpB);
+	}
+
+	@Override
+	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
+		final long[] specialValues = getSpecialValues(scaleMetrics);
+		for (int i = 0; i < specialValues.length; i++) {
+			for (int j = 0; j < specialValues.length; j++) {
+				final Decimal<S> dOpA = newDecimal(scaleMetrics, specialValues[i]);
+				final Decimal<S> dOpB = newDecimal(scaleMetrics, specialValues[j]);
+				runTest(scaleMetrics, "[" + i + ", " + j + "]", dOpA, dOpB);
+			}
+		}
+		
+	}
+
+	private <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<S> dOpB) {
 		final BigDecimal bdOpA = toBigDecimal(dOpA);
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
 
@@ -65,6 +82,6 @@ abstract public class AbstractBinaryOperationTest extends
 		}
 
 		//assert
-		actual.assertEquivalentTo(expected, "[" + index + "]: " + dOpA + " " + operation() + " " + dOpB);
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " " + dOpB);
 	}
 }

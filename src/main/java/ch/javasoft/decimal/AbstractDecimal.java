@@ -5,8 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.DecimalRounding;
-import ch.javasoft.decimal.arithmetic.TruncatedPart;
 
 /**
  * Common base class for {@link AbstractImmutableDecimal immutable} and
@@ -104,7 +102,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		}
 		return (int) num;
 	}
-	
+
 	@Override
 	public int intValue(RoundingMode roundingMode) {
 		final long num = longValue(roundingMode); // will check decimal part
@@ -118,12 +116,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public long longValue() {
 		return getDefaultArithmetics().toLong(unscaledValue());
 	}
-	
+
 	@Override
 	public long longValueExact() {
 		return longValue(RoundingMode.UNNECESSARY);
 	}
-	
+
 	@Override
 	public long longValue(RoundingMode roundingMode) {
 		return getArithmeticsFor(roundingMode).toLong(unscaledValue());
@@ -133,7 +131,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public float floatValue() {
 		return getDefaultArithmetics().toFloat(unscaledValue());
 	}
-	
+
 	@Override
 	public float floatValue(RoundingMode roundingMode) {
 		return getArithmeticsFor(roundingMode).toFloat(unscaledValue());
@@ -143,32 +141,32 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public double doubleValue() {
 		return getDefaultArithmetics().toDouble(unscaledValue());
 	}
-	
+
 	@Override
 	public double doubleValue(RoundingMode roundingMode) {
 		return getArithmeticsFor(roundingMode).toDouble(unscaledValue());
 	}
-	
+
 	@Override
 	public BigInteger toBigInteger() {
 		return BigInteger.valueOf(longValue());
 	}
-	
+
 	@Override
 	public BigInteger toBigIntegerExact() {
 		return BigInteger.valueOf(longValueExact());
 	}
-	
+
 	@Override
 	public BigInteger toBigInteger(RoundingMode roundingMode) {
 		return BigInteger.valueOf(longValue(roundingMode));
 	}
-	
+
 	@Override
 	public BigDecimal toBigDecimal() {
 		return getDefaultArithmetics().toBigDecimal(unscaledValue());
 	}
-	
+
 	@Override
 	public BigDecimal toBigDecimal(int scale, RoundingMode roundingMode) {
 		final int thisScale = getScale();
@@ -193,14 +191,14 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		//let the big decimal deal with such large numbers then
 		return toBigDecimal().setScale(scale, roundingMode);
 	}
-	
+
 	@Override
 	public Decimal<S> integralPart() {
 		final long unscaled = unscaledValue();
 		final long integral = unscaled - getScaleMetrics().moduloByScaleFactor(unscaled);
 		return createOrAssign(integral);
 	}
-	
+
 	@Override
 	public Decimal<S> fractionalPart() {
 		return createOrAssign(getScaleMetrics().moduloByScaleFactor(unscaledValue()));
@@ -553,7 +551,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public D divideByPowerOfTen(int n, RoundingMode roundingMode) {
 		return createOrAssign(getArithmeticsFor(roundingMode).divideByPowerOf10(unscaledValue(), n));
 	}
-	
+
 	@Override
 	public Decimal<S> divideToIntegralValue(Decimal<S> divisor) {
 		final DecimalArithmetics arith = getArithmeticsFor(RoundingMode.DOWN);
@@ -561,19 +559,20 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		final long frac = getScaleMetrics().moduloByScaleFactor(quot);
 		return createOrAssign(quot - frac);
 	}
-	
+
 	@Override
 	public Decimal<S>[] divideAndRemainder(Decimal<S> divisor) {
 		final DecimalArithmetics arith = getArithmeticsFor(RoundingMode.DOWN);
 		final long quot = arith.divide(unscaledValue(), divisor.unscaledValue());
 		final long frac = getScaleMetrics().moduloByScaleFactor(quot);
-		@SuppressWarnings("unchecked")//safe cast
+		@SuppressWarnings("unchecked")
+		//safe cast
 		final Decimal<S>[] result = (Decimal<S>[]) new Decimal<?>[2];
 		result[0] = createOrAssign(quot - frac);
 		result[1] = createOrAssign(frac);
 		return result;
 	}
-	
+
 	@Override
 	public Decimal<S> remainder(Decimal<S> divisor) {
 		final DecimalArithmetics arith = getArithmeticsFor(RoundingMode.DOWN);
@@ -685,7 +684,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public boolean isUlp() {
 		return unscaledValue() == 1;
 	}
-	
+
 	@Override
 	public boolean isMinusOne() {
 		return unscaledOne() == -unscaledOne();
@@ -710,7 +709,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public boolean isNonPositive() {
 		return unscaledValue() <= 0;
 	}
-	
+
 	@Override
 	public boolean isIntegral() {
 		return getScaleMetrics().moduloByScaleFactor(unscaledValue()) == 0;
@@ -720,13 +719,13 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public boolean isIntegralPartZero() {
 		return getScaleMetrics().divideByScaleFactor(unscaledValue()) == 0;
 	}
-	
+
 	@Override
 	public boolean isBetweenZeroAndOne() {
 		final long unscaled = unscaledValue();
 		return unscaled >= 0 && getScaleMetrics().divideByScaleFactor(unscaled) == 0;
 	}
-	
+
 	@Override
 	public boolean isBetweenZeroAndMinusOne() {
 		final long unscaled = unscaledValue();
@@ -771,7 +770,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public boolean isEqualToNumerically(Decimal<?> other) {
 		return compareToNumerically(other) == 0;
 	}
-	
+
 	@Override
 	public Decimal<S> min(Decimal<S> val) {
 		return isLessThanOrEqualTo(val) ? this : val;
@@ -781,39 +780,17 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public Decimal<S> max(Decimal<S> val) {
 		return isGreaterThanOrEqualTo(val) ? this : val;
 	}
-	
+
 	@Override
 	public Decimal<S> average(Decimal<S> val) {
-		return average(val, getDefaultArithmetics().getRoundingMode());
+		return createOrAssign(getDefaultArithmetics().average(unscaledValue(), val.unscaledValue()));
 	}
-	
+
 	@Override
 	public Decimal<S> average(Decimal<S> val, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		final long self = unscaledValue();
-		final long other = val.unscaledValue();
-		final long selfHalf = self >> 1;
-		final long otherHalf = other >> 1;
-		final long selfRem = self - (selfHalf << 1);
-		final long otherRem = other - (otherHalf << 1);
-		final long avg = arith.add(selfHalf, otherHalf);
-		final long rem = selfRem + otherRem;//rem is either of -2, -1, 0, 1, 2
-		if (rem == 0) {
-			return createOrAssign(avg); 
-		}
-		if ((rem & 0x1) == 0) {
-			//-2 or 2
-			return createOrAssign(arith.add(avg, rem >> 1));
-		}
-		//odd, apply rounding rules
-		if (roundingMode == RoundingMode.DOWN) {
-			return createOrAssign(avg);
-		}
-		final int sgn = avg < 0 ? -1 : avg > 0 ? 1 : (int)rem;//rem happens to be -1 or 1
-		final int inc = DecimalRounding.valueOf(roundingMode).calculateRoundingIncrement(sgn, avg, TruncatedPart.EQUAL_TO_HALF);
-		return createOrAssign(arith.add(avg, inc));
+		return createOrAssign(getArithmeticsFor(roundingMode).average(unscaledValue(), val.unscaledValue()));
 	}
-	
+
 	/* ---------------------------- equals etc. ---------------------------- */
 
 	@Override

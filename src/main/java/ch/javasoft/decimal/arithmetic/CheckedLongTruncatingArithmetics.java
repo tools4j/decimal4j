@@ -170,6 +170,11 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 	}
 
 	@Override
+	public long average(long a, long b) {
+		return UncheckedLongTruncatingArithmetics.average(this, a, b);
+	}
+
+	@Override
 	public long fromLong(long value) {
 		return value;
 	}

@@ -228,6 +228,25 @@ public interface DecimalArithmetics {
 	long divideByPowerOf10(long uDecimal, int n);
 
 	/**
+	 * Returns the average of {@code uDecimal1} and {@code uDecimal2}. The
+	 * method is designed to avoid overflows. If rounding must be performed,
+	 * this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
+	 *
+	 * @param uDecimal1
+	 *            the first unscaled decimal value to average
+	 * @param uDecimal2
+	 *            the second unscaled decimal value to average
+	 * @return {@code (uDecimal1+uDecimal2)/2} using the rounding mode of this
+	 *         arithetics
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long average(long uDecimal1, long uDecimal2);
+
+	/**
 	 * Returns the non-negative value {@code abs(uDecimal)}, which is the value
 	 * itself if {@code uDecimal>=0} and {@code -uDecimal} if the given value is
 	 * negative.
@@ -426,7 +445,7 @@ public interface DecimalArithmetics {
 	long toLong(long uDecimal);
 
 	float toFloat(long uDecimal);
-	
+
 	double toDouble(long uDecimal);
 
 	BigDecimal toBigDecimal(long uDecimal);

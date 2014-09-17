@@ -36,8 +36,19 @@ abstract public class AbstractUnaryOperationTest extends AbstractDecimalVersusBi
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand);
 
 	@Override
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, int index) {
-		final Decimal<S> dOperand = randomDecimal(scaleMetrics);
+	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
+		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics));
+	}
+
+	@Override
+	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
+		final long[] specialValues = getSpecialValues(scaleMetrics);
+		for (int i = 0; i < specialValues.length; i++) {
+			runTest(scaleMetrics, "[" + i + "]", newDecimal(scaleMetrics, specialValues[i]));
+		}
+	}
+
+	private <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperand) {
 		final BigDecimal bdOperand = toBigDecimal(dOperand);
 
 		//expected
@@ -60,6 +71,6 @@ abstract public class AbstractUnaryOperationTest extends AbstractDecimalVersusBi
 		}
 		
 		//assert
-		actual.assertEquivalentTo(expected, "[" + index + "]: " + dOperand + " " + operation());
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperand + " " + operation());
 	}
 }

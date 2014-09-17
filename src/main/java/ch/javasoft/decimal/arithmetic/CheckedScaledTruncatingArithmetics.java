@@ -104,6 +104,11 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 	}
 	
 	@Override
+	public long average(long a, long b) {
+		return UncheckedLongTruncatingArithmetics.average(this, a, b);
+	}
+
+	@Override
 	public long invert(long uDecimal) {
 		//special cases first
 		final long one = one();

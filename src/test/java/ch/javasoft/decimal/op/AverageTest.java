@@ -5,8 +5,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -15,7 +13,10 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
-@Ignore//FIXME make this pass
+/**
+ * Unit test for {@link Decimal#average(Decimal, RoundingMode)}
+ */
+//@Ignore//FIXME make this pass
 @RunWith(Parameterized.class)
 public class AverageTest extends AbstractBinaryOperationTest {
 	
@@ -35,13 +36,7 @@ public class AverageTest extends AbstractBinaryOperationTest {
 		}
 		return data;
 	}
-
-	@Test
-	public void runTest() {
-		runTest(100000);
-	}
 	
-
 	@Override
 	protected String operation() {
 		return "avg";

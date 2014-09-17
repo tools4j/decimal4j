@@ -127,6 +127,11 @@ public class UncheckedScaledTruncatingArithmetics extends
 		//too big, use divide128 now
 		return UInt128.divide128(scaleMetrics, one, uDecimal);
 	}
+	
+	@Override
+	public long average(long a, long b) {
+		return UncheckedLongTruncatingArithmetics.average(this, a, b);
+	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {

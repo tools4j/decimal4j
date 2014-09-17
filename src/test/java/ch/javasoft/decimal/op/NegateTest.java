@@ -5,7 +5,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -14,6 +13,9 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
+/**
+ * Unit test for {@link Decimal#negate()}
+ */
 @RunWith(Parameterized.class)
 public class NegateTest extends AbstractUnaryOperationTest {
 	
@@ -29,12 +31,6 @@ public class NegateTest extends AbstractUnaryOperationTest {
 		}
 		return data;
 	}
-
-	@Test
-	public void runTest() {
-		runTest(100000);
-	}
-	
 
 	@Override
 	protected String operation() {

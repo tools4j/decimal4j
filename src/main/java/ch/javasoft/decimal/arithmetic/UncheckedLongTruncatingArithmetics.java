@@ -110,6 +110,16 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 			return scaleMetrics.multiplyByScaleFactor(result);
 		}
 	}
+	
+	@Override
+	public long average(long a, long b) {
+		return average(this, a, b);
+	}
+	static long average(DecimalArithmetics arith, long a, long b) {
+		final long xor = a ^ b;
+		final long floor = (a & b) + (xor >> 1);
+		return floor + ((floor >>> 63) & xor);
+	}
 
 	@Override
 	public long fromLong(long value) {

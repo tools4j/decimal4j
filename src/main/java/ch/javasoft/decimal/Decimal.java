@@ -943,7 +943,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns the average of this {@code Decimal} and {@code val} using the
-	 * default rounding mode if rounding is necessary.
+	 * default rounding mode if rounding is necessary. The method is designed
+	 * to avoid overflows.
 	 *
 	 * @param val
 	 *            value with which the average is to be computed.
@@ -953,7 +954,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns the average of this {@code Decimal} and {@code val} using the
-	 * specified rounding mode if rounding is necessary.
+	 * specified rounding mode if rounding is necessary. The method is designed
+	 * to avoid overflows.
 	 *
 	 * @param val
 	 *            value with which the average is to be computed.
