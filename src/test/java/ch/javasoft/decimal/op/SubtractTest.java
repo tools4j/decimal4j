@@ -17,7 +17,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Unit test for {@link Decimal#subtract(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class SubtractTest extends AbstractBinaryOperationTest {
+public class SubtractTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	public SubtractTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);

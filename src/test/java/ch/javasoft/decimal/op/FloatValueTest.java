@@ -13,12 +13,12 @@ import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
- * Unit test for {@link Decimal#max(Decimal)}
+ * Unit test for {@link Decimal#floatValue()}
  */
 @RunWith(Parameterized.class)
-public class MaxTest extends AbstractTwoAryDecimalToDecimalTest {
+public class FloatValueTest extends AbstractOneAryDecimalToAnyTest<Float> {
 
-	public MaxTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
+	public FloatValueTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -33,16 +33,16 @@ public class MaxTest extends AbstractTwoAryDecimalToDecimalTest {
 
 	@Override
 	protected String operation() {
-		return "max";
+		return "floatValue";
 	}
 
 	@Override
-	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.max(b);
+	protected Float expectedResult(BigDecimal operand) {
+		return operand.floatValue();
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.max(b);
+	protected <S extends ScaleMetrics> Float actualResult(Decimal<S> operand) {
+		return operand.floatValue();
 	}
 }

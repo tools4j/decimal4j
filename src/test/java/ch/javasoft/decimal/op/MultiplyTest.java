@@ -17,7 +17,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Unit test for {@link Decimal#multiply(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class MultiplyTest extends AbstractBinaryOperationTest {
+public class MultiplyTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	public MultiplyTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);
@@ -46,6 +46,10 @@ public class MultiplyTest extends AbstractBinaryOperationTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.multiply(b, arithmetics.getRoundingMode());
+		if (isStandardRounding() & rnd.nextBoolean()) {
+			return a.multiply(b);
+		} else {
+			return a.multiply(b, getRoundingMode());
+		}
 	}
 }

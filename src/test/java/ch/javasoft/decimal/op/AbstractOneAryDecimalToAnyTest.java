@@ -11,8 +11,10 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * {@link Decimal} with the expected result produced by the equivalent operation
  * of the {@link BigDecimal}. The test operand values created based on random
  * long values.
+ * 
+ * @param <R> the result type of the operation, common type for {@link Decimal} and {@link BigDecimal}
  */
-abstract public class AbstractUnaryOperationTest extends AbstractDecimalVersusBigDecimalTest {
+abstract public class AbstractOneAryDecimalToAnyTest<R> extends AbstractDecimalVersusBigDecimalTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -22,18 +24,12 @@ abstract public class AbstractUnaryOperationTest extends AbstractDecimalVersusBi
 	 *            the arithmetics determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractUnaryOperationTest(DecimalArithmetics arithmetics) {
+	public AbstractOneAryDecimalToAnyTest(DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
-	/**
-	 * Returns the operation string, such as "+", "-", "*", "/", "abs" etc.
-	 * 
-	 * @return the operation string used in exceptions and log statements
-	 */
-	abstract protected String operation();
-	abstract protected BigDecimal expectedResult(BigDecimal operand);
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand);
+	abstract protected R expectedResult(BigDecimal operand);
+	abstract protected <S extends ScaleMetrics> R actualResult(Decimal<S> operand);
 
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
@@ -52,22 +48,21 @@ abstract public class AbstractUnaryOperationTest extends AbstractDecimalVersusBi
 		final BigDecimal bdOperand = toBigDecimal(dOperand);
 
 		//expected
-		AssertableResult expected;
+		ArithmeticResult<R> expected;
 		try {
-			final BigDecimal exp = expectedResult(bdOperand).setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
-			final long expUnscaled = arithmetics.getOverflowMode().isChecked() ? exp.unscaledValue().longValueExact() : exp.unscaledValue().longValue();
-			expected = new AssertableResult(exp.toPlainString(), expUnscaled);
+			final R exp = expectedResult(bdOperand);
+			expected = ArithmeticResult.forResult(exp.toString(), exp);
 		} catch (ArithmeticException e) {
-			expected = new AssertableResult(e);
+			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
-		AssertableResult actual;
+		ArithmeticResult<R> actual;
 		try {
-			final Decimal<S> act = actualResult(dOperand);
-			actual = new AssertableResult(act.toString(), act.unscaledValue());
+			final R act = actualResult(dOperand);
+			actual = ArithmeticResult.forResult(act.toString(), act);
 		} catch (ArithmeticException e) {
-			actual = new AssertableResult(e);
+			actual = ArithmeticResult.forException(e);
 		}
 		
 		//assert

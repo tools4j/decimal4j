@@ -17,7 +17,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Unit test for {@link Decimal#divide(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class DivideTest extends AbstractBinaryOperationTest {
+public class DivideTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	public DivideTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);
@@ -57,6 +57,10 @@ public class DivideTest extends AbstractBinaryOperationTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.divide(b, arithmetics.getRoundingMode());
+		if (isStandardRounding() & rnd.nextBoolean()) {
+			return a.divide(b);
+		} else {
+			return a.divide(b, getRoundingMode());
+		}
 	}
 }

@@ -14,11 +14,11 @@ import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
- * Unit test for {@link Decimal#average(Decimal, RoundingMode)}
+ * Unit test for {@link Decimal#average(Decimal)} and {@link Decimal#average(Decimal, RoundingMode)}
  */
 //@Ignore//FIXME make this pass
 @RunWith(Parameterized.class)
-public class AverageTest extends AbstractBinaryOperationTest {
+public class AverageTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	
@@ -44,11 +44,15 @@ public class AverageTest extends AbstractBinaryOperationTest {
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.add(b).divide(TWO, arithmetics.getRoundingMode());
+		return a.add(b).divide(TWO, getRoundingMode());
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.average(b, arithmetics.getRoundingMode());
+		if (isStandardRounding() & rnd.nextBoolean()) {
+			return a.average(b);
+		} else {
+			return a.average(b, getRoundingMode());
+		}
 	}
 }

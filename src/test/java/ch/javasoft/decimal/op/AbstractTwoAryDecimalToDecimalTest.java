@@ -12,7 +12,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * of the {@link BigDecimal}. The test operand values created based on random
  * long values.
  */
-abstract public class AbstractBinaryOperationTest extends
+abstract public class AbstractTwoAryDecimalToDecimalTest extends
 		AbstractDecimalVersusBigDecimalTest {
 
 	/**
@@ -23,21 +23,14 @@ abstract public class AbstractBinaryOperationTest extends
 	 *            the arithmetics determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractBinaryOperationTest(DecimalArithmetics arithmetics) {
+	public AbstractTwoAryDecimalToDecimalTest(DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
-
-	/**
-	 * Returns the operation string, such as "+", "-", "*", "/", "abs" etc.
-	 * 
-	 * @return the operation string used in exceptions and log statements
-	 */
-	abstract protected String operation();
 
 	abstract protected BigDecimal expectedResult(BigDecimal a, BigDecimal b);
 
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b);
-
+	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		final Decimal<S> dOpA = randomDecimal(scaleMetrics);
@@ -63,22 +56,22 @@ abstract public class AbstractBinaryOperationTest extends
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
 
 		//expected
-		AssertableResult expected;
+		ArithmeticResult<Long> expected;
 		try {
 			final BigDecimal exp = expectedResult(bdOpA, bdOpB).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
 			final long expUnscaled = arithmetics.getOverflowMode().isChecked() ? exp.unscaledValue().longValueExact() : exp.unscaledValue().longValue();
-			expected = new AssertableResult(exp.toPlainString(), expUnscaled);
+			expected = ArithmeticResult.forResult(exp.toPlainString(), expUnscaled);
 		} catch (ArithmeticException e) {
-			expected = new AssertableResult(e);
+			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
-		AssertableResult actual;
+		ArithmeticResult<Long> actual;
 		try {
 			final Decimal<S> act = actualResult(dOpA, dOpB);
-			actual = new AssertableResult(act.toString(), act.unscaledValue());
+			actual = ArithmeticResult.forResult(act.toString(), act.unscaledValue());
 		} catch (ArithmeticException e) {
-			actual = new AssertableResult(e);
+			actual = ArithmeticResult.forException(e);
 		}
 
 		//assert

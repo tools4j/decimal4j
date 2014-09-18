@@ -14,12 +14,12 @@ import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
- * Unit test for {@link Decimal#invert()}
+ * Unit test for {@link Decimal#integralPart()}
  */
 @RunWith(Parameterized.class)
-public class InvertTest extends AbstractOneAryDecimalToDecimalTest {
+public class IntegralPartTest extends AbstractOneAryDecimalToDecimalTest {
 	
-	public InvertTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public IntegralPartTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -27,40 +27,23 @@ public class InvertTest extends AbstractOneAryDecimalToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			//FIXME should pass for all rounding modes
-			if (s.getScale() <= 9) {
-				for (final RoundingMode rm : RoundingMode.values()) {
-					data.add(new Object[] {s, rm, s.getArithmetics(rm)});
-				}
-			} else {
-				data.add(new Object[] {s, RoundingMode.DOWN, s.getArithmetics(RoundingMode.DOWN)});
-			}
+			data.add(new Object[] {s, s.getDefaultArithmetics()});
 		}
 		return data;
 	}
 
 	@Override
-	public void runSpecialValueTest() {
-		//FIXME should pass for special values
-		//super.runSpecialValueTest();
-	}
-
-	@Override
 	protected String operation() {
-		return "1/";
+		return "integralPart";
 	}
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal operand) {
-		return BigDecimal.ONE.divide(operand, mathContextLong128);
+		return operand.setScale(0, RoundingMode.DOWN);
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardRounding() & rnd.nextBoolean()) {
-			return operand.invert();
-		} else {
-			return operand.invert(getRoundingMode());
-		}
+		return operand.integralPart();
 	}
 }

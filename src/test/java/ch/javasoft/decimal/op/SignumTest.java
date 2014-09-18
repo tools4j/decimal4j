@@ -13,12 +13,12 @@ import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 
 /**
- * Unit test for {@link Decimal#max(Decimal)}
+ * Unit test for {@link Decimal#signum()}
  */
 @RunWith(Parameterized.class)
-public class MaxTest extends AbstractTwoAryDecimalToDecimalTest {
-
-	public MaxTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
+public class SignumTest extends AbstractOneAryDecimalToAnyTest<Integer> {
+	
+	public SignumTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -26,23 +26,23 @@ public class MaxTest extends AbstractTwoAryDecimalToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] { s, s.getDefaultArithmetics() });
+			data.add(new Object[] {s, s.getDefaultArithmetics()});
 		}
 		return data;
 	}
 
 	@Override
 	protected String operation() {
-		return "max";
+		return "sgn";
 	}
-
+	
 	@Override
-	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.max(b);
+	protected Integer expectedResult(BigDecimal operand) {
+		return operand.signum();
 	}
-
+	
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.max(b);
+	protected <S extends ScaleMetrics> Integer actualResult(Decimal<S> operand) {
+		return operand.signum();
 	}
 }

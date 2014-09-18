@@ -940,7 +940,7 @@ abstract public class ScaleMetrics {
 	 */
 	public static ScaleMetrics valueOf(int scale) {
 		if (0 <= scale && scale <= 18) {
-			return VALUES.get(scale);
+			return scale == 0 ? Scale0f.INSTANCE /*FIXME is null in VALUES*/ : VALUES.get(scale);
 		}
 		throw new IllegalArgumentException("illegal scale, must be in [0,18] but was: " + scale);
 	}

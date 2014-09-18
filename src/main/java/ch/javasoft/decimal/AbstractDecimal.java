@@ -104,15 +104,6 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public int intValue(RoundingMode roundingMode) {
-		final long num = longValue(roundingMode); // will check decimal part
-		if ((int) num != num) {
-			throw new java.lang.ArithmeticException("Overflow: " + num + " is out of the possible range for an int");
-		}
-		return (int) num;
-	}
-
-	@Override
 	public long longValue() {
 		return getDefaultArithmetics().toLong(unscaledValue());
 	}
@@ -175,17 +166,30 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		}
 		final long unscaled = unscaledValue();
 		if (scale < thisScale) {
+			if (scale < 0) {
+				return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
+			}
+			if (scale == 0) {
+				//for scale 0 we need room for add/sub of 1 for the potential rounding
+				final ScaleMetrics myScale = getScaleMetrics();
+				if (unscaled <= myScale.getMinIntegerValue() & unscaled >= myScale.getMaxIntegerValue()) {
+					return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
+				}
+			}
 			final ScaleMetrics m = ScaleMetrics.valueOf(scale);
-			final long rescaled = m.getArithmetics(roundingMode).fromUnscaled(unscaled, thisScale);
-			return BigDecimal.valueOf(rescaled, scale);
-		}
-		//does it fit in a long?
-		final int diff = scale - thisScale;
-		if (diff <= 18) {
-			final ScaleMetrics diffMetrics = ScaleMetrics.valueOf(diff);
-			if (unscaled >= diffMetrics.getMinIntegerValue() && unscaled <= diffMetrics.getMaxIntegerValue()) {
-				final long rescaled = diffMetrics.multiplyByScaleFactor(unscaled);
+			if (scale != 0) {
+				final long rescaled = m.getArithmetics(roundingMode).fromUnscaled(unscaled, thisScale);
 				return BigDecimal.valueOf(rescaled, scale);
+			}
+		} else {
+			//does it fit in a long?
+			final int diff = scale - thisScale;
+			if (diff <= 18) {
+				final ScaleMetrics diffMetrics = ScaleMetrics.valueOf(diff);
+				if (unscaled >= diffMetrics.getMinIntegerValue() && unscaled <= diffMetrics.getMaxIntegerValue()) {
+					final long rescaled = diffMetrics.multiplyByScaleFactor(unscaled);
+					return BigDecimal.valueOf(rescaled, scale);
+				}
 			}
 		}
 		//let the big decimal deal with such large numbers then

@@ -1,7 +1,6 @@
 package ch.javasoft.decimal.op;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,17 +16,17 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Unit test for {@link Decimal#min(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class MinTest extends AbstractBinaryOperationTest {
+public class MinTest extends AbstractTwoAryDecimalToDecimalTest {
 	
-	public MinTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public MinTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
-	@Parameters(name = "{index}: scale={0}, rounding={1}")
+	@Parameters(name = "{index}: scale={0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] {s, RoundingMode.DOWN, s.getArithmetics(RoundingMode.DOWN)});
+			data.add(new Object[] {s, s.getDefaultArithmetics()});
 		}
 		return data;
 	}

@@ -1,7 +1,6 @@
 package ch.javasoft.decimal.op;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,9 +16,9 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Unit test for {@link Decimal#abs()}
  */
 @RunWith(Parameterized.class)
-public class AbsTest extends AbstractUnaryOperationTest {
+public class AbsTest extends AbstractOneAryDecimalToDecimalTest {
 	
-	public AbsTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public AbsTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -27,7 +26,7 @@ public class AbsTest extends AbstractUnaryOperationTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] {s, RoundingMode.DOWN, s.getArithmetics(RoundingMode.DOWN)});
+			data.add(new Object[] {s, s.getDefaultArithmetics()});
 		}
 		return data;
 	}

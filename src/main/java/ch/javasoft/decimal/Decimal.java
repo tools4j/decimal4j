@@ -64,6 +64,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	long unscaledValue();
 
+	Decimal<S> integralPart();
+
+	Decimal<S> fractionalPart();
+
 	//some methods "inherited" from Number and BigDecimal
 
 	/**
@@ -230,8 +234,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	//some conversion methods with rounding mode
 
-	int intValue(RoundingMode roundingMode);
-
 	long longValue(RoundingMode roundingMode);
 
 	float floatValue(RoundingMode roundingMode);
@@ -241,10 +243,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	BigInteger toBigInteger(RoundingMode roundingMode);
 
 	BigDecimal toBigDecimal(int scale, RoundingMode roundingMode);
-
-	Decimal<S> integralPart();
-
-	Decimal<S> fractionalPart();
 
 	//methods to change the scale
 

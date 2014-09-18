@@ -1,11 +1,8 @@
 package ch.javasoft.decimal.op;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -23,7 +20,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
  * Base class for tests comparing the result of an operation of the
  * {@link Decimal} with the expected result produced by the equivalent operation
  * of the {@link BigDecimal}. The test operand values created based on random
- * long values.
+ * long values. The result type of the operation can be any type but.
  */
 abstract public class AbstractDecimalVersusBigDecimalTest {
 
@@ -49,6 +46,18 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 		this.mathContextLong64 = new MathContext(19, arithmetics.getRoundingMode());
 		this.mathContextLong128 = new MathContext(39, arithmetics.getRoundingMode());
 	}
+	
+	protected int getScale() {
+		return arithmetics.getScale();
+	}
+	
+	protected RoundingMode getRoundingMode() {
+		return arithmetics.getRoundingMode();
+	}
+	
+	protected boolean isStandardRounding() {
+		return arithmetics.getRoundingMode() == RoundingMode.DOWN;
+	}
 
 	@Test
 	public void runRandomTest() {
@@ -65,7 +74,15 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 		runSpecialValueTest(scaleMetrics);
 	}
 
+	/**
+	 * Returns the operation string, such as "+", "-", "*", "/", "abs" etc.
+	 * 
+	 * @return the operation string used in exceptions and log statements
+	 */
+	abstract protected String operation();
+
 	abstract protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index);
+
 	abstract protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics);
 
 	protected int getRandomTestCount() {
@@ -97,32 +114,5 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 
 	protected BigDecimal toBigDecimal(Decimal<?> decimal) {
 		return decimal.toBigDecimal();
-	}
-
-	protected static class AssertableResult {
-		private final String resultString;
-		private final long resultUnscaled;
-		private final ArithmeticException exception;
-
-		protected AssertableResult(String resultString, long resultUnscaled) {
-			this.resultString = resultString;
-			this.resultUnscaled = resultUnscaled;
-			this.exception = null;
-		}
-
-		protected AssertableResult(ArithmeticException exception) {
-			this.resultString = null;
-			this.resultUnscaled = 0;
-			this.exception = exception;
-		}
-
-		public void assertEquivalentTo(AssertableResult expected, String messagePrefix) {
-			if (expected.exception != null) {
-				assertNotNull(messagePrefix + " was " + resultString + " but should lead to an exception: " + expected.exception);
-			} else {
-				assertNull(messagePrefix + " = " + expected.resultString + " but lead to an exception: " + exception, exception);
-				assertEquals(messagePrefix + " = " + expected.resultString, expected.resultUnscaled, resultUnscaled);
-			}
-		}
 	}
 }
