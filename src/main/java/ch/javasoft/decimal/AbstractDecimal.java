@@ -693,7 +693,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public boolean isMinusOne() {
-		return unscaledOne() == -unscaledOne();
+		return unscaledValue() == -unscaledOne();
 	}
 
 	@Override

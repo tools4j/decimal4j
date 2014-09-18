@@ -3,6 +3,7 @@ package ch.javasoft.decimal.op;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -91,24 +92,54 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 	protected int getRandomTestCount() {
 		return 10000;
 	}
+	private static final long[] SPECIALS = {
+		Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE,
+		Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE,
+	};
 	protected long[] getSpecialValues(ScaleMetrics scaleMetrics) {
-		final long min = Long.MIN_VALUE;
-		final long max = Long.MAX_VALUE;
-		final long minInt = scaleMetrics.getMinIntegerValue();
-		final long maxInt = scaleMetrics.getMaxIntegerValue();
-		return new long[] {//
-				min, min + 1, min/2 - 1, min/2, min/2 + 1,//
-				minInt - 1, minInt, minInt + 1, minInt / 2 - 1, minInt/2, minInt/2 + 1,//
-				-10, -9, -8, -7, -6, -5, -4, -3, -2, -1,//
-				0,//
-				1, 2, 3, 4, 5, 6, 7, 8, 9,//
-				maxInt/2 - 1, maxInt/2, maxInt/2 + 1, maxInt - 1, maxInt, maxInt + 1,//
-				max/2 - 1, max/2, max/2 + 1, max - 1, max//
-		};
+		final List<Long> specials = new ArrayList<Long>();
+		//boundary values of different types
+		for (final long l : SPECIALS) {
+			specials.add(l);
+			//value +/- 1
+			if (l < Long.MAX_VALUE) {
+				specials.add(l+1); 
+			}
+			if (l > Long.MIN_VALUE) {
+				specials.add(l-1);
+			}
+			//half value and neighbours
+			specials.add(l/2);
+			specials.add(l/2-1);
+			specials.add(l/2+1);
+			//divided by scale ten, pos and neg
+			for (long d = l/10; Math.abs(d) >= 10; d/=10) {
+				specials.add(d);
+				specials.add(-d);
+			}
+		}
+		//small numbers including zero
+		for (long i = -9; i <= 9; i++) {
+			specials.add(i);
+		}
+		//powers of 10
+		long pow10 = 1;
+		for (int i = 1; i <= 18; i++) {
+			pow10 *= 10;
+			specials.add(pow10);
+			specials.add(-pow10);
+		}
+		//convert to array
+		final long[] result = new long[specials.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = specials.get(i);
+		}
+		return result;
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
-		return newDecimal(scaleMetrics, rnd.nextLong());
+		final long unscaled = rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
+		return newDecimal(scaleMetrics, unscaled);
 	}
 	@SuppressWarnings("unchecked")
 	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {

@@ -118,7 +118,8 @@ public class UncheckedScaledTruncatingArithmetics extends
 		//div by power of 10
 		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimal));
 		if (pow10 != null) {
-			return divideByPowerOf10(one, pow10.getScaleFactor(), pow10);
+			final long absResult = divideByPowerOf10(one, pow10.getScaleFactor(), pow10);
+			return uDecimal >= 0 ? absResult : -absResult;
 		}
 		//check if one * one fits in long
 		final ScaleMetrics scaleMetrics = getScaleMetrics();

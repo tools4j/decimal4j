@@ -58,8 +58,9 @@ abstract public class AbstractTwoAryDecimalToDecimalTest extends
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			final BigDecimal exp = expectedResult(bdOpA, bdOpB).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
-			final long expUnscaled = arithmetics.getOverflowMode().isChecked() ? exp.unscaledValue().longValueExact() : exp.unscaledValue().longValue();
+			final BigDecimal exp = expectedResult(bdOpA, bdOpB);
+			final BigDecimal rnd = exp.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
+			final long expUnscaled = arithmetics.getOverflowMode().isChecked() ? rnd.unscaledValue().longValueExact() : rnd.unscaledValue().longValue();
 			expected = ArithmeticResult.forResult(exp.toPlainString(), expUnscaled);
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
