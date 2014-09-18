@@ -1,6 +1,6 @@
 package ch.javasoft.decimal.math;
 
-import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 public class UInt128 {
 

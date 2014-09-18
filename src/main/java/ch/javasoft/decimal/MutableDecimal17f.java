@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics.Scale17f;
+import ch.javasoft.decimal.scale.Scale17f;
 
 @SuppressWarnings("serial")
 public class MutableDecimal17f extends

@@ -3,7 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigDecimal;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Base class for arithmetic implementations implementing those functions where

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics.Scale6f;
+import ch.javasoft.decimal.scale.Scale6f;
 
 @SuppressWarnings("serial")
 public class MutableDecimal6f extends

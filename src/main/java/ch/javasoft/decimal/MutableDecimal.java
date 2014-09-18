@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.scale.ScaleMetrics;
+
 /**
  * Interface implemented by mutable {@link Decimal} classes of different scales.
  * Arithmetic operations of mutable decimals modify the state of {@code this}

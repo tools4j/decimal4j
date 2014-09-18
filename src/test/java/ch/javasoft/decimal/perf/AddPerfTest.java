@@ -5,8 +5,8 @@ import java.math.MathContext;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.MutableDecimal;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 public class AddPerfTest extends AbstractPerfTest {
 

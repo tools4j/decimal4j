@@ -3,8 +3,9 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale0f;
+import ch.javasoft.decimal.scale.Scale0f;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Arithmetics implementation for the special case {@code scale=0}, that is, for
@@ -135,13 +136,13 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 		}
 		if (n < 0) {
 			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-n);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
 				return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 			}
 			throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " / 10^" + n);
 		}
 		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(n);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 			return scaleMetrics.divideByScaleFactor(uDecimal);
 		}
 		return 0;
@@ -157,13 +158,13 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 		}
 		if (n < 0) {
 			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-n);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
 				return scaleMetrics.divideByScaleFactor(uDecimal);
 			}
 			return 0;
 		}
 		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(n);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 		}
 		throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " * 10^" + n);
@@ -194,13 +195,13 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 		}
 		if (scale > 0) {
 			if (scale <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scale);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(scale);
 				return scaleMetrics.multiplyByScaleFactorExact(unscaledValue);
 			}
 			throw new ArithmeticException("overflow: " + unscaledValue + " * 10^" + scale);
 		} else {
 			if (scale >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scale);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-scale);
 				return scaleMetrics.divideByScaleFactor(unscaledValue);
 			}
 			return 0;

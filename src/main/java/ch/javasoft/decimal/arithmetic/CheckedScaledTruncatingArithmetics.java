@@ -2,8 +2,9 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.math.UInt128;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Arithmetics implementation throwing an exception if an operation leads to on
@@ -42,8 +43,8 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 				f1xf2 = scaleMetrics.divideByScaleFactor(f1 * f2);
 			} else {
 				//product does not fit in long, divide first to fit, then remainder
-				final ScaleMetrics m1 = ScaleMetrics.valueOf(scale - 9);
-				final ScaleMetrics m2 = ScaleMetrics.valueOf(18 - scale);
+				final ScaleMetrics m1 = Scales.valueOf(scale - 9);
+				final ScaleMetrics m2 = Scales.valueOf(18 - scale);
 				final long tmp = m1.divideByScaleFactor(f1) * m1.divideByScaleFactor(f2);
 				f1xf2 = m2.divideByScaleFactor(tmp);
 			}
@@ -68,7 +69,7 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 			return special.divide(this, uDecimalDividend, uDecimalDivisor);
 		}
 		//div by power of 10
-		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimalDivisor));
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
 		if (pow10 != null) {
 			return divideByPowerOf10(uDecimalDividend, uDecimalDivisor, pow10);
 		}
@@ -92,12 +93,12 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 		final long quot;
 		if (scaleDiff <= 0) {
 			//divide
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scaleDiff);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-scaleDiff);
 			quot = scaleMetrics.divideByScaleFactor(uDecimalDividend);
 
 		} else {
 			//multiply
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scaleDiff);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(scaleDiff);
 			quot = scaleMetrics.multiplyByScaleFactorExact(uDecimalDividend);
 		}
 		return uDecimalDivisor > 0 ? quot : -quot;
@@ -117,7 +118,7 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 			return special.divide(this, one, uDecimal);
 		}
 		//div by power of 10
-		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimal));
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimal));
 		if (pow10 != null) {
 			return divideByPowerOf10(one, pow10.getScaleFactor(), pow10);
 		}
@@ -172,14 +173,14 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 		if (scale >= scaleTarget) {
 			final int scaleDiff = scale - scaleTarget;
 			if (scaleDiff <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scaleDiff);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(scaleDiff);
 				return scaleMetrics.multiplyByScaleFactorExact(unscaledValue);
 			}
 			throw new ArithmeticException("overflow: " + unscaledValue + " * 10^" + scale);
 		} else {
 			final int scaleDiff = scaleTarget - scale;
 			if (scaleDiff <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scaleDiff);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(scaleDiff);
 				return scaleMetrics.divideByScaleFactor(unscaledValue);
 			}
 			return 0;

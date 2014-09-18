@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale9f;
 import ch.javasoft.decimal.math.UInt128;
+import ch.javasoft.decimal.scale.Scale9f;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * An arithmetic implementation which truncates decimals after the last scale
@@ -52,8 +53,8 @@ public class UncheckedScaledTruncatingArithmetics extends
 		} else {
 			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
 			final Scale9f scale9f = Scale9f.INSTANCE;
-			final ScaleMetrics scaleDiff09 = ScaleMetrics.valueOf(scale - 9);
-			final ScaleMetrics scaleDiff18 = ScaleMetrics.valueOf(18 - scale);
+			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
 			final long hf1 = scale9f.divideByScaleFactor(f1);
 			final long hf2 = scale9f.divideByScaleFactor(f2);
 			final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
@@ -77,7 +78,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 			return special.divide(this, uDecimalDividend, uDecimalDivisor);
 		}
 		//div by power of 10
-		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimalDivisor));
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
 		if (pow10 != null) {
 			return divideByPowerOf10(uDecimalDividend, uDecimalDivisor, pow10);
 		}
@@ -95,12 +96,12 @@ public class UncheckedScaledTruncatingArithmetics extends
 		final long quot;
 		if (scaleDiff <= 0) {
 			//divide
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scaleDiff);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-scaleDiff);
 			quot = scaleMetrics.divideByScaleFactor(uDecimalDividend);
 
 		} else {
 			//multiply
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scaleDiff);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(scaleDiff);
 			quot = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
 		}
 		return uDecimalDivisor > 0 ? quot : -quot;
@@ -115,7 +116,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 			return special.divide(this, one, uDecimal);
 		}
 		//div by power of 10
-		final ScaleMetrics pow10 = ScaleMetrics.findByScaleFactor(Math.abs(uDecimal));
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimal));
 		if (pow10 != null) {
 			return divideByPowerOf10(one, pow10.getScaleFactor(), pow10);
 		}

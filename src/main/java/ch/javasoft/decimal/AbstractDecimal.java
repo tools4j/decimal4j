@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Common base class for {@link AbstractImmutableDecimal immutable} and
@@ -105,7 +107,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public long longValue() {
-		return getDefaultArithmetics().toLong(unscaledValue());
+		return getArithmeticsFor(RoundingMode.DOWN).toLong(unscaledValue());
 	}
 
 	@Override
@@ -176,7 +178,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 					return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
 				}
 			}
-			final ScaleMetrics m = ScaleMetrics.valueOf(scale);
+			final ScaleMetrics m = Scales.valueOf(scale);
 			if (scale != 0) {
 				final long rescaled = m.getArithmetics(roundingMode).fromUnscaled(unscaled, thisScale);
 				return BigDecimal.valueOf(rescaled, scale);
@@ -185,7 +187,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 			//does it fit in a long?
 			final int diff = scale - thisScale;
 			if (diff <= 18) {
-				final ScaleMetrics diffMetrics = ScaleMetrics.valueOf(diff);
+				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
 				if (unscaled >= diffMetrics.getMinIntegerValue() && unscaled <= diffMetrics.getMaxIntegerValue()) {
 					final long rescaled = diffMetrics.multiplyByScaleFactor(unscaled);
 					return BigDecimal.valueOf(rescaled, scale);
@@ -424,7 +426,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public Decimal<?> multiplyExact(Decimal<?> multiplicand) {
 		final int targetScale = getScale() + multiplicand.getScale();
-		final ScaleMetrics targetMetrics = ScaleMetrics.valueOf(targetScale);
+		final ScaleMetrics targetMetrics = Scales.valueOf(targetScale);
 		return targetMetrics.createMutable(unscaledValue() * multiplicand.unscaledValue());
 	}
 
@@ -747,7 +749,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		}
 		if (scale < otherScale) {
 			final DecimalArithmetics arith = getDefaultArithmetics();
-			final ScaleMetrics diffMetrics = ScaleMetrics.valueOf(otherScale - scale);
+			final ScaleMetrics diffMetrics = Scales.valueOf(otherScale - scale);
 			final long otherRescaled = diffMetrics.divideByScaleFactor(otherUnscaled);
 			final int cmp = arith.compare(unscaled, otherRescaled);
 			if (cmp != 0) {
@@ -758,7 +760,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 			return -arith.signum(otherRemainder);
 		} else {
 			final DecimalArithmetics arith = other.getScaleMetrics().getDefaultArithmetics();
-			final ScaleMetrics diffMetrics = ScaleMetrics.valueOf(scale - otherScale);
+			final ScaleMetrics diffMetrics = Scales.valueOf(scale - otherScale);
 			final long rescaled = diffMetrics.divideByScaleFactor(unscaled);
 			final int cmp = arith.compare(rescaled, otherUnscaled);
 			if (cmp != 0) {

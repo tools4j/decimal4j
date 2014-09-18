@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale0f;
-import ch.javasoft.decimal.ScaleMetrics.Scale18f;
+import ch.javasoft.decimal.scale.Scale0f;
+import ch.javasoft.decimal.scale.Scale18f;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
@@ -70,11 +71,11 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
 				pos -= 18;
 			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(pos);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
 			return scaleMetrics.multiplyByScaleFactor(result);
 		} else {
 			if (positions >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-positions);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-positions);
 				return scaleMetrics.divideByScaleFactor(uDecimal);
 			}
 			//truncated result is 0
@@ -92,7 +93,7 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 		}
 		if (positions > 0) {
 			if (positions <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(positions);
 				return scaleMetrics.divideByScaleFactor(uDecimal);
 			}
 			//truncated result is 0
@@ -106,7 +107,7 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
 				pos += 18;
 			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-pos);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
 			return scaleMetrics.multiplyByScaleFactor(result);
 		}
 	}
@@ -154,11 +155,11 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 				value = Scale18f.INSTANCE.multiplyByScaleFactor(value);
 				scale -= 18;
 			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(scale);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(scale);
 			return scaleMetrics.multiplyByScaleFactor(value);
 		} else {
 			if (scale >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-scale);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-scale);
 				return scaleMetrics.divideByScaleFactor(unscaledValue);
 			}
 			//truncating division leads to zero

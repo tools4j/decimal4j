@@ -10,8 +10,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Unit test for {@link Decimal#abs()}

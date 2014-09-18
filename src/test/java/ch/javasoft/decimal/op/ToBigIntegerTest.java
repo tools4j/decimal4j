@@ -11,8 +11,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Unit test for {@link Decimal#toBigInteger()}, {@link Decimal#toBigIntegerExact()}
@@ -50,7 +50,7 @@ public class ToBigIntegerTest extends AbstractOneAryDecimalToAnyTest<BigInteger>
 		if (exact) {
 			return operand.toBigIntegerExact();
 		}
-		if (isStandardRounding() && rnd.nextBoolean()) {
+		if (isRoundingDown() && rnd.nextBoolean()) {
 			return operand.toBigInteger();
 		}
 		return operand.setScale(0, getRoundingMode()).toBigInteger();
@@ -61,7 +61,7 @@ public class ToBigIntegerTest extends AbstractOneAryDecimalToAnyTest<BigInteger>
 		if (exact) {
 			return operand.toBigIntegerExact();
 		}
-		if (isStandardRounding() && rnd.nextBoolean()) {
+		if (isRoundingDown() && rnd.nextBoolean()) {
 			return operand.toBigInteger();
 		}
 		return operand.toBigInteger(getRoundingMode());

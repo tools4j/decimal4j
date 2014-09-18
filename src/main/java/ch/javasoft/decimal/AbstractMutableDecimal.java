@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
+
 /**
  * Base class for mutable {@link Decimal} classes of different scales.
  * Arithmetic operations of mutable decimals modify the state of {@code this}
@@ -66,7 +69,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		if (scale == getScale()) {
 			return this;
 		}
-		return ScaleMetrics.valueOf(scale).createMutable(0).set(this, roundingMode);
+		return Scales.valueOf(scale).createMutable(0).set(this, roundingMode);
 	}
 
 	@Override

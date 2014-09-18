@@ -1,5 +1,7 @@
 package ch.javasoft.decimal;
 
+import ch.javasoft.decimal.scale.ScaleMetrics;
+
 /**
  * Interface implemented by immutable {@link Decimal} classes of different
  * scales. Arithmetic operations of immutable decimals return a new decimal

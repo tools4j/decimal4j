@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale0f;
-import ch.javasoft.decimal.ScaleMetrics.Scale18f;
+import ch.javasoft.decimal.scale.Scale0f;
+import ch.javasoft.decimal.scale.Scale18f;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
@@ -130,7 +131,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 		}
 		if (positions > 0) {
 			if (positions <= 18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(positions);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(positions);
 				return scaleMetrics.divideByScaleFactor(uDecimal);
 			}
 			//truncated part is always larger 0 (see first if) 
@@ -145,7 +146,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
 				pos += 18;
 			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-pos);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
 			return scaleMetrics.multiplyByScaleFactor(result);
 		}
 	}
@@ -168,11 +169,11 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
 				pos -= 18;
 			}
-			final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(pos);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
 			return scaleMetrics.multiplyByScaleFactor(result);
 		} else {
 			if (positions >= -18) {
-				final ScaleMetrics scaleMetrics = ScaleMetrics.valueOf(-positions);
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-positions);
 				return scaleMetrics.divideByScaleFactor(uDecimal);
 			}
 			//truncated part is always larger 0 (see first if) 

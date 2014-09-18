@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics.Scale17f;
+import ch.javasoft.decimal.scale.Scale17f;
 
 /**
  * <tt>Decimal17f</tt> represents an immutable decimal number with 6 fractional

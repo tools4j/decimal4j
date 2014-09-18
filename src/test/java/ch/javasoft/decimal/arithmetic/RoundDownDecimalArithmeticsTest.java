@@ -2,7 +2,7 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.ScaleMetrics.Scale6f;
+import ch.javasoft.decimal.scale.Scale6f;
 
 /**
  * Unit test for {@link UncheckedScaledRoundingArithmetics} with {@link RoundingMode#DOWN}.

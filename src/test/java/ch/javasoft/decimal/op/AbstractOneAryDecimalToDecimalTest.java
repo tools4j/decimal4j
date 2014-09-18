@@ -3,8 +3,8 @@ package ch.javasoft.decimal.op;
 import java.math.BigDecimal;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Base class for tests comparing the result of some unary operation of the

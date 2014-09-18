@@ -3,7 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ch.javasoft.decimal.ScaleMetrics.Scale6f;
+import ch.javasoft.decimal.scale.Scale6f;
 
 /**
  * Unit test for {@link UncheckedScaledTruncatingArithmetics} and subclasses.

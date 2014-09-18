@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.ScaleMetrics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 public interface DecimalArithmetics {
 	/**

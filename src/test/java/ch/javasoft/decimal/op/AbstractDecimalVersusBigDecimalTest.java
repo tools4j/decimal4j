@@ -10,11 +10,11 @@ import java.util.Random;
 import org.junit.Test;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ScaleMetrics;
-import ch.javasoft.decimal.ScaleMetrics.Scale0f;
-import ch.javasoft.decimal.ScaleMetrics.Scale17f;
-import ch.javasoft.decimal.ScaleMetrics.Scale6f;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.Scale0f;
+import ch.javasoft.decimal.scale.Scale17f;
+import ch.javasoft.decimal.scale.Scale6f;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Base class for tests comparing the result of an operation of the
@@ -25,7 +25,7 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 abstract public class AbstractDecimalVersusBigDecimalTest {
 
 //	protected static final List<ScaleMetrics> SCALES = ScaleMetrics.VALUES;
-	protected static final List<ScaleMetrics> SCALES = Arrays.asList(Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE);
+	protected static final List<ScaleMetrics> SCALES = Arrays.<ScaleMetrics>asList(Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE);
 	
 	protected final Random rnd = new Random();
 
@@ -56,6 +56,9 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 	}
 	
 	protected boolean isStandardRounding() {
+		return arithmetics.getRoundingMode() == RoundingMode.HALF_UP;
+	}
+	protected boolean isRoundingDown() {
 		return arithmetics.getRoundingMode() == RoundingMode.DOWN;
 	}
 

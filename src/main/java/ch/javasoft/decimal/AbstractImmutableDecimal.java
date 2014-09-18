@@ -2,6 +2,9 @@ package ch.javasoft.decimal;
 
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.scale.ScaleMetrics;
+
 /**
  * Base class for immutable {@link Decimal} classes of different scales.
  * Arithmetic operations of immutable decimals return a new decimal instance as
@@ -52,7 +55,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 		if (scale == myScale) {
 			return this;
 		}
-		final ScaleMetrics targetMetrics = ScaleMetrics.valueOf(scale);
+		final ScaleMetrics targetMetrics = Scales.valueOf(scale);
 		final long targetUnscaled = targetMetrics.getArithmetics(roundingMode).fromUnscaled(unscaledValue(), myScale);
 		return targetMetrics.createImmutable(targetUnscaled);
 	}

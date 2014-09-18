@@ -10,8 +10,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Unit test for {@link Decimal#longValue()}, {@link Decimal#longValueExact()}
@@ -31,7 +31,7 @@ public class LongValueTest extends AbstractOneAryDecimalToAnyTest<Long> {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] {s, RoundingMode.DOWN, true, s.getDefaultArithmetics()});
+			data.add(new Object[] {s, RoundingMode.DOWN, true, s.getTruncatingArithmetics()});
 			for (RoundingMode rounding : RoundingMode.values()) {
 				data.add(new Object[] {s, rounding, false, s.getArithmetics(rounding)});
 			}
@@ -49,7 +49,7 @@ public class LongValueTest extends AbstractOneAryDecimalToAnyTest<Long> {
 		if (exact) {
 			return operand.longValueExact();
 		}
-		if (isStandardRounding() && rnd.nextBoolean()) {
+		if (isRoundingDown() && rnd.nextBoolean()) {
 			return operand.longValue();
 		}
 		return operand.setScale(0, getRoundingMode()).longValue();
@@ -60,7 +60,7 @@ public class LongValueTest extends AbstractOneAryDecimalToAnyTest<Long> {
 		if (exact) {
 			return operand.longValueExact();
 		}
-		if (isStandardRounding() && rnd.nextBoolean()) {
+		if (isRoundingDown() && rnd.nextBoolean()) {
 			return operand.longValue();
 		}
 		return operand.longValue(getRoundingMode());

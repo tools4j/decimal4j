@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.scale.ScaleMetrics;
+
 /**
  * Mutable or immutable fixed-precision signed decimal numbers similar to
  * {@link BigDecimal}. A {@code Decimal} consists of an <i>unscaled long

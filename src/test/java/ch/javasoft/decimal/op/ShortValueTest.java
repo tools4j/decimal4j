@@ -9,8 +9,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ScaleMetrics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
  * Unit test for {@link Decimal#shortValue()} and
@@ -30,8 +30,8 @@ public class ShortValueTest extends AbstractOneAryDecimalToAnyTest<Short> {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] { s, true, s.getDefaultArithmetics() });
-			data.add(new Object[] { s, false, s.getDefaultArithmetics() });
+			data.add(new Object[] { s, true, s.getTruncatingArithmetics() });
+			data.add(new Object[] { s, false, s.getTruncatingArithmetics() });
 		}
 		return data;
 	}
