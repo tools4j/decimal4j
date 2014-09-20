@@ -6,8 +6,8 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
 import ch.javasoft.decimal.scale.Scale18f;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
@@ -132,7 +132,10 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 		if (positions > 0) {
 			if (positions <= 18) {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
+				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
+				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
+				final long inc = rounding.calculateRoundingIncrement(truncated, rem, scaleMetrics.getScaleFactor());
+				return truncated + inc;
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
@@ -174,7 +177,10 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 		} else {
 			if (positions >= -18) {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(-positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
+				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
+				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
+				final long inc = rounding.calculateRoundingIncrement(truncated, rem, scaleMetrics.getScaleFactor());
+				return truncated + inc;
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
@@ -235,26 +241,10 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0) {
-			return fromLong(unscaledValue);
+		if (scale == 0 | unscaledValue == 0) {
+			return unscaledValue;
 		}
-		long result = unscaledValue;
-		if (scale < 0) {
-			for (int i = scale; i < 0; i++) {
-				result *= 10;
-			}
-		} else if (scale > 0) {
-			int lastDigit = 0;
-			boolean zeroAfterLastDigit = true;
-			for (int i = 0; i < scale; i++) {
-				zeroAfterLastDigit &= (lastDigit == 0);
-				lastDigit = (int) Math.abs(result % 10);
-				result /= 10;
-			}
-			//rounding
-			result += rounding.calculateRoundingIncrement(Long.signum(unscaledValue), result, lastDigit, zeroAfterLastDigit);
-		}
-		return result;
+		return divideByPowerOf10(rounding, unscaledValue, scale);
 	}
 
 	@Override

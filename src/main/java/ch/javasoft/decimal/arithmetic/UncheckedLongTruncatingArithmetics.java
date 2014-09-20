@@ -56,9 +56,9 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		return multiplyByPowerOf10(this, uDecimal, positions);
+		return _multiplyByPowerOf10(uDecimal, positions);
 	}
-	static long multiplyByPowerOf10(DecimalArithmetics arith, long uDecimal, int positions) {
+	static long _multiplyByPowerOf10(long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
 			return uDecimal;
 		}
@@ -85,9 +85,9 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		return divideByPowerOf10(this, uDecimal, positions);
+		return _divideByPowerOf10(uDecimal, positions);
 	}
-	static long divideByPowerOf10(DecimalArithmetics arith, long uDecimal, int positions) {
+	static long _divideByPowerOf10(long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
 			return uDecimal;
 		}
@@ -114,9 +114,9 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 	
 	@Override
 	public long average(long a, long b) {
-		return average(this, a, b);
+		return _average(a, b);
 	}
-	static long average(DecimalArithmetics arith, long a, long b) {
+	static long _average(long a, long b) {
 		final long xor = a ^ b;
 		final long floor = (a & b) + (xor >> 1);
 		return floor + ((floor >>> 63) & xor);
@@ -144,27 +144,10 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0) {
-			return fromLong(unscaledValue);
+		if (scale == 0 | unscaledValue == 0) {
+			return unscaledValue;
 		}
-		if (scale > 0) {
-			long value = unscaledValue;
-			while (scale > 18) {
-				//not very efficient for large scale, but how do we otherwise
-				//get the correct truncated value?
-				value = Scale18f.INSTANCE.multiplyByScaleFactor(value);
-				scale -= 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(scale);
-			return scaleMetrics.multiplyByScaleFactor(value);
-		} else {
-			if (scale >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-scale);
-				return scaleMetrics.divideByScaleFactor(unscaledValue);
-			}
-			//truncating division leads to zero
-			return 0;
-		}
+		return _divideByPowerOf10(unscaledValue, scale);
 	}
 
 	@Override

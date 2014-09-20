@@ -6,8 +6,8 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.math.UInt128;
 import ch.javasoft.decimal.scale.Scale9f;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * An arithmetic implementation which truncates decimals after the last scale
@@ -132,17 +132,17 @@ public class UncheckedScaledTruncatingArithmetics extends
 	
 	@Override
 	public long average(long a, long b) {
-		return UncheckedLongTruncatingArithmetics.average(this, a, b);
+		return UncheckedLongTruncatingArithmetics._average(a, b);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		return UncheckedLongTruncatingArithmetics.multiplyByPowerOf10(this, uDecimal, positions);
+		return UncheckedLongTruncatingArithmetics._multiplyByPowerOf10(uDecimal, positions);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		return UncheckedLongTruncatingArithmetics.divideByPowerOf10(this, uDecimal, positions);
+		return UncheckedLongTruncatingArithmetics._divideByPowerOf10(uDecimal, positions);
 	}
 
 	@Override
@@ -152,18 +152,10 @@ public class UncheckedScaledTruncatingArithmetics extends
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		final int targetScale = getScale();
 		if (scale == 0) {
 			return fromLong(unscaledValue);
 		}
-		long result = unscaledValue;
-		for (int i = scale; i < targetScale; i++) {
-			result *= 10;
-		}
-		for (int i = targetScale; i < scale; i++) {
-			result /= 10;
-		}
-		return result;
+		return UncheckedLongTruncatingArithmetics._multiplyByPowerOf10(unscaledValue, getScale() - scale);
 	}
 
 	@Override

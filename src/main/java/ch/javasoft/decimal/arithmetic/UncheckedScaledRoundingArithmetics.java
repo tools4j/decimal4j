@@ -205,27 +205,10 @@ public class UncheckedScaledRoundingArithmetics extends
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		final int targetScale = getScale();
 		if (scale == 0) {
 			return fromLong(unscaledValue);
 		}
-		long result = unscaledValue;
-		if (scale < targetScale) {
-			for (int i = scale; i < targetScale; i++) {
-				result *= 10;
-			}
-		} else if (scale > targetScale) {
-			int lastDigit = 0;
-			boolean zeroAfterLastDigit = true;
-			for (int i = targetScale; i < scale; i++) {
-				zeroAfterLastDigit &= (lastDigit == 0);
-				lastDigit = (int) Math.abs(result % 10);
-				result /= 10;
-			}
-			//rounding
-			result += rounding.calculateRoundingIncrement(Long.signum(unscaledValue), result, lastDigit, zeroAfterLastDigit);
-		}
-		return result;
+		return UncheckedLongRoundingArithmetics.multiplyByPowerOf10(rounding, unscaledValue, getScale() - scale);
 	}
 
 	@Override

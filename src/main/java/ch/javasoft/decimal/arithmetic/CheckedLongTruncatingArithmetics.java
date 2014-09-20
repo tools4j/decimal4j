@@ -4,8 +4,8 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * Arithmetics implementation for the special case {@code scale=0}, that is, for
@@ -172,7 +172,7 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 
 	@Override
 	public long average(long a, long b) {
-		return UncheckedLongTruncatingArithmetics.average(this, a, b);
+		return UncheckedLongTruncatingArithmetics._average(a, b);
 	}
 
 	@Override
@@ -190,22 +190,10 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0 || unscaledValue == 0) {
+		if (scale == 0 | unscaledValue == 0) {
 			return unscaledValue;
 		}
-		if (scale > 0) {
-			if (scale <= 18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(scale);
-				return scaleMetrics.multiplyByScaleFactorExact(unscaledValue);
-			}
-			throw new ArithmeticException("overflow: " + unscaledValue + " * 10^" + scale);
-		} else {
-			if (scale >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-scale);
-				return scaleMetrics.divideByScaleFactor(unscaledValue);
-			}
-			return 0;
-		}
+		return multiplyByPowerOf10(null, unscaledValue, scale);
 	}
 
 	@Override

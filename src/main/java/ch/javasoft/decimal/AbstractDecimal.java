@@ -5,8 +5,9 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.arithmetic.DecimalRounding;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * Common base class for {@link AbstractImmutableDecimal immutable} and
@@ -162,25 +163,16 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public BigDecimal toBigDecimal(int scale, RoundingMode roundingMode) {
-		final int thisScale = getScale();
+		final ScaleMetrics thisMetrics = getScaleMetrics();
+		final int thisScale = thisMetrics.getScale();
 		if (scale == thisScale) {
 			return toBigDecimal();
 		}
 		final long unscaled = unscaledValue();
 		if (scale < thisScale) {
-			if (scale < 0) {
-				return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
-			}
-			if (scale == 0) {
-				//for scale 0 we need room for add/sub of 1 for the potential rounding
-				final ScaleMetrics myScale = getScaleMetrics();
-				if (unscaled <= myScale.getMinIntegerValue() & unscaled >= myScale.getMaxIntegerValue()) {
-					return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
-				}
-			}
-			final ScaleMetrics m = Scales.valueOf(scale);
-			if (scale != 0) {
-				final long rescaled = m.getArithmetics(roundingMode).fromUnscaled(unscaled, thisScale);
+			final int diff = thisScale - scale;
+			if (diff <= 18) {
+				final long rescaled = getArithmeticsFor(roundingMode).divideByPowerOf10(unscaled, diff);
 				return BigDecimal.valueOf(rescaled, scale);
 			}
 		} else {
@@ -188,14 +180,14 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 			final int diff = scale - thisScale;
 			if (diff <= 18) {
 				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
-				if (unscaled >= diffMetrics.getMinIntegerValue() && unscaled <= diffMetrics.getMaxIntegerValue()) {
-					final long rescaled = diffMetrics.multiplyByScaleFactor(unscaled);
+				if (unscaled > diffMetrics.getMinIntegerValue() & unscaled < diffMetrics.getMaxIntegerValue()) {
+					final long rescaled = getArithmeticsFor(roundingMode).multiplyByPowerOf10(unscaled, diff);
 					return BigDecimal.valueOf(rescaled, scale);
 				}
 			}
 		}
 		//let the big decimal deal with such large numbers then
-		return toBigDecimal().setScale(scale, roundingMode);
+		return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
 	}
 
 	@Override
