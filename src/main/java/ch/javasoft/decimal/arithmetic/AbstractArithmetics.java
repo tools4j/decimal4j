@@ -1,8 +1,10 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
+
+import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * Base class for all arithmetic implementations. Only operations are
@@ -44,8 +46,31 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 
 	@Override
 	public BigDecimal toBigDecimal(long uDecimal, int scale) {
-		final BigDecimal bd = toBigDecimal(uDecimal);
-		return (scale == getScale()) ? bd : bd.round(new MathContext(scale, getRoundingMode()));
+		final ScaleMetrics thisMetrics = getScaleMetrics();
+		final int thisScale = thisMetrics.getScale();
+		if (scale == thisScale) {
+			return toBigDecimal(uDecimal);
+		}
+		if (scale < thisScale) {
+			final int diff = thisScale - scale;
+			if (diff <= 18) {
+				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
+				final long rescaled = diffMetrics.getArithmetics(getRoundingMode()).divideByPowerOf10(uDecimal, diff);
+				return BigDecimal.valueOf(rescaled, scale);
+			}
+		} else {
+			//does it fit in a long?
+			final int diff = scale - thisScale;
+			if (diff <= 18) {
+				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
+				if (uDecimal >= diffMetrics.getMinIntegerValue() & uDecimal <= diffMetrics.getMaxIntegerValue()) {
+					final long rescaled = diffMetrics.multiplyByScaleFactor(uDecimal);
+					return BigDecimal.valueOf(rescaled, scale);
+				}
+			}
+		}
+		//let the big decimal deal with such large numbers then
+		return BigDecimal.valueOf(uDecimal, thisScale).setScale(scale, getRoundingMode());
 	}
 	
 	@Override

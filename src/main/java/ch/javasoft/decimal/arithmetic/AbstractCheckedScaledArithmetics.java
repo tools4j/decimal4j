@@ -1,7 +1,5 @@
 package ch.javasoft.decimal.arithmetic;
 
-import java.math.BigDecimal;
-
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
@@ -54,16 +52,6 @@ abstract public class AbstractCheckedScaledArithmetics extends AbstractCheckedAr
 	@Override
 	public double toDouble(long uDecimal) {
 		return unchecked.toDouble(uDecimal);
-	}
-
-	@Override
-	public BigDecimal toBigDecimal(long uDecimal) {
-		return unchecked.toBigDecimal(uDecimal);
-	}
-
-	@Override
-	public BigDecimal toBigDecimal(long uDecimal, int scale) {
-		return unchecked.toBigDecimal(uDecimal, scale);
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.Scale9f;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * Arithmetic implementation for rounding strategies. For
@@ -256,11 +255,6 @@ public class UncheckedScaledRoundingArithmetics extends
 		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long reminder = scaleMetrics.moduloByScaleFactor(uDecimal);
 		return truncated + rounding.calculateRoundingIncrement(truncated, reminder, one());
-	}
-
-	@Override
-	public BigDecimal toBigDecimal(long uDecimal, int scale) {
-		return toBigDecimal(uDecimal).round(new MathContext(scale, getRoundingMode()));
 	}
 
 	@Override

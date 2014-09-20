@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.DecimalRounding;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 
@@ -163,31 +162,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public BigDecimal toBigDecimal(int scale, RoundingMode roundingMode) {
-		final ScaleMetrics thisMetrics = getScaleMetrics();
-		final int thisScale = thisMetrics.getScale();
-		if (scale == thisScale) {
-			return toBigDecimal();
-		}
-		final long unscaled = unscaledValue();
-		if (scale < thisScale) {
-			final int diff = thisScale - scale;
-			if (diff <= 18) {
-				final long rescaled = getArithmeticsFor(roundingMode).divideByPowerOf10(unscaled, diff);
-				return BigDecimal.valueOf(rescaled, scale);
-			}
-		} else {
-			//does it fit in a long?
-			final int diff = scale - thisScale;
-			if (diff <= 18) {
-				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
-				if (unscaled > diffMetrics.getMinIntegerValue() & unscaled < diffMetrics.getMaxIntegerValue()) {
-					final long rescaled = getArithmeticsFor(roundingMode).multiplyByPowerOf10(unscaled, diff);
-					return BigDecimal.valueOf(rescaled, scale);
-				}
-			}
-		}
-		//let the big decimal deal with such large numbers then
-		return BigDecimal.valueOf(unscaled, thisScale).setScale(scale, roundingMode);
+		return getArithmeticsFor(roundingMode).toBigDecimal(unscaledValue(), scale);
 	}
 
 	@Override

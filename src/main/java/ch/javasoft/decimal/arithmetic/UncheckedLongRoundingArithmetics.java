@@ -210,11 +210,6 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 	}
 
 	@Override
-	public BigDecimal toBigDecimal(long uDecimal) {
-		return BigDecimal.valueOf(uDecimal);
-	}
-
-	@Override
 	public long fromLong(long value) {
 		return value;
 	}
