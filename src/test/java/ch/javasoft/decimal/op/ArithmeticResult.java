@@ -2,6 +2,11 @@ package ch.javasoft.decimal.op;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigDecimal;
+
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+
 /**
  * Result of an arithmetic operation which can also sometimes lead to an
  * {@link ArithmeticException}. The assertion is based on a comparable value
@@ -22,6 +27,14 @@ class ArithmeticResult<T> {
 
 	public static <T> ArithmeticResult<T> forResult(String resultString, T comparableValue) {
 		return new ArithmeticResult<T>(resultString, comparableValue, null);
+	}
+	public static ArithmeticResult<Long> forResult(DecimalArithmetics arithmetics, BigDecimal result) {
+		final BigDecimal rnd = result.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
+		final long resultUnscaled = arithmetics.getOverflowMode().isChecked() ? rnd.unscaledValue().longValueExact() : rnd.unscaledValue().longValue();
+		return forResult(result.toPlainString(), resultUnscaled);
+	}
+	public static ArithmeticResult<Long> forResult(Decimal<?> result) {
+		return forResult(result.toString(), result.unscaledValue());
 	}
 	public static <T> ArithmeticResult<T> forException(ArithmeticException e) {
 		return new ArithmeticResult<T>(null, null, e);

@@ -351,7 +351,8 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D multiply(BigInteger multiplicand) {
-		return multiply(multiplicand.longValue());
+		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.multiplyByLong(unscaledValue(), arith.fromBigInteger(multiplicand)));
 	}
 
 	@Override
@@ -374,7 +375,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D multiplyUnscaled(long unscaledMultiplicand, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
+		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
 		return createOrAssign(arith.multiply(unscaledValue(), unscaledMultiplicand));
 	}
 
@@ -455,7 +456,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D divide(BigInteger divisor) {
-		return divide(divisor, RoundingMode.HALF_UP);
+		return divide(divisor, getDefaultArithmetics().getRoundingMode());
 	}
 
 	@Override
@@ -463,21 +464,22 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		if (fitsInLong(divisor)) {
 			return divide(divisor.longValue(), roundingMode);
 		}
+		//FIXME rounding and overflow
 		return createOrAssign(0);
 	}
 
 	@Override
 	public D divide(BigDecimal divisor) {
-		return divide(divisor, RoundingMode.HALF_UP);
+		return divide(divisor, getDefaultArithmetics().getRoundingMode());
 	}
 
 	@Override
 	public D divide(BigDecimal divisor, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		final BigInteger intDivisor = divisor.toBigInteger();
-		if (fitsInLong(intDivisor)) {
+		if (divisor.precision() - divisor.scale() <= 19 - getScale()) {
 			return createOrAssign(arith.divide(unscaledValue(), arith.fromBigDecimal(divisor)));
 		}
+		//FIXME rounding and overflow
 		return createOrAssign(0);
 	}
 
@@ -489,7 +491,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D divideUnscaled(long unscaledDivisor, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
+		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
 		return createOrAssign(arith.divide(unscaledValue(), unscaledDivisor));
 	}
 
@@ -527,31 +529,28 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public Decimal<S> divideToIntegralValue(Decimal<S> divisor) {
-		final DecimalArithmetics arith = getArithmeticsFor(RoundingMode.DOWN);
-		final long quot = arith.divide(unscaledValue(), divisor.unscaledValue());
-		final long frac = getScaleMetrics().moduloByScaleFactor(quot);
-		return createOrAssign(quot - frac);
+		final long quot = unscaledValue() / divisor.unscaledValue();
+		return createOrAssign(getDefaultArithmetics().fromLong(quot));
 	}
 
 	@Override
 	public Decimal<S>[] divideAndRemainder(Decimal<S> divisor) {
-		final DecimalArithmetics arith = getArithmeticsFor(RoundingMode.DOWN);
-		final long quot = arith.divide(unscaledValue(), divisor.unscaledValue());
-		final long frac = getScaleMetrics().moduloByScaleFactor(quot);
+		final long uDividend = unscaledValue();
+		final long uDivisor = divisor.unscaledValue();
+		final long lIntegral = uDividend / uDivisor;
+		final long uIntegral = getDefaultArithmetics().fromLong(lIntegral);
+		final long uReminder = uDividend - uDivisor * lIntegral;
 		@SuppressWarnings("unchecked")
 		//safe cast
 		final Decimal<S>[] result = (Decimal<S>[]) new Decimal<?>[2];
-		result[0] = createOrAssign(quot - frac);
-		result[1] = createOrAssign(frac);
+		result[0] = create(uIntegral);
+		result[1] = create(uReminder);
 		return result;
 	}
 
 	@Override
 	public Decimal<S> remainder(Decimal<S> divisor) {
-		final DecimalArithmetics arith = getArithmeticsFor(RoundingMode.DOWN);
-		final long quot = arith.divide(unscaledValue(), divisor.unscaledValue());
-		final long frac = getScaleMetrics().moduloByScaleFactor(quot);
-		return createOrAssign(frac);
+		return createOrAssign(unscaledValue() % divisor.unscaledValue());
 	}
 
 	/* ------------------------- other arithmetic ------------------------- */
@@ -568,7 +567,8 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D abs() {
-		return unscaledValue() >= 0 ? self() : negate();
+		final long unscaled = unscaledValue();
+		return unscaled >= 0 ? self() : createOrAssign(getDefaultArithmetics().negate(unscaled));
 	}
 
 	@Override

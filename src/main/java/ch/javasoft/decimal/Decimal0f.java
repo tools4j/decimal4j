@@ -11,7 +11,7 @@ import ch.javasoft.decimal.scale.Scale0f;
  * digits, that is, essentially a long value.
  */
 @SuppressWarnings("serial")
-public class Decimal0f extends AbstractImmutableDecimal<Scale0f, Decimal0f> {
+public final class Decimal0f extends AbstractImmutableDecimal<Scale0f, Decimal0f> {
 
 	public static final Scale0f SCALE = Scale0f.INSTANCE;
 	

@@ -58,10 +58,7 @@ abstract public class AbstractTwoAryDecimalToDecimalTest extends
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			final BigDecimal exp = expectedResult(bdOpA, bdOpB);
-			final BigDecimal rnd = exp.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
-			final long expUnscaled = arithmetics.getOverflowMode().isChecked() ? rnd.unscaledValue().longValueExact() : rnd.unscaledValue().longValue();
-			expected = ArithmeticResult.forResult(exp.toPlainString(), expUnscaled);
+			expected = ArithmeticResult.forResult(arithmetics, expectedResult(bdOpA, bdOpB));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}
@@ -69,8 +66,7 @@ abstract public class AbstractTwoAryDecimalToDecimalTest extends
 		//actual
 		ArithmeticResult<Long> actual;
 		try {
-			final Decimal<S> act = actualResult(dOpA, dOpB);
-			actual = ArithmeticResult.forResult(act.toString(), act.unscaledValue());
+			actual = ArithmeticResult.forResult(actualResult(dOpA, dOpB));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		}

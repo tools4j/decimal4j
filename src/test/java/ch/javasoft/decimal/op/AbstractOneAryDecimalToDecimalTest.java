@@ -49,10 +49,7 @@ abstract public class AbstractOneAryDecimalToDecimalTest extends AbstractDecimal
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			final BigDecimal exp = expectedResult(bdOperand);
-			final BigDecimal rnd = exp.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
-			final long expUnscaled = arithmetics.getOverflowMode().isChecked() ? rnd.unscaledValue().longValueExact() : rnd.unscaledValue().longValue();
-			expected = ArithmeticResult.forResult(exp.toPlainString(), expUnscaled);
+			expected = ArithmeticResult.forResult(arithmetics, expectedResult(bdOperand));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}
@@ -60,8 +57,7 @@ abstract public class AbstractOneAryDecimalToDecimalTest extends AbstractDecimal
 		//actual
 		ArithmeticResult<Long> actual;
 		try {
-			final Decimal<S> act = actualResult(dOperand);
-			actual = ArithmeticResult.forResult(act.toString(), act.unscaledValue());
+			actual = ArithmeticResult.forResult(actualResult(dOperand));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		}

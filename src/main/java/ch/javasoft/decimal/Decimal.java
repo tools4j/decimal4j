@@ -66,8 +66,41 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	long unscaledValue();
 
+	/**
+	 * Returns a {@code Decimal} whose value represents the integral part of
+	 * {@code (this)} value. The integral part corresponds to digits at the left
+	 * of decimal point. The result is {@code this} decimal rounded at scale
+	 * zero with {@link RoundingMode#DOWN}.
+	 * <p>
+	 * The returned value is a new instance if this decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @return <code>&lfloor;this&rfloor;</code> for non-negative and
+	 *         &lceil;this&rceil;</code> for negative values
+	 * @see #fractionalPart()
+	 * @see #isIntegral()
+	 * @see #isIntegralPartZero()
+	 */
 	Decimal<S> integralPart();
 
+	/**
+	 * Returns a {@code Decimal} whose value represents the fractional part of
+	 * {@code (this)} value. The fractional part corresponds to digits at the
+	 * right of the decimal point. The result is {@code this} minus the integral
+	 * part of this decimal.
+	 * <p>
+	 * The returned value is a new instance if this decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @return {@code this-integralPart()}
+	 * @see #integralPart()
+	 * @see #isIntegral()
+	 * @see #isIntegralPartZero()
+	 */
 	Decimal<S> fractionalPart();
 
 	//some methods "inherited" from Number and BigDecimal
@@ -943,8 +976,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns the average of this {@code Decimal} and {@code val} using the
-	 * default rounding mode if rounding is necessary. The method is designed
-	 * to avoid overflows.
+	 * default rounding mode if rounding is necessary. The method is designed to
+	 * avoid overflows.
 	 *
 	 * @param val
 	 *            value with which the average is to be computed.
