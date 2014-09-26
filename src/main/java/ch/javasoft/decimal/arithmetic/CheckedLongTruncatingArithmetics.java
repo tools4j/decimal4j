@@ -64,6 +64,11 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 		}
 		return 0;
 	}
+	
+	@Override
+	public long sqrt(long uDecimal) {
+		return UncheckedLongTruncatingArithmetics.sqrt(this, uDecimal);
+	}
 
 	@Override
 	public long pow(long uDecimalBase, int exponent) {

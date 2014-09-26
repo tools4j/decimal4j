@@ -14,14 +14,12 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
- * Unit test for {@link Decimal#average(Decimal)} and {@link Decimal#average(Decimal, RoundingMode)}
+ * Unit test for {@link Decimal#square()}
  */
 @RunWith(Parameterized.class)
-public class AverageTest extends AbstractTwoAryDecimalToDecimalTest {
+public class SquareTest extends AbstractOneAryDecimalToDecimalTest {
 	
-	private static final BigDecimal TWO = BigDecimal.valueOf(2);
-	
-	public AverageTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public SquareTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -35,23 +33,23 @@ public class AverageTest extends AbstractTwoAryDecimalToDecimalTest {
 		}
 		return data;
 	}
-	
+
 	@Override
 	protected String operation() {
-		return "avg";
+		return "^2";
 	}
 	
 	@Override
-	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.add(b).divide(TWO, getRoundingMode());
+	protected BigDecimal expectedResult(BigDecimal operand) {
+		return operand.multiply(operand, mathContextLong128);
 	}
 	
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
 		if (isStandardRounding() & rnd.nextBoolean()) {
-			return a.average(b);
+			return operand.square();
 		} else {
-			return a.average(b, getRoundingMode());
+			return operand.square(getRoundingMode());
 		}
 	}
 }

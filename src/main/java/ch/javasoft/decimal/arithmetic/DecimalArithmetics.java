@@ -290,6 +290,34 @@ public interface DecimalArithmetics {
 	long invert(long uDecimal);
 
 	/**
+	 * Returns the square of {@code uDecimal} again as unscaled decimal value.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value
+	 * @return {@code uDecimal^s}
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long square(long uDecimal);
+
+	/**
+	 * Returns the square root of {@code uDecimal} again as unscaled decimal
+	 * value.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value
+	 * @return {@code sqrt(uDecimal)}
+	 * @throws ArithmeticException
+	 *             if {@code uDecimal} is negative or if
+	 *             {@link #getRoundingMode() rounding mode} is UNNECESSARY and
+	 *             rounding is necessary
+	 */
+	long sqrt(long uDecimal);
+
+	/**
 	 * Returns an unscaled decimal whose value is
 	 * <tt>(uDecimalBase<sup>exponent</sup>)</tt>. Note that {@code exponent} is
 	 * an integer rather than a decimal.

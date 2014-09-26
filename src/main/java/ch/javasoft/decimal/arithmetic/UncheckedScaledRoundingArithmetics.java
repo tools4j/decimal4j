@@ -4,10 +4,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
+import ch.javasoft.decimal.math.UInt128;
 import ch.javasoft.decimal.scale.Scale9f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
-
+import static ch.javasoft.decimal.arithmetic.UncheckedScaledTruncatingArithmetics.SQRT_LONG_MAX_VALUE;
 /**
  * Arithmetic implementation for rounding strategies. For
  * {@link RoundingMode#DOWN} the more efficient
@@ -57,6 +58,10 @@ public class UncheckedScaledRoundingArithmetics extends
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
+		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(this, uDecimal1, uDecimal2);
+		if (special != null) {
+			return special.multiply(this, uDecimal1, uDecimal2);
+		}
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
@@ -92,6 +97,40 @@ public class UncheckedScaledRoundingArithmetics extends
 			return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder, scaleMetrics.getScaleFactor());
 		}
 	}
+	
+	@Override
+	public long square(long uDecimal) {
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final int scale = scaleMetrics.getScale();
+		final long i = scaleMetrics.divideByScaleFactor(uDecimal);
+		final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
+		if (f >= -SQRT_LONG_MAX_VALUE & f <= SQRT_LONG_MAX_VALUE) {
+			//low order product f1*f2 fits in long
+			final long fxf = f * f;
+			final long fxfd = scaleMetrics.divideByScaleFactor(fxf);
+			final long fxfr = fxf - scaleMetrics.multiplyByScaleFactor(fxfd);
+			final long unrounded = scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + fxfd;
+			return unrounded + rounding.calculateRoundingIncrement(unrounded, fxfr, scaleMetrics.getScaleFactor());
+		} else {
+			//low order product f*f does not fit in long, do component wise multiplication with Scale9f
+			final Scale9f scale9f = Scale9f.INSTANCE;
+			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+			final long hf = scale9f.divideByScaleFactor(f);
+			final long lf = f - scale9f.multiplyByScaleFactor(hf);
+
+			final long lfxlf = lf * lf;
+			final long lfxlfd = scale9f.divideByScaleFactor(lfxlf);
+			final long lfxlfr = lfxlf - scale9f.multiplyByScaleFactor(lfxlfd);
+			final long hl_lh_ll_fxf = ((hf * lf)<<1) + lfxlfd;
+			final long hl_lh_ll_fxfd = scaleDiff09.divideByScaleFactor(hl_lh_ll_fxf);
+			final long hl_lh_ll_fxfr = hl_lh_ll_fxf - scaleDiff09.multiplyByScaleFactor(hl_lh_ll_fxfd);
+			final long fxf = scaleDiff18.multiplyByScaleFactor(hf * hf) + hl_lh_ll_fxfd;
+			final long unrounded = scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + fxf;
+			final long reminder = scale9f.multiplyByScaleFactor(hl_lh_ll_fxfr) + lfxlfr;
+			return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder, scaleMetrics.getScaleFactor());
+		}
+	}
 
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
@@ -110,20 +149,30 @@ public class UncheckedScaledRoundingArithmetics extends
 		if (pow10 != null) {
 			return divideByPowerOf10(uDecimalDividend, uDecimalDivisor, pow10);
 		}
-		return divide128(uDecimalDividend, uDecimalDivisor);
-	}
-
-	private long divide128(long uDecimalDividend, long uDecimalDivisor) {
+		//WE WANT: uDecimalDividend * one / uDecimalDivisor
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
-		final DecimalArithmetics truncArith = scaleMetrics.getTruncatingArithmetics();
-		final long unrounded = truncArith.divide(uDecimalDividend, uDecimalDivisor);
-		final long product = truncArith.multiply(unrounded, uDecimalDivisor);//FIXME we may loose some after-decimals >= 0.5
-		final long delta = uDecimalDividend - product;
-		if (delta != 0) {
-			final long deltaScaled = scaleMetrics.multiplyByScaleFactor(delta);
-			return unrounded + rounding.calculateRoundingIncrementForDivision(unrounded, deltaScaled, uDecimalDivisor);//OVERFLOW possible
+		final long maxInteger = scaleMetrics.getMaxIntegerValue();
+		final long minInteger = scaleMetrics.getMinIntegerValue();
+		if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
+			//just do it, multiplication result fits in long
+			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
+			final long quot = scaledDividend / uDecimalDivisor;
+			final long rem = scaledDividend - quot * uDecimalDivisor;
+			return quot + rounding.calculateRoundingIncrementForDivision(quot, rem, uDecimalDivisor);
 		}
-		return unrounded;
+		//perform component wise division
+		final long integralPart = uDecimalDividend / uDecimalDivisor;
+		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+		if (reminder <= maxInteger & reminder >= minInteger) {
+			final long scaledReminder = scaleMetrics.multiplyByScaleFactor(reminder);
+			final long fractionalPart = scaledReminder / uDecimalDivisor;
+			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
+			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+			return truncated + rounding.calculateRoundingIncrementForDivision(truncated, subFractionalPart, uDecimalDivisor); 
+		} else {
+			final long fractionalPart = UInt128.divide128(scaleMetrics, rounding, reminder, uDecimalDivisor);
+			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart; 
+		}
 	}
 
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
@@ -134,9 +183,9 @@ public class UncheckedScaledRoundingArithmetics extends
 			final long truncatedValue = scaler.divideByScaleFactor(uDecimalDividend);
 			final long truncatedDigits = uDecimalDividend - scaler.multiplyByScaleFactor(truncatedValue);
 			if (uDecimalDivisor > 0) {
-				return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimalDivisor);
+				return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, scaler.getScaleFactor());
 			}
-			return -truncatedValue + rounding.calculateRoundingIncrementForDivision(-truncatedValue, truncatedDigits, uDecimalDivisor);
+			return -truncatedValue + rounding.calculateRoundingIncrementForDivision(-truncatedValue, -truncatedDigits, scaler.getScaleFactor());
 
 		} else {
 			//multiply
@@ -145,30 +194,11 @@ public class UncheckedScaledRoundingArithmetics extends
 			return uDecimalDivisor > 0 ? quot : -quot;
 		}
 	}
-
+	
 	@Override
-	public long invert(long uDecimal) {
-		//special cases first
-		final long one = one();
-		final SpecialDivisionResult special = SpecialDivisionResult.getFor(this, one, uDecimal);
-		if (special != null) {
-			return special.divide(this, one, uDecimal);
-		}
-		//div by power of 10
-		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimal));
-		if (pow10 != null) {
-			return divideByPowerOf10(one(), pow10.getScaleFactor(), pow10);
-		}
-		//check if one * one fits in long
-		final ScaleMetrics scaleMetrics = getScaleMetrics();
-		if (scaleMetrics.getScale() <= 9) {
-			final long oneSquare = scaleMetrics.multiplyByScaleFactor(one);
-			final long truncatedValue = oneSquare / uDecimal;
-			final long truncatedDigits = oneSquare % uDecimal;
-			return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, uDecimal);
-		}
-		//too big, use divide128 now
-		return divide128(one, uDecimal);
+	public long sqrt(long uDecimal) {
+		//FIXME impl with rounding
+		return UncheckedScaledTruncatingArithmetics.sqrt(this, uDecimal);
 	}
 
 	@Override

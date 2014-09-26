@@ -242,6 +242,18 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
 		return createOrAssign(arith.add(unscaledValue(), arith.fromUnscaled(unscaledAugend, scale)));
 	}
+	
+	@Override
+	public D addSquared(Decimal<S> value) {
+		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.add(unscaledValue(), arith.square(value.unscaledValue())));
+	}
+	
+	@Override
+	public D addSquared(Decimal<S> value, RoundingMode roundingMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.add(unscaledValue(), arith.square(value.unscaledValue())));
+	}
 
 	/* ------------------------------ subtract ------------------------------ */
 
@@ -307,6 +319,18 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public D subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
 		return createOrAssign(arith.subtract(unscaledValue(), arith.fromUnscaled(unscaledSubtrahend, scale)));
+	}
+
+	@Override
+	public D subtractSquared(Decimal<S> value) {
+		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.subtract(unscaledValue(), arith.square(value.unscaledValue())));
+	}
+	
+	@Override
+	public D subtractSquared(Decimal<S> value, RoundingMode roundingMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.subtract(unscaledValue(), arith.square(value.unscaledValue())));
 	}
 
 	/* ------------------------------ multiply ------------------------------ */
@@ -575,10 +599,30 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public D invert() {
 		return createOrAssign(getDefaultArithmetics().invert(unscaledValue()));
 	}
-
+	
 	@Override
 	public D invert(RoundingMode roundingMode) {
 		return createOrAssign(getArithmeticsFor(roundingMode).invert(unscaledValue()));
+	}
+	
+	@Override
+	public Decimal<S> square() {
+		return createOrAssign(getDefaultArithmetics().square(unscaledValue()));
+	}
+	
+	@Override
+	public Decimal<S> square(RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).square(unscaledValue()));
+	}
+
+	@Override
+	public Decimal<S> sqrt() {
+		return createOrAssign(getDefaultArithmetics().sqrt(unscaledValue()));
+	}
+	
+	@Override
+	public Decimal<S> sqrt(RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).sqrt(unscaledValue()));
 	}
 
 	@Override

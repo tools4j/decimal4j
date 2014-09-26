@@ -38,6 +38,11 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	public long invert(long uDecimal) {
 		return divide(one(), uDecimal);
 	}
+	
+	@Override
+	public long square(long uDecimal) {
+		return multiply(uDecimal, uDecimal);
+	}
 
 	@Override
 	public BigDecimal toBigDecimal(long uDecimal) {

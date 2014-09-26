@@ -198,14 +198,11 @@ abstract public class AbstractPerfTest {
 			timer.stop();
 			Runtime.getRuntime().gc();
 
-			//assert
 			for (int iN = 0; iN < N; iN++) {
-				final BigDecimal expected = expectedResult(aBigDec[iN], bBigDec[iN], mcLong128).setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
+				final BigDecimal expected = expectedResult(aBigDec[iN], bBigDec[iN], mcLong128);
+				final BigDecimal expectedScaled = expected.setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
 				final Decimal<S> actual = actualResult(aDec[iN], bDec[iN]);
-				if (scaleMetrics.getScale() > 9 & "/".equals(operation())) {
-					return;//FIXME make this work for division and scale > 9
-				}
-				assertEquals("test[" + iN + "]: " + aDec[iN] + " " + operation() + " " + bDec[iN] + " = " + expected.toPlainString(), expected.unscaledValue().longValue(), actual.unscaledValue());
+				assertEquals("test[" + iN + "]: " + aDec[iN] + " " + operation() + " " + bDec[iN] + " = " + expected.toPlainString(), expectedScaled.unscaledValue().longValue(), actual.unscaledValue());
 			}
 		}
 
@@ -238,7 +235,7 @@ abstract public class AbstractPerfTest {
 //				val = rnd.nextLong() & 0x000001ffffffffffL;
 				//works only with unscaled asserts
 //				val = rnd.nextLong() & 0x03ffffffffffffffL;
-				val = rnd.nextLong();
+				val = rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
 			} while (val == 0);//avoid division by 0
 			values[i] = BigDecimal.valueOf(val, scale);
 		}

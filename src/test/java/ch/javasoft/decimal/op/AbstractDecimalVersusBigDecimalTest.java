@@ -3,10 +3,11 @@ package ch.javasoft.decimal.op;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -97,23 +98,23 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 		Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE,
 	};
 	protected long[] getSpecialValues(ScaleMetrics scaleMetrics) {
-		final List<Long> specials = new ArrayList<Long>();
+		final Set<Long> specials = new TreeSet<Long>();
 		//boundary values of different types
-		for (final long l : SPECIALS) {
-			specials.add(l);
+		for (final long s : SPECIALS) {
+			specials.add(s);
 			//value +/- 1
-			if (l < Long.MAX_VALUE) {
-				specials.add(l+1); 
+			if (s < Long.MAX_VALUE) {
+				specials.add(s+1); 
 			}
-			if (l > Long.MIN_VALUE) {
-				specials.add(l-1);
+			if (s > Long.MIN_VALUE) {
+				specials.add(s-1);
 			}
 			//half value and neighbours
-			specials.add(l/2);
-			specials.add(l/2-1);
-			specials.add(l/2+1);
+			specials.add(s/2);
+			specials.add(s/2-1);
+			specials.add(s/2+1);
 			//divided by scale ten, pos and neg
-			for (long d = l/10; Math.abs(d) >= 10; d/=10) {
+			for (long d = s/10; Math.abs(d) >= 10; d/=10) {
 				specials.add(d);
 				specials.add(-d);
 			}
@@ -131,8 +132,9 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 		}
 		//convert to array
 		final long[] result = new long[specials.size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = specials.get(i);
+		int index = 0;
+		for (long s : specials) {
+			result[index++] = s;
 		}
 		return result;
 	}

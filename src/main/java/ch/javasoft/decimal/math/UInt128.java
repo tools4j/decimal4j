@@ -1,5 +1,7 @@
 package ch.javasoft.decimal.math;
 
+import ch.javasoft.decimal.arithmetic.DecimalRounding;
+import ch.javasoft.decimal.arithmetic.TruncatedPart;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 public class UInt128 {
@@ -17,13 +19,23 @@ public class UInt128 {
 	};
 
 	public static long divide128(ScaleMetrics scaleMetrics, long uDecimalDividend, long uDecimalDivisor) {
+		return divide128(scaleMetrics, null, uDecimalDividend, uDecimalDivisor);
+	}
+	public static long divide128(ScaleMetrics scaleMetrics, DecimalRounding roundingMode, long uDecimalDividend, long uDecimalDivisor) {
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
 		final int[] val160 = VALUE_5W.get();
 		multiplyByScaleFactor(scaleMetrics, (int) (absDividend >> 32), (int)absDividend, val160);
-		final long quot = divide128(val160, absDivisor);
-		return negative ? -quot : quot;
+		if (roundingMode == null | roundingMode == DecimalRounding.DOWN) {
+			final long quot = divide128(val160, absDivisor, false);
+			return negative ? -quot : quot;
+		}
+		final long quot = divide128(val160, absDivisor, true);
+		final long rem = (((long)val160[3]) << 32) | (val160[4] & LONG_MASK);
+		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(rem), Math.abs(uDecimalDivisor));
+		final int inc = roundingMode.calculateRoundingIncrement(negative ? -1 : 1, quot, truncatedPart);
+		return (negative ? -quot : quot) + inc;
 	}
 
 	//@see MutableBigInteger#multiply(MutableBigInteger y, MutableBigInteger)
@@ -52,15 +64,15 @@ public class UInt128 {
 		result160[0] = 0;
 	}
 
-	private static long divide128(int[] val160, long absDivisor) {
+	private static long divide128(int[] val160, long absDivisor, boolean reminder) {
 		final long hiBits = absDivisor >>> 32;
 		if (hiBits == 0) {
-			return divideOneWord(val160, (int) absDivisor);
+			return divideOneWord(val160, (int) absDivisor, reminder);
 		}
-		return divideLongMagnitude(val160, absDivisor);
+		return divideLongMagnitude(val160, absDivisor, reminder);
 	}
 
-	private static long divideOneWord(int[] dividend160, int divisor) {
+	private static long divideOneWord(int[] dividend160, int divisor, boolean reminder) {
 		final long divisorLong = divisor & LONG_MASK;
 		long remLong = dividend160[1] & LONG_MASK;
 		if (remLong >= divisorLong) {
@@ -80,7 +92,11 @@ public class UInt128 {
 		dividendEstimate = (remLong << 32) | (dividend160[4] & LONG_MASK);
 		remQuot = divWord(dividendEstimate, divisor);
 		final long quotLo = remQuot & LONG_MASK;
-		remLong = remQuot >>> 32;
+		if (reminder) {
+			remLong = remQuot >>> 32;
+			dividend160[3] = 0;
+			dividend160[4] = (int)remLong;
+		}
 
 		return (quotHi << 32) | quotLo;
 	}
@@ -89,7 +105,7 @@ public class UInt128 {
 	 * Divide the given value by the divisor represented by positive long value.
 	 * The quotient will be placed into the provided value array.
 	 */
-	private static long divideLongMagnitude(int[] value, long ldivisor) {
+	private static long divideLongMagnitude(int[] value, long ldivisor, boolean reminder) {
 		// Remainder starts as dividend with space for a leading zero
 		//		MutableBigInteger rem = new MutableBigInteger(new int[intLen + 1]);
 		//		System.arraycopy(value, offset, rem.value, 1, intLen);
@@ -188,7 +204,13 @@ public class UInt128 {
 		} // D7 loop on j
 
 		// D8 Unnormalize
-		//		if (shift > 0) rem.rightShift(shift);
+		if (shift > 0 & reminder) {
+			final int intLen = rightShift(value, 5, offset, shift);
+			if (intLen < 5) {
+				value[4] = value[intLen - 1];
+				value[3] = value[intLen - 2];
+			}
+		}
 
 		//		quotient.normalize();
 		//		rem.normalize();
@@ -264,8 +286,29 @@ public class UInt128 {
 		return (int) carry;
 	}
 
-	/**
-	 * Left shift this MutableBigInteger n bits.
+    /**
+     * Right shift value n bits.
+     */
+    private static int rightShift(int[] value, int intLen, int offset, int n) {
+        if (intLen == 0)
+            return intLen;
+        int nInts = n >>> 5;
+        int nBits = n & 0x1F;
+        intLen -= nInts;
+        if (nBits == 0)
+            return intLen;
+        int bitsInHighWord = bitLengthForInt(value[offset]);
+        if (nBits >= bitsInHighWord) {
+            primitiveLeftShift(value, intLen, offset, 32 - nBits);
+            intLen--;
+        } else {
+            primitiveRightShift(value, intLen, offset, nBits);
+        }
+        return intLen;
+    }
+
+    /**
+	 * Left shift value n bits.
 	 */
 	private static int leftShift(int[] value, int intLen, int offset, int n) {
 		/*

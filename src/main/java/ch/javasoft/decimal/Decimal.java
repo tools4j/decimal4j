@@ -567,6 +567,39 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> addUnscaled(long unscaledAugend);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}.
+	 * <p>
+	 * The returned value is a new instance if this decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @param value
+	 *            value to be added to this {@code Decimal}
+	 * @return {@code this + value*value}
+	 */
+	Decimal<S> addSquared(Decimal<S> value);
+
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}
+	 * applying the specified rounding mode.
+	 * <p>
+	 * The returned value is a new instance if this decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @param value
+	 *            value to be added to this {@code Decimal}
+	 * @param roundingMode
+	 *            the rounding mode to apply for this operation
+	 * @return {@code this + value*value}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
+	 */
+	Decimal<S> addSquared(Decimal<S> value, RoundingMode roundingMode);
+
 	//subtract
 
 	Decimal<S> subtract(Decimal<S> subtrahend);
@@ -590,6 +623,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend);
+
+	Decimal<S> subtractSquared(Decimal<S> value);
+
+	Decimal<S> subtractSquared(Decimal<S> value, RoundingMode roundingMode);
 
 	//multiply
 
@@ -764,6 +801,49 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @return {@code 1/this}
 	 */
 	Decimal<S> invert(RoundingMode roundingMode);
+
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this^2)}. Depending on
+	 * the implementation, a new decimal instance may be created and returned
+	 * for the result, or this decimal may be modified and returned.
+	 * 
+	 * @return {@code this*this}
+	 */
+	Decimal<S> square();
+
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this^2)} applying the
+	 * specified rounding mode. Depending on the implementation, a new decimal
+	 * instance may be created and returned for the result, or this decimal may
+	 * be modified and returned.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode to apply for this operation
+	 * @return {@code this*this}
+	 */
+	Decimal<S> square(RoundingMode roundingMode);
+
+	/**
+	 * Returns a {@code Decimal} whose value is the square root of {@code this}
+	 * decimal value. Depending on the implementation, a new decimal instance
+	 * may be created and returned for the result, or this decimal may be
+	 * modified and returned.
+	 * 
+	 * @return {@code sqrt(this}
+	 */
+	Decimal<S> sqrt();
+
+	/**
+	 * Returns a {@code Decimal} whose value is the square root of {@code this}
+	 * decimal value applying the specified rounding mode. Depending on the
+	 * implementation, a new decimal instance may be created and returned for
+	 * the result, or this decimal may be modified and returned.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode to apply for this operation
+	 * @return {@code sqrt(this)}
+	 */
+	Decimal<S> sqrt(RoundingMode roundingMode);
 
 	/**
 	 * Returns the signum function of this {@code Decimal}.

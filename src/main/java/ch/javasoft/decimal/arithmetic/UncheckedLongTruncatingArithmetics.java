@@ -43,6 +43,24 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 	public long multiply(long uDecimal1, long uDecimal2) {
 		return uDecimal1 * uDecimal2;
 	}
+	
+	@Override
+	public long sqrt(long uDecimal) {
+		return sqrt(this, uDecimal);
+	}
+	static long sqrt(DecimalArithmetics arith, long uDecimal) {
+		if (uDecimal < 0) {
+			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
+		}
+		return _sqrt(uDecimal);
+	}
+	static long _sqrt(long uDecimal) {
+		if ((uDecimal & 0xfff0000000000000L) == 0L) {
+			return (int) StrictMath.sqrt(uDecimal);  
+		}
+	    final long result = (long) StrictMath.sqrt(2.0d*(uDecimal >>> 1));  
+	    return result*result - uDecimal > 0L ? (int) result - 1 : (int) result; 	
+	}
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {

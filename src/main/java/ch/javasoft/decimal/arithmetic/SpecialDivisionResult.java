@@ -1,11 +1,11 @@
 package ch.javasoft.decimal.arithmetic;
 
 /**
- * Helper class used by division and inversion to handle some special cases. 
+ * Helper class used by division and inversion to handle some special cases.
  */
 enum SpecialDivisionResult {
 	/**
-	 *{@code a/b} with {@code a==0, b!=0} leading to {@code 0/b=0} 
+	 * {@code a/b} with {@code a==0, b!=0} leading to {@code 0/b=0}
 	 */
 	DIVIDEND_IS_ZERO {
 		@Override
@@ -14,7 +14,7 @@ enum SpecialDivisionResult {
 		}
 	},
 	/**
-	 *{@code a/b} with {@code b==0} leading to an arithmetic exception 
+	 * {@code a/b} with {@code b==0} leading to an arithmetic exception
 	 */
 	DIVISOR_IS_ZERO {
 		@Override
@@ -23,7 +23,7 @@ enum SpecialDivisionResult {
 		}
 	},
 	/**
-	 *{@code a/b} with {@code b==1} leading to {@code a/1=a} 
+	 * {@code a/b} with {@code b==1} leading to {@code a/1=a}
 	 */
 	DIVISOR_IS_ONE {
 		@Override
@@ -32,7 +32,7 @@ enum SpecialDivisionResult {
 		}
 	},
 	/**
-	 *{@code a/b} with {@code b==-1} resulting in {@code a/-1=-a} 
+	 * {@code a/b} with {@code b==-1} resulting in {@code a/-1=-a}
 	 */
 	DIVISOR_IS_MINUS_ONE {
 		@Override
@@ -41,7 +41,7 @@ enum SpecialDivisionResult {
 		}
 	},
 	/**
-	 *{@code a/b} with {@code a==b} resulting in {@code a/a=b/b=1} 
+	 * {@code a/b} with {@code a==b} resulting in {@code a/a=b/b=1}
 	 */
 	DIVISOR_EQUALS_DIVIDEND {
 		@Override
@@ -50,7 +50,7 @@ enum SpecialDivisionResult {
 		}
 	},
 	/**
-	 *{@code a/b} with {@code a==-b} resulting in {@code a/-a=-b/b=-1} 
+	 * {@code a/b} with {@code a==-b} resulting in {@code a/-a=-b/b=-1}
 	 */
 	DIVISOR_EQUALS_MINUS_DIVIDEND {
 		@Override
@@ -63,10 +63,13 @@ enum SpecialDivisionResult {
 	/**
 	 * Returns the special division case if it is one and null otherwise.
 	 * 
-	 * @param arithmetics 		the arithmetics object
-	 * @param uDecimalDividend	the dividend
+	 * @param arithmetics
+	 *            the arithmetics object
+	 * @param uDecimalDividend
+	 *            the dividend
 	 * @param uDecimalDivisor
-	 * @return
+	 *            the divisor
+	 * @return the special case if it is one and null otherwise
 	 */
 	static SpecialDivisionResult getFor(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
 		//NOTE: this must be the first case because 0/0 must also throw an exception!

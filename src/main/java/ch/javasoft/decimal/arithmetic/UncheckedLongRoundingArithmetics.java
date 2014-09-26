@@ -61,7 +61,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		return divideByLong(uDecimalDividend, uDecimalDivisor);
+		return divideByLong(rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
@@ -186,6 +186,12 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}
+	}
+	
+	@Override
+	public long sqrt(long uDecimal) {
+		//FIXME implement with rounding
+		return UncheckedLongTruncatingArithmetics.sqrt(this, uDecimal);
 	}
 
 	@Override

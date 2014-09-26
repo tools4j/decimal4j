@@ -137,6 +137,11 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 	}
 
 	@Override
+	public long sqrt(long uDecimal) {
+		return UncheckedLongTruncatingArithmetics.sqrt(this, uDecimal);
+	}
+
+	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
 		return CheckedLongTruncatingArithmetics.divideByPowerOf10(this, uDecimal, positions);
 	}

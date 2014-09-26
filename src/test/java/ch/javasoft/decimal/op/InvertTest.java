@@ -28,18 +28,10 @@ public class InvertTest extends AbstractOneAryDecimalToDecimalTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
 			for (final RoundingMode rm : RoundingMode.values()) {
-				//FIXME should pass for all rounding modes
-				if (rm == RoundingMode.DOWN) {
-					data.add(new Object[] {s, rm, s.getArithmetics(rm)});
-				}
+				data.add(new Object[] {s, rm, s.getArithmetics(rm)});
 			}
 		}
 		return data;
-	}
-
-	@Override
-	public void runSpecialValueTest() {
-		super.runSpecialValueTest();
 	}
 
 	@Override

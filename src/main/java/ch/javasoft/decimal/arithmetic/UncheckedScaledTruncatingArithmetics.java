@@ -16,6 +16,12 @@ import ch.javasoft.decimal.scale.Scales;
  */
 public class UncheckedScaledTruncatingArithmetics extends
 		AbstractUncheckedScaledArithmetics implements DecimalArithmetics {
+	
+	/**
+	 * sqrt(Long.MAX_VALUE)
+	 * @see Long#MAX_VALUE
+	 */
+	static final long SQRT_LONG_MAX_VALUE = 3037000499L;
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -39,6 +45,10 @@ public class UncheckedScaledTruncatingArithmetics extends
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
+		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(this, uDecimal1, uDecimal2);
+		if (special != null) {
+			return special.multiply(this, uDecimal1, uDecimal2);
+		}
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 
@@ -66,6 +76,52 @@ public class UncheckedScaledTruncatingArithmetics extends
 	}
 
 	@Override
+	public long square(long uDecimal) {
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		final int scale = scaleMetrics.getScale();
+
+		//use scale to split into 2 parts: i (integral) and f (fractional)
+		final long i = scaleMetrics.divideByScaleFactor(uDecimal);
+		final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
+		if (f >= -SQRT_LONG_MAX_VALUE & f <= SQRT_LONG_MAX_VALUE) {
+			//low order product f*f fits in long
+			return scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + scaleMetrics.divideByScaleFactor(f * f);
+		} else {
+			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
+			final Scale9f scale9f = Scale9f.INSTANCE;
+			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+			final long hf = scale9f.divideByScaleFactor(f);
+			final long lf = f - scale9f.multiplyByScaleFactor(hf);
+
+			final long fxf = scaleDiff18.multiplyByScaleFactor(hf * hf) + scaleDiff09.divideByScaleFactor(((hf * lf)<<1) + scale9f.divideByScaleFactor(lf * lf));
+			return scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + fxf;
+		}
+	}
+
+	@Override
+	public long sqrt(long uDecimal) {
+		return sqrt(this, uDecimal);
+	}
+	static long sqrt(DecimalArithmetics arith, long uDecimal) {
+		if (uDecimal < 0) {
+			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
+		}
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final int scale = scaleMetrics.getScale();
+		final int sqrtScale = scale>>1;
+		final int backScale = scale - sqrtScale;
+		final ScaleMetrics backScaleMetrics = Scales.findByScaleFactor(backScale);
+		if (uDecimal <= backScaleMetrics.getMaxIntegerValue()) {
+			final long scaled = backScaleMetrics.multiplyByScaleFactor(uDecimal);
+			final long sqrtScaled = UncheckedLongTruncatingArithmetics._sqrt(scaled);
+			return ((uDecimal & 0x1) == 0) ? sqrtScaled : sqrtScaled / 10;
+		}
+		//FIXME impl for larger values
+		throw new RuntimeException("not implemented: sqrt(" + arith.toString(uDecimal) + ")");
+	}
+
+	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
 		return uDecimalDividend / lDivisor;
 	}
@@ -84,11 +140,22 @@ public class UncheckedScaledTruncatingArithmetics extends
 		}
 		//WE WANT: uDecimalDividend * one / uDecimalDivisor
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
-		if (uDecimalDividend <= scaleMetrics.getMaxIntegerValue() && uDecimalDividend >= scaleMetrics.getMinIntegerValue()) {
+		final long maxInteger = scaleMetrics.getMaxIntegerValue();
+		final long minInteger = scaleMetrics.getMinIntegerValue();
+		if (uDecimalDividend <= (maxInteger) & uDecimalDividend >= minInteger) {
 			//just do it, multiplication result fits in long
 			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
 		}
-		return UInt128.divide128(scaleMetrics, uDecimalDividend, uDecimalDivisor);
+		//perform component wise division
+		final long integralPart = uDecimalDividend / uDecimalDivisor;
+		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+		final long fractionalPart;
+		if (reminder <= maxInteger & reminder >= minInteger) {
+			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
+		} else {
+			fractionalPart = UInt128.divide128(scaleMetrics, reminder, uDecimalDivisor);
+		}
+		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart; 
 	}
 
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {

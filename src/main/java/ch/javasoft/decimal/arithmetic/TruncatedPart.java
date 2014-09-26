@@ -130,8 +130,6 @@ public enum TruncatedPart {
 	 */
 	abstract public boolean isGreaterThanHalf();
 
-	private static final TruncatedPart[] COMPARE_HALF_VALUES = { LESS_THAN_HALF_BUT_NOT_ZERO, EQUAL_TO_HALF, GREATER_THAN_HALF };
-
 	/**
 	 * Returns a truncated part constant given a non-negative remainder
 	 * resulting from a division by the given non-negative divisor.
@@ -148,21 +146,17 @@ public enum TruncatedPart {
 		if (nonNegativeRemainder == 0) {
 			return ZERO;
 		}
-		final long nonNegativeRemainderTimes2 = nonNegativeRemainder << 1;
-		if (nonNegativeRemainderTimes2 >= 0) {
-			final int compareWithHalf = (nonNegativeRemainderTimes2 < nonNegativeDivisor) ? -1 : ((nonNegativeRemainderTimes2 == nonNegativeDivisor) ? 0 : 1); 
-			return COMPARE_HALF_VALUES[compareWithHalf + 1];
-		} else {
-			if (nonNegativeDivisor < 0) {
-				//nonNegativeDivisor == MIN_VALUE
-				if (nonNegativeRemainderTimes2 == nonNegativeDivisor) {
-					return EQUAL_TO_HALF;
-				}
-				return LESS_THAN_HALF_BUT_NOT_ZERO;
-			} else {
-				return GREATER_THAN_HALF;
-			}
+		final long halfNonNegativeDivisor = Math.abs(nonNegativeDivisor >>> 1);
+		//NOTE: abs because it could have been LONG.MIN_VALUE
+		//NOTE: halfNonNegativeDivisor cannot be zero, because if it was 1 then nonNegativeRemainder was 0
+		
+		if (halfNonNegativeDivisor < nonNegativeRemainder) {
+			return GREATER_THAN_HALF;
 		}
+		if ((nonNegativeDivisor & 0x1) == 0 & halfNonNegativeDivisor == nonNegativeRemainder) {
+			return EQUAL_TO_HALF;
+		}
+		return LESS_THAN_HALF_BUT_NOT_ZERO;
 	}
 
 	/**

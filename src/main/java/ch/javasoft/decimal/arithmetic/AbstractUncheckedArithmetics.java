@@ -71,7 +71,7 @@ abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 		while (exp != 1 && result != 0) {
 			if (exp % 2 == 0) {
 				//even
-				result = multiply(result, result);
+				result = square(result);
 				exp >>>= 1;
 			} else {
 				//odd
