@@ -55,11 +55,12 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 		return _sqrt(uDecimal);
 	}
 	static long _sqrt(long uDecimal) {
-		if ((uDecimal & 0xfff0000000000000L) == 0L) {
-			return (int) StrictMath.sqrt(uDecimal);  
+		//http://www.codecodex.com/wiki/Calculate_an_integer_square_root
+		if ((uDecimal & 0xfff0000000000000L) == 0) {
+			return (long)StrictMath.sqrt(uDecimal);  
 		}
 	    final long result = (long) StrictMath.sqrt(2.0d*(uDecimal >>> 1));  
-	    return result*result - uDecimal > 0L ? (int) result - 1 : (int) result; 	
+	    return result*result - uDecimal > 0L ? result - 1 : result;
 	}
 
 	@Override

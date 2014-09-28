@@ -100,7 +100,9 @@ public class UncheckedScaledRoundingArithmetics extends
 	
 	@Override
 	public long square(long uDecimal) {
-		final ScaleMetrics scaleMetrics = getScaleMetrics();
+		return square(getScaleMetrics(), rounding, uDecimal);
+	}
+	static long square(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
 		final int scale = scaleMetrics.getScale();
 		final long i = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
@@ -173,6 +175,7 @@ public class UncheckedScaledRoundingArithmetics extends
 			final long fractionalPart = UInt128.divide128(scaleMetrics, rounding, reminder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart; 
 		}
+//			return UInt128.divide128(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {

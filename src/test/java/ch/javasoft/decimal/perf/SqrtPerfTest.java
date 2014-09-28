@@ -8,9 +8,9 @@ import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
-public class DividePerfTest extends AbstractPerfTest {
+public class SqrtPerfTest extends AbstractPerfTest {
 
-	public DividePerfTest(ScaleMetrics scaleMetrics) {
+	public SqrtPerfTest(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 
@@ -19,47 +19,47 @@ public class DividePerfTest extends AbstractPerfTest {
 		long val;
 		do {
 			val = super.nextRandomLong();
-		} while (val == 0);//avoid division by 0
+		} while (val < 0);//avoid sqrt of negative value
 		return val;
 	}
 	@Override
 	protected String operation() {
-		return "/";
+		return "^(1/2)";
 	}
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b, MathContext mathContext) {
-		return a.divide(b, mathContext);
+		return null;//to avoid asserts
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.divide(b);
+		return a.sqrt();
 	}
 	
 	@Override
 	protected int signumOfResult(BigDecimal a, BigDecimal b, MathContext mathContext) {
-		return a.divide(b, mathContext).signum();
+		return a.divide(a, mathContext).signum();//TODO impl sqrt for BigDecimal
 	}
 	
 	@Override
 	protected int signumOfResult(double a, double b) {
-		return (int)Math.signum(a / b);
+		return (int)Math.signum(Math.sqrt(a));
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> int signumOfResult(Decimal<S> a, Decimal<S> b) {
-		return a.divide(b).signum();
+		return a.sqrt().signum();
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> int signumOfResult(MutableDecimal<S, ?> m, Decimal<S> a, Decimal<S> b) {
-		return m.set(a).divide(b).signum();
+		return m.set(a).sqrt().signum();
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> int signumOfResult(DecimalArithmetics arith, long a, long b) {
-		return arith.signum(arith.divide(a, b));
+		return arith.signum(arith.sqrt(a));
 	}
 
 }

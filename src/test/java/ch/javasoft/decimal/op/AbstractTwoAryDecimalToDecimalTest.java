@@ -13,7 +13,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * long values.
  */
 abstract public class AbstractTwoAryDecimalToDecimalTest extends
-		AbstractDecimalVersusBigDecimalTest {
+		AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and

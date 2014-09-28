@@ -108,17 +108,55 @@ public class UncheckedScaledTruncatingArithmetics extends
 			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
 		}
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final int scale = scaleMetrics.getScale();
-		final int sqrtScale = scale>>1;
-		final int backScale = scale - sqrtScale;
-		final ScaleMetrics backScaleMetrics = Scales.findByScaleFactor(backScale);
-		if (uDecimal <= backScaleMetrics.getMaxIntegerValue()) {
-			final long scaled = backScaleMetrics.multiplyByScaleFactor(uDecimal);
-			final long sqrtScaled = UncheckedLongTruncatingArithmetics._sqrt(scaled);
-			return ((uDecimal & 0x1) == 0) ? sqrtScaled : sqrtScaled / 10;
+		if (uDecimal <= scaleMetrics.getMaxIntegerValue()) {
+			final long scaled = scaleMetrics.multiplyByScaleFactor(uDecimal);
+			return UncheckedLongTruncatingArithmetics._sqrt(scaled);
 		}
+		//perform a binary search 
+		//NOTE: Newton would be faster but does not fit in a single long
+		
+		//initial guess
+		final int scale = scaleMetrics.getScale();
+		final long guess;
+		final ScaleMetrics sqrtMetrics;
+		if ((scale & 0x1) == 0) {
+			sqrtMetrics = Scales.valueOf(scale >>> 1);
+			final long sqrt = UncheckedLongTruncatingArithmetics._sqrt(uDecimal);
+			guess = sqrtMetrics.multiplyByScaleFactor(sqrt);
+		} else {
+			sqrtMetrics = Scales.valueOf((scale >>> 1) + 1);
+			final long sqrt = UncheckedLongTruncatingArithmetics._sqrt(uDecimal/10);
+			guess = sqrtMetrics.multiplyByScaleFactor(sqrt);
+		}
+
+		//binary search now
+		long best = guess;
+		long low = 0;
+		long high = sqrtMetrics.getScaleFactor();
+		while (low <= high) {
+			final long mid = (low + high) >>> 1;
+			final long val = guess + mid;
+			final long valSquared = UncheckedScaledRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val);
+			if (valSquared > uDecimal | valSquared < 0) {//FIXME do we really catch all overflows with negativity check?
+				high = mid - 1;
+			} else if (valSquared < uDecimal) {
+				low = mid + 1;
+				best = val;
+			} else {
+				//could match also because of round-UP
+				final long nextSquared = UncheckedScaledRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val+1);
+				if (nextSquared > uDecimal | nextSquared < 0) {//FIXME do we really catch all overflows with negativity check?
+					return val;
+				}
+				//next still matches, continue our search
+				low = mid + 2;
+				best = val + 1;
+			}
+		}
+		return best;
+		
 		//FIXME impl for larger values
-		throw new RuntimeException("not implemented: sqrt(" + arith.toString(uDecimal) + ")");
+//		throw new RuntimeException("not implemented: sqrt(" + arith.toString(uDecimal) + ")");
 	}
 
 	@Override

@@ -45,6 +45,13 @@ abstract public class AbstractPerfTest {
 	private final MathContext mcLong64;
 	private final MathContext mcLong128;
 	
+	protected long nextRandomLong() {
+//		return rnd.nextInt(Integer.MAX_VALUE);
+//		return rnd.nextInt();
+		return rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
+//		return rnd.nextLong();
+	}
+
 	private static final ThreadLocal<Set<Class<?>>> tracedTestClasses = new ThreadLocal<Set<Class<?>>>() {
 		@Override
 		protected Set<Class<?>> initialValue() {
@@ -200,9 +207,11 @@ abstract public class AbstractPerfTest {
 
 			for (int iN = 0; iN < N; iN++) {
 				final BigDecimal expected = expectedResult(aBigDec[iN], bBigDec[iN], mcLong128);
-				final BigDecimal expectedScaled = expected.setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
-				final Decimal<S> actual = actualResult(aDec[iN], bDec[iN]);
-				assertEquals("test[" + iN + "]: " + aDec[iN] + " " + operation() + " " + bDec[iN] + " = " + expected.toPlainString(), expectedScaled.unscaledValue().longValue(), actual.unscaledValue());
+				if (expected != null) {
+					final BigDecimal expectedScaled = expected.setScale(scaleMetrics.getScale(), arithmetics.getRoundingMode());
+					final Decimal<S> actual = actualResult(aDec[iN], bDec[iN]);
+					assertEquals("test[" + iN + "]: " + aDec[iN] + " " + operation() + " " + bDec[iN] + " = " + expected.toPlainString(), expectedScaled.unscaledValue().longValue(), actual.unscaledValue());
+				}
 			}
 		}
 
@@ -222,21 +231,12 @@ abstract public class AbstractPerfTest {
 		System.out.println(msg + ", scale=" + scaleMetrics.getScale() + ", rounding=" + arithmetics.getRoundingMode() + ": BigDecimal=" + tBigDec + "ms, double=" + tDouble + "ms, Decimal=" + tDecNf + "ms, Mutable=" + tMutNf + "ms, native=" + tNatNf + "ms, relative=" //
 				+ ((100f * tDouble) / tBigDec) + "% / " + ((100f * tDecNf) / tBigDec) + "% / " + ((100f * tMutNf) / tBigDec) + "% / " + +((100f * tNatNf) / tBigDec) + "%");
 	}
-
+	
 	private BigDecimal[] randomBigDecimals(BigDecimal[] values) {
 		final int n = values.length;
 		final int scale = arithmetics.getScale();
 		for (int i = 0; i < n; i++) {
-			long val;
-			do {
-				//works with toString asserts
-//				val = rnd.nextInt();
-	//			val = rnd.nextLong() & 0x000001ffffffffffL;
-//				val = rnd.nextLong() & 0x000001ffffffffffL;
-				//works only with unscaled asserts
-//				val = rnd.nextLong() & 0x03ffffffffffffffL;
-				val = rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
-			} while (val == 0);//avoid division by 0
+			final long val = nextRandomLong();
 			values[i] = BigDecimal.valueOf(val, scale);
 		}
 		return values;

@@ -19,16 +19,16 @@ import ch.javasoft.decimal.scale.Scale6f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
- * Base class for tests comparing the result of an operation of the
- * {@link Decimal} with the expected result produced by the equivalent operation
- * of the {@link BigDecimal}. The test operand values created based on random
- * long values. The result type of the operation can be any type but.
+ * Base class for tests of operands with random and special values. The class
+ * provides also some helper methods for subclasses comparing the result of an
+ * operation of the {@link Decimal} with the expected result produced by the
+ * equivalent operation of the {@link BigDecimal}.
  */
-abstract public class AbstractDecimalVersusBigDecimalTest {
+abstract public class AbstractOperandTest {
 
-//	protected static final List<ScaleMetrics> SCALES = ScaleMetrics.VALUES;
-	protected static final List<ScaleMetrics> SCALES = Arrays.<ScaleMetrics>asList(Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE);
-	
+	//	protected static final List<ScaleMetrics> SCALES = ScaleMetrics.VALUES;
+	protected static final List<ScaleMetrics> SCALES = Arrays.<ScaleMetrics> asList(Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE);
+
 	protected final Random rnd = new Random();
 
 	protected final DecimalArithmetics arithmetics;
@@ -43,23 +43,24 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 	 *            the arithmetics determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractDecimalVersusBigDecimalTest(DecimalArithmetics arithmetics) {
+	public AbstractOperandTest(DecimalArithmetics arithmetics) {
 		this.arithmetics = arithmetics;
 		this.mathContextLong64 = new MathContext(19, arithmetics.getRoundingMode());
 		this.mathContextLong128 = new MathContext(39, arithmetics.getRoundingMode());
 	}
-	
+
 	protected int getScale() {
 		return arithmetics.getScale();
 	}
-	
+
 	protected RoundingMode getRoundingMode() {
 		return arithmetics.getRoundingMode();
 	}
-	
+
 	protected boolean isStandardRounding() {
 		return arithmetics.getRoundingMode() == RoundingMode.HALF_UP;
 	}
+
 	protected boolean isRoundingDown() {
 		return arithmetics.getRoundingMode() == RoundingMode.DOWN;
 	}
@@ -93,10 +94,9 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 	protected int getRandomTestCount() {
 		return 10000;
 	}
-	private static final long[] SPECIALS = {
-		Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE,
-		Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE,
-	};
+
+	private static final long[] SPECIALS = { Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE, Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE, };
+
 	protected long[] getSpecialValues(ScaleMetrics scaleMetrics) {
 		final Set<Long> specials = new TreeSet<Long>();
 		//boundary values of different types
@@ -104,17 +104,17 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 			specials.add(s);
 			//value +/- 1
 			if (s < Long.MAX_VALUE) {
-				specials.add(s+1); 
+				specials.add(s + 1);
 			}
 			if (s > Long.MIN_VALUE) {
-				specials.add(s-1);
+				specials.add(s - 1);
 			}
 			//half value and neighbours
-			specials.add(s/2);
-			specials.add(s/2-1);
-			specials.add(s/2+1);
+			specials.add(s / 2);
+			specials.add(s / 2 - 1);
+			specials.add(s / 2 + 1);
 			//divided by scale ten, pos and neg
-			for (long d = s/10; Math.abs(d) >= 10; d/=10) {
+			for (long d = s / 10; Math.abs(d) >= 10; d /= 10) {
 				specials.add(d);
 				specials.add(-d);
 			}
@@ -143,6 +143,7 @@ abstract public class AbstractDecimalVersusBigDecimalTest {
 		final long unscaled = rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
 		return newDecimal(scaleMetrics, unscaled);
 	}
+
 	@SuppressWarnings("unchecked")
 	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
 		return (Decimal<S>) scaleMetrics.createImmutable(unscaled);

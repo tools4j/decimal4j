@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  *            and {@link BigDecimal}
  */
 abstract public class AbstractTwoAryDecimalToAnyTest<R> extends
-		AbstractDecimalVersusBigDecimalTest {
+		AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
