@@ -44,7 +44,7 @@ public class SqrtTest extends AbstractOperandTest {
 	protected String operation() {
 		return "sqrt";
 	}
-	
+
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
 		if (isStandardRounding() & rnd.nextBoolean()) {
 			return operand.sqrt();
@@ -52,7 +52,7 @@ public class SqrtTest extends AbstractOperandTest {
 			return operand.sqrt(getRoundingMode());
 		}
 	}
-
+	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		runTest(randomDecimal(scaleMetrics), index);

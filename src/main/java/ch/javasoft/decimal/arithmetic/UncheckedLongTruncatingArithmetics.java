@@ -6,8 +6,8 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
 import ch.javasoft.decimal.scale.Scale18f;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
