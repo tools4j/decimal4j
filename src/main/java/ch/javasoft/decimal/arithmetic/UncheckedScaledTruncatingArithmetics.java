@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.math.UInt128;
 import ch.javasoft.decimal.scale.Scale9f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
@@ -250,7 +249,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 		if (reminder <= maxInteger & reminder >= minInteger) {
 			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
 		} else {
-			fractionalPart = UInt128.divide128(scaleMetrics, reminder, uDecimalDivisor);
+			fractionalPart = Div.scaleTo128divBy64(scaleMetrics, reminder, uDecimalDivisor);
 		}
 		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart; 
 	}
@@ -291,7 +290,10 @@ public class UncheckedScaledTruncatingArithmetics extends
 			return getScaleMetrics().multiplyByScaleFactor(one) / uDecimal;
 		}
 		//too big, use divide128 now
-		return UInt128.divide128(scaleMetrics, one, uDecimal);
+		final long integralPart = one / uDecimal;
+		final long reminder = one - integralPart * uDecimal;
+		final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, reminder, uDecimal);
+		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 	}
 	
 	@Override

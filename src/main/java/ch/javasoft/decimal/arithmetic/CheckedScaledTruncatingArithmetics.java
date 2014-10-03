@@ -2,7 +2,6 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.math.UInt128;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 
@@ -80,7 +79,7 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
 		}
 		//too big, use divide128 now
-		final long result = UInt128.divide128(scaleMetrics, uDecimalDividend, uDecimalDivisor);
+		final long result = Div.scaleTo128divBy64(scaleMetrics, uDecimalDividend, uDecimalDivisor);
 		//check by multiply
 		if (multiply(uDecimalDivisor, result) == uDecimalDividend) {
 			return result;
@@ -128,7 +127,7 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 			return getScaleMetrics().multiplyByScaleFactorExact(one) / uDecimal;
 		}
 		//too big, use divide128 now
-		final long result = UInt128.divide128(scaleMetrics, one, uDecimal);
+		final long result = Div.scaleTo128divBy64(scaleMetrics, one, uDecimal);
 		//check by multiply
 		if (multiply(uDecimal, result) == one) {
 			return result;

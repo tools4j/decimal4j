@@ -1,14 +1,14 @@
 package ch.javasoft.decimal.arithmetic;
 
+import static ch.javasoft.decimal.arithmetic.UncheckedScaledTruncatingArithmetics.SQRT_LONG_MAX_VALUE;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.math.UInt128;
 import ch.javasoft.decimal.scale.Scale9f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
-import static ch.javasoft.decimal.arithmetic.UncheckedScaledTruncatingArithmetics.SQRT_LONG_MAX_VALUE;
 /**
  * Arithmetic implementation for rounding strategies. For
  * {@link RoundingMode#DOWN} the more efficient
@@ -172,10 +172,9 @@ public class UncheckedScaledRoundingArithmetics extends
 			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 			return truncated + rounding.calculateRoundingIncrementForDivision(truncated, subFractionalPart, uDecimalDivisor); 
 		} else {
-			final long fractionalPart = UInt128.divide128(scaleMetrics, rounding, reminder, uDecimalDivisor);
+			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart; 
 		}
-//			return UInt128.divide128(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {
