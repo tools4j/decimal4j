@@ -799,13 +799,13 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public Decimal<S> average(Decimal<S> val) {
-		return createOrAssign(getDefaultArithmetics().average(unscaledValue(), val.unscaledValue()));
+	public Decimal<S> avg(Decimal<S> val) {
+		return createOrAssign(getDefaultArithmetics().avg(unscaledValue(), val.unscaledValue()));
 	}
 
 	@Override
-	public Decimal<S> average(Decimal<S> val, RoundingMode roundingMode) {
-		return createOrAssign(getArithmeticsFor(roundingMode).average(unscaledValue(), val.unscaledValue()));
+	public Decimal<S> avg(Decimal<S> val, RoundingMode roundingMode) {
+		return createOrAssign(getArithmeticsFor(roundingMode).avg(unscaledValue(), val.unscaledValue()));
 	}
 
 	/* ---------------------------- equals etc. ---------------------------- */

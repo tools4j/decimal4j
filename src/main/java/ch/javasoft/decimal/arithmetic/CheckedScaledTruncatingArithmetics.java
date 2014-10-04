@@ -104,8 +104,8 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 	}
 	
 	@Override
-	public long average(long a, long b) {
-		return UncheckedLongTruncatingArithmetics._average(a, b);
+	public long avg(long a, long b) {
+		return UncheckedLongTruncatingArithmetics._avg(a, b);
 	}
 
 	@Override

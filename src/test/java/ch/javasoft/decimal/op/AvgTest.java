@@ -14,14 +14,14 @@ import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
- * Unit test for {@link Decimal#average(Decimal)} and {@link Decimal#average(Decimal, RoundingMode)}
+ * Unit test for {@link Decimal#avg(Decimal)} and {@link Decimal#avg(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class AverageTest extends AbstractTwoAryDecimalToDecimalTest {
+public class AvgTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	
-	public AverageTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public AvgTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -49,9 +49,9 @@ public class AverageTest extends AbstractTwoAryDecimalToDecimalTest {
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
 		if (isStandardRounding() & rnd.nextBoolean()) {
-			return a.average(b);
+			return a.avg(b);
 		} else {
-			return a.average(b, getRoundingMode());
+			return a.avg(b, getRoundingMode());
 		}
 	}
 }

@@ -1063,7 +1063,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            value with which the average is to be computed.
 	 * @return {@code (this+val)/2} using the default rounding mode
 	 */
-	Decimal<S> average(Decimal<S> val);
+	Decimal<S> avg(Decimal<S> val);
 
 	/**
 	 * Returns the average of this {@code Decimal} and {@code val} using the
@@ -1076,7 +1076,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the rounding mode to use if rounding is necessary
 	 * @return {@code (this+val)/2} using the specified rounding mode
 	 */
-	Decimal<S> average(Decimal<S> val, RoundingMode roundingMode);
+	Decimal<S> avg(Decimal<S> val, RoundingMode roundingMode);
 
 	/**
 	 * Returns true if this {@code Decimal} is zero.

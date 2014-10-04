@@ -271,34 +271,8 @@ public class UncheckedScaledTruncatingArithmetics extends
 	}
 
 	@Override
-	public long invert(long uDecimal) {
-		//special cases first
-		final long one = one();
-		final SpecialDivisionResult special = SpecialDivisionResult.getFor(this, one, uDecimal);
-		if (special != null) {
-			return special.divide(this, one, uDecimal);
-		}
-		//div by power of 10
-		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimal));
-		if (pow10 != null) {
-			final long absResult = divideByPowerOf10(one, pow10.getScaleFactor(), pow10);
-			return uDecimal >= 0 ? absResult : -absResult;
-		}
-		//check if one * one fits in long
-		final ScaleMetrics scaleMetrics = getScaleMetrics();
-		if (scaleMetrics.getScale() <= 9) {
-			return getScaleMetrics().multiplyByScaleFactor(one) / uDecimal;
-		}
-		//too big, use divide128 now
-		final long integralPart = one / uDecimal;
-		final long reminder = one - integralPart * uDecimal;
-		final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, reminder, uDecimal);
-		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
-	}
-	
-	@Override
-	public long average(long a, long b) {
-		return UncheckedLongTruncatingArithmetics._average(a, b);
+	public long avg(long a, long b) {
+		return UncheckedLongTruncatingArithmetics._avg(a, b);
 	}
 
 	@Override

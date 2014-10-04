@@ -79,7 +79,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	}
 	
 	@Override
-	public long average(long a, long b) {
+	public long avg(long a, long b) {
 		final RoundingMode roundingMode = getRoundingMode();
 		final long xor = a ^ b;
 		switch (roundingMode) {

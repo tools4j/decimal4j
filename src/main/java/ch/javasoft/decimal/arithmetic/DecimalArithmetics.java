@@ -244,7 +244,7 @@ public interface DecimalArithmetics {
 	 *             {@link #getOverflowMode() overflow mode} is set to throw an
 	 *             exception
 	 */
-	long average(long uDecimal1, long uDecimal2);
+	long avg(long uDecimal1, long uDecimal2);
 
 	/**
 	 * Returns the non-negative value {@code abs(uDecimal)}, which is the value

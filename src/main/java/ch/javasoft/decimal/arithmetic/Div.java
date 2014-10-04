@@ -114,13 +114,14 @@ class Div {
 			right = (rhat << 32) | un0;
 		}
 
-		r = ((un21 << 32) + (un0 - (q0 * v))) >>> s;
 		q = (q1 << 32) | q0;
 
 		//apply sign and rounding
 		if (rounding == null || rounding == DecimalRounding.DOWN) {
 			return neg ? -q : q;
 		}
+
+		r = ((un21 << 32) + (un0 - (q0 * v))) >>> s;
 		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(r), Math.abs(v0));
 		final int inc = rounding.calculateRoundingIncrement(neg ? -1 : 1, q, truncatedPart);
 		return (neg ? -q : q) + inc;

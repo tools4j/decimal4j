@@ -132,10 +132,10 @@ public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithme
 	}
 	
 	@Override
-	public long average(long a, long b) {
-		return _average(a, b);
+	public long avg(long a, long b) {
+		return _avg(a, b);
 	}
-	static long _average(long a, long b) {
+	static long _avg(long a, long b) {
 		final long xor = a ^ b;
 		final long floor = (a & b) + (xor >> 1);
 		return floor + ((floor >>> 63) & xor);
