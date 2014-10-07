@@ -26,18 +26,7 @@ public class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScal
 
 	@Override
 	public long sqrt(long uDecimal) {
-		return _sqrt(uDecimal);
-	}
-	static long _sqrt(long uDecimal) {
-		if (uDecimal < 0) {
-			throw new ArithmeticException("square root of a negative value: " + uDecimal);
-		}
-		//http://www.codecodex.com/wiki/Calculate_an_integer_square_root
-		if ((uDecimal & 0xfff0000000000000L) == 0) {
-			return (long)StrictMath.sqrt(uDecimal);  
-		}
-	    final long result = (long) StrictMath.sqrt(2.0d*(uDecimal >>> 1));  
-	    return result*result - uDecimal > 0L ? result - 1 : result;
+		return Sqrt.sqrtLong(uDecimal);
 	}
 
 	@Override

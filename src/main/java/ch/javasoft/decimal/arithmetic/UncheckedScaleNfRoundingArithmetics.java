@@ -1,7 +1,5 @@
 package ch.javasoft.decimal.arithmetic;
 
-import static ch.javasoft.decimal.arithmetic.UncheckedScaleNfTruncatingArithmetics.SQRT_LONG_MAX_VALUE;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -17,6 +15,12 @@ import ch.javasoft.decimal.scale.Scales;
  */
 public class UncheckedScaleNfRoundingArithmetics extends
 		AbstractUncheckedScaleNfArithmetics {
+
+	/**
+	 * sqrt(Long.MAX_VALUE) used in {@link #square(long)}
+	 * @see Long#MAX_VALUE
+	 */
+	private static final long SQRT_LONG_MAX_VALUE = 3037000499L;
 
 	private final DecimalRounding rounding;
 
@@ -135,6 +139,11 @@ public class UncheckedScaleNfRoundingArithmetics extends
 	}
 
 	@Override
+	public long sqrt(long uDecimal) {
+		return Sqrt.sqrt(this, rounding, uDecimal);
+	}
+
+	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
 		return UncheckedScale0fRoundingArithmetics.divideByLong(rounding, uDecimalDividend, lDivisor);
 	}
@@ -197,12 +206,6 @@ public class UncheckedScaleNfRoundingArithmetics extends
 		}
 	}
 	
-	@Override
-	public long sqrt(long uDecimal) {
-		//FIXME impl with rounding
-		return UncheckedScaleNfTruncatingArithmetics.sqrt(this, uDecimal);
-	}
-
 	@Override
 	public long pow(long uDecimal, int exponent) {
 		//FIXME implement with rounding (not only on multiplications!)

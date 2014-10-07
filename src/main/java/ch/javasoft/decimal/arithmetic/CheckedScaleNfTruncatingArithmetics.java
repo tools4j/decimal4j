@@ -137,7 +137,7 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 
 	@Override
 	public long sqrt(long uDecimal) {
-		return UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
+		return Sqrt.sqrt(this, uDecimal);
 	}
 
 	@Override

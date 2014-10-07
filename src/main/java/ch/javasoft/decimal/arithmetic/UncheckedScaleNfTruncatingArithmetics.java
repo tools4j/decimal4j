@@ -20,11 +20,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	 * sqrt(Long.MAX_VALUE) used in {@link #square(long)}
 	 * @see Long#MAX_VALUE
 	 */
-	static final long SQRT_LONG_MAX_VALUE = 3037000499L;
-	/**
-	 * This mask is used to obtain the value of an int as if it were unsigned.
-	 */
-	private static final long LONG_MASK = 0xffffffffL;
+	private static final long SQRT_LONG_MAX_VALUE = 3037000499L;
 
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
@@ -104,117 +100,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 
 	@Override
 	public long sqrt(long uDecimal) {
-		return sqrt(this, uDecimal);
-	}
-	static long sqrt(DecimalArithmetics arith, long uDecimal) {
-		if (uDecimal < 0) {
-			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
-		}
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		
-		//multiply by scale factor into a 128bit integer
-		final int lFactor = (int)(uDecimal & LONG_MASK);
-		final int hFactor = (int)(uDecimal >>> 32);
-		long lScaled;
-		long hScaled;
-		long product;
-
-		product = scaleMetrics.mulloByScaleFactor(lFactor);
-		lScaled = product & LONG_MASK;
-		product = scaleMetrics.mulhiByScaleFactor(lFactor) + (product >>> 32);
-		hScaled = product >>> 32;
-		product = scaleMetrics.mulloByScaleFactor(hFactor) + (product & LONG_MASK);
-		lScaled |= ((product & LONG_MASK) << 32);
-		hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + hScaled + (product >>> 32);
-		
-		//square root
-		//@see http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
-		int zerosHalf;
-		long rem = 0;
-		long root = 0;
-		zerosHalf = Long.numberOfLeadingZeros(hScaled) >> 1;
-		hScaled <<= (zerosHalf << 1);
-		for (int i = zerosHalf; i < 32; i++) {
-			root <<= 1;
-			rem = ((rem << 2) + (hScaled >>> 62));
-			hScaled <<= 2;
-			root++;
-			if (root <= rem) {
-				rem -= root;
-				root++;
-			} else {
-				root--;
-			}
-		}
-		zerosHalf = zerosHalf == 32 ? Long.numberOfLeadingZeros(lScaled) >> 1 : 0;
-		lScaled <<= (zerosHalf << 1);
-		for (int i = zerosHalf; i < 32; i++) {
-			root <<= 1;
-			rem = ((rem << 2) + (lScaled >>> 62));
-			lScaled <<= 2;
-			root++;
-			if (root <= rem) {
-				rem -= root;
-				root++;
-			} else {
-				root--;
-			}
-		}
-		return root >>> 1;
-	}
-	static long sqrtAlt(DecimalArithmetics arith, long uDecimal) {
-		if (uDecimal < 0) {
-			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
-		}
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		if (uDecimal <= scaleMetrics.getMaxIntegerValue()) {
-			final long scaled = scaleMetrics.multiplyByScaleFactor(uDecimal);
-			return UncheckedScale0fTruncatingArithmetics._sqrt(scaled);
-		}
-		//perform a binary search 
-		//NOTE: Newton would be faster but does not fit in a single long
-		
-		//initial guess
-		final int scale = scaleMetrics.getScale();
-		final long guess;
-		final ScaleMetrics sqrtMetrics;
-		if ((scale & 0x1) == 0) {
-			sqrtMetrics = Scales.valueOf(scale >>> 1);
-			final long sqrt = UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
-			guess = sqrtMetrics.multiplyByScaleFactor(sqrt);
-		} else {
-			sqrtMetrics = Scales.valueOf((scale >>> 1) + 1);
-			final long sqrt = UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal/10);
-			guess = sqrtMetrics.multiplyByScaleFactor(sqrt);
-		}
-
-		//binary search now
-		long best = guess;
-		long low = 1;
-		long high = sqrtMetrics.getScaleFactor() - 1;
-		while (low <= high) {
-			final long mid = (low + high) >>> 1;
-			final long val = guess + mid;
-			final long valSquared = UncheckedScaleNfRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val);
-			if (valSquared > uDecimal | valSquared < 0) { 
-				//NOTE: negativity test for overflow check is sufficient here as tests for all scales have shown
-				high = mid - 1;
-			} else if (valSquared < uDecimal) {
-				low = mid + 1;
-				best = val;
-			} else {
-				//could match also because of round-UP
-				final long nextSquared = UncheckedScaleNfRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val+1);
-				if (nextSquared > uDecimal | nextSquared < 0) {
-					//NOTE: negativity test for overflow check is sufficient here as tests for all scales have shown
-					return val;
-				}
-				//next still matches, continue our search
-				low = mid + 2;
-				best = val + 1;
-			}
-		}
-		return best;
+		return Sqrt.sqrt(this, uDecimal);
 	}
 
 	@Override

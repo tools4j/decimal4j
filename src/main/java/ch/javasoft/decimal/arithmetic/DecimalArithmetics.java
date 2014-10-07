@@ -5,9 +5,29 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.ImmutableDecimal;
+import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
+/**
+ * <tt>DecimalArithmetics</tt> defines the basic native operations for
+ * {@link Decimal} numbers for one particular combination of {@link #getScale()
+ * scale}, {@link #getRoundingMode() rounding mode} and
+ * {@link #getOverflowMode() overflow mode}. Native here means that
+ * <tt>Decimal</tt> values are simply represented by their underlying unscaled
+ * <tt>long</tt> value. All operations therefore use unscaled longs for
+ * <tt>Decimal</tt> arguments and return longs for <tt>Decimal</tt> number
+ * results.
+ * <p>
+ * Application code usually does not need to use <tt>DecimalArithmetics</tt>
+ * directly. However, certain highly performance critical and/or zero garbage
+ * applications may prefer such native arithmetics operations over the two main
+ * alternatives {@link ImmutableDecimal} and {@link MutableDecimal}.
+ * <p>
+ * Operations of <tt>DecimalArithmetics</tt> produce no garbage unless indicated
+ * differently.
+ */
 public interface DecimalArithmetics {
 	/**
 	 * Returns the scale {@code f} applied to all unscaled decimal values passed
@@ -415,6 +435,9 @@ public interface DecimalArithmetics {
 
 	/**
 	 * Converts the specified {@link BigDecimal} value to an unscaled decimal.
+	 * <p>
+	 * Note: this operation is <b>not</b> garbage free, meaning that new
+	 * temporary objects may be allocated during the conversion.
 	 * 
 	 * @param value
 	 *            the value to convert

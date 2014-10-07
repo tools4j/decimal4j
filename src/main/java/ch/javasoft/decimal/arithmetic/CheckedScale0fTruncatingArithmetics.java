@@ -38,7 +38,7 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 	
 	@Override
 	public long sqrt(long uDecimal) {
-		return UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
+		return Sqrt.sqrtLong(uDecimal);
 	}
 
 	@Override

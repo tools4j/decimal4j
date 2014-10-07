@@ -170,8 +170,7 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 	
 	@Override
 	public long sqrt(long uDecimal) {
-		//FIXME implement with rounding
-		return UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
+		return Sqrt.sqrtLong(rounding, uDecimal);
 	}
 
 	@Override
