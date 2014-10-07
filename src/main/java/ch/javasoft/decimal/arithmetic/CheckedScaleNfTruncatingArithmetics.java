@@ -9,13 +9,13 @@ import ch.javasoft.decimal.scale.Scales;
  * Arithmetics implementation throwing an exception if an operation leads to on
  * overflow. Decimals after the last scale digit are truncated without rounding.
  */
-public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledArithmetics {
+public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfArithmetics {
 
 	//lazy init
 	private Double minDouble;
 	private Double maxDouble;
 
-	public CheckedScaledTruncatingArithmetics(ScaleMetrics scaleMetrics) {
+	public CheckedScaleNfTruncatingArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 
@@ -105,7 +105,7 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 	
 	@Override
 	public long avg(long a, long b) {
-		return UncheckedLongTruncatingArithmetics._avg(a, b);
+		return UncheckedScale0fTruncatingArithmetics._avg(a, b);
 	}
 
 	@Override
@@ -137,17 +137,17 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 
 	@Override
 	public long sqrt(long uDecimal) {
-		return UncheckedLongTruncatingArithmetics.sqrt(this, uDecimal);
+		return UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		return CheckedLongTruncatingArithmetics.divideByPowerOf10(this, uDecimal, positions);
+		return CheckedScale0fTruncatingArithmetics.divideByPowerOf10(this, uDecimal, positions);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		return CheckedLongTruncatingArithmetics.multiplyByPowerOf10(this, uDecimal, positions);
+		return CheckedScale0fTruncatingArithmetics.multiplyByPowerOf10(this, uDecimal, positions);
 	}
 
 	@Override
@@ -173,7 +173,7 @@ public class CheckedScaledTruncatingArithmetics extends AbstractCheckedScaledAri
 		if (scale == 0) {
 			return fromLong(unscaledValue);
 		}
-		return CheckedLongTruncatingArithmetics.multiplyByPowerOf10(this, unscaledValue, getScale() - scale);
+		return CheckedScale0fTruncatingArithmetics.multiplyByPowerOf10(this, unscaledValue, getScale() - scale);
 	}
 
 }

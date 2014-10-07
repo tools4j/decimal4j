@@ -1,25 +1,18 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigInteger;
-import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
-import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
 
 /**
- * Arithmetics implementation for the special case {@code scale=0}, that is, for
- * long values. The implementation throws an exception if an operation leads to on
- * overflow. Decimals after the last scale digit are truncated without rounding.
+ * Base class for arithmetics implementations for the special case
+ * {@code scale=0}, that is, for long values. The implementation throws an
+ * exception if an operation leads to on overflow.
  */
-public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics {
+abstract public class AbstractCheckedScale0fArithmetics extends
+		AbstractCheckedArithmetics {
 
 	private static final long FLOOR_SQRT_MAX_LONG = 3037000499L;
-
-	/**
-	 * The singleton instance.
-	 */
-	public static final CheckedLongTruncatingArithmetics INSTANCE = new CheckedLongTruncatingArithmetics();
 
 	@Override
 	public Scale0f getScaleMetrics() {
@@ -29,11 +22,6 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 	@Override
 	public int getScale() {
 		return 0;
-	}
-
-	@Override
-	public RoundingMode getRoundingMode() {
-		return RoundingMode.DOWN;
 	}
 
 	@Override
@@ -52,28 +40,10 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 	}
 
 	@Override
-	public long invert(long uDecimal) {
-		if (uDecimal == 0) {
-			SpecialDivisionResult.DIVIDEND_IS_ZERO.divide(this, 1, uDecimal);
-		}
-		if (uDecimal == 1) {
-			return 1;
-		}
-		if (uDecimal == -1) {
-			return -1;
-		}
-		return 0;
-	}
-	
-	@Override
-	public long sqrt(long uDecimal) {
-		return UncheckedLongTruncatingArithmetics.sqrt(this, uDecimal);
-	}
-
-	@Override
 	public long pow(long uDecimalBase, int exponent) {
 		return pow(this, uDecimalBase, exponent);
 	}
+
 	static long pow(DecimalArithmetics arith, long uDecimalBase, int exponent) {
 		if (exponent == 0) {
 			return 1;
@@ -132,52 +102,8 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 	}
 
 	@Override
-	public long divideByPowerOf10(long uDecimal, int n) {
-		return divideByPowerOf10(this, uDecimal, n);
-	}
-	static long divideByPowerOf10(DecimalArithmetics arith, long uDecimal, int n) {
-		if (uDecimal == 0 | n == 0) {
-			return uDecimal;
-		}
-		if (n < 0) {
-			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-				return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
-			}
-			throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " / 10^" + n);
-		}
-		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
-			return scaleMetrics.divideByScaleFactor(uDecimal);
-		}
-		return 0;
-	}
-
-	@Override
-	public long multiplyByPowerOf10(long uDecimal, int n) {
-		return multiplyByPowerOf10(this, uDecimal, n);
-	}
-	static long multiplyByPowerOf10(DecimalArithmetics arith, long uDecimal, int n) {
-		if (uDecimal == 0 | n == 0) {
-			return uDecimal;
-		}
-		if (n < 0) {
-			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			return 0;
-		}
-		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
-			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
-		}
-		throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " * 10^" + n);
-	}
-
-	@Override
 	public long avg(long a, long b) {
-		return UncheckedLongTruncatingArithmetics._avg(a, b);
+		return UncheckedScale0fTruncatingArithmetics._avg(a, b);
 	}
 
 	@Override
@@ -186,19 +112,11 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 	}
 
 	@Override
-	public long fromDouble(double value) {
-		if (value <= Long.MAX_VALUE & value >= Long.MIN_VALUE) { 
-			return (long)value;
-		}
-		throw new ArithmeticException("overflow for conversion from double: " + value);
-	}
-
-	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
 		if (scale == 0 | unscaledValue == 0) {
 			return unscaledValue;
 		}
-		return multiplyByPowerOf10(null, unscaledValue, scale);
+		return multiplyByPowerOf10(unscaledValue, scale);
 	}
 
 	@Override
@@ -216,12 +134,12 @@ public class CheckedLongTruncatingArithmetics extends AbstractCheckedArithmetics
 
 	@Override
 	public float toFloat(long uDecimal) {
-		return (float)uDecimal;
+		return (float) uDecimal;
 	}
 
 	@Override
 	public double toDouble(long uDecimal) {
-		return (double)uDecimal;
+		return (double) uDecimal;
 	}
 
 	@Override

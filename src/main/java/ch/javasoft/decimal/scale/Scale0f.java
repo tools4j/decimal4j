@@ -5,11 +5,11 @@ import java.util.EnumMap;
 
 import ch.javasoft.decimal.Decimal0f;
 import ch.javasoft.decimal.MutableDecimal0f;
-import ch.javasoft.decimal.arithmetic.CheckedLongTruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.CheckedScale0fTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalRounding;
-import ch.javasoft.decimal.arithmetic.UncheckedLongRoundingArithmetics;
-import ch.javasoft.decimal.arithmetic.UncheckedLongTruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedScale0fRoundingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedScale0fTruncatingArithmetics;
 
 /**
  * Scale class for decimals with 0 {@link #getScale() fraction digits} (aka
@@ -24,9 +24,9 @@ public final class Scale0f extends AbstractScale {
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, UncheckedLongTruncatingArithmetics.INSTANCE);
+				map.put(roundingMode, UncheckedScale0fTruncatingArithmetics.INSTANCE);
 			} else {
-				map.put(roundingMode, new UncheckedLongRoundingArithmetics(dr));
+				map.put(roundingMode, new UncheckedScale0fRoundingArithmetics(dr));
 			}
 		}
 		return map;
@@ -38,7 +38,7 @@ public final class Scale0f extends AbstractScale {
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, CheckedLongTruncatingArithmetics.INSTANCE);
+				map.put(roundingMode, CheckedScale0fTruncatingArithmetics.INSTANCE);
 			} else {
 				//FIXME add when implemented
 				//					map.put(roundingMode, new CheckedLongRoundingArithmetics(dr));

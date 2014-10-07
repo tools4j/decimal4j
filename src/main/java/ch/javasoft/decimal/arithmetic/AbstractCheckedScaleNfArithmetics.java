@@ -8,12 +8,12 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * rounding is no issue. Overflow is checked, that is,
  * {@link #getOverflowMode()} returns {@link OverflowMode#CHECKED}.
  */
-abstract public class AbstractCheckedScaledArithmetics extends AbstractCheckedArithmetics {
+abstract public class AbstractCheckedScaleNfArithmetics extends AbstractCheckedArithmetics {
 
 	private final ScaleMetrics scaleMetrics;
 	protected final DecimalArithmetics unchecked;
 
-	public AbstractCheckedScaledArithmetics(ScaleMetrics scaleMetrics) {
+	public AbstractCheckedScaleNfArithmetics(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.unchecked = scaleMetrics.getArithmetics(getRoundingMode());
 	}
@@ -31,7 +31,7 @@ abstract public class AbstractCheckedScaledArithmetics extends AbstractCheckedAr
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
 		//NOTE: we assume that multiply with this arithmetics does the correct rounding
-		return CheckedLongTruncatingArithmetics.pow(this, uDecimalBase, exponent);
+		return CheckedScale0fTruncatingArithmetics.pow(this, uDecimalBase, exponent);
 	}
 
 	@Override

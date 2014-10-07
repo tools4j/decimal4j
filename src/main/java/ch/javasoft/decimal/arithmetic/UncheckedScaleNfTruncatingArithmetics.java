@@ -13,8 +13,8 @@ import ch.javasoft.decimal.scale.Scales;
  * digit without rounding. Operations are unchecked, that is, the result of an
  * operation that leads to an overflow is silently truncated.
  */
-public class UncheckedScaledTruncatingArithmetics extends
-		AbstractUncheckedScaledArithmetics implements DecimalArithmetics {
+public class UncheckedScaleNfTruncatingArithmetics extends
+		AbstractUncheckedScaleNfArithmetics implements DecimalArithmetics {
 	
 	/**
 	 * sqrt(Long.MAX_VALUE) used in {@link #square(long)}
@@ -37,7 +37,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative or uneven
 	 */
-	public UncheckedScaledTruncatingArithmetics(ScaleMetrics scaleMetrics) {
+	public UncheckedScaleNfTruncatingArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 
@@ -169,7 +169,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		if (uDecimal <= scaleMetrics.getMaxIntegerValue()) {
 			final long scaled = scaleMetrics.multiplyByScaleFactor(uDecimal);
-			return UncheckedLongTruncatingArithmetics._sqrt(scaled);
+			return UncheckedScale0fTruncatingArithmetics._sqrt(scaled);
 		}
 		//perform a binary search 
 		//NOTE: Newton would be faster but does not fit in a single long
@@ -180,11 +180,11 @@ public class UncheckedScaledTruncatingArithmetics extends
 		final ScaleMetrics sqrtMetrics;
 		if ((scale & 0x1) == 0) {
 			sqrtMetrics = Scales.valueOf(scale >>> 1);
-			final long sqrt = UncheckedLongTruncatingArithmetics._sqrt(uDecimal);
+			final long sqrt = UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
 			guess = sqrtMetrics.multiplyByScaleFactor(sqrt);
 		} else {
 			sqrtMetrics = Scales.valueOf((scale >>> 1) + 1);
-			final long sqrt = UncheckedLongTruncatingArithmetics._sqrt(uDecimal/10);
+			final long sqrt = UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal/10);
 			guess = sqrtMetrics.multiplyByScaleFactor(sqrt);
 		}
 
@@ -195,7 +195,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 		while (low <= high) {
 			final long mid = (low + high) >>> 1;
 			final long val = guess + mid;
-			final long valSquared = UncheckedScaledRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val);
+			final long valSquared = UncheckedScaleNfRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val);
 			if (valSquared > uDecimal | valSquared < 0) { 
 				//NOTE: negativity test for overflow check is sufficient here as tests for all scales have shown
 				high = mid - 1;
@@ -204,7 +204,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 				best = val;
 			} else {
 				//could match also because of round-UP
-				final long nextSquared = UncheckedScaledRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val+1);
+				final long nextSquared = UncheckedScaleNfRoundingArithmetics.square(scaleMetrics, DecimalRounding.UP, val+1);
 				if (nextSquared > uDecimal | nextSquared < 0) {
 					//NOTE: negativity test for overflow check is sufficient here as tests for all scales have shown
 					return val;
@@ -272,17 +272,17 @@ public class UncheckedScaledTruncatingArithmetics extends
 
 	@Override
 	public long avg(long a, long b) {
-		return UncheckedLongTruncatingArithmetics._avg(a, b);
+		return UncheckedScale0fTruncatingArithmetics._avg(a, b);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		return UncheckedLongTruncatingArithmetics._multiplyByPowerOf10(uDecimal, positions);
+		return UncheckedScale0fTruncatingArithmetics._multiplyByPowerOf10(uDecimal, positions);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		return UncheckedLongTruncatingArithmetics._divideByPowerOf10(uDecimal, positions);
+		return UncheckedScale0fTruncatingArithmetics._divideByPowerOf10(uDecimal, positions);
 	}
 
 	@Override
@@ -295,7 +295,7 @@ public class UncheckedScaledTruncatingArithmetics extends
 		if (scale == 0) {
 			return fromLong(unscaledValue);
 		}
-		return UncheckedLongTruncatingArithmetics._multiplyByPowerOf10(unscaledValue, getScale() - scale);
+		return UncheckedScale0fTruncatingArithmetics._multiplyByPowerOf10(unscaledValue, getScale() - scale);
 	}
 
 	@Override

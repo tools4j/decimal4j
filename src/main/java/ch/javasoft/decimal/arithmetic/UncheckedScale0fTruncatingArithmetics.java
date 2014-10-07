@@ -12,49 +12,26 @@ import ch.javasoft.decimal.scale.Scales;
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
  */
-public class UncheckedLongTruncatingArithmetics extends AbstractUncheckedArithmetics {
+public class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScale0fArithmetics {
 	
 	/**
 	 * The singleton instance.
 	 */
-	public static final UncheckedLongTruncatingArithmetics INSTANCE = new UncheckedLongTruncatingArithmetics();
+	public static final UncheckedScale0fTruncatingArithmetics INSTANCE = new UncheckedScale0fTruncatingArithmetics();
 	
-	@Override
-	public ScaleMetrics getScaleMetrics() {
-		return Scale0f.INSTANCE;
-	}
-
-	@Override
-	public int getScale() {
-		return 0;
-	}
-
 	@Override
 	public RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
 	}
 
 	@Override
-	public long one() {
-		return 1L;
-	}
-
-	@Override
-	public long multiply(long uDecimal1, long uDecimal2) {
-		return uDecimal1 * uDecimal2;
-	}
-	
-	@Override
 	public long sqrt(long uDecimal) {
-		return sqrt(this, uDecimal);
-	}
-	static long sqrt(DecimalArithmetics arith, long uDecimal) {
-		if (uDecimal < 0) {
-			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
-		}
 		return _sqrt(uDecimal);
 	}
 	static long _sqrt(long uDecimal) {
+		if (uDecimal < 0) {
+			throw new ArithmeticException("square root of a negative value: " + uDecimal);
+		}
 		//http://www.codecodex.com/wiki/Calculate_an_integer_square_root
 		if ((uDecimal & 0xfff0000000000000L) == 0) {
 			return (long)StrictMath.sqrt(uDecimal);  

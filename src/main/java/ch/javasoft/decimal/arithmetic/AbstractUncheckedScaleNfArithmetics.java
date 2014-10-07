@@ -8,14 +8,14 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * rounding is no issue. Overflow is not checked, that is,
  * {@link #getOverflowMode()} returns {@link OverflowMode#STANDARD}.
  */
-abstract public class AbstractUncheckedScaledArithmetics extends
+abstract public class AbstractUncheckedScaleNfArithmetics extends
 		AbstractUncheckedArithmetics {
 
 	private final ScaleMetrics scaleMetrics;
 	private final int scale;
 	private final long one;//10^scale
 
-	public AbstractUncheckedScaledArithmetics(ScaleMetrics scaleMetrics) {
+	public AbstractUncheckedScaleNfArithmetics(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.scale = scaleMetrics.getScale();
 		this.one = scaleMetrics.getScaleFactor();

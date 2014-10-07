@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.scale.Scale6f;
 
 /**
- * Unit test for {@link UncheckedScaledRoundingArithmetics} with {@link RoundingMode#DOWN}.
+ * Unit test for {@link UncheckedScaleNfRoundingArithmetics} with {@link RoundingMode#DOWN}.
  */
 public class RoundDownDecimalArithmeticsTest extends
 		TruncatingDecimalArithmeticsTest {

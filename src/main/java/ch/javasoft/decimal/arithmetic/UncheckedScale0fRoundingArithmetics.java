@@ -12,41 +12,21 @@ import ch.javasoft.decimal.scale.Scales;
 /**
  * The special case for longs with {@link Scale0f} and rounding.
  */
-public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmetics {
+public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0fArithmetics {
 
 	private final DecimalRounding rounding;
 
-	public UncheckedLongRoundingArithmetics(RoundingMode roundingMode) {
+	public UncheckedScale0fRoundingArithmetics(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
 
-	public UncheckedLongRoundingArithmetics(DecimalRounding rounding) {
+	public UncheckedScale0fRoundingArithmetics(DecimalRounding rounding) {
 		this.rounding = rounding;
 	}
 
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return rounding.getRoundingMode();
-	}
-
-	@Override
-	public ScaleMetrics getScaleMetrics() {
-		return Scale0f.INSTANCE;
-	}
-
-	@Override
-	public int getScale() {
-		return 0;
-	}
-
-	@Override
-	public long one() {
-		return 1;
-	}
-
-	@Override
-	public long multiply(long uDecimal1, long uDecimal2) {
-		return uDecimal1 * uDecimal2;
 	}
 
 	@Override
@@ -191,7 +171,7 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 	@Override
 	public long sqrt(long uDecimal) {
 		//FIXME implement with rounding
-		return UncheckedLongTruncatingArithmetics.sqrt(this, uDecimal);
+		return UncheckedScale0fTruncatingArithmetics._sqrt(uDecimal);
 	}
 
 	@Override
@@ -200,35 +180,11 @@ public class UncheckedLongRoundingArithmetics extends AbstractUncheckedArithmeti
 		return super.pow(uDecimal, exponent);
 	}
 
-	@Override
-	public long toLong(long uDecimal) {
-		return uDecimal;
-	}
-
-	@Override
-	public double toDouble(long uDecimal) {
-		return (double) uDecimal;
-	}
-
-	@Override
-	public float toFloat(long uDecimal) {
-		return (float) uDecimal;
-	}
-
-	@Override
-	public long fromLong(long value) {
-		return value;
-	}
-
-	@Override
-	public long fromDouble(double value) {
-//		final double floor = Math.rou
-//		final long truncated = (long)value;
-//		final double delta = Math.abs(value - truncated);
-//		
-//		return truncated + rounding.calculateRoundingIncrement(truncated, value < 0, truncatedPart);
-		return (long) value;
-	}
+//	@Override
+//	public long fromDouble(double value) {
+//		// FIXME impl with rounding
+//		return (long) value;
+//	}
 
 	@Override
 	public long fromBigInteger(BigInteger value) {

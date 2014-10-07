@@ -9,11 +9,11 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.OverflowMode;
-import ch.javasoft.decimal.arithmetic.CheckedScaledTruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.CheckedScaleNfTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalRounding;
-import ch.javasoft.decimal.arithmetic.UncheckedScaledRoundingArithmetics;
-import ch.javasoft.decimal.arithmetic.UncheckedScaledTruncatingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedScaleNfRoundingArithmetics;
+import ch.javasoft.decimal.arithmetic.UncheckedScaleNfTruncatingArithmetics;
 
 /**
  * <tt>ScaleMetrics</tt> is associated with {@link Decimal} numbers and
@@ -51,9 +51,9 @@ abstract public class AbstractScale implements ScaleMetrics {
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, new UncheckedScaledTruncatingArithmetics(this));
+				map.put(roundingMode, new UncheckedScaleNfTruncatingArithmetics(this));
 			} else {
-				map.put(roundingMode, new UncheckedScaledRoundingArithmetics(this, dr));
+				map.put(roundingMode, new UncheckedScaleNfRoundingArithmetics(this, dr));
 			}
 		}
 		return map;
@@ -71,7 +71,7 @@ abstract public class AbstractScale implements ScaleMetrics {
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, new CheckedScaledTruncatingArithmetics(this));
+				map.put(roundingMode, new CheckedScaleNfTruncatingArithmetics(this));
 			} else {
 				//FIXME add when implemented
 				//				map.put(roundingMode, new CheckedScaledRoundingArithmetics(this, dr));
