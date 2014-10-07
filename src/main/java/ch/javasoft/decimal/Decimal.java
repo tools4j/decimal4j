@@ -829,7 +829,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * may be created and returned for the result, or this decimal may be
 	 * modified and returned.
 	 * 
-	 * @return {@code sqrt(this}
+	 * @return {@code sqrt(this)}
 	 */
 	Decimal<S> sqrt();
 

@@ -14,11 +14,12 @@ class Sqrt {
 		}
 		//http://www.codecodex.com/wiki/Calculate_an_integer_square_root
 		if ((lValue & 0xfff0000000000000L) == 0) {
-			return (long)StrictMath.sqrt(lValue);  
+			return (long) StrictMath.sqrt(lValue);
 		}
-	    final long result = (long) StrictMath.sqrt(2.0d*(lValue >>> 1));  
-	    return result*result - lValue > 0L ? result - 1 : result;
+		final long result = (long) StrictMath.sqrt(2.0d * (lValue >>> 1));
+		return result * result - lValue > 0L ? result - 1 : result;
 	}
+
 	public static long sqrtLong(DecimalRounding rounding, long lValue) {
 		if (lValue < 0) {
 			throw new ArithmeticException("square root of a negative value: " + lValue);
@@ -42,14 +43,17 @@ class Sqrt {
 			}
 		}
 		final long truncated = root >>> 1;
-		if (rounding == null || (rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR)) {
+		if (rounding == null || isRoundDown(rounding)) {
+			//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
 			return truncated;
 		}
 		return truncated + getRoundingIncrement(rounding, truncated, root, rem);
-	}	
+	}
+
 	public static long sqrt(DecimalArithmetics arith, long uDecimal) {
 		return sqrt(arith, null, uDecimal);
 	}
+
 	public static long sqrt(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
 		if (uDecimal < 0) {
 			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
@@ -57,8 +61,8 @@ class Sqrt {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 
 		//multiply by scale factor into a 128bit integer
-		final int lFactor = (int)(uDecimal & LONG_MASK);
-		final int hFactor = (int)(uDecimal >>> 32);
+		final int lFactor = (int) (uDecimal & LONG_MASK);
+		final int hFactor = (int) (uDecimal >>> 32);
 		long lScaled;
 		long hScaled;
 		long product;
@@ -70,7 +74,7 @@ class Sqrt {
 		product = scaleMetrics.mulloByScaleFactor(hFactor) + (product & LONG_MASK);
 		lScaled |= ((product & LONG_MASK) << 32);
 		hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + hScaled + (product >>> 32);
-		
+
 		//square root
 		//@see http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
 		int zerosHalf;
@@ -106,12 +110,24 @@ class Sqrt {
 		}
 
 		final long truncated = root >>> 1;
-		if (rounding == null || (rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR)) {
+		if (rounding == null || isRoundDown(rounding)) {
 			return truncated;
 		}
 		return truncated + getRoundingIncrement(rounding, truncated, root, rem);
 	}
-	
+
+	private static boolean isRoundDown(DecimalRounding rounding) {
+		//NOTE: Truncated part cannot be 0.5 because this would square to 0.25
+		switch (rounding) {
+		case UP: // fallthrough
+		case CEILING: // fallthrough
+		case UNNECESSARY:
+			return false;
+		default:
+			return true;
+		}
+	}
+
 	private static int getRoundingIncrement(DecimalRounding rounding, long truncated, long root, long rem) {
 		//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
 		if ((root & 0x1) != 0) {
