@@ -22,6 +22,10 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  */
 @RunWith(Parameterized.class)
 public class SqrtTest extends AbstractOperandTest {
+	
+	private static final int precision = 20;
+	private static final BigDecimal TEN_POW_PRECISION = BigDecimal.TEN.pow(precision);
+	private static final BigDecimal TEN_POW_2xPRECISION = BigDecimal.TEN.pow(precision<<1);
 
 	public SqrtTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);
@@ -37,6 +41,16 @@ public class SqrtTest extends AbstractOperandTest {
 		}
 		return data;
 	}
+	
+	@Override
+	public void runRandomTest() {
+		super.runRandomTest();
+	}
+	
+	@Override
+	public void runSpecialValueTest() {
+		super.runSpecialValueTest();
+	}
 
 	@Override
 	protected String operation() {
@@ -45,7 +59,7 @@ public class SqrtTest extends AbstractOperandTest {
 
 	private BigDecimal expectedResult(BigDecimal bigDecimal) {
 		//we calculate 20 extra decimal places, should be enough, chance that we have 20 zero's or a 5 and 19 zeros is relatively low
-		return sqrt(bigDecimal.multiply(BigDecimal.TEN.pow(40))).divide(BigDecimal.TEN.pow(20), getScale(), getRoundingMode());
+		return sqrt(bigDecimal.multiply(TEN_POW_2xPRECISION)).divide(TEN_POW_PRECISION, getScale(), getRoundingMode());
 	}
 	public static BigDecimal sqrt(BigDecimal bigDecimal) {
 		if (bigDecimal.signum() < 0) {
@@ -72,7 +86,7 @@ public class SqrtTest extends AbstractOperandTest {
 	}
 
 	private <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardRounding() & rnd.nextBoolean()) {
+		if (isStandardRounding() && rnd.nextBoolean()) {
 			return operand.sqrt();
 		} else {
 			return operand.sqrt(getRoundingMode());
@@ -98,7 +112,7 @@ public class SqrtTest extends AbstractOperandTest {
 			return;
 		}
 		
-		if (getRoundingMode() != RoundingMode.UNNECESSARY && getRoundingMode() != RoundingMode.UP && getRoundingMode() != RoundingMode.CEILING) {
+		if (rnd.nextBoolean() && (getRoundingMode() == RoundingMode.DOWN || getRoundingMode() == RoundingMode.FLOOR)) {
 			//when: positive
 			final Decimal<S> actual = actualResult(operand);
 			

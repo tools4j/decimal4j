@@ -43,11 +43,11 @@ class Sqrt {
 			}
 		}
 		final long truncated = root >>> 1;
-		if (rounding == null || isRoundDown(rounding)) {
+		if (rounding == null | rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
 			//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
 			return truncated;
 		}
-		return truncated + getRoundingIncrement(rounding, truncated, root, rem);
+		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
 	public static long sqrt(DecimalArithmetics arith, long uDecimal) {
@@ -110,32 +110,18 @@ class Sqrt {
 		}
 
 		final long truncated = root >>> 1;
-		if (rounding == null || isRoundDown(rounding)) {
+		if (rounding == null | rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
 			return truncated;
 		}
-		return truncated + getRoundingIncrement(rounding, truncated, root, rem);
+		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
-	private static boolean isRoundDown(DecimalRounding rounding) {
-		//NOTE: Truncated part cannot be 0.5 because this would square to 0.25
-		switch (rounding) {
-		case UP: // fallthrough
-		case CEILING: // fallthrough
-		case UNNECESSARY:
-			return false;
-		default:
-			return true;
-		}
-	}
-
-	private static int getRoundingIncrement(DecimalRounding rounding, long truncated, long root, long rem) {
-		//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
-		if ((root & 0x1) != 0) {
+	//PRECONDITION: rem != 0
+	//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
+	private static int getRoundingIncrement(DecimalRounding rounding, long truncated, long rem) {
+		if (truncated < rem) {
 			return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.GREATER_THAN_HALF);
 		}
-		if (rem != 0) {
-			return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		}
-		return 0;//exact result
+		return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 	}
 }

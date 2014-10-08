@@ -86,7 +86,7 @@ class Div {
 		left = q1 * vn0;
 		right = (rhat << 32) + un1;
 
-		while (((q1 >>> 32) != 0) | unsignedLongCompare(left, right)) {
+		while (((q1 >>> 32) != 0) | Unsigned.isGreater(left, right)) {
 			--q1;
 			rhat += vn1;
 			if ((rhat >>> 32) != 0) {
@@ -104,7 +104,7 @@ class Div {
 		left = q0 * vn0;
 		right = (rhat << 32) | un0;
 
-		while (((q0 >>> 32) != 0) | unsignedLongCompare(left, right)) {
+		while (((q0 >>> 32) != 0) | Unsigned.isGreater(left, right)) {
 			--q0;
 			rhat += vn1;
 			if ((rhat >>> 32) != 0) {
@@ -181,7 +181,7 @@ class Div {
 	 */
 	public static long unsignedDiv64by64(long dividend, long divisor) {
 		if (divisor < 0) { // i.e., divisor >= 2^63:
-			if (compare(dividend, divisor) < 0) {
+			if (Unsigned.compare(dividend, divisor) < 0) {
 				return 0; // dividend < divisor
 			} else {
 				return 1; // dividend >= divisor
@@ -202,47 +202,7 @@ class Div {
 		 */
 		final long quotient = ((dividend >>> 1) / divisor) << 1;
 		final long rem = dividend - quotient * divisor;
-		return quotient + (compare(rem, divisor) >= 0 ? 1 : 0);
+		return quotient + (Unsigned.compare(rem, divisor) >= 0 ? 1 : 0);
 	}
 
-	/**
-	 * A (self-inverse) bijection which converts the ordering on unsigned longs
-	 * to the ordering on longs, that is, {@code a <= b} as unsigned longs if
-	 * and only if {@code flip(a) <= flip(b)} as signed longs.
-	 * <p>
-	 * From Guava's <a href=
-	 * "http://docs.guava-libraries.googlecode.com/git/javadoc/src-html/com/google/common/primitives/UnsignedLongs.html"
-	 * >UnsignedLongs</a>.
-	 */
-	private static long flip(long a) {
-		return a ^ Long.MIN_VALUE;
-	}
-
-	/**
-	 * Compares the two specified {@code long} values, treating them as unsigned
-	 * values between {@code 0} and {@code 2^64 - 1} inclusive.
-	 * <p>
-	 * From Guava's <a href=
-	 * "http://docs.guava-libraries.googlecode.com/git/javadoc/src-html/com/google/common/primitives/UnsignedLongs.html"
-	 * >UnsignedLongs</a>.
-	 *
-	 * @param a
-	 *            the first unsigned {@code long} to compare
-	 * @param b
-	 *            the second unsigned {@code long} to compare
-	 * @return a negative value if {@code a} is less than {@code b}; a positive
-	 *         value if {@code a} is greater than {@code b}; or zero if they are
-	 *         equal
-	 */
-	public static int compare(long a, long b) {
-		return Long.compare(flip(a), flip(b));
-	}
-
-	/**
-	 * Compare two longs as if they were unsigned. Returns true iff one is
-	 * bigger than two.
-	 */
-	private static boolean unsignedLongCompare(long one, long two) {
-		return (one + Long.MIN_VALUE) > (two + Long.MIN_VALUE);
-	}
 }
