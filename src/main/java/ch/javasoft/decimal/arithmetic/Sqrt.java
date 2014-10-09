@@ -44,7 +44,6 @@ class Sqrt {
 		}
 		final long truncated = root >>> 1;
 		if (rounding == null | rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
-			//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
 			return truncated;
 		}
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
