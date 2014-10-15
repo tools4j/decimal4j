@@ -8,13 +8,13 @@ import ch.javasoft.decimal.OverflowMode;
 /**
  * Base class for arithmetic implementations without overflow checking, that is,
  * for arithmetics whose {@link #getOverflowMode()} method returns
- * {@link OverflowMode#STANDARD}.
+ * {@link OverflowMode#UNCHECKED}.
  */
 abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 
 	@Override
 	public OverflowMode getOverflowMode() {
-		return OverflowMode.STANDARD;
+		return OverflowMode.UNCHECKED;
 	}
 
 	@Override

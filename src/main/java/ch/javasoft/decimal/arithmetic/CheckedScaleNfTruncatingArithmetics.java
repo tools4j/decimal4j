@@ -2,6 +2,7 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.scale.Scale9f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 
@@ -33,19 +34,42 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 			final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
 			final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
 			final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
-			final long i1xi2 = multiplyByLong(i1, i2);
-			final long i1xf2 = multiplyByLong(i1, f2);
-			final long i2xf1 = multiplyByLong(i2, f1);
+			final long i1xf2 = i1 * f2;//cannot overflow
+			final long i2xf1 = i2 * f1;//cannot overflow
+			final long i1xi2;
 			final long f1xf2;
 			if (scale <= 9) {
+				i1xi2 = multiplyByLong(i1, i2);//checked
 				//product fits, hence unchecked
 				f1xf2 = scaleMetrics.divideByScaleFactor(f1 * f2);
 			} else {
-				//product does not fit in long, divide first to fit, then remainder
-				final ScaleMetrics m1 = Scales.valueOf(scale - 9);
-				final ScaleMetrics m2 = Scales.valueOf(18 - scale);
-				final long tmp = m1.divideByScaleFactor(f1) * m1.divideByScaleFactor(f2);
-				f1xf2 = m2.divideByScaleFactor(tmp);
+				i1xi2 = i1 * i2;//cannot overflow for this scale
+				
+				//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
+				final Scale9f scale9f = Scale9f.INSTANCE;
+				final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
+				final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+				final long hf1 = scale9f.divideByScaleFactor(f1);
+				final long hf2 = scale9f.divideByScaleFactor(f2);
+				final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
+				final long lf2 = f2 - scale9f.multiplyByScaleFactor(hf2);
+
+				//partial products, cannot overflow
+				final long hf1xhf2 = hf1 * hf2;
+				final long hf1xlf2 = hf1 * lf2;
+				final long lf1xhf2 = lf1 * hf2;
+				final long lf1xlf2 = lf1 * lf2;
+
+				//scale each part
+				final long hf1xhf2s = scaleDiff18.multiplyByScaleFactorExact(hf1 * hf2);
+				
+				
+				final long lf1xlf2d = scale9f.divideByScaleFactor(lf1xlf2);
+				final long hl_lh_ll_f1xf2 = hf1 * lf2 + hf2 * lf1 + lf1xlf2d;
+				final long hl_lh_ll_f1xf2d = scaleDiff09.divideByScaleFactor(hl_lh_ll_f1xf2);
+				
+				f1xf2 = add(hf1xhf2s, hl_lh_ll_f1xf2d);//checked
+//				f1xf2 = scaleDiff18.multiplyByScaleFactorExact(hf1 * hf2) + scaleDiff09.divideByScaleFactor(hf1 * lf2 + hf2 * lf1 + scale9f.divideByScaleFactor(lf1 * lf2));
 			}
 			//add it all up now, every addition checked
 			long result = scaleMetrics.multiplyByScaleFactorExact(i1xi2);

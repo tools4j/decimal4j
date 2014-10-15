@@ -1,6 +1,5 @@
 package ch.javasoft.decimal.arithmetic;
 
-
 /**
  * Helper class for division.
  */
@@ -42,11 +41,15 @@ class Unsigned {
 	/**
 	 * Compare two longs as if they were unsigned. Returns true iff one is
 	 * bigger than two.
-	 * @param one the first unsigned {@code long} to compare
-	 * @param two the second unsigned {@code long} to compare
+	 * 
+	 * @param one
+	 *            the first unsigned {@code long} to compare
+	 * @param two
+	 *            the second unsigned {@code long} to compare
 	 * @return true if {@code one > two}
 	 */
 	public static boolean isGreater(long one, long two) {
 		return (one + Long.MIN_VALUE) > (two + Long.MIN_VALUE);
 	}
+
 }

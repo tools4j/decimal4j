@@ -17,15 +17,9 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 		AbstractUncheckedScaleNfArithmetics implements DecimalArithmetics {
 	
 	/**
-	 * sqrt(Long.MAX_VALUE) used in {@link #square(long)}
-	 * @see Long#MAX_VALUE
-	 */
-	private static final long SQRT_LONG_MAX_VALUE = 3037000499L;
-
-	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
 	 * {@link RoundingMode#DOWN DOWN} rounding mode and
-	 * {@link OverflowMode#STANDARD SILENT} overflow mode.
+	 * {@link OverflowMode#UNCHECKED SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale, a non-negative integer denoting the number of
@@ -41,36 +35,41 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	public RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
 	}
-
+	
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(this, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(this, uDecimal1, uDecimal2);
 		}
+		
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
-
-		//use scale to split into 2 parts: i (integral) and f (fractional)
-		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
-		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
-		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
-		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
 		if (scale <= 9) {
-			//low order product f1*f2 fits in long
+			//use scale to split into 2 parts: i (integral) and f (fractional)
+			//with this scale, the low order product f1*f2 fits in a long
+			final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
+			final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
+			final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
+			final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
 			return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + scaleMetrics.divideByScaleFactor(f1 * f2);
 		} else {
-			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
-			final Scale9f scale9f = Scale9f.INSTANCE;
+			//use scale9 to split into 2 parts: h (high) and l (low)
+			final ScaleMetrics scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
-			final long hf1 = scale9f.divideByScaleFactor(f1);
-			final long hf2 = scale9f.divideByScaleFactor(f2);
-			final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
-			final long lf2 = f2 - scale9f.multiplyByScaleFactor(hf2);
-
-			final long f1xf2 = scaleDiff18.multiplyByScaleFactor(hf1 * hf2) + scaleDiff09.divideByScaleFactor(hf1 * lf2 + hf2 * lf1 + scale9f.divideByScaleFactor(lf1 * lf2));
-			return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2;
+			final long h1 = scale9f.divideByScaleFactor(uDecimal1);
+			final long h2 = scale9f.divideByScaleFactor(uDecimal2);
+			final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
+			final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
+			final long h1xl2 = h1 * l2;
+			final long h2xl1 = h2 * l1;
+			final long l1xl2d = scale9f.divideByScaleFactor(l1 * l2);
+			final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
+			final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
+			final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
+			final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
+			return scaleDiff18.multiplyByScaleFactor(h1 * h2) + h1xl2d + h2xl1d + scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d); 
 		}
 	}
 
@@ -78,23 +77,24 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	public long square(long uDecimal) {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
-
-		//use scale to split into 2 parts: i (integral) and f (fractional)
-		final long i = scaleMetrics.divideByScaleFactor(uDecimal);
-		final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
-		if (f >= -SQRT_LONG_MAX_VALUE & f <= SQRT_LONG_MAX_VALUE) {
-			//low order product f*f fits in long
+		if (scale <= 9) {
+			//use scale to split into 2 parts: i (integral) and f (fractional)
+			//with this scale, the low order product f*f fits in a long
+			final long i = scaleMetrics.divideByScaleFactor(uDecimal);
+			final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
 			return scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + scaleMetrics.divideByScaleFactor(f * f);
 		} else {
-			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
-			final Scale9f scale9f = Scale9f.INSTANCE;
+			//use scale9 to split into 2 parts: h (high) and l (low)
+			final ScaleMetrics scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
-			final long hf = scale9f.divideByScaleFactor(f);
-			final long lf = f - scale9f.multiplyByScaleFactor(hf);
-
-			final long fxf = scaleDiff18.multiplyByScaleFactor(hf * hf) + scaleDiff09.divideByScaleFactor(((hf * lf)<<1) + scale9f.divideByScaleFactor(lf * lf));
-			return scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + fxf;
+			final long h = scale9f.divideByScaleFactor(uDecimal);
+			final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
+			final long hxl = h * l;
+			final long lxld = scale9f.divideByScaleFactor(l * l);
+			final long hxld = scaleDiff09.divideByScaleFactor(hxl);
+			final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
+			return scaleDiff18.multiplyByScaleFactor(h * h) + (hxld<<1) + scaleDiff09.divideByScaleFactor((hxlr<<1) + lxld); 
 		}
 	}
 

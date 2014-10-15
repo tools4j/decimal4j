@@ -16,17 +16,11 @@ import ch.javasoft.decimal.scale.Scales;
 public class UncheckedScaleNfRoundingArithmetics extends
 		AbstractUncheckedScaleNfArithmetics {
 
-	/**
-	 * sqrt(Long.MAX_VALUE) used in {@link #square(long)}
-	 * @see Long#MAX_VALUE
-	 */
-	private static final long SQRT_LONG_MAX_VALUE = 3037000499L;
-
 	private final DecimalRounding rounding;
 
 	/**
 	 * Constructor for decimal arithmetics with given scale, rounding mode and
-	 * {@link OverflowMode#STANDARD SILENT} overflow mode.
+	 * {@link OverflowMode#UNCHECKED SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics for this decimal arithmetics
@@ -39,7 +33,7 @@ public class UncheckedScaleNfRoundingArithmetics extends
 
 	/**
 	 * Constructor for decimal arithmetics with given scale, rounding mode and
-	 * {@link OverflowMode#STANDARD SILENT} overflow mode.
+	 * {@link OverflowMode#UNCHECKED SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics for this decimal arithmetics
@@ -66,75 +60,81 @@ public class UncheckedScaleNfRoundingArithmetics extends
 		if (special != null) {
 			return special.multiply(this, uDecimal1, uDecimal2);
 		}
+
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
-		final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
-		final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
-		final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
-		final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
 		if (scale <= 9) {
-			//low order product f1*f2 fits in long
+			//use scale to split into 2 parts: i (integral) and f (fractional)
+			//with this scale, the low order product f1*f2 fits in a long
+			final long i1 = scaleMetrics.divideByScaleFactor(uDecimal1);
+			final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
+			final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
+			final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
 			final long f1xf2 = f1 * f2;
 			final long f1xf2d = scaleMetrics.divideByScaleFactor(f1xf2);
 			final long f1xf2r = f1xf2 - scaleMetrics.multiplyByScaleFactor(f1xf2d);
 			final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2d;
 			return unrounded + rounding.calculateRoundingIncrement(unrounded, f1xf2r, scaleMetrics.getScaleFactor());
 		} else {
-			//low order product f1*f2 does not fit in long, do component wise multiplication with Scale9f
-			final Scale9f scale9f = Scale9f.INSTANCE;
+			//use scale9 to split into 2 parts: h (high) and l (low)
+			final ScaleMetrics scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
-			final long hf1 = scale9f.divideByScaleFactor(f1);
-			final long hf2 = scale9f.divideByScaleFactor(f2);
-			final long lf1 = f1 - scale9f.multiplyByScaleFactor(hf1);
-			final long lf2 = f2 - scale9f.multiplyByScaleFactor(hf2);
-
-			final long lf1xlf2 = lf1 * lf2;
-			final long lf1xlf2d = scale9f.divideByScaleFactor(lf1xlf2);
-			final long lf1xlf2r = lf1xlf2 - scale9f.multiplyByScaleFactor(lf1xlf2d);
-			final long hl_lh_ll_f1xf2 = hf1 * lf2 + hf2 * lf1 + lf1xlf2d;
-			final long hl_lh_ll_f1xf2d = scaleDiff09.divideByScaleFactor(hl_lh_ll_f1xf2);
-			final long hl_lh_ll_f1xf2r = hl_lh_ll_f1xf2 - scaleDiff09.multiplyByScaleFactor(hl_lh_ll_f1xf2d);
-			final long f1xf2 = scaleDiff18.multiplyByScaleFactor(hf1 * hf2) + hl_lh_ll_f1xf2d;
-			final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2;
-			final long reminder = scale9f.multiplyByScaleFactor(hl_lh_ll_f1xf2r) + lf1xlf2r;
-			return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder, scaleMetrics.getScaleFactor());
+			final long h1 = scale9f.divideByScaleFactor(uDecimal1);
+			final long h2 = scale9f.divideByScaleFactor(uDecimal2);
+			final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
+			final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
+			final long h1xl2 = h1 * l2;
+			final long h2xl1 = h2 * l1;
+			final long l1xl2 = l1 * l2;
+			final long l1xl2d = scale9f.divideByScaleFactor(l1xl2);
+			final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
+			final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
+			final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
+			final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
+			final long l1xl2r = l1xl2 - scale9f.multiplyByScaleFactor(l1xl2d);
+			final long h1xl2_h2xl1_l1xl1 = h1xl2r + h2xl1r + l1xl2d; 
+			final long h1xl2_h2xl1_l1xl1d = scaleDiff09.divideByScaleFactor(h1xl2_h2xl1_l1xl1); 
+			final long h1xl2_h2xl1_l1xl1r = h1xl2_h2xl1_l1xl1 - scaleDiff09.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1d); 
+			final long unrounded = scaleDiff18.multiplyByScaleFactor(h1 * h2) + h1xl2d + h2xl1d + h1xl2_h2xl1_l1xl1d;
+			final long remainder = scale9f.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;
+			return unrounded + rounding.calculateRoundingIncrement(unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
 	
 	@Override
 	public long square(long uDecimal) {
-		return square(getScaleMetrics(), rounding, uDecimal);
-	}
-	static long square(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
+		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
-		final long i = scaleMetrics.divideByScaleFactor(uDecimal);
-		final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
-		if (f >= -SQRT_LONG_MAX_VALUE & f <= SQRT_LONG_MAX_VALUE) {
-			//low order product f1*f2 fits in long
+		if (scale <= 9) {
+			//use scale to split into 2 parts: i (integral) and f (fractional)
+			//with this scale, the low order product f*f fits in a long
+			final long i = scaleMetrics.divideByScaleFactor(uDecimal);
+			final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
 			final long fxf = f * f;
 			final long fxfd = scaleMetrics.divideByScaleFactor(fxf);
 			final long fxfr = fxf - scaleMetrics.multiplyByScaleFactor(fxfd);
 			final long unrounded = scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + fxfd;
 			return unrounded + rounding.calculateRoundingIncrement(unrounded, fxfr, scaleMetrics.getScaleFactor());
 		} else {
-			//low order product f*f does not fit in long, do component wise multiplication with Scale9f
-			final Scale9f scale9f = Scale9f.INSTANCE;
+			//use scale9 to split into 2 parts: h (high) and l (low)
+			final ScaleMetrics scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
-			final long hf = scale9f.divideByScaleFactor(f);
-			final long lf = f - scale9f.multiplyByScaleFactor(hf);
-
-			final long lfxlf = lf * lf;
-			final long lfxlfd = scale9f.divideByScaleFactor(lfxlf);
-			final long lfxlfr = lfxlf - scale9f.multiplyByScaleFactor(lfxlfd);
-			final long hl_lh_ll_fxf = ((hf * lf)<<1) + lfxlfd;
-			final long hl_lh_ll_fxfd = scaleDiff09.divideByScaleFactor(hl_lh_ll_fxf);
-			final long hl_lh_ll_fxfr = hl_lh_ll_fxf - scaleDiff09.multiplyByScaleFactor(hl_lh_ll_fxfd);
-			final long fxf = scaleDiff18.multiplyByScaleFactor(hf * hf) + hl_lh_ll_fxfd;
-			final long unrounded = scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + fxf;
-			final long reminder = scale9f.multiplyByScaleFactor(hl_lh_ll_fxfr) + lfxlfr;
-			return unrounded + rounding.calculateRoundingIncrement(unrounded, reminder, scaleMetrics.getScaleFactor());
+			final long h = scale9f.divideByScaleFactor(uDecimal);
+			final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
+			final long hxl = h * l;
+			final long lxl = l * l;
+			final long lxld = scale9f.divideByScaleFactor(lxl);
+			final long hxld = scaleDiff09.divideByScaleFactor(hxl);
+			final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
+			final long lxlr = lxl - scale9f.multiplyByScaleFactor(lxld);
+			final long hxlx2_lxl = (hxlr<<1) + lxld; 
+			final long hxlx2_lxld = scaleDiff09.divideByScaleFactor(hxlx2_lxl); 
+			final long hxlx2_lxlr = hxlx2_lxl - scaleDiff09.multiplyByScaleFactor(hxlx2_lxld); 
+			final long unrounded = scaleDiff18.multiplyByScaleFactor(h * h) + (hxld<<1) + hxlx2_lxld;
+			final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;
+			return unrounded + rounding.calculateRoundingIncrement(unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
 

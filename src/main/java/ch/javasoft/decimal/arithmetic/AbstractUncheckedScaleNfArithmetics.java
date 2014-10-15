@@ -6,7 +6,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Base class for arithmetic implementations implementing those functions where
  * rounding is no issue. Overflow is not checked, that is,
- * {@link #getOverflowMode()} returns {@link OverflowMode#STANDARD}.
+ * {@link #getOverflowMode()} returns {@link OverflowMode#UNCHECKED}.
  */
 abstract public class AbstractUncheckedScaleNfArithmetics extends
 		AbstractUncheckedArithmetics {

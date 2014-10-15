@@ -57,7 +57,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 		if (leadingZeros > Long.SIZE + 1) {
 			return result;
 		}
-		if (leadingZeros < Long.SIZE | (uDecimal < 0 & lValue == Long.MIN_VALUE) | (uDecimal != 0 && result / uDecimal != lValue)) {
+		if (leadingZeros < Long.SIZE || (uDecimal < 0 & lValue == Long.MIN_VALUE) || (uDecimal != 0 && result / uDecimal != lValue)) {
 			throw new ArithmeticException("overflow: " + toString(uDecimal) + " * " + toString(lValue) + " = " + toString(result));
 		}
 		return result;

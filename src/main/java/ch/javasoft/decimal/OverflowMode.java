@@ -8,7 +8,7 @@ public enum OverflowMode {
 	 * Operations causing an overflow silently return the truncated result (the
 	 * low order bytes of the extended result); no exception is thrown.
 	 */
-	STANDARD,
+	UNCHECKED,
 	/**
 	 * Operations causing an overflow throw an {@link ArithmeticException}.
 	 */
