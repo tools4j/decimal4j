@@ -101,9 +101,6 @@ abstract public class AbstractScale implements ScaleMetrics {
 	}
 
 	@Override
-	abstract public long multiplyByScaleFactor(long factor);
-
-	@Override
 	public long multiplyByScaleFactorExact(long factor) {
 		final long scaleFactor = getScaleFactor();
 		final int leadingZeros = Long.numberOfLeadingZeros(factor) + Long.numberOfLeadingZeros(~factor) + Long.numberOfLeadingZeros(scaleFactor);
@@ -116,7 +113,7 @@ abstract public class AbstractScale implements ScaleMetrics {
 		}
 		return result;
 	}
-
+	
 	@Override
 	public ImmutableDecimal<?, ?> createImmutable(long unscaled) {
 		// FIXME impl

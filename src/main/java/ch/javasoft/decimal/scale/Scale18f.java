@@ -38,6 +38,16 @@ public final class Scale18f extends AbstractScale {
 	}
 
 	@Override
+	public long multiplyByScaleFactorHalf(long dividend) {
+		return dividend * 500000000000000000L;
+	}
+
+	@Override
+	public long divideByScaleFactorHalf(long dividend) {
+		return dividend / 500000000000000000L;
+	}
+
+	@Override
 	public long moduloByScaleFactor(long dividend) {
 		return dividend % 1000000000000000000L;
 	}

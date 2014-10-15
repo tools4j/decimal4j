@@ -38,6 +38,16 @@ public final class Scale4f extends AbstractScale {
 	}
 
 	@Override
+	public long multiplyByScaleFactorHalf(long dividend) {
+		return dividend * 5000;
+	}
+
+	@Override
+	public long divideByScaleFactorHalf(long dividend) {
+		return dividend / 5000;
+	}
+
+	@Override
 	public long moduloByScaleFactor(long dividend) {
 		return dividend % 10000;
 	}

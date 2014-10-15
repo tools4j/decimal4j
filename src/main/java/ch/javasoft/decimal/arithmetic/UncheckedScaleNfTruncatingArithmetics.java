@@ -15,7 +15,7 @@ import ch.javasoft.decimal.scale.Scales;
  */
 public class UncheckedScaleNfTruncatingArithmetics extends
 		AbstractUncheckedScaleNfArithmetics implements DecimalArithmetics {
-	
+
 	/**
 	 * Constructor for silent decimal arithmetics with given scale, truncating
 	 * {@link RoundingMode#DOWN DOWN} rounding mode and
@@ -35,14 +35,14 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	public RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
 	}
-	
+
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(this, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(this, uDecimal1, uDecimal2);
 		}
-		
+
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		if (scale <= 9) {
@@ -65,11 +65,9 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 			final long h1xl2 = h1 * l2;
 			final long h2xl1 = h2 * l1;
 			final long l1xl2d = scale9f.divideByScaleFactor(l1 * l2);
-			final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
-			final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
-			final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
-			final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
-			return scaleDiff18.multiplyByScaleFactor(h1 * h2) + h1xl2d + h2xl1d + scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d); 
+			final long sumOfLowsHalf = (h1xl2 >> 1) + (h2xl1 >> 1) + (l1xl2d >> 1) //sum halfs to avoid overflow
+					+ (((h1xl2 & h2xl1) | (h1xl2 & l1xl2d) | (h2xl1 & l1xl2d)) & 0x1); //carry of lost bits
+			return scaleDiff18.multiplyByScaleFactor(h1 * h2) + scaleDiff09.divideByScaleFactorHalf(sumOfLowsHalf);
 		}
 	}
 
@@ -82,7 +80,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 			//with this scale, the low order product f*f fits in a long
 			final long i = scaleMetrics.divideByScaleFactor(uDecimal);
 			final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
-			return scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f)<<1) + scaleMetrics.divideByScaleFactor(f * f);
+			return scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f) << 1) + scaleMetrics.divideByScaleFactor(f * f);
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
@@ -92,9 +90,8 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 			final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 			final long hxl = h * l;
 			final long lxld = scale9f.divideByScaleFactor(l * l);
-			final long hxld = scaleDiff09.divideByScaleFactor(hxl);
-			final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
-			return scaleDiff18.multiplyByScaleFactor(h * h) + (hxld<<1) + scaleDiff09.divideByScaleFactor((hxlr<<1) + lxld); 
+			final long sumOfLowsHalf = hxl + (lxld >> 1); //sum halfs to avoid overflow
+			return scaleDiff18.multiplyByScaleFactor(h * h) + scaleDiff09.divideByScaleFactorHalf(sumOfLowsHalf);
 		}
 	}
 
@@ -137,7 +134,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 		} else {
 			fractionalPart = Div.scaleTo128divBy64(scaleMetrics, reminder, uDecimalDivisor);
 		}
-		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart; 
+		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 	}
 
 	private long divideByPowerOf10(long uDecimalDividend, long uDecimalDivisor, ScaleMetrics pow10) {

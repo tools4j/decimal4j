@@ -88,16 +88,14 @@ public class UncheckedScaleNfRoundingArithmetics extends
 			final long h2xl1 = h2 * l1;
 			final long l1xl2 = l1 * l2;
 			final long l1xl2d = scale9f.divideByScaleFactor(l1xl2);
-			final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
-			final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
-			final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
-			final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
 			final long l1xl2r = l1xl2 - scale9f.multiplyByScaleFactor(l1xl2d);
-			final long h1xl2_h2xl1_l1xl1 = h1xl2r + h2xl1r + l1xl2d; 
-			final long h1xl2_h2xl1_l1xl1d = scaleDiff09.divideByScaleFactor(h1xl2_h2xl1_l1xl1); 
-			final long h1xl2_h2xl1_l1xl1r = h1xl2_h2xl1_l1xl1 - scaleDiff09.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1d); 
-			final long unrounded = scaleDiff18.multiplyByScaleFactor(h1 * h2) + h1xl2d + h2xl1d + h1xl2_h2xl1_l1xl1d;
-			final long remainder = scale9f.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;
+			final long sumOfLowsHalf = (h1xl2 >> 1) + (h2xl1 >> 1) + (l1xl2d >> 1) //sum halfs to avoid overflow
+					+ (((h1xl2 & h2xl1) | (h1xl2 & l1xl2d) | (h2xl1 & l1xl2d)) & 0x1); //carry of lost bits
+			final long sumOfLowsHalfDiv = scaleDiff09.divideByScaleFactorHalf(sumOfLowsHalf);
+			final long sumOfLowsHalfRem = sumOfLowsHalf - scaleDiff09.multiplyByScaleFactorHalf(sumOfLowsHalfDiv); 
+			final long sumOfLowsHalfBit = ((h1xl2 ^ h2xl1 ^ l1xl2d) & 0x1); //lost bit
+			final long unrounded = scaleDiff18.multiplyByScaleFactor(h1 * h2) + sumOfLowsHalfDiv;
+			final long remainder = scale9f.multiplyByScaleFactor((sumOfLowsHalfRem<<1) + sumOfLowsHalfBit) + l1xl2r;
 			return unrounded + rounding.calculateRoundingIncrement(unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
@@ -126,14 +124,13 @@ public class UncheckedScaleNfRoundingArithmetics extends
 			final long hxl = h * l;
 			final long lxl = l * l;
 			final long lxld = scale9f.divideByScaleFactor(lxl);
-			final long hxld = scaleDiff09.divideByScaleFactor(hxl);
-			final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
 			final long lxlr = lxl - scale9f.multiplyByScaleFactor(lxld);
-			final long hxlx2_lxl = (hxlr<<1) + lxld; 
-			final long hxlx2_lxld = scaleDiff09.divideByScaleFactor(hxlx2_lxl); 
-			final long hxlx2_lxlr = hxlx2_lxl - scaleDiff09.multiplyByScaleFactor(hxlx2_lxld); 
-			final long unrounded = scaleDiff18.multiplyByScaleFactor(h * h) + (hxld<<1) + hxlx2_lxld;
-			final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;
+			final long sumOfLowsHalf = hxl + (lxld >> 1); //sum halfs to avoid overflow
+			final long sumOfLowsHalfDiv = scaleDiff09.divideByScaleFactorHalf(sumOfLowsHalf);
+			final long sumOfLowsHalfRem = sumOfLowsHalf - scaleDiff09.multiplyByScaleFactorHalf(sumOfLowsHalfDiv); 
+			final long sumOfLowsHalfBit = (lxld & 0x1); //lost bit
+			final long unrounded = scaleDiff18.multiplyByScaleFactor(h * h) + sumOfLowsHalfDiv;
+			final long remainder = scale9f.multiplyByScaleFactor((sumOfLowsHalfRem<<1) + sumOfLowsHalfBit) + lxlr;
 			return unrounded + rounding.calculateRoundingIncrement(unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}

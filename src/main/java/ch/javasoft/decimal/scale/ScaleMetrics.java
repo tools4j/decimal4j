@@ -80,6 +80,15 @@ public interface ScaleMetrics {
 	long multiplyByScaleFactor(long factor);
 
 	/**
+	 * Returns {@code dividend*scaleFactor/2}.
+	 * 
+	 * @param dividend
+	 *            the dividend
+	 * @return {@code dividend*scaleFactor/2}
+	 */
+	long multiplyByScaleFactorHalf(long dividend);
+
+	/**
 	 * Returns {@code factor*scaleFactor}, checking for lost information. If the
 	 * result is out of the range of the {@code long} type, then an
 	 * {@code ArithmeticException} is thrown.
@@ -120,6 +129,15 @@ public interface ScaleMetrics {
 	 * @return {@code dividend/scaleFactor}
 	 */
 	long divideByScaleFactor(long dividend);
+
+	/**
+	 * Returns {@code dividend/(scaleFactor/2)}.
+	 * 
+	 * @param dividend
+	 *            the dividend
+	 * @return {@code dividend/(scaleFactor/2)}
+	 */
+	long divideByScaleFactorHalf(long dividend);
 
 	/**
 	 * Returns {@code dividend % scaleFactor} also known as reminder.

@@ -63,6 +63,11 @@ public final class Scale0f extends AbstractScale {
 	}
 
 	@Override
+	public long multiplyByScaleFactorHalf(long dividend) {
+		return dividend >> 1;
+	}
+
+	@Override
 	public long mulloByScaleFactor(int factor) {
 		return factor & LONG_MASK;
 	}
@@ -75,6 +80,11 @@ public final class Scale0f extends AbstractScale {
 	@Override
 	public long divideByScaleFactor(long dividend) {
 		return dividend;
+	}
+
+	@Override
+	public long divideByScaleFactorHalf(long dividend) {
+		return dividend << 1;
 	}
 
 	@Override
