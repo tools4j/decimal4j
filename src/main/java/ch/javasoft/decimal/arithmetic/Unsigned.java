@@ -51,5 +51,9 @@ class Unsigned {
 	public static boolean isGreater(long one, long two) {
 		return (one + Long.MIN_VALUE) > (two + Long.MIN_VALUE);
 	}
-
+	
+	// no instances
+	private Unsigned() {
+		super();
+	}
 }

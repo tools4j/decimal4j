@@ -12,8 +12,6 @@ import ch.javasoft.decimal.scale.Scale0f;
 abstract public class AbstractCheckedScale0fArithmetics extends
 		AbstractCheckedArithmetics {
 
-	private static final long FLOOR_SQRT_MAX_LONG = 3037000499L;
-
 	@Override
 	public Scale0f getScaleMetrics() {
 		return Scale0f.INSTANCE;
@@ -41,69 +39,12 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
-		return pow(this, uDecimalBase, exponent);
-	}
-
-	static long pow(DecimalArithmetics arith, long uDecimalBase, int exponent) {
-		if (exponent == 0) {
-			return 1;
-		}
-		if (exponent < 0) {
-			if (uDecimalBase == 1 | uDecimalBase == -1) {
-				return uDecimalBase;
-			}
-			if (uDecimalBase != 0) {
-				return 0;
-			}
-			throw new ArithmeticException("division by zero: " + arith.toString(uDecimalBase) + "^" + exponent);
-		}
-		if (uDecimalBase >= -2 & uDecimalBase <= 2) {
-			switch ((int) uDecimalBase) {
-			case 0:
-				return (exponent == 0) ? 1 : 0;
-			case 1:
-				return 1;
-			case (-1):
-				return ((exponent & 1) == 0) ? 1 : -1;
-			case 2:
-				if (exponent >= Long.SIZE - 1) {
-					throw new ArithmeticException("overflow: " + arith.toString(uDecimalBase) + "^" + exponent);
-				}
-				return 1L << exponent;
-			case (-2):
-				if (exponent >= Long.SIZE) {
-					throw new ArithmeticException("overflow: " + arith.toString(uDecimalBase) + "^" + exponent);
-				}
-				return ((exponent & 1) == 0) ? (1L << exponent) : (-1L << exponent);
-			default:
-				throw new AssertionError();
-			}
-		}
-		long accum = 1;
-		while (true) {
-			switch (exponent) {
-			case 0:
-				return accum;
-			case 1:
-				return arith.multiplyByLong(accum, uDecimalBase);
-			default:
-				if ((exponent & 1) != 0) {
-					accum = arith.multiplyByLong(accum, uDecimalBase);
-				}
-				exponent >>= 1;
-				if (exponent > 0) {
-					if (uDecimalBase > FLOOR_SQRT_MAX_LONG) {
-						throw new ArithmeticException("overflow: " + arith.toString(uDecimalBase) + "^" + exponent);
-					}
-					uDecimalBase *= uDecimalBase;
-				}
-			}
-		}
+		return Pow.powChecked(this, uDecimalBase, exponent);
 	}
 
 	@Override
 	public long avg(long a, long b) {
-		return UncheckedScale0fTruncatingArithmetics._avg(a, b);
+		return Avg.avg(a, b);
 	}
 
 	@Override

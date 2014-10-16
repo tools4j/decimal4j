@@ -2,9 +2,6 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
-
 /**
  * Arithmetics implementation for the special case {@code scale=0}, that is, for
  * long values. The implementation throws an exception if an operation leads to on
@@ -43,46 +40,12 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int n) {
-		return divideByPowerOf10(this, uDecimal, n);
-	}
-	static long divideByPowerOf10(DecimalArithmetics arith, long uDecimal, int n) {
-		if (uDecimal == 0 | n == 0) {
-			return uDecimal;
-		}
-		if (n < 0) {
-			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-				return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
-			}
-			throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " / 10^" + n);
-		}
-		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
-			return scaleMetrics.divideByScaleFactor(uDecimal);
-		}
-		return 0;
+		return Pow10.divideByPowerOf10Checked(this, uDecimal, n);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int n) {
-		return multiplyByPowerOf10(this, uDecimal, n);
-	}
-	static long multiplyByPowerOf10(DecimalArithmetics arith, long uDecimal, int n) {
-		if (uDecimal == 0 | n == 0) {
-			return uDecimal;
-		}
-		if (n < 0) {
-			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			return 0;
-		}
-		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
-			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
-		}
-		throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " * 10^" + n);
+		return Pow10.multiplyByPowerOf10Checked(this, uDecimal, n);
 	}
 
 	@Override

@@ -54,32 +54,7 @@ abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 
 	@Override
 	public long pow(long uDecimal, int exponent) {
-		if (exponent == 0) {
-			return one();
-		}
-		long base;
-		long exp;//long to hold -Integer.MIN_VALUE
-		if (exponent > 0) {
-			base = uDecimal;
-			exp = exponent;
-		} else {/* exponent < 0 */
-			base = invert(uDecimal);
-			exp = -exponent;
-		}
-		long result = base;
-		//TODO eliminate repeated truncation with multiplications in loop
-		while (exp != 1 && result != 0) {
-			if (exp % 2 == 0) {
-				//even
-				result = square(result);
-				exp >>>= 1;
-			} else {
-				//odd
-				result = multiply(result, base);
-				exp--;
-			}
-		}
-		return result;
+		return Pow.pow(this, uDecimal, exponent);
 	}
 
 	@Override

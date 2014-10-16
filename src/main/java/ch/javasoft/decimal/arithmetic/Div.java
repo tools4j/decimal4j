@@ -1,19 +1,123 @@
 package ch.javasoft.decimal.arithmetic;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
- * Helper class for division.
+ * Calculates division results.
  */
 class Div {
 
 	private static final long LONG_MASK = 0xffffffffL;
 
-	public static long scaleTo128divBy64(ScaleMetrics scaleMetrics, long uDecimalDividend, long uDecimalDivisor) {
-		return scaleTo128divBy64(scaleMetrics, null, uDecimalDividend, uDecimalDivisor);
+	public static long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
+		final long quotient = uDecimalDividend / lDivisor;
+		final long remainder = uDecimalDividend - quotient * lDivisor;
+		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);
 	}
 
-	public static long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	public static long divide(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
+		//special cases first
+		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
+		if (special != null) {
+			return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+		}
+		//div by power of 10
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
+		if (pow10 != null) {
+			return Pow10.divideByPowerOf10(uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
+		}
+		//WE WANT: uDecimalDividend * one / uDecimalDivisor
+		final long maxInteger = scaleMetrics.getMaxIntegerValue();
+		final long minInteger = scaleMetrics.getMinIntegerValue();
+		if (uDecimalDividend <= (maxInteger) & uDecimalDividend >= minInteger) {
+			//just do it, multiplication result fits in long
+			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
+		}
+		//perform component wise division
+		final long integralPart = uDecimalDividend / uDecimalDivisor;
+		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+		final long fractionalPart;
+		if (reminder <= maxInteger & reminder >= minInteger) {
+			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
+		} else {
+			fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
+		}
+		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+	}
+
+	public static long divide(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+		//special cases first
+		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
+		if (special != null) {
+			return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+		}
+		//div by power of 10
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
+		if (pow10 != null) {
+			return Pow10.divideByPowerOf10(rounding, uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
+		}
+		//WE WANT: uDecimalDividend * one / uDecimalDivisor
+		final long maxInteger = scaleMetrics.getMaxIntegerValue();
+		final long minInteger = scaleMetrics.getMinIntegerValue();
+		if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
+			//just do it, multiplication result fits in long
+			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
+			final long quot = scaledDividend / uDecimalDivisor;
+			final long rem = scaledDividend - quot * uDecimalDivisor;
+			return quot + rounding.calculateRoundingIncrementForDivision(quot, rem, uDecimalDivisor);
+		}
+		//perform component wise division
+		final long integralPart = uDecimalDividend / uDecimalDivisor;
+		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+		if (reminder <= maxInteger & reminder >= minInteger) {
+			final long scaledReminder = scaleMetrics.multiplyByScaleFactor(reminder);
+			final long fractionalPart = scaledReminder / uDecimalDivisor;
+			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
+			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+			return truncated + rounding.calculateRoundingIncrementForDivision(truncated, subFractionalPart, uDecimalDivisor);
+		} else {
+			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
+			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+		}
+	}
+
+	//FIXME this method is incomplete and incorrect
+	public static long divideChecked(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
+		//check overflow
+		overflowCheck(arith, DecimalRounding.DOWN, uDecimalDividend, uDecimalDivisor);
+		//no overflow, simply divide
+		return divide(arith, uDecimalDividend, uDecimalDivisor);
+	}
+	//FIXME this method is incomplete and incorrect
+	public static long divideChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+		overflowCheck(arith, rounding, uDecimalDividend, uDecimalDivisor);
+		//no overflow, simply divide
+		return divide(arith, rounding, uDecimalDividend, uDecimalDivisor);
+	}
+	
+	private static void overflowCheck(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+		try {
+			final long min = Mul.multiply/*Checked*/(arith, uDecimalDivisor, Long.MIN_VALUE);
+			if (uDecimalDividend < min) {
+				throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + "/" + arith.toString(uDecimalDivisor)); 
+			}
+		} catch (ArithmeticException e) {
+			//overflow, then min is fine
+		}
+		try {
+			final long max = Mul.multiply/*Checked*/(arith, uDecimalDivisor, Long.MAX_VALUE);
+			if (uDecimalDividend > max) {
+				throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + "/" + arith.toString(uDecimalDivisor)); 
+			}
+		} catch (ArithmeticException e) {
+			//overflow, then max is fine
+		}
+	}
+
+	private static long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
@@ -58,7 +162,7 @@ class Div {
 	 *            rounding to apply, or null to truncate result
 	 * @return the signed quotient, rounded if {@code rounding != null}
 	 */
-	public static long div128by64(final boolean neg, final long u1, final long u0, final long v0, final DecimalRounding rounding) {
+	private static long div128by64(final boolean neg, final long u1, final long u0, final long v0, final DecimalRounding rounding) {
 		long q;
 		long r;
 
@@ -117,7 +221,7 @@ class Div {
 		q = (q1 << 32) | q0;
 
 		//apply sign and rounding
-		if (rounding == null || rounding == DecimalRounding.DOWN) {
+		if (rounding == DecimalRounding.DOWN) {
 			return neg ? -q : q;
 		}
 
@@ -162,47 +266,9 @@ class Div {
 		return quotient + (((rem > divisor) | (rem < 0)) ? 1 : 0);
 	}
 
-	/**
-	 * 
-	 * Returns dividend / divisor, where the dividend and divisor are treated as
-	 * unsigned 64-bit quantities.
-	 * <p>
-	 * From Guava's <a href=
-	 * "http://docs.guava-libraries.googlecode.com/git/javadoc/src-html/com/google/common/primitives/UnsignedLongs.html"
-	 * >UnsignedLongs</a>.
-	 *
-	 * @param dividend
-	 *            the dividend (numerator)
-	 * @param divisor
-	 *            the divisor (denominator)
-	 * @throws ArithmeticException
-	 *             if divisor is 0
-	 * @return result of unsigned division {@code (dividend / divisor)}
-	 */
-	public static long unsignedDiv64by64(long dividend, long divisor) {
-		if (divisor < 0) { // i.e., divisor >= 2^63:
-			if (Unsigned.compare(dividend, divisor) < 0) {
-				return 0; // dividend < divisor
-			} else {
-				return 1; // dividend >= divisor
-			}
-		}
-
-		// Optimization - use signed division if dividend < 2^63
-		if (dividend >= 0) {
-			return dividend / divisor;
-		}
-
-		/*
-		 * Otherwise, approximate the quotient, check, and correct if necessary.
-		 * Our approximation is guaranteed to be either exact or one less than
-		 * the correct value. This follows from fact that floor(floor(x)/i) ==
-		 * floor(x/i) for any real x and integer i != 0. The proof is not quite
-		 * trivial.
-		 */
-		final long quotient = ((dividend >>> 1) / divisor) << 1;
-		final long rem = dividend - quotient * divisor;
-		return quotient + (Unsigned.compare(rem, divisor) >= 0 ? 1 : 0);
+	//no instances
+	private Div() {
+		super();
 	}
 
 }

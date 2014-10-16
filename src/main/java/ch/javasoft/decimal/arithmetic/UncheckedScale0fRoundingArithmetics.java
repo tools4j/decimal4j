@@ -5,9 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
-import ch.javasoft.decimal.scale.Scale18f;
-import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
@@ -31,17 +28,12 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
-		return divideByLong(rounding, uDecimalDividend, lDivisor);
-	}
-	static long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
-		final long quotient = uDecimalDividend / lDivisor;
-		final long remainder = uDecimalDividend - quotient * lDivisor;
-		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);
+		return Div.divideByLong(rounding, uDecimalDividend, lDivisor);
 	}
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		return divideByLong(rounding, uDecimalDividend, uDecimalDivisor);
+		return Div.divideByLong(rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
@@ -61,113 +53,24 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
-		return shiftLeft(rounding, uDecimal, positions);
-	}
-
-	static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions < 0) {
-			if (positions > -63) {
-				return shiftRight(rounding, uDecimal, -positions);
-			}
-			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		}
-		return uDecimal << positions;
+		return Shift.shiftLeft(rounding, uDecimal, positions);
 	}
 
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
-		return shiftRight(rounding, uDecimal, positions);
-	}
-
-	static long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			//rounding may be necessary
-			if (positions < 63) {
-				final long truncated = uDecimal >> positions;
-				final long remainder = uDecimal - (truncated << positions);
-				final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(remainder), 1L << positions);
-				return truncated + rounding.calculateRoundingIncrement(Long.signum(uDecimal), truncated, truncatedPart);
-			}
-			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		}
-		//shift left, no rounding
-		return uDecimal >> positions;
+		return Shift.shiftRight(rounding, uDecimal, positions);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		return divideByPowerOf10(rounding, uDecimal, positions);
-	}
-
-	static long divideByPowerOf10(DecimalRounding rounding, long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			if (positions <= 18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(positions);
-				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
-				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = rounding.calculateRoundingIncrement(truncated, rem, scaleMetrics.getScaleFactor());
-				return truncated + inc;
-			}
-			//truncated part is always larger 0 (see first if) 
-			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
-			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		} else {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions << -18
-			//      but how else do we get the correct truncated value?
-			while (pos < -18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos += 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		}
+		return Pow10.divideByPowerOf10(rounding, uDecimal, positions);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		return multiplyByPowerOf10(rounding, uDecimal, positions);
+		return Pow10.multiplyByPowerOf10(rounding, uDecimal, positions);
 	}
 
-	static long multiplyByPowerOf10(DecimalRounding rounding, long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions >> 18
-			//      but how else do we get the correct truncated value?
-			while (pos > 18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos -= 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		} else {
-			if (positions >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-positions);
-				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
-				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = rounding.calculateRoundingIncrement(truncated, rem, scaleMetrics.getScaleFactor());
-				return truncated + inc;
-			}
-			//truncated part is always larger 0 (see first if) 
-			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
-			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		}
-	}
-	
 	@Override
 	public long sqrt(long uDecimal) {
 		return Sqrt.sqrtLong(rounding, uDecimal);
@@ -200,7 +103,7 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 		if (scale == 0 | unscaledValue == 0) {
 			return unscaledValue;
 		}
-		return divideByPowerOf10(rounding, unscaledValue, scale);
+		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
 	}
 
 	@Override

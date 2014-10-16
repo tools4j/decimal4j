@@ -5,9 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
-import ch.javasoft.decimal.scale.Scale18f;
-import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
 
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
@@ -41,70 +38,17 @@ public class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScal
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {
-		return _multiplyByPowerOf10(uDecimal, positions);
-	}
-	static long _multiplyByPowerOf10(long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions >> 18
-			//      but how else do we get the correct truncated value?
-			while (pos > 18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos -= 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		} else {
-			if (positions >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			//truncated result is 0
-			return 0;
-		}
+		return Pow10.multiplyByPowerOf10(uDecimal, positions);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
-		return _divideByPowerOf10(uDecimal, positions);
-	}
-	static long _divideByPowerOf10(long uDecimal, int positions) {
-		if (uDecimal == 0 | positions == 0) {
-			return uDecimal;
-		}
-		if (positions > 0) {
-			if (positions <= 18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(positions);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			//truncated result is 0
-			return 0;
-		} else {
-			int pos = positions;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for positions << -18
-			//      but how else do we get the correct truncated value?
-			while (pos < -18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos += 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
-			return scaleMetrics.multiplyByScaleFactor(result);
-		}
+		return Pow10.divideByPowerOf10(uDecimal, positions);
 	}
 	
 	@Override
 	public long avg(long a, long b) {
-		return _avg(a, b);
-	}
-	static long _avg(long a, long b) {
-		final long xor = a ^ b;
-		final long floor = (a & b) + (xor >> 1);
-		return floor + ((floor >>> 63) & xor);
+		return Avg.avg(a, b);
 	}
 
 	@Override
@@ -132,7 +76,7 @@ public class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScal
 		if (scale == 0 | unscaledValue == 0) {
 			return unscaledValue;
 		}
-		return _divideByPowerOf10(unscaledValue, scale);
+		return Pow10.divideByPowerOf10(unscaledValue, scale);
 	}
 
 	@Override

@@ -123,4 +123,9 @@ class Sqrt {
 		}
 		return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 	}
+	
+	// no instances
+	private Sqrt() {
+		super();
+	}
 }

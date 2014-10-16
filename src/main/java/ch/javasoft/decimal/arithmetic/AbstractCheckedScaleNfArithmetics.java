@@ -31,7 +31,7 @@ abstract public class AbstractCheckedScaleNfArithmetics extends AbstractCheckedA
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
 		//NOTE: we assume that multiply with this arithmetics does the correct rounding
-		return CheckedScale0fTruncatingArithmetics.pow(this, uDecimalBase, exponent);
+		return Pow.powChecked(this, uDecimalBase, exponent);
 	}
 
 	@Override

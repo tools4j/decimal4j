@@ -94,45 +94,12 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 
 	@Override
 	public long shiftLeft(long uDecimal, int positions) {
-		if (uDecimal == 0) {
-			return 0;
-		}
-		if (positions <= 0) {
-			if (positions > -64) {
-				return uDecimal >> -positions;
-			}
-			return 0;
-		}
-		if (positions < Long.SIZE) {
-			if (uDecimal > 0) {
-				if (positions < Long.SIZE - 1) {
-					final int leadingZeros = Long.numberOfLeadingZeros(uDecimal);
-					if (leadingZeros > positions) {
-						return uDecimal << positions;
-					}
-				}
-			} else if (uDecimal > Long.MIN_VALUE) {
-				final int leadingZeros = Long.numberOfLeadingZeros(~uDecimal);
-				if (leadingZeros > positions) {
-					return uDecimal << positions;
-				}
-			}
-		}
-		throw new ArithmeticException("overflow: " + toString(uDecimal) + " << " + positions + " = " + toString(uDecimal << positions));
+		return Shift.shiftLeftChecked(this, uDecimal, positions);
 	}
 
 	@Override
 	public long shiftRight(long uDecimal, int positions) {
-		if (uDecimal == 0) {
-			return 0;
-		}
-		if (positions >= 0) {
-			return uDecimal >> positions;
-		}
-		if (positions > -Long.SIZE) {
-			return shiftLeft(uDecimal, -positions);
-		}
-		throw new ArithmeticException("overflow: " + toString(uDecimal) + " >> " + positions + " = " + toString(uDecimal >> positions));
+		return Shift.shiftRightChecked(this, uDecimal, positions);
 	}
 
 	@Override
