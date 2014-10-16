@@ -43,14 +43,14 @@ class Sqrt {
 			}
 		}
 		final long truncated = root >>> 1;
-		if (rounding == null | rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
+		if (rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
 			return truncated;
 		}
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
 	public static long sqrt(DecimalArithmetics arith, long uDecimal) {
-		return sqrt(arith, null, uDecimal);
+		return sqrt(arith, DecimalRounding.DOWN, uDecimal);
 	}
 
 	public static long sqrt(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
@@ -109,7 +109,7 @@ class Sqrt {
 		}
 
 		final long truncated = root >>> 1;
-		if (rounding == null | rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
+		if (rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
 			return truncated;
 		}
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
