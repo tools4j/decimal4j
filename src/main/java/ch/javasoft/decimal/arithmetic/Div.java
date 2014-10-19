@@ -1,5 +1,6 @@
 package ch.javasoft.decimal.arithmetic;
 
+import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 
@@ -16,6 +17,22 @@ class Div {
 		return quotient + rounding.calculateRoundingIncrementForDivision(quotient, remainder, lDivisor);
 	}
 
+	/**
+	 * Calculates {@code (uDecimalDividend * scaleFactor) / uDecimalDivisor}
+	 * without rounding.
+	 * <p>
+	 * <b>Note:</b> this methods supports {@link OverflowMode#CHECKED} if set in
+	 * the decimal arithmetics.
+	 * 
+	 * @param arith
+	 *            the arithmetics with scale metrics and overflow mode
+	 * @param uDecimalDividend
+	 *            the unscaled decimal dividend
+	 * @param uDecimalDivisor
+	 *            the unscaled decimal divisor
+	 * @return the division result without rounding but with support for
+	 *         overflow checks if desired
+	 */
 	public static long divide(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
@@ -42,11 +59,29 @@ class Div {
 		if (reminder <= maxInteger & reminder >= minInteger) {
 			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
 		} else {
-			fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
+			fractionalPart = scaleTo128divBy64(arith, scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
 		}
 		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 	}
 
+	/**
+	 * Calculates {@code (uDecimalDividend * scaleFactor) / uDecimalDivisor}
+	 * with rounding.
+	 * <p>
+	 * <b>Note:</b> this methods supports {@link OverflowMode#CHECKED} if set in
+	 * the decimal arithmetics.
+	 * 
+	 * @param arith
+	 *            the arithmetics with scale metrics and overflow mode
+	 * @param rounding
+	 *            the decimal rounding to apply if rounding is necessary
+	 * @param uDecimalDividend
+	 *            the unscaled decimal dividend
+	 * @param uDecimalDivisor
+	 *            the unscaled decimal divisor
+	 * @return the division result with rounding and support for overflow checks
+	 *         if desired
+	 */
 	public static long divide(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
@@ -79,45 +114,12 @@ class Div {
 			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 			return truncated + rounding.calculateRoundingIncrementForDivision(truncated, subFractionalPart, uDecimalDivisor);
 		} else {
-			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
+			final long fractionalPart = Div.scaleTo128divBy64(arith, scaleMetrics, rounding, reminder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 		}
 	}
 
-	//FIXME this method is incomplete and incorrect
-	public static long divideChecked(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
-		//check overflow
-		overflowCheck(arith, DecimalRounding.DOWN, uDecimalDividend, uDecimalDivisor);
-		//no overflow, simply divide
-		return divide(arith, uDecimalDividend, uDecimalDivisor);
-	}
-	//FIXME this method is incomplete and incorrect
-	public static long divideChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
-		overflowCheck(arith, rounding, uDecimalDividend, uDecimalDivisor);
-		//no overflow, simply divide
-		return divide(arith, rounding, uDecimalDividend, uDecimalDivisor);
-	}
-	
-	private static void overflowCheck(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
-		try {
-			final long min = Mul.multiply/*Checked*/(arith, uDecimalDivisor, Long.MIN_VALUE);
-			if (uDecimalDividend < min) {
-				throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + "/" + arith.toString(uDecimalDivisor)); 
-			}
-		} catch (ArithmeticException e) {
-			//overflow, then min is fine
-		}
-		try {
-			final long max = Mul.multiply/*Checked*/(arith, uDecimalDivisor, Long.MAX_VALUE);
-			if (uDecimalDividend > max) {
-				throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + "/" + arith.toString(uDecimalDivisor)); 
-			}
-		} catch (ArithmeticException e) {
-			//overflow, then max is fine
-		}
-	}
-
-	private static long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	private static long scaleTo128divBy64(DecimalArithmetics arith, ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
@@ -137,8 +139,26 @@ class Div {
 		lScaled |= ((product & LONG_MASK) << 32);
 		hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + hScaled + (product >>> 32);
 
+		if (arith.getOverflowMode() == OverflowMode.CHECKED) {
+			//pre-check for overflow
+			if (Unsigned.compare(hScaled, absDivisor) >= 0) {
+				throw new ArithmeticException("overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
+			}
+
+			final long result = div128by64(rounding, negative, hScaled, lScaled, absDivisor);
+
+			//post-check for overflow 
+			//FIXME not sure if correct especially for neg / neg = pos
+			if (result < 0 & ((uDecimalDividend ^ uDecimalDivisor) >= 0)) {
+				throw new ArithmeticException("overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
+			}
+
+			return result;
+		}
+
 		//divide 128 bit product by 64 bit divisor
-		return div128by64(negative, hScaled, lScaled, absDivisor, rounding);
+		return div128by64(rounding, negative, hScaled, lScaled, absDivisor);
+
 	}
 
 	/**
@@ -162,11 +182,12 @@ class Div {
 	 *            rounding to apply, or null to truncate result
 	 * @return the signed quotient, rounded if {@code rounding != null}
 	 */
-	private static long div128by64(final boolean neg, final long u1, final long u0, final long v0, final DecimalRounding rounding) {
+	private static long div128by64(final DecimalRounding rounding, final boolean neg, final long u1, final long u0, final long v0) {
 		long q;
 		long r;
 
 		long un1, un0, vn1, vn0, q1, q0, un32, un21, un10, rhat, left, right;
+
 		final int s = Long.numberOfLeadingZeros(v0);
 
 		final long v = v0 << s;

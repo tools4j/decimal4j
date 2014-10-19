@@ -30,7 +30,7 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		return Div.divideChecked(this, uDecimalDividend, uDecimalDivisor);
+		return Div.divide(this, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
