@@ -3,8 +3,8 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * An arithmetic implementation which truncates decimals after the last scale

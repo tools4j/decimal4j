@@ -1,9 +1,12 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.immutable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.base.AbstractImmutableDecimal;
+import ch.javasoft.decimal.mutable.MutableDecimal0f;
 import ch.javasoft.decimal.scale.Scale0f;
 
 /**
@@ -162,6 +165,11 @@ public final class Decimal0f extends AbstractImmutableDecimal<Scale0f, Decimal0f
 	@Override
 	protected Decimal0f create(long unscaled) {
 		return valueOfUnscaled(unscaled);
+	}
+	
+	@Override
+	protected Decimal0f[] createArray(int length) {
+		return new Decimal0f[length];
 	}
 
 	@Override

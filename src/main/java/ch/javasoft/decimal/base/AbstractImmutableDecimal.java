@@ -1,9 +1,12 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.base;
 
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Base class for immutable {@link Decimal} classes of different scales.
@@ -61,6 +64,17 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	}
 
 	@Override
+	public ImmutableDecimal<?, ?> scale(int scale, TruncationPolicy truncationPolicy) {
+		final int myScale = getScale();
+		if (scale == myScale) {
+			return this;
+		}
+		final ScaleMetrics targetMetrics = Scales.valueOf(scale);
+		final long targetUnscaled = targetMetrics.getArithmetics(truncationPolicy).fromUnscaled(unscaledValue(), myScale);
+		return targetMetrics.createImmutable(targetUnscaled);
+	}
+
+	@Override
 	@SuppressWarnings("hiding")
 	public <S extends ScaleMetrics> ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?>> scale(S scaleMetrics, RoundingMode roundingMode) {
 		final ImmutableDecimal<?, ?> value;
@@ -68,6 +82,22 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			value = this;
 		} else {
 			final long targetUnscaled = scaleMetrics.getArithmetics(roundingMode).fromUnscaled(unscaledValue(), getScale());
+			value = scaleMetrics.createImmutable(targetUnscaled);
+		}
+		@SuppressWarnings("unchecked")
+		//safe: we know it is the same scale metrics
+		final ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?>> result = (ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?>>) value;
+		return result;
+	}
+
+	@Override
+	@SuppressWarnings("hiding")
+	public <S extends ScaleMetrics> ImmutableDecimal<S, ? extends ImmutableDecimal<S, ?>> scale(S scaleMetrics, TruncationPolicy truncationPolicy) {
+		final ImmutableDecimal<?, ?> value;
+		if (scaleMetrics == getScaleMetrics()) {
+			value = this;
+		} else {
+			final long targetUnscaled = scaleMetrics.getArithmetics(truncationPolicy).fromUnscaled(unscaledValue(), getScale());
 			value = scaleMetrics.createImmutable(targetUnscaled);
 		}
 		@SuppressWarnings("unchecked")

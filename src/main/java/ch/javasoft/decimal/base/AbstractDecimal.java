@@ -1,12 +1,17 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.base;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.ImmutableDecimal;
+import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Common base class for {@link AbstractImmutableDecimal immutable} and
@@ -48,6 +53,15 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	abstract protected D create(long unscaled);
 
 	/**
+	 * Returns a new {@code Decimal} array of the specified {@code length}.
+	 * 
+	 * @param length
+	 *            the length of the array to return
+	 * @return {@code new D[length]}
+	 */
+	abstract protected D[] createArray(int length);
+
+	/**
 	 * Returns {@code this} decimal value as concrete implementation subtype.
 	 * 
 	 * @return {@code this}
@@ -67,8 +81,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return getScaleMetrics().getArithmetics(roundingMode);
 	}
 
-	protected long unscaledOne() {
-		return getScaleMetrics().getScaleFactor();
+	protected DecimalArithmetics getArithmeticsFor(TruncationPolicy truncationPolicy) {
+		return getScaleMetrics().getArithmetics(truncationPolicy);
+	}
+
+	protected DecimalArithmetics getArithmeticsFor(OverflowMode overflowMode) {
+		return getScaleMetrics().getArithmetics(overflowMode.getPolicyFor(RoundingMode.UNNECESSARY));
 	}
 
 	/* -------------------- Number and simular conversion ------------------- */
@@ -119,6 +137,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public long longValue(RoundingMode roundingMode) {
 		return getArithmeticsFor(roundingMode).toLong(unscaledValue());
 	}
+	
+	@Override
+	public long longValue(TruncationPolicy truncationPolicy) {
+		return getArithmeticsFor(truncationPolicy).toLong(unscaledValue());
+	}
 
 	@Override
 	public float floatValue() {
@@ -166,14 +189,14 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public Decimal<S> integralPart() {
+	public D integralPart() {
 		final long unscaled = unscaledValue();
 		final long integral = unscaled - getScaleMetrics().moduloByScaleFactor(unscaled);
 		return createOrAssign(integral);
 	}
 
 	@Override
-	public Decimal<S> fractionalPart() {
+	public D fractionalPart() {
 		return createOrAssign(getScaleMetrics().moduloByScaleFactor(unscaledValue()));
 	}
 
@@ -188,10 +211,21 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	public D add(Decimal<?> augend, RoundingMode roundingMode) {
 		return addUnscaled(augend.unscaledValue(), augend.getScale(), roundingMode);
 	}
+	
+	@Override
+	public D add(Decimal<?> augend, TruncationPolicy truncationPolicy) {
+		return addUnscaled(augend.unscaledValue(), augend.getScale(), truncationPolicy);
+	}
 
 	@Override
 	public D add(long augend) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.add(unscaledValue(), arith.fromLong(augend)));
+	}
+	
+	@Override
+	public D add(long augend, OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(overflowMode);
 		return createOrAssign(arith.add(unscaledValue(), arith.fromLong(augend)));
 	}
 
@@ -206,28 +240,22 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
 		return createOrAssign(arith.add(unscaledValue(), arith.fromDouble(augend)));
 	}
-
+	
 	@Override
-	public D add(BigInteger augend) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.add(unscaledValue(), arith.fromBigInteger(augend)));
-	}
-
-	@Override
-	public D add(BigDecimal augend) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.add(unscaledValue(), arith.fromBigDecimal(augend)));
-	}
-
-	@Override
-	public D add(BigDecimal augend, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		return createOrAssign(arith.add(unscaledValue(), arith.fromBigDecimal(augend)));
+	public D add(double augend, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.add(unscaledValue(), arith.fromDouble(augend)));
 	}
 
 	@Override
 	public D addUnscaled(long unscaledAugend) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.add(unscaledValue(), unscaledAugend));
+	}
+	
+	@Override
+	public D addUnscaled(long unscaledAugend, OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(overflowMode);
 		return createOrAssign(arith.add(unscaledValue(), unscaledAugend));
 	}
 
@@ -244,6 +272,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 	
 	@Override
+	public D addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.add(unscaledValue(), arith.fromUnscaled(unscaledAugend, scale)));
+	}
+
+	@Override
 	public D addSquared(Decimal<S> value) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
 		return createOrAssign(arith.add(unscaledValue(), arith.square(value.unscaledValue())));
@@ -252,6 +286,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D addSquared(Decimal<S> value, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.add(unscaledValue(), arith.square(value.unscaledValue())));
+	}
+
+	@Override
+	public D addSquared(Decimal<S> value, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
 		return createOrAssign(arith.add(unscaledValue(), arith.square(value.unscaledValue())));
 	}
 
@@ -268,8 +308,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D subtract(Decimal<?> subtrahend, TruncationPolicy truncationPolicy) {
+		return subtractUnscaled(subtrahend.unscaledValue(), subtrahend.getScale(), truncationPolicy);
+	}
+
+	@Override
 	public D subtract(long subtrahend) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.subtract(unscaledValue(), arith.fromLong(subtrahend)));
+	}
+	
+	@Override
+	public D subtract(long subtrahend, OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(overflowMode);
 		return createOrAssign(arith.subtract(unscaledValue(), arith.fromLong(subtrahend)));
 	}
 
@@ -286,26 +337,20 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public D subtract(BigInteger subtrahend) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromBigInteger(subtrahend)));
-	}
-
-	@Override
-	public D subtract(BigDecimal subtrahend) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromBigDecimal(subtrahend)));
-	}
-
-	@Override
-	public D subtract(BigDecimal subtrahend, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromBigDecimal(subtrahend)));
+	public D subtract(double subtrahend, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.subtract(unscaledValue(), arith.fromDouble(subtrahend)));
 	}
 
 	@Override
 	public D subtractUnscaled(long unscaledSubtrahend) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.subtract(unscaledValue(), unscaledSubtrahend));
+	}
+	
+	@Override
+	public D subtractUnscaled(long unscaledSubtrahend, OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(overflowMode);
 		return createOrAssign(arith.subtract(unscaledValue(), unscaledSubtrahend));
 	}
 
@@ -322,6 +367,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D subtractUnscaled(long unscaledSubtrahend, int scale, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.subtract(unscaledValue(), arith.fromUnscaled(unscaledSubtrahend, scale)));
+	}
+
+	@Override
 	public D subtractSquared(Decimal<S> value) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
 		return createOrAssign(arith.subtract(unscaledValue(), arith.square(value.unscaledValue())));
@@ -330,6 +381,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D subtractSquared(Decimal<S> value, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.subtract(unscaledValue(), arith.square(value.unscaledValue())));
+	}
+
+	@Override
+	public D subtractSquared(Decimal<S> value, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
 		return createOrAssign(arith.subtract(unscaledValue(), arith.square(value.unscaledValue())));
 	}
 
@@ -346,6 +403,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D multiply(Decimal<S> multiplicand, TruncationPolicy truncationPolicy) {
+		return multiplyUnscaled(multiplicand.unscaledValue(), truncationPolicy);
+	}
+
+	@Override
 	public D multiplyBy(Decimal<?> multiplicand) {
 		return multiplyUnscaled(multiplicand.unscaledValue(), multiplicand.getScale());
 	}
@@ -356,8 +418,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D multiplyBy(Decimal<?> multiplicand, TruncationPolicy truncationPolicy) {
+		return multiplyUnscaled(multiplicand.unscaledValue(), multiplicand.getScale(), truncationPolicy);
+	}
+
+	@Override
 	public D multiply(long multiplicand) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
+		return createOrAssign(arith.multiplyByLong(unscaledValue(), multiplicand));
+	}
+
+	@Override
+	public D multiply(long multiplicand, OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(overflowMode);
 		return createOrAssign(arith.multiplyByLong(unscaledValue(), multiplicand));
 	}
 
@@ -374,21 +447,9 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public D multiply(BigInteger multiplicand) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.multiplyByLong(unscaledValue(), arith.fromBigInteger(multiplicand)));
-	}
-
-	@Override
-	public D multiply(BigDecimal multiplicand) {
-		final DecimalArithmetics arith = getDefaultArithmetics();
-		return createOrAssign(arith.multiply(unscaledValue(), arith.fromBigDecimal(multiplicand)));
-	}
-
-	@Override
-	public D multiply(BigDecimal multiplicand, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		return createOrAssign(arith.multiply(unscaledValue(), arith.fromBigDecimal(multiplicand)));
+	public D multiply(double multiplicand, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.multiply(unscaledValue(), arith.fromDouble(multiplicand)));
 	}
 
 	@Override
@@ -404,6 +465,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D multiplyUnscaled(long unscaledMultiplicand, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.multiply(unscaledValue(), unscaledMultiplicand));
+	}
+
+	@Override
 	public D multiplyUnscaled(long unscaledMultiplicand, int scale) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
 		return createOrAssign(arith.multiply(unscaledValue(), arith.fromUnscaled(unscaledMultiplicand, scale)));
@@ -412,6 +479,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.multiply(unscaledValue(), arith.fromUnscaled(unscaledMultiplicand, scale)));
+	}
+
+	@Override
+	public D multiplyUnscaled(long unscaledMultiplicand, int scale, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
 		return createOrAssign(arith.multiply(unscaledValue(), arith.fromUnscaled(unscaledMultiplicand, scale)));
 	}
 
@@ -432,6 +505,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return createOrAssign(getArithmeticsFor(roundingMode).multiplyByPowerOf10(unscaledValue(), n));
 	}
 
+	@Override
+	public D multiplyByPowerOfTen(int n, TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).multiplyByPowerOf10(unscaledValue(), n));
+	}
+
 	/* ------------------------------ divide ------------------------------ */
 
 	@Override
@@ -445,6 +523,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D divide(Decimal<S> divisor, TruncationPolicy truncationPolicy) {
+		return divideUnscaled(divisor.unscaledValue(), truncationPolicy);
+	}
+
+	@Override
 	public D divideBy(Decimal<?> divisor) {
 		return divideUnscaled(divisor.unscaledValue(), divisor.getScale());
 	}
@@ -452,6 +535,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D divideBy(Decimal<?> divisor, RoundingMode roundingMode) {
 		return divideUnscaled(divisor.unscaledValue(), divisor.getScale(), roundingMode);
+	}
+
+	@Override
+	public D divideBy(Decimal<?> divisor, TruncationPolicy truncationPolicy) {
+		return divideUnscaled(divisor.unscaledValue(), divisor.getScale(), truncationPolicy);
 	}
 
 	@Override
@@ -463,6 +551,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D divide(long divisor, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.divideByLong(unscaledValue(), divisor));
+	}
+
+	@Override
+	public D divide(long divisor, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
 		return createOrAssign(arith.divideByLong(unscaledValue(), divisor));
 	}
 
@@ -479,32 +573,9 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public D divide(BigInteger divisor) {
-		return divide(divisor, getDefaultArithmetics().getRoundingMode());
-	}
-
-	@Override
-	public D divide(BigInteger divisor, RoundingMode roundingMode) {
-		if (fitsInLong(divisor)) {
-			return divide(divisor.longValue(), roundingMode);
-		}
-		//FIXME rounding and overflow
-		return createOrAssign(0);
-	}
-
-	@Override
-	public D divide(BigDecimal divisor) {
-		return divide(divisor, getDefaultArithmetics().getRoundingMode());
-	}
-
-	@Override
-	public D divide(BigDecimal divisor, RoundingMode roundingMode) {
-		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
-		if (divisor.precision() - divisor.scale() <= 19 - getScale()) {
-			return createOrAssign(arith.divide(unscaledValue(), arith.fromBigDecimal(divisor)));
-		}
-		//FIXME rounding and overflow
-		return createOrAssign(0);
+	public D divide(double divisor, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.divide(unscaledValue(), arith.fromDouble(divisor)));
 	}
 
 	@Override
@@ -520,6 +591,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D divideUnscaled(long unscaledDivisor, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
+		return createOrAssign(arith.divide(unscaledValue(), unscaledDivisor));
+	}
+
+	@Override
 	public D divideUnscaled(long unscaledDivisor, int scale) {
 		final DecimalArithmetics arith = getDefaultArithmetics();
 		return createOrAssign(arith.divide(unscaledValue(), arith.fromUnscaled(unscaledDivisor, scale)));
@@ -528,6 +605,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetics arith = getArithmeticsFor(roundingMode);
+		return createOrAssign(arith.divide(unscaledValue(), arith.fromUnscaled(unscaledDivisor, scale)));
+	}
+
+	@Override
+	public D divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy) {
+		final DecimalArithmetics arith = getArithmeticsFor(truncationPolicy);
 		return createOrAssign(arith.divide(unscaledValue(), arith.fromUnscaled(unscaledDivisor, scale)));
 	}
 
@@ -552,28 +635,31 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public Decimal<S> divideToIntegralValue(Decimal<S> divisor) {
+	public D divideByPowerOfTen(int n, TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).divideByPowerOf10(unscaledValue(), n));
+	}
+
+	@Override
+	public D divideToIntegralValue(Decimal<S> divisor) {
 		final long quot = unscaledValue() / divisor.unscaledValue();
 		return createOrAssign(getDefaultArithmetics().fromLong(quot));
 	}
 
 	@Override
-	public Decimal<S>[] divideAndRemainder(Decimal<S> divisor) {
+	public D[] divideAndRemainder(Decimal<S> divisor) {
 		final long uDividend = unscaledValue();
 		final long uDivisor = divisor.unscaledValue();
 		final long lIntegral = uDividend / uDivisor;
 		final long uIntegral = getDefaultArithmetics().fromLong(lIntegral);
 		final long uReminder = uDividend - uDivisor * lIntegral;
-		@SuppressWarnings("unchecked")
-		//safe cast
-		final Decimal<S>[] result = (Decimal<S>[]) new Decimal<?>[2];
+		final D[] result = createArray(2);
 		result[0] = create(uIntegral);
 		result[1] = create(uReminder);
 		return result;
 	}
 
 	@Override
-	public Decimal<S> remainder(Decimal<S> divisor) {
+	public D remainder(Decimal<S> divisor) {
 		return createOrAssign(unscaledValue() % divisor.unscaledValue());
 	}
 
@@ -590,9 +676,20 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public D negate(OverflowMode overflowMode) {
+		return createOrAssign(getArithmeticsFor(overflowMode).negate(unscaledValue()));
+	}
+
+	@Override
 	public D abs() {
 		final long unscaled = unscaledValue();
 		return unscaled >= 0 ? self() : createOrAssign(getDefaultArithmetics().negate(unscaled));
+	}
+
+	@Override
+	public D abs(OverflowMode overflowMode) {
+		final long unscaled = unscaledValue();
+		return unscaled >= 0 ? self() : createOrAssign(getArithmeticsFor(overflowMode).negate(unscaled));
 	}
 
 	@Override
@@ -606,43 +703,63 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 	
 	@Override
-	public Decimal<S> square() {
+	public D invert(TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).invert(unscaledValue()));
+	}
+	
+	@Override
+	public D square() {
 		return createOrAssign(getDefaultArithmetics().square(unscaledValue()));
 	}
 	
 	@Override
-	public Decimal<S> square(RoundingMode roundingMode) {
+	public D square(RoundingMode roundingMode) {
 		return createOrAssign(getArithmeticsFor(roundingMode).square(unscaledValue()));
 	}
 
 	@Override
-	public Decimal<S> sqrt() {
+	public D square(TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).square(unscaledValue()));
+	}
+
+	@Override
+	public D sqrt() {
 		return createOrAssign(getDefaultArithmetics().sqrt(unscaledValue()));
 	}
 	
 	@Override
-	public Decimal<S> sqrt(RoundingMode roundingMode) {
+	public D sqrt(RoundingMode roundingMode) {
 		return createOrAssign(getArithmeticsFor(roundingMode).sqrt(unscaledValue()));
 	}
 
 	@Override
 	public D shiftLeft(int n) {
-		return createOrAssign(getDefaultArithmetics().shiftLeft(unscaledOne(), n));
+		return createOrAssign(getDefaultArithmetics().shiftLeft(unscaledValue(), n));
 	}
 
 	@Override
 	public D shiftLeft(int n, RoundingMode roundingMode) {
-		return createOrAssign(getArithmeticsFor(roundingMode).shiftLeft(unscaledOne(), n));
+		return createOrAssign(getArithmeticsFor(roundingMode).shiftLeft(unscaledValue(), n));
+	}
+
+	@Override
+	public D shiftLeft(int n, TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).shiftLeft(unscaledValue(), n));
 	}
 
 	@Override
 	public D shiftRight(int n) {
-		return createOrAssign(getDefaultArithmetics().shiftRight(unscaledOne(), n));
+		return createOrAssign(getDefaultArithmetics().shiftRight(unscaledValue(), n));
 	}
 
 	@Override
 	public D shiftRight(int n, RoundingMode roundingMode) {
-		return createOrAssign(getArithmeticsFor(roundingMode).shiftRight(unscaledOne(), n));
+		return createOrAssign(getArithmeticsFor(roundingMode).shiftRight(unscaledValue(), n));
+	}
+
+	@Override
+	public D shiftRight(int n, TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).shiftRight(unscaledValue(), n));
 	}
 
 	@Override
@@ -653,6 +770,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D pow(int n, RoundingMode roundingMode) {
 		return createOrAssign(getArithmeticsFor(roundingMode).pow(unscaledValue(), n));
+	}
+
+	@Override
+	public D pow(int n, TruncationPolicy truncationPolicy) {
+		return createOrAssign(getArithmeticsFor(truncationPolicy).pow(unscaledValue(), n));
 	}
 
 	/* --------------------------- compare etc. ---------------------------- */
@@ -694,7 +816,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public boolean isOne() {
-		return unscaledValue() == unscaledOne();
+		return unscaledValue() == getScaleMetrics().getScaleFactor();
 	}
 
 	@Override
@@ -704,7 +826,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public boolean isMinusOne() {
-		return unscaledValue() == -unscaledOne();
+		return unscaledValue() == -getScaleMetrics().getScaleFactor();
 	}
 
 	@Override
@@ -790,7 +912,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public Decimal<S> min(Decimal<S> val) {
-		return isLessThanOrEqualTo(val) ? this : val;
+		return isLessThanOrEqualTo(val) ? self() : val;
 	}
 
 	@Override
@@ -799,12 +921,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public Decimal<S> avg(Decimal<S> val) {
+	public D avg(Decimal<S> val) {
 		return createOrAssign(getDefaultArithmetics().avg(unscaledValue(), val.unscaledValue()));
 	}
 
 	@Override
-	public Decimal<S> avg(Decimal<S> val, RoundingMode roundingMode) {
+	public D avg(Decimal<S> val, RoundingMode roundingMode) {
 		return createOrAssign(getArithmeticsFor(roundingMode).avg(unscaledValue(), val.unscaledValue()));
 	}
 
@@ -828,9 +950,5 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public String toString() {
 		return getDefaultArithmetics().toString(unscaledValue());
-	}
-
-	private static boolean fitsInLong(BigInteger value) {
-		return value.bitLength() < 64;
 	}
 }

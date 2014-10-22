@@ -1,13 +1,13 @@
 package ch.javasoft.decimal.arithmetic;
 
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.CEILING;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.DOWN;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.FLOOR;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.HALF_DOWN;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.HALF_EVEN;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.HALF_UP;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.UNNECESSARY;
-import static ch.javasoft.decimal.arithmetic.DecimalRounding.UP;
+import static ch.javasoft.decimal.truncate.DecimalRounding.CEILING;
+import static ch.javasoft.decimal.truncate.DecimalRounding.DOWN;
+import static ch.javasoft.decimal.truncate.DecimalRounding.FLOOR;
+import static ch.javasoft.decimal.truncate.DecimalRounding.HALF_DOWN;
+import static ch.javasoft.decimal.truncate.DecimalRounding.HALF_EVEN;
+import static ch.javasoft.decimal.truncate.DecimalRounding.HALF_UP;
+import static ch.javasoft.decimal.truncate.DecimalRounding.UNNECESSARY;
+import static ch.javasoft.decimal.truncate.DecimalRounding.UP;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -20,6 +20,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * Unit test for {@link DecimalRounding}
@@ -130,9 +132,9 @@ public class DecimalRoundingTest {
 		if (Double.isNaN(expected)) {
 			thrown.expect(ArithmeticException.class);
 			thrown.expectMessage("necessary");
-			rounding.calculateRoundingIncrement(Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
+			Rounding.calculateRoundingIncrement(rounding, Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
 		} else {
-			final int increment = rounding.calculateRoundingIncrement(Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
+			final int increment = Rounding.calculateRoundingIncrement(rounding, Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
 			final double actual = ((long)input) + increment;
 			assertEquals("wrong rounding for " + input + " " + rounding, expected, actual, 0);
 		}

@@ -1,9 +1,10 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.mutable;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.base.AbstractMutableDecimal;
+import ch.javasoft.decimal.immutable.Decimal17f;
 import ch.javasoft.decimal.scale.Scale17f;
 
 @SuppressWarnings("serial")
@@ -41,16 +42,6 @@ public class MutableDecimal17f extends
 	}
 
 	public MutableDecimal17f(double value, RoundingMode roundingMode) {
-		this();
-		add(value, roundingMode);
-	}
-
-	public MutableDecimal17f(BigInteger value) {
-		this();
-		add(value);
-	}
-
-	public MutableDecimal17f(BigDecimal value, RoundingMode roundingMode) {
 		this();
 		add(value, roundingMode);
 	}
@@ -98,6 +89,11 @@ public class MutableDecimal17f extends
 	@Override
 	protected MutableDecimal17f create(long unscaled) {
 		return new MutableDecimal17f(unscaled, Decimal17f.SCALE);
+	}
+	
+	@Override
+	protected MutableDecimal17f[] createArray(int length) {
+		return new MutableDecimal17f[length];
 	}
 
 	@Override

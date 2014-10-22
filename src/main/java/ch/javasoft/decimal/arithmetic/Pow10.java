@@ -3,11 +3,13 @@ package ch.javasoft.decimal.arithmetic;
 import ch.javasoft.decimal.scale.Scale18f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.DecimalRounding;
+import ch.javasoft.decimal.truncate.TruncatedPart;
 
 /**
  * Calculates multiplications and divisions with powers of 10.
  */
-class Pow10 {
+final class Pow10 {
 	
 	public static long multiplyByPowerOf10(long uDecimal, int n) {
 		if (uDecimal == 0 | n == 0) {
@@ -115,7 +117,7 @@ class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = rounding.calculateRoundingIncrement(truncated, rem, scaleMetrics.getScaleFactor());
+				final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
 			}
 			//truncated part is always larger 0 (see first if) 
@@ -133,7 +135,7 @@ class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = rounding.calculateRoundingIncrement(truncated, rem, scaleMetrics.getScaleFactor());
+				final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
 			}
 			//truncated part is always larger 0 (see first if) 
@@ -177,9 +179,9 @@ class Pow10 {
 			final long truncatedValue = scaler.divideByScaleFactor(uDecimalDividend);
 			final long truncatedDigits = uDecimalDividend - scaler.multiplyByScaleFactor(truncatedValue);
 			if (pow10divisorIsPositive) {
-				return truncatedValue + rounding.calculateRoundingIncrementForDivision(truncatedValue, truncatedDigits, scaler.getScaleFactor());
+				return truncatedValue + Rounding.calculateRoundingIncrementForDivision(rounding, truncatedValue, truncatedDigits, scaler.getScaleFactor());
 			}
-			return -truncatedValue + rounding.calculateRoundingIncrementForDivision(-truncatedValue, -truncatedDigits, scaler.getScaleFactor());
+			return -truncatedValue + Rounding.calculateRoundingIncrementForDivision(rounding, -truncatedValue, -truncatedDigits, scaler.getScaleFactor());
 
 		} else {
 			//multiply

@@ -8,12 +8,13 @@ import java.util.EnumMap;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
-import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.arithmetic.CheckedScaleNfTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.DecimalRounding;
 import ch.javasoft.decimal.arithmetic.UncheckedScaleNfRoundingArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScaleNfTruncatingArithmetics;
+import ch.javasoft.decimal.truncate.DecimalRounding;
+import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * <tt>ScaleMetrics</tt> is associated with {@link Decimal} numbers and
@@ -128,7 +129,7 @@ abstract public class AbstractScale implements ScaleMetrics {
 
 	@Override
 	public DecimalArithmetics getDefaultArithmetics() {
-		return getArithmetics(RoundingMode.HALF_UP);
+		return getArithmetics(TruncationPolicy.DEFAULT);
 	}
 
 	@Override
@@ -142,8 +143,10 @@ abstract public class AbstractScale implements ScaleMetrics {
 	}
 
 	@Override
-	public DecimalArithmetics getCheckedArithmetics(RoundingMode roundingMode) {
-		return roundingModeToCheckedArithmetics.get(roundingMode);
+	public DecimalArithmetics getArithmetics(TruncationPolicy truncationPolicy) {
+		final OverflowMode overflow = truncationPolicy.getOverflowMode();
+		final RoundingMode rounding = truncationPolicy.getRoundingMode();
+		return overflow == OverflowMode.UNCHECKED ? roundingModeToArithmetics.get(rounding) : roundingModeToCheckedArithmetics.get(rounding);
 	}
 
 	@Override

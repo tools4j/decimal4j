@@ -3,8 +3,9 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.DecimalRounding;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * Arithmetic implementation for rounding strategies. For
@@ -147,7 +148,7 @@ public class UncheckedScaleNfRoundingArithmetics extends
 				fractionDigits /= 10;
 			}
 			//rounding
-			fractionDigits += rounding.calculateRoundingIncrement(1, fractionDigits, lastDigit, zeroAfterLastDigit);
+			fractionDigits += Rounding.calculateRoundingIncrement(rounding, 1, fractionDigits, lastDigit, zeroAfterLastDigit);
 			fValue = fractionDigits;
 		} else {
 			fValue = 0;
@@ -161,7 +162,7 @@ public class UncheckedScaleNfRoundingArithmetics extends
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long reminder = scaleMetrics.moduloByScaleFactor(uDecimal);
-		return truncated + rounding.calculateRoundingIncrement(truncated, reminder, one());
+		return truncated + Rounding.calculateRoundingIncrement(rounding, truncated, reminder, one());
 	}
 
 	@Override

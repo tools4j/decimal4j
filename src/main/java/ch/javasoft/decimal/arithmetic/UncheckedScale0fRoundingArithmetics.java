@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * The special case for longs with {@link Scale0f} and rounding.
@@ -48,7 +49,7 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 		if (uDecimal == -1) {
 			return -1;
 		}
-		return rounding.calculateRoundingIncrementForDivision(0, 1, uDecimal);
+		return Rounding.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 /**
  * Helper class for division.
  */
-class Unsigned {
+final class Unsigned {
 
 	/**
 	 * A (self-inverse) bijection which converts the ordering on unsigned longs

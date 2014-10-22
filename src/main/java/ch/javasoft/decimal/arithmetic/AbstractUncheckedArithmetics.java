@@ -3,7 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import ch.javasoft.decimal.OverflowMode;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * Base class for arithmetic implementations without overflow checking, that is,

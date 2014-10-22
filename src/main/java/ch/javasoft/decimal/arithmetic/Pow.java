@@ -3,7 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 /**
  * Calculates powers of a decimal.
  */
-class Pow {
+final class Pow {
 
 	/**
 	 * Constant for {@code floor(sqrt(Long.MAX_VALUE))}

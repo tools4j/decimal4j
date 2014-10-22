@@ -1,10 +1,10 @@
 package ch.javasoft.decimal;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Interface implemented by mutable {@link Decimal} classes of different scales.
@@ -16,7 +16,8 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * @param <D>
  *            the concrete class implementing this mutable decimal
  */
-public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal<S, D>> extends Decimal<S> {
+public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal<S, D>>
+		extends Decimal<S> {
 
 	/**
 	 * Creates a new immutable value representing the same decimal as
@@ -87,9 +88,34 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @param value
 	 *            value to be set
+	 * @param truncationPolicy
+	 *            the truncation policy to apply if the value argument needs to
+	 *            be truncated when converted to the appropriate scale
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	D set(Decimal<?> value, TruncationPolicy truncationPolicy);
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
 	D set(long value);
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param overflowMode
+	 *            the mode to apply if an overflow occurs
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	D set(long value, OverflowMode overflowMode);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -120,51 +146,37 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @param value
 	 *            value to be set
+	 * @param truncationPolicy
+	 *            the truncation policy to apply if the value argument needs to
+	 *            be truncated when converted into a decimal number
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(BigInteger value);
-
-	/**
-	 * Sets {@code this} decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}.
-	 * 
-	 * @param value
-	 *            value to be set
-	 * @return {@code this} decimal after assigning it the given {@code value}
-	 */
-	D set(BigDecimal value);
-
-	/**
-	 * Sets {@code this} decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}.
-	 * 
-	 * @param value
-	 *            value to be set
-	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a decimal number
-	 * @return {@code this} decimal after assigning it the given {@code value}
-	 */
-	D set(BigDecimal value, RoundingMode roundingMode);
+	D set(double value, TruncationPolicy truncationPolicy);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
 	 * given {@code scale} and returns {@code this} now representing
-	 * <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 * <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>. Note that
+	 * the conversion may involve rounding if the specified {@code scale} is
+	 * larger than {@link #getScale()}; the default rounding mode is applied in
+	 * this case.
 	 * 
 	 * @param unscaledValue
 	 *            value to be set
 	 * @param scale
 	 *            the scale used for {@code unscaledValue}
 	 * @return {@code this} decimal after assigning
-	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 *         <code>this = round(unscaledValue * 10<sup>-scale)</sup></code>.
 	 */
 	D setUnscaled(long unscaledValue, int scale);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
 	 * given {@code scale} and returns {@code this} now representing
-	 * <code>this = unscaledValue * 10<sup>-scale</sup></code>.
+	 * <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>. Note that
+	 * the conversion may involve rounding if the specified {@code scale} is
+	 * larger than {@link #getScale()}; the specified {@code roundingMode} is
+	 * applied in this case.
 	 * 
 	 * @param unscaledValue
 	 *            value to be set
@@ -172,11 +184,31 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            the scale used for {@code unscaledValue}
 	 * @param roundingMode
 	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a decimal number
+	 *            truncated when converted to this decimal's scale
+	 * @return {@code this} decimal after assigning
+	 *         <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>.
+	 */
+	D setUnscaled(long unscaledValue, int scale, RoundingMode roundingMode);
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
+	 * given {@code scale} and returns {@code this} now representing
+	 * <code>this = unscaledValue * 10<sup>-scale</sup></code>. Note that the
+	 * conversion may involve rounding if the specified {@code scale} is larger
+	 * than {@link #getScale()} or lead to an overflow. The specified
+	 * {@code truncationPolicy} is applied in such cases.
+	 * 
+	 * @param unscaledValue
+	 *            value to be set
+	 * @param scale
+	 *            the scale used for {@code unscaledValue}
+	 * @param truncationPolicy
+	 *            the truncation policy to apply if the value argument needs to
+	 *            be truncated when converted to this decimal's scale
 	 * @return {@code this} decimal after assigning
 	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
 	 */
-	D setUnscaled(long unscaledValue, int scale, RoundingMode roundingMode);
+	D setUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} and

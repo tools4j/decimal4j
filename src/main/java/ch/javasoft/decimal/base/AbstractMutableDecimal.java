@@ -1,11 +1,13 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.base;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Base class for mutable {@link Decimal} classes of different scales.
@@ -73,6 +75,14 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
+	public MutableDecimal<?, ?> scale(int scale, TruncationPolicy truncationPolicy) {
+		if (scale == getScale()) {
+			return this;
+		}
+		return Scales.valueOf(scale).createMutable(0).set(this, truncationPolicy);
+	}
+
+	@Override
 	@SuppressWarnings("hiding")
 	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?>> scale(S scaleMetrics, RoundingMode roundingMode) {
 		final MutableDecimal<?, ?> value;
@@ -88,6 +98,21 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
+	@SuppressWarnings("hiding")
+	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?>> scale(S scaleMetrics, TruncationPolicy truncationPolicy) {
+		final MutableDecimal<?, ?> value;
+		if (scaleMetrics == getScaleMetrics()) {
+			value = this;
+		} else {
+			value = scaleMetrics.createMutable(0).set(this, truncationPolicy);
+		}
+		@SuppressWarnings("unchecked")
+		//safe: we know it is the same scale metrics
+		final MutableDecimal<S, ? extends MutableDecimal<S, ?>> result = (MutableDecimal<S, ? extends MutableDecimal<S, ?>>) value;
+		return result;
+	}
+
+	@Override
 	public D setZero() {
 		unscaled = 0;
 		return self();
@@ -95,13 +120,13 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 
 	@Override
 	public D setOne() {
-		unscaled = unscaledOne();
+		unscaled = getScaleMetrics().getScaleFactor();
 		return self();
 	}
 
 	@Override
 	public D setMinusOne() {
-		unscaled = -unscaledOne();
+		unscaled = -getScaleMetrics().getScaleFactor();
 		return self();
 	}
 
@@ -122,8 +147,19 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
+	public D set(Decimal<?> value, TruncationPolicy truncationPolicy) {
+		return setUnscaled(value.unscaledValue(), value.getScale(), truncationPolicy);
+	}
+
+	@Override
 	public D set(long value) {
 		unscaled = getDefaultArithmetics().fromLong(value);
+		return self();
+	}
+
+	@Override
+	public D set(long value, OverflowMode overflowMode) {
+		unscaled = getArithmeticsFor(overflowMode).fromLong(value);
 		return self();
 	}
 
@@ -140,20 +176,8 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
-	public D set(BigInteger value) {
-		unscaled = getDefaultArithmetics().fromBigInteger(value);
-		return self();
-	}
-
-	@Override
-	public D set(BigDecimal value) {
-		unscaled = getDefaultArithmetics().fromBigDecimal(value);
-		return self();
-	}
-
-	@Override
-	public D set(BigDecimal value, RoundingMode roundingMode) {
-		unscaled = getArithmeticsFor(roundingMode).fromBigDecimal(value);
+	public D set(double value, TruncationPolicy truncationPolicy) {
+		unscaled = getArithmeticsFor(truncationPolicy).fromDouble(value);
 		return self();
 	}
 
@@ -175,4 +199,9 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		return self();
 	}
 
+	@Override
+	public D setUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
+		unscaled = getArithmeticsFor(truncationPolicy).fromUnscaled(unscaledValue, scale);
+		return self();
+	}
 }

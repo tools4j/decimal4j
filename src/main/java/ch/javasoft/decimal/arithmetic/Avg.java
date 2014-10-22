@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 /**
  * Computes the average of two numbers, that is, {@code (a+b)/2}.
  */
-class Avg {
+final class Avg {
 
 	public static long avg(long a, long b) {
 		final long xor = a ^ b;

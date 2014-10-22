@@ -3,11 +3,12 @@ package ch.javasoft.decimal.arithmetic;
 import ch.javasoft.decimal.scale.Scale9f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * Computes different variants of multiplications.
  */
-class Mul {
+final class Mul {
 
 	/**
 	 * Calculates the multiple {@code uDecimal1 * uDecimal2 / scaleFactor}
@@ -88,7 +89,7 @@ class Mul {
 			final long f1xf2d = scaleMetrics.divideByScaleFactor(f1xf2);
 			final long f1xf2r = f1xf2 - scaleMetrics.multiplyByScaleFactor(f1xf2d);
 			final long unrounded = scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2d;
-			return unrounded + rounding.calculateRoundingIncrement(unrounded, f1xf2r, scaleMetrics.getScaleFactor());
+			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, f1xf2r, scaleMetrics.getScaleFactor());
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
@@ -110,7 +111,7 @@ class Mul {
 			final long sumOfLowsHalfBit = ((h1xl2 ^ h2xl1 ^ l1xl2d) & 0x1); //lost bit
 			final long unrounded = scaleDiff18.multiplyByScaleFactor(h1 * h2) + sumOfLowsHalfDiv;
 			final long remainder = scale9f.multiplyByScaleFactor((sumOfLowsHalfRem << 1) + sumOfLowsHalfBit) + l1xl2r;
-			return unrounded + rounding.calculateRoundingIncrement(unrounded, remainder, scaleMetrics.getScaleFactor());
+			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
 
@@ -168,7 +169,7 @@ class Mul {
 			final long fxfd = scaleMetrics.divideByScaleFactor(fxf);
 			final long fxfr = fxf - scaleMetrics.multiplyByScaleFactor(fxfd);
 			final long unrounded = scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f) << 1) + fxfd;
-			return unrounded + rounding.calculateRoundingIncrement(unrounded, fxfr, scaleMetrics.getScaleFactor());
+			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, fxfr, scaleMetrics.getScaleFactor());
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
@@ -186,7 +187,7 @@ class Mul {
 			final long sumOfLowsHalfBit = (lxld & 0x1); //lost bit
 			final long unrounded = scaleDiff18.multiplyByScaleFactor(h * h) + sumOfLowsHalfDiv;
 			final long remainder = scale9f.multiplyByScaleFactor((sumOfLowsHalfRem << 1) + sumOfLowsHalfBit) + lxlr;
-			return unrounded + rounding.calculateRoundingIncrement(unrounded, remainder, scaleMetrics.getScaleFactor());
+			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
 

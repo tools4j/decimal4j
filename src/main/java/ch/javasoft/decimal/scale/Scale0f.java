@@ -3,13 +3,13 @@ package ch.javasoft.decimal.scale;
 import java.math.RoundingMode;
 import java.util.EnumMap;
 
-import ch.javasoft.decimal.Decimal0f;
-import ch.javasoft.decimal.MutableDecimal0f;
 import ch.javasoft.decimal.arithmetic.CheckedScale0fTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.DecimalRounding;
 import ch.javasoft.decimal.arithmetic.UncheckedScale0fRoundingArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScale0fTruncatingArithmetics;
+import ch.javasoft.decimal.immutable.Decimal0f;
+import ch.javasoft.decimal.mutable.MutableDecimal0f;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * Scale class for decimals with 0 {@link #getScale() fraction digits} (aka

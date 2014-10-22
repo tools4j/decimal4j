@@ -7,8 +7,8 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
-import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * <tt>ScaleMetrics</tt> is associated with {@link Decimal} numbers and
@@ -194,14 +194,12 @@ public interface ScaleMetrics {
 	DecimalArithmetics getArithmetics(RoundingMode roundingMode);
 
 	/**
-	 * Returns the checked arithmetics for this scale that performs all
-	 * operations with the specified {@code roundingMode}.
+	 * Returns the arithmetics for this scale that performs all
+	 * operations with the specified {@code truncationPolicy}.
 	 *
-	 * @param roundingMode
-	 *            the rounding mode used by the returned arithmetics
-	 * @return checked arithmetics for this scale with specified rounding mode
-	 * @see OverflowMode#CHECKED
+	 * @param truncationPolicy
+	 *            the truncation policy used by the returned arithmetics
+	 * @return arithmetics for this scale with specified truncation policy
 	 */
-	DecimalArithmetics getCheckedArithmetics(RoundingMode roundingMode);
-
+	DecimalArithmetics getArithmetics(TruncationPolicy truncationPolicy);
 }

@@ -7,8 +7,8 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
-import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * <tt>DecimalArithmetics</tt> defines the basic native operations for

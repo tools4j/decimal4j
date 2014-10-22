@@ -7,6 +7,8 @@ import java.math.RoundingMode;
 
 import org.junit.Test;
 
+import ch.javasoft.decimal.truncate.DecimalRounding;
+
 /**
  * Unit test for {@link DecimalRounding#valueOf(RoundingMode)}
  */

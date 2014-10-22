@@ -1,7 +1,7 @@
 package ch.javasoft.decimal.scale;
 
-import ch.javasoft.decimal.Decimal17f;
-import ch.javasoft.decimal.MutableDecimal17f;
+import ch.javasoft.decimal.immutable.Decimal17f;
+import ch.javasoft.decimal.mutable.MutableDecimal17f;
 
 /**
  * Scale class for decimals with 17 {@link #getScale() fraction digit} and

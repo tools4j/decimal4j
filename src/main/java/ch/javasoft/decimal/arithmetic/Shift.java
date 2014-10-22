@@ -1,9 +1,13 @@
 package ch.javasoft.decimal.arithmetic;
 
+import ch.javasoft.decimal.truncate.DecimalRounding;
+import ch.javasoft.decimal.truncate.TruncatedPart;
+
+
 /**
  * Calculates left and right shifts.
  */
-class Shift {
+final class Shift {
 
 	public static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
@@ -27,7 +31,7 @@ class Shift {
 			if (positions < 63) {
 				final long truncated = uDecimal >> positions;
 				final long remainder = uDecimal - (truncated << positions);
-				final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(remainder), 1L << positions);
+				final TruncatedPart truncatedPart = Rounding.truncatedPartFor(Math.abs(remainder), 1L << positions);
 				return truncated + rounding.calculateRoundingIncrement(Long.signum(uDecimal), truncated, truncatedPart);
 			}
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);

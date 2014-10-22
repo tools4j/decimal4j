@@ -1,7 +1,7 @@
 package ch.javasoft.decimal.scale;
 
-import ch.javasoft.decimal.Decimal6f;
-import ch.javasoft.decimal.MutableDecimal6f;
+import ch.javasoft.decimal.immutable.Decimal6f;
+import ch.javasoft.decimal.mutable.MutableDecimal6f;
 
 /**
  * Scale class for decimals with 6 {@link #getScale() fraction digit} and

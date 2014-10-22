@@ -1,7 +1,7 @@
 package ch.javasoft.decimal.arithmetic;
 
-import ch.javasoft.decimal.OverflowMode;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * Base class for arithmetic implementations implementing those functions where

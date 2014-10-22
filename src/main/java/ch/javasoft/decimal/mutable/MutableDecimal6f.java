@@ -1,9 +1,10 @@
-package ch.javasoft.decimal;
+package ch.javasoft.decimal.mutable;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.base.AbstractMutableDecimal;
+import ch.javasoft.decimal.immutable.Decimal6f;
 import ch.javasoft.decimal.scale.Scale6f;
 
 @SuppressWarnings("serial")
@@ -40,16 +41,6 @@ public class MutableDecimal6f extends
 	}
 
 	public MutableDecimal6f(double value, RoundingMode roundingMode) {
-		this();
-		add(value, roundingMode);
-	}
-
-	public MutableDecimal6f(BigInteger value) {
-		this();
-		add(value);
-	}
-
-	public MutableDecimal6f(BigDecimal value, RoundingMode roundingMode) {
 		this();
 		add(value, roundingMode);
 	}
@@ -96,6 +87,11 @@ public class MutableDecimal6f extends
 	@Override
 	protected MutableDecimal6f create(long unscaled) {
 		return new MutableDecimal6f(unscaled, Decimal6f.SCALE);
+	}
+	
+	@Override
+	protected MutableDecimal6f[] createArray(int length) {
+		return new MutableDecimal6f[length];
 	}
 
 	@Override

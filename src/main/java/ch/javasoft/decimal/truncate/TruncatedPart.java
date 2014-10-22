@@ -1,10 +1,11 @@
-package ch.javasoft.decimal.arithmetic;
+package ch.javasoft.decimal.truncate;
+
 
 /**
  * Represents the truncated part for instance after division. It is passed to
  * the rounding methods in {@link DecimalRounding}
  */
-enum TruncatedPart {
+public enum TruncatedPart {
 	/**
 	 * Truncated part {@code t == 0}.
 	 */
@@ -131,35 +132,6 @@ enum TruncatedPart {
 	abstract public boolean isGreaterThanHalf();
 
 	/**
-	 * Returns a truncated part constant given a non-negative remainder
-	 * resulting from a division by the given non-negative divisor.
-	 * 
-	 * @param nonNegativeRemainder
-	 *            the remainder part, not negative and 
-	 *            {@code nonNegativeRemainder < nonNegativeDivisor}
-	 * @param nonNegativeDivisor
-	 *            the divisor, not negative or LONG.MIN_VALUE --- the latter
-	 *            equal to {@code abs(Long.MIN_VALUE)}
-	 * @return the truncated part constant equivalent to the given arguments
-	 */
-	static TruncatedPart valueOf(long nonNegativeRemainder, long nonNegativeDivisor) {
-		if (nonNegativeRemainder == 0) {
-			return ZERO;
-		}
-		final long halfNonNegativeDivisor = Math.abs(nonNegativeDivisor >>> 1);
-		//NOTE: abs because it could have been LONG.MIN_VALUE
-		//NOTE: halfNonNegativeDivisor cannot be zero, because if it was 1 then nonNegativeRemainder was 0
-		
-		if (halfNonNegativeDivisor < nonNegativeRemainder) {
-			return GREATER_THAN_HALF;
-		}
-		if ((nonNegativeDivisor & 0x1) == 0 & halfNonNegativeDivisor == nonNegativeRemainder) {
-			return EQUAL_TO_HALF;
-		}
-		return LESS_THAN_HALF_BUT_NOT_ZERO;
-	}
-
-	/**
 	 * Returns a truncated part constant given the first truncated digit and a
 	 * boolean indicating whether there is non-zero digits after that.
 	 * 
@@ -188,4 +160,5 @@ enum TruncatedPart {
 		}
 		return GREATER_THAN_HALF;
 	}
+
 }

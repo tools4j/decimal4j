@@ -1,8 +1,10 @@
 package ch.javasoft.decimal.arithmetic;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.DecimalRounding;
+import ch.javasoft.decimal.truncate.TruncatedPart;
 
-class Sqrt {
+final class Sqrt {
 	/**
 	 * This mask is used to obtain the value of an int as if it were unsigned.
 	 */

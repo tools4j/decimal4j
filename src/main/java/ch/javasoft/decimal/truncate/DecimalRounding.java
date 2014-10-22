@@ -1,4 +1,4 @@
-package ch.javasoft.decimal.arithmetic;
+package ch.javasoft.decimal.truncate;
 
 import java.math.RoundingMode;
 import java.util.Collections;
@@ -177,9 +177,13 @@ public enum DecimalRounding {
 	 */
 	private DecimalRounding(RoundingMode roundingMode) {
 		this.roundingMode = roundingMode;
+		this.uncheckedPolicy = new DefaultTruncationPolicy(OverflowMode.UNCHECKED, this);
+		this.checkedPolicy = new DefaultTruncationPolicy(OverflowMode.CHECKED, this);
 	}
 
 	private final RoundingMode roundingMode;
+	private final DefaultTruncationPolicy uncheckedPolicy;
+	private final DefaultTruncationPolicy checkedPolicy;
 
 	/**
 	 * Returns the {@link RoundingMode} associated with this decimal rounding
@@ -189,6 +193,28 @@ public enum DecimalRounding {
 	 */
 	public RoundingMode getRoundingMode() {
 		return roundingMode;
+	}
+
+	/**
+	 * Returns the truncation policy defined by {@link #getRoundingMode()} and
+	 * {@link OverflowMode#CHECKED}.
+	 * 
+	 * @return the truncation policy defined by this decimal rounding and the
+	 *         checked overflow mode
+	 */
+	public TruncationPolicy getCheckedPolicy() {
+		return checkedPolicy;
+	}
+
+	/**
+	 * Returns the truncation policy defined by {@link #getRoundingMode()} and
+	 * {@link OverflowMode#UNCHECKED}.
+	 * 
+	 * @return the truncation policy defined by this decimal rounding and the
+	 *         unchecked overflow mode
+	 */
+	public TruncationPolicy getUncheckedPolicy() {
+		return uncheckedPolicy;
 	}
 
 	/**
@@ -207,74 +233,6 @@ public enum DecimalRounding {
 	 */
 	abstract public int calculateRoundingIncrement(int sign, long truncatedValue, TruncatedPart truncatedPart);
 
-	/**
-	 * Returns the rounding increment appropriate for this decimal rounding. The
-	 * returned value is one of -1, 0 or 1.
-	 * 
-	 * @param sign
-	 *            the sign of the total value, either +1 or -1; determines the
-	 *            result value if rounded
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param firstTruncatedDigit
-	 *            the first truncated digit, must be in {@code [0, 1, ..., 9]}
-	 * @param zeroAfterFirstTruncatedDigit
-	 *            true if all truncated digits after the first truncated digit
-	 *            are zero, and false otherwise
-	 * @return the value to add to {@code truncatedValue} to get the rounded
-	 *         result, one of -1, 0 or 1
-	 */
-	public int calculateRoundingIncrement(int sign, long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
-		return calculateRoundingIncrement(sign, truncatedValue, TruncatedPart.valueOf(firstTruncatedDigit, zeroAfterFirstTruncatedDigit));
-	}
-
-	/**
-	 * Returns the rounding increment appropriate for this decimal rounding
-	 * given the remaining truncated digits truncated by modulo one. The
-	 * returned value is one of -1, 0 or 1.
-	 * 
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param truncatedDigits
-	 *            the truncated part of a double, must be {@code >-one} and
-	 *            {@code <one}
-	 * @param one
-	 *            the value representing 1 which is {@code 10^scale}, must be
-	 *            {@code >= 10}
-	 * @return the value to add to {@code truncatedValue} to get the rounded
-	 *         result, one of -1, 0 or 1
-	 */
-	int calculateRoundingIncrement(long truncatedValue, long truncatedDigits, long one) {
-		if (truncatedDigits == 0) {
-			return 0;
-		}
-		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(truncatedDigits), one);
-		return calculateRoundingIncrement(Long.signum(truncatedDigits), truncatedValue, truncatedPart);
-	}
-
-	/**
-	 * Returns the rounding increment appropriate for this decimal rounding
-	 * given the remaining truncated digits truncated by a given divisor. The
-	 * returned value is one of -1, 0 or 1.
-	 * 
-	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
-	 * @param truncatedDigits
-	 *            the truncated part, it most hold that
-	 *            {@code abs(truncatedDigits) < abs(divisor)}
-	 * @param divisor
-	 *            the divisor that led to the truncated digits
-	 * @return the value to add to {@code truncatedValue} to get the rounded
-	 *         result, one of -1, 0 or 1
-	 */
-	public int calculateRoundingIncrementForDivision(long truncatedValue, long truncatedDigits, long divisor) {
-		if (truncatedDigits == 0) {
-			return 0;
-		}
-		final TruncatedPart truncatedPart = TruncatedPart.valueOf(Math.abs(truncatedDigits), Math.abs(divisor));
-		return calculateRoundingIncrement(Long.signum(truncatedDigits ^ divisor), truncatedValue, truncatedPart);
-	}
-
 	private static final DecimalRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();
 
 	/**
@@ -289,10 +247,9 @@ public enum DecimalRounding {
 	}
 
 	private static DecimalRounding[] sortByRoundingModeOrdinal() {
-		final RoundingMode[] modes = RoundingMode.values();
-		final DecimalRounding[] sorted = new DecimalRounding[modes.length];
-		for (int i = 0; i < modes.length; i++) {
-			sorted[modes[i].ordinal()] = valueOf(modes[i].name());
+		final DecimalRounding[] sorted = new DecimalRounding[VALUES.size()];
+		for (final DecimalRounding dr : VALUES) {
+			sorted[dr.getRoundingMode().ordinal()] = dr;
 		}
 		return sorted;
 	}

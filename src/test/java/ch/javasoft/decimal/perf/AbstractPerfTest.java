@@ -253,7 +253,7 @@ abstract public class AbstractPerfTest {
 	private <S extends ScaleMetrics> Decimal<S>[] toDecimal(MutableDecimal<S, ?> mutable, BigDecimal[] source, Decimal<S>[] target) {
 		final int n = Math.min(source.length, target.length);
 		for (int i = 0; i < n; i++) {
-			target[i] = mutable.set(source[i]).toImmutableDecimal();
+			target[i] = mutable.setUnscaled(source[i].unscaledValue().longValueExact()).toImmutableDecimal();
 		}
 		return target;
 	}

@@ -1,12 +1,10 @@
 package ch.javasoft.decimal;
 
-import java.math.BigInteger;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import ch.javasoft.decimal.Decimal6f;
-import ch.javasoft.decimal.MutableDecimal6f;
+import ch.javasoft.decimal.immutable.Decimal6f;
+import ch.javasoft.decimal.mutable.MutableDecimal6f;
 
 /**
  * Unit test for {@link Decimal6f} and {@link MutableDecimal6f}
@@ -15,8 +13,8 @@ public class Decimal6fTest {
 	
 	@Test
 	public void testMutableCalculationChain() {
-		Assert.assertEquals(Decimal6f.valueOf(20), new MutableDecimal6f().add(7).multiply(3.0).subtract(BigInteger.ONE));
-		Assert.assertEquals(Decimal6f.valueOf(20), new MutableDecimal6f().add(7).multiply(3.0).subtract(BigInteger.ONE).toImmutableDecimal());
+		Assert.assertEquals(Decimal6f.valueOf(20), new MutableDecimal6f().add(7).multiply(3.0).subtract(1L));
+		Assert.assertEquals(Decimal6f.valueOf(20), new MutableDecimal6f().add(7).multiply(3.0).subtract(1L).toImmutableDecimal());
 	}
 	@Test
 	public void testCalculateToGetOneMillionth() {
