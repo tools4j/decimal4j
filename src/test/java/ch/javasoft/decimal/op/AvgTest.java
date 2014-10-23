@@ -48,7 +48,7 @@ public class AvgTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardRounding() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
 			return a.avg(b);
 		} else {
 			return a.avg(b, getRoundingMode());

@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Base class for all arithmetic implementations. Only operations are
@@ -22,6 +23,11 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	@Override
 	public long one() {
 		return getScaleMetrics().getScaleFactor();
+	}
+	
+	@Override
+	public TruncationPolicy getTruncationPolicy() {
+		return getOverflowMode().getTruncationPolicyFor(getRoundingMode());
 	}
 
 	@Override

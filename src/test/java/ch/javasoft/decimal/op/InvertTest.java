@@ -46,7 +46,7 @@ public class InvertTest extends AbstractOneAryDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardRounding() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
 			return operand.invert();
 		} else {
 			return operand.invert(getRoundingMode());

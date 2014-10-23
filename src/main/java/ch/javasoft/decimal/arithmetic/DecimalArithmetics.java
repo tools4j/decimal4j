@@ -9,6 +9,7 @@ import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * <tt>DecimalArithmetics</tt> defines the basic native operations for
@@ -72,6 +73,17 @@ public interface DecimalArithmetics {
 	 *         {@code DecimalArithmetics} object if an overflow occurs
 	 */
 	OverflowMode getOverflowMode();
+
+	/**
+	 * Returns the <i>truncation policy</i> defining how to handle truncation
+	 * due to overflow or rounding. The {@code TruncationPolicy} is defined by
+	 * the {@link #getOverflowMode() overflow mode} and the
+	 * {@link #getRoundingMode() rounding mode}.
+	 * 
+	 * @return the truncation policy defining how this
+	 *         {@code DecimalArithmetics} handles truncation
+	 */
+	TruncationPolicy getTruncationPolicy();
 
 	/**
 	 * Returns the unscaled decimal for the decimal value {@code 1}. One is the

@@ -86,7 +86,7 @@ public class SqrtTest extends AbstractOperandTest {
 	}
 
 	private <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardRounding() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
 			return operand.sqrt();
 		} else {
 			return operand.sqrt(getRoundingMode());

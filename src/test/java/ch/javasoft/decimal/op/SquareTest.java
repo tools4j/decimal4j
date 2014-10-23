@@ -46,7 +46,7 @@ public class SquareTest extends AbstractOneAryDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardRounding() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
 			return operand.square();
 		} else {
 			return operand.square(getRoundingMode());

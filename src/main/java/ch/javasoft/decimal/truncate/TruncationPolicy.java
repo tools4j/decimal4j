@@ -1,6 +1,8 @@
 package ch.javasoft.decimal.truncate;
 
 import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Policy defining how to handle truncation due to overflow or rounding. A
@@ -8,12 +10,13 @@ import java.math.RoundingMode;
  * {@link #getOverflowMode overflow mode} and {@link #getRoundingMode() rounding
  * mode}.
  * <p>
- * Truncation policies can be accessed through one of the following methods:
+ * Truncation policies can be accessed as follows:
  * <ul>
  * <li>{@link #DEFAULT}</li>
- * <li>{@link OverflowMode#getPolicyFor(RoundingMode)}</li>
- * <li>{@link DecimalRounding#getUncheckedPolicy()}</li>
- * <li>{@link DecimalRounding#getCheckedPolicy()}</li>
+ * <li>{@link #VALUES}</li>
+ * <li>{@link OverflowMode#getTruncationPolicyFor(RoundingMode)}</li>
+ * <li>{@link DecimalRounding#getUncheckedTruncationPolicy()}</li>
+ * <li>{@link DecimalRounding#getCheckedTruncationPolicy()}</li>
  * </ul>
  */
 public interface TruncationPolicy {
@@ -21,7 +24,12 @@ public interface TruncationPolicy {
 	 * Default truncation policy using {@link OverflowMode#UNCHECKED} and
 	 * {@link RoundingMode#HALF_UP}.
 	 */
-	TruncationPolicy DEFAULT = DecimalRounding.HALF_UP.getUncheckedPolicy();
+	TruncationPolicy DEFAULT = DecimalRounding.HALF_UP.getUncheckedTruncationPolicy();
+	
+	/**
+	 * Unmodifiable set with all possible truncation policies.
+	 */
+	Set<TruncationPolicy> VALUES = Collections.unmodifiableSet(DefaultTruncationPolicy.values());
 
 	/**
 	 * Specifies the overflow behavior for numerical operations causing an

@@ -17,6 +17,8 @@ import ch.javasoft.decimal.scale.Scale0f;
 import ch.javasoft.decimal.scale.Scale17f;
 import ch.javasoft.decimal.scale.Scale6f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Base class for tests of operands with random and special values. The class
@@ -53,16 +55,25 @@ abstract public class AbstractOperandTest {
 		return arithmetics.getScale();
 	}
 
+	protected TruncationPolicy getTruncationPolicy() {
+		return arithmetics.getTruncationPolicy();
+	}
 	protected RoundingMode getRoundingMode() {
 		return arithmetics.getRoundingMode();
 	}
+	protected OverflowMode getOverflowMode() {
+		return arithmetics.getOverflowMode();
+	}
 
-	protected boolean isStandardRounding() {
-		return arithmetics.getRoundingMode() == RoundingMode.HALF_UP;
+	protected boolean isStandardTruncationPolicy() {
+		return arithmetics.getRoundingMode() == TruncationPolicy.DEFAULT.getRoundingMode() && arithmetics.getOverflowMode() == TruncationPolicy.DEFAULT.getOverflowMode();
 	}
 
 	protected boolean isRoundingDown() {
 		return arithmetics.getRoundingMode() == RoundingMode.DOWN;
+	}
+	protected boolean isUnchecked() {
+		return !arithmetics.getOverflowMode().isChecked();
 	}
 
 	@Test

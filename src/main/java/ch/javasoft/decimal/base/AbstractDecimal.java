@@ -86,7 +86,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	protected DecimalArithmetics getArithmeticsFor(OverflowMode overflowMode) {
-		return getScaleMetrics().getArithmetics(overflowMode.getPolicyFor(RoundingMode.UNNECESSARY));
+		return getScaleMetrics().getArithmetics(overflowMode.getTruncationPolicyFor(RoundingMode.UNNECESSARY));
 	}
 
 	/* -------------------- Number and simular conversion ------------------- */

@@ -10,11 +10,21 @@ public enum OverflowMode {
 	 * Operations causing an overflow silently return the truncated result (the
 	 * low order bytes of the extended result); no exception is thrown.
 	 */
-	UNCHECKED,
+	UNCHECKED {
+		@Override
+		public TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode) {
+			return DecimalRounding.valueOf(roundingMode).getUncheckedTruncationPolicy();
+		}
+	},
 	/**
 	 * Operations causing an overflow throw an {@link ArithmeticException}.
 	 */
-	CHECKED;
+	CHECKED {
+		@Override
+		public TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode) {
+			return DecimalRounding.valueOf(roundingMode).getCheckedTruncationPolicy();
+		}
+	};
 
 	/**
 	 * Returns true if overflow leads to an {@link ArithmeticException}
@@ -35,7 +45,5 @@ public enum OverflowMode {
 	 * @return the truncation policy defined by this {@code OverflowMode} and
 	 *         the specified {@code roundingMode}
 	 */
-	public TruncationPolicy getPolicyFor(RoundingMode roundingMode) {
-		return DecimalRounding.valueOf(roundingMode).getCheckedPolicy();
-	}
+	abstract public TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode);
 }

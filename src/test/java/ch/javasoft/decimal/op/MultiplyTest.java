@@ -46,7 +46,7 @@ public class MultiplyTest extends AbstractTwoAryDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardRounding() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
 			return a.multiply(b);
 		} else {
 			return a.multiply(b, getRoundingMode());

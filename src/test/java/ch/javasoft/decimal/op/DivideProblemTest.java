@@ -14,11 +14,12 @@ import ch.javasoft.decimal.scale.Scale17f;
 import ch.javasoft.decimal.scale.Scale18f;
 import ch.javasoft.decimal.scale.Scale6f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 public class DivideProblemTest extends DivideTest {
 
 	public DivideProblemTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
-		super(scaleMetrics, roundingMode, arithmetics);
+		super(scaleMetrics, OverflowMode.UNCHECKED.getTruncationPolicyFor(roundingMode), arithmetics);
 	}
 	
 	@Parameters(name = "{index}: scale={0}, rounding={1}")
