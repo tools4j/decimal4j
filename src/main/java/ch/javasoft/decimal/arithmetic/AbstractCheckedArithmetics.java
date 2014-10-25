@@ -22,7 +22,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	public long add(long uDecimal1, long uDecimal2) {
 		final long result = uDecimal1 + uDecimal2;
 		if ((uDecimal1 ^ uDecimal2) >= 0 & (uDecimal1 ^ result) < 0) {
-			throw new ArithmeticException("overflow: " + toString(uDecimal1) + " + " + toString(uDecimal2) + " = " + toString(result));
+			throw new ArithmeticException("Overflow: " + toString(uDecimal1) + " + " + toString(uDecimal2) + " = " + toString(result));
 		}
 		return result;
 	}
@@ -31,7 +31,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
 		final long result = uDecimalMinuend - uDecimalSubtrahend;
 		if ((uDecimalMinuend ^ uDecimalSubtrahend) < 0 & (uDecimalMinuend ^ result) < 0) {
-			throw new ArithmeticException("overflow: " + toString(uDecimalMinuend) + " - " + toString(uDecimalSubtrahend) + " = " + toString(result));
+			throw new ArithmeticException("Overflow: " + toString(uDecimalMinuend) + " - " + toString(uDecimalSubtrahend) + " = " + toString(result));
 		}
 		return result;
 	}
@@ -58,7 +58,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 			return result;
 		}
 		if (leadingZeros < Long.SIZE || (uDecimal < 0 & lValue == Long.MIN_VALUE) || (uDecimal != 0 && result / uDecimal != lValue)) {
-			throw new ArithmeticException("overflow: " + toString(uDecimal) + " * " + toString(lValue) + " = " + toString(result));
+			throw new ArithmeticException("Overflow: " + toString(uDecimal) + " * " + toString(lValue) + " = " + toString(result));
 		}
 		return result;
 	}
@@ -66,10 +66,10 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
 		if (lDivisor == 0) {
-			throw new ArithmeticException("division by zero: " + toString(uDecimalDividend) + " / " + toString(lDivisor));
+			throw new ArithmeticException("Division by zero: " + toString(uDecimalDividend) + " / " + lDivisor);
 		}
 		if (lDivisor == -1 & uDecimalDividend == Long.MIN_VALUE) {
-			throw new ArithmeticException("overflow: " + toString(uDecimalDividend) + " / " + toString(lDivisor) + " = " + toString(Long.MIN_VALUE));
+			throw new ArithmeticException("Overflow: " + toString(uDecimalDividend) + " / " + lDivisor + " = " + toString(Long.MIN_VALUE));
 		}
 		return uDecimalDividend / lDivisor;
 	}
@@ -78,7 +78,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	public long abs(long uDecimal) {
 		final long abs = Math.abs(uDecimal);
 		if (abs < 0) {
-			throw new ArithmeticException("overflow: abs(" + toString(uDecimal) + ") = " + toString(abs));
+			throw new ArithmeticException("Overflow: abs(" + toString(uDecimal) + ") = " + toString(abs));
 		}
 		return abs;
 	}
@@ -87,7 +87,7 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	public long negate(long uDecimal) {
 		final long neg = -uDecimal;
 		if (uDecimal != 0 & (uDecimal ^ neg) >= 0) {
-			throw new ArithmeticException("overflow: -" + toString(uDecimal) + " = " + toString(neg));
+			throw new ArithmeticException("Overflow: -" + toString(uDecimal) + " = " + toString(neg));
 		}
 		return neg;
 	}

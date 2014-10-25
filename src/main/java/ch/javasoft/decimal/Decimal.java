@@ -877,6 +877,21 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> divideToIntegralValue(Decimal<S> divisor);
 
 	/**
+	 * Returns a {@code Decimal} whose value is the integer part of the quotient
+	 * {@code (this / divisor)} rounded down.
+	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided.
+	 * @param overflowMode
+	 *            the mode to apply if the operation leads to an overflow
+	 * @return The integer part of {@code this / divisor}.
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} or if {@code overflowMode==CHECKED} and
+	 *             an overflow occurs
+	 */
+	Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode);
+
+	/**
 	 * Returns a two-element {@code Decimal} array containing the result of
 	 * {@code divideToIntegralValue} followed by the result of {@code remainder}
 	 * on the two operands.

@@ -86,7 +86,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	protected DecimalArithmetics getArithmeticsFor(OverflowMode overflowMode) {
-		return getScaleMetrics().getArithmetics(overflowMode.getTruncationPolicyFor(RoundingMode.UNNECESSARY));
+		return getScaleMetrics().getArithmetics(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
 	}
 
 	/* -------------------- Number and simular conversion ------------------- */
@@ -641,8 +641,22 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D divideToIntegralValue(Decimal<S> divisor) {
-		final long quot = unscaledValue() / divisor.unscaledValue();
-		return createOrAssign(getDefaultArithmetics().fromLong(quot));
+		final long longValue = unscaledValue() / divisor.unscaledValue();
+		return createOrAssign(getDefaultArithmetics().fromLong(longValue));
+	}
+	
+	@Override
+	public Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode) {
+		final DecimalArithmetics arith = getArithmeticsFor(overflowMode);
+		try {
+			final long longValue = arith.divideByLong(unscaledValue(), divisor.unscaledValue());
+			return createOrAssign(getArithmeticsFor(overflowMode).fromLong(longValue));
+		} catch (ArithmeticException e) {
+			if (divisor.isZero()) {
+				throw new ArithmeticException("Division by zero: integral(" + this + " / " + divisor + ")");
+			}
+			throw new ArithmeticException("Overflow: integral(" + this + " / " + divisor + ")");
+		}
 	}
 
 	@Override

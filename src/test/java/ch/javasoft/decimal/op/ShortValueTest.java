@@ -30,8 +30,8 @@ public class ShortValueTest extends AbstractOneAryDecimalToAnyTest<Short> {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] { s, true, s.getTruncatingArithmetics() });
-			data.add(new Object[] { s, false, s.getTruncatingArithmetics() });
+			data.add(new Object[] { s, true, s.getDefaultArithmetics() });
+			data.add(new Object[] { s, false, s.getDefaultArithmetics() });
 		}
 		return data;
 	}

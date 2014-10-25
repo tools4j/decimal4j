@@ -19,7 +19,7 @@ enum SpecialDivisionResult {
 	DIVISOR_IS_ZERO {
 		@Override
 		long divide(DecimalArithmetics arithmetics, long uDecimalDividend, long uDecimalDivisor) {
-			throw new ArithmeticException("division by zero: " + arithmetics.toString(uDecimalDividend) + "/" + arithmetics.toString(uDecimalDivisor));
+			throw new ArithmeticException("Division by zero: " + arithmetics.toString(uDecimalDividend) + " / " + arithmetics.toString(uDecimalDivisor));
 		}
 	},
 	/**

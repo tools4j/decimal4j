@@ -22,7 +22,7 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 	@Override
 	public long invert(long uDecimal) {
 		if (uDecimal == 0) {
-			return SpecialDivisionResult.DIVIDEND_IS_ZERO.divide(this, 1, uDecimal);
+			return SpecialDivisionResult.DIVISOR_IS_ZERO.divide(this, 1, uDecimal);
 		}
 		if (uDecimal == 1) {
 			return 1;
@@ -53,7 +53,7 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 		if (value <= Long.MAX_VALUE & value >= Long.MIN_VALUE) { 
 			return (long)value;
 		}
-		throw new ArithmeticException("overflow for conversion from double: " + value);
+		throw new ArithmeticException("Overflow for conversion from double: " + value);
 	}
 
 }

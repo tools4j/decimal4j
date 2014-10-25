@@ -12,6 +12,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Unit test for {@link Decimal#multiply(Decimal, RoundingMode)}
@@ -19,16 +20,19 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 @RunWith(Parameterized.class)
 public class MultiplyTest extends AbstractTwoAryDecimalToDecimalTest {
 	
-	public MultiplyTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public MultiplyTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
-	@Parameters(name = "{index}: scale={0}, rounding={1}")
+	@Parameters(name = "{index}: {0}, {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			for (final RoundingMode rm : RoundingMode.values()) {
-				data.add(new Object[] {s, rm, s.getArithmetics(rm)});
+			for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
+				final DecimalArithmetics arith = s.getArithmetics(tp);
+				if (arith != null) {//FIXME this if can be removed later
+					data.add(new Object[] {s, tp, arith});
+				}
 			}
 		}
 		return data;
@@ -49,7 +53,11 @@ public class MultiplyTest extends AbstractTwoAryDecimalToDecimalTest {
 		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
 			return a.multiply(b);
 		} else {
-			return a.multiply(b, getRoundingMode());
+			if (isUnchecked() && rnd.nextBoolean()) {
+				return a.multiply(b, getRoundingMode());
+			} else {
+				return a.multiply(b, getTruncationPolicy());
+			}
 		}
 	}
 }

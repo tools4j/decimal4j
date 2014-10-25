@@ -29,6 +29,11 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 	}
 
 	@Override
+	public long square(long uDecimal) {
+		return Mul.squareChecked(this, uDecimal);
+	}
+
+	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideChecked(this, uDecimalDividend, uDecimalDivisor);
 	}
@@ -59,7 +64,7 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 		if (value <= maxDouble & value >= minDouble) { 
 			return unchecked.fromDouble(value);
 		}
-		throw new ArithmeticException("overflow for conversion from double: " + value);
+		throw new ArithmeticException("Overflow for conversion from double: " + value);
 	}
 
 	private void initDoubleMinMax() {

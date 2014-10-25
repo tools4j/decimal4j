@@ -110,7 +110,7 @@ abstract public class AbstractScale implements ScaleMetrics {
 			return result;
 		}
 		if (leadingZeros < Long.SIZE | divideByScaleFactor(result) != factor) {
-			throw new ArithmeticException("overflow: " + factor + " * " + scaleFactor + " = " + result);
+			throw new ArithmeticException("Overflow: " + factor + " * " + scaleFactor + " = " + result);
 		}
 		return result;
 	}
@@ -133,8 +133,8 @@ abstract public class AbstractScale implements ScaleMetrics {
 	}
 
 	@Override
-	public DecimalArithmetics getTruncatingArithmetics() {
-		return getArithmetics(RoundingMode.DOWN);
+	public DecimalArithmetics getTruncatingArithmetics(OverflowMode overflowMode) {
+		return overflowMode == OverflowMode.UNCHECKED ? roundingModeToArithmetics.get(RoundingMode.DOWN) : roundingModeToCheckedArithmetics.get(RoundingMode.DOWN);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ch.javasoft.decimal.scale.Scale6f;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * Unit test for {@link UncheckedScaleNfTruncatingArithmetics} and subclasses.
@@ -12,7 +13,7 @@ public class TruncatingDecimalArithmeticsTest extends AbstractDecimalArithmetics
 	
 	@Override
 	protected DecimalArithmetics initArithmetics() {
-		return Scale6f.INSTANCE.getTruncatingArithmetics();
+		return Scale6f.INSTANCE.getTruncatingArithmetics(OverflowMode.UNCHECKED);
 	}
 	
 	@Override

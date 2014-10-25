@@ -157,7 +157,7 @@ public enum DecimalRounding {
 		@Override
 		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
-				throw new ArithmeticException("rounding necessary");
+				throw new ArithmeticException("Rounding necessary");
 			}
 			return 0;
 		}

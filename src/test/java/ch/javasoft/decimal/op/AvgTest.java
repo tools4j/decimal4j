@@ -25,7 +25,7 @@ public class AvgTest extends AbstractTwoAryDecimalToDecimalTest {
 		super(arithmetics);
 	}
 
-	@Parameters(name = "{index}: scale={0}, rounding={1}")
+	@Parameters(name = "{index}: {0}, {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {

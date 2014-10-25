@@ -128,6 +128,10 @@ abstract public class AbstractOperandTest {
 			for (long d = s / 10; Math.abs(d) >= 10; d /= 10) {
 				specials.add(d);
 				specials.add(-d);
+				specials.add(d + 1);
+				specials.add(d - 1);
+				specials.add(-d - 1);
+				specials.add(-d + 1);
 			}
 		}
 		//small numbers including zero
@@ -140,6 +144,10 @@ abstract public class AbstractOperandTest {
 			pow10 *= 10;
 			specials.add(pow10);
 			specials.add(-pow10);
+			specials.add(pow10 + 1);
+			specials.add(pow10 - 1);
+			specials.add(-pow10 - 1);
+			specials.add(-pow10 + 1);
 		}
 		//convert to array
 		final long[] result = new long[specials.size()];

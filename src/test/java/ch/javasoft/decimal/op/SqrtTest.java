@@ -63,7 +63,7 @@ public class SqrtTest extends AbstractOperandTest {
 	}
 	public static BigDecimal sqrt(BigDecimal bigDecimal) {
 		if (bigDecimal.signum() < 0) {
-			throw new ArithmeticException("sqrt of a negative value: " + bigDecimal);
+			throw new ArithmeticException("Square root of a negative value: " + bigDecimal);
 		}
 		final int scale = bigDecimal.scale();
 		final BigInteger bigInt = bigDecimal.unscaledValue().multiply(BigInteger.TEN.pow(scale));

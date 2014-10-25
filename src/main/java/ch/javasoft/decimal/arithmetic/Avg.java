@@ -41,13 +41,13 @@ final class Avg {
 		case UNNECESSARY: {
 			final long floor = (a & b) + (xor >> 1);
 			if ((xor & 0x1) != 0) {
-				throw new ArithmeticException("rounding necessary: " + arith.toString(a) + " avg " + arith.toString(b) + " = " + arith.toString(floor));
+				throw new ArithmeticException("Rounding necessary: " + arith.toString(a) + " avg " + arith.toString(b) + " = " + arith.toString(floor));
 			}
 			return floor;
 		}
 		default: {
 			//should not get here
-			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
+			throw new IllegalArgumentException("Unsupported rounding mode: " + roundingMode);
 		}}
 	}
 

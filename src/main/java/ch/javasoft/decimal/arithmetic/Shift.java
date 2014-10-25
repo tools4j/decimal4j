@@ -65,7 +65,7 @@ final class Shift {
 				}
 			}
 		}
-		throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " << " + positions + " = " + arith.toString(uDecimal << positions));
+		throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " << " + positions + " = " + arith.toString(uDecimal << positions));
 	}
 
 
@@ -79,7 +79,7 @@ final class Shift {
 		if (positions > -Long.SIZE) {
 			return shiftLeftChecked(arith, uDecimal, -positions);
 		}
-		throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " >> " + positions + " = " + arith.toString(uDecimal >> positions));
+		throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " >> " + positions + " = " + arith.toString(uDecimal >> positions));
 	}
 
 	//no instances

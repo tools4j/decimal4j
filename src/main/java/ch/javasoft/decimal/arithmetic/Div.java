@@ -3,7 +3,6 @@ package ch.javasoft.decimal.arithmetic;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.truncate.DecimalRounding;
-import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncatedPart;
 
 /**
@@ -58,7 +57,7 @@ final class Div {
 		if (reminder <= maxInteger & reminder >= minInteger) {
 			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
 		} else {
-			fractionalPart = scaleTo128divBy64(arith, scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
+			fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
 		}
 		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 	}
@@ -110,7 +109,7 @@ final class Div {
 			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 			return truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
 		} else {
-			final long fractionalPart = Div.scaleTo128divBy64(arith, scaleMetrics, rounding, reminder, uDecimalDivisor);
+			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 		}
 	}
@@ -130,36 +129,47 @@ final class Div {
 	 */
 	public static long divideChecked(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
-		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
-		if (special != null) {
-			return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+		if (uDecimalDivisor == 0) {
+			return SpecialDivisionResult.DIVISOR_IS_ZERO.divide(arith, uDecimalDividend, uDecimalDivisor);
 		}
-		//div by power of 10
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
-		if (pow10 != null) {
-			return Pow10.divideByPowerOf10Checked(arith, uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
+		try {
+			final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
+			if (special != null) {
+				return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+			}
+			//div by power of 10
+			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+			final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
+			if (pow10 != null) {
+				return Pow10.divideByPowerOf10Checked(arith, uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
+			}
+			//WE WANT: uDecimalDividend * one / uDecimalDivisor
+			final long maxInteger = scaleMetrics.getMaxIntegerValue();
+			final long minInteger = scaleMetrics.getMinIntegerValue();
+			if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
+				//just do it, multiplication result fits in long
+				return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
+			}
+			//perform component wise division
+			final long integralPart = uDecimalDividend / uDecimalDivisor;
+			final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+			final long fractionalPart;
+			if (reminder <= maxInteger & reminder >= minInteger) {
+				//scaling and result can't overflow because of the above condition
+				fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
+			} else {
+				//result can't overflow because reminder is smaller than divisor, i.e. -1 < result < 1
+				fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
+			}
+			return arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
+		} catch (ArithmeticException e) {
+			final ArithmeticException ae = new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
+			ae.initCause(e);
+			throw ae;
 		}
-		//WE WANT: uDecimalDividend * one / uDecimalDivisor
-		final long maxInteger = scaleMetrics.getMaxIntegerValue();
-		final long minInteger = scaleMetrics.getMinIntegerValue();
-		if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
-			//just do it, multiplication result fits in long
-			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
-		}
-		//perform component wise division
-		final long integralPart = uDecimalDividend / uDecimalDivisor;
-		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
-		final long fractionalPart;
-		if (reminder <= maxInteger & reminder >= minInteger) {
-			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
-		} else {
-			fractionalPart = scaleTo128divBy64(arith, scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
-		}
-		return arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
 	}
 
-	private static long scaleTo128divBy64(DecimalArithmetics arith, ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	private static long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
@@ -178,23 +188,6 @@ final class Div {
 		product = scaleMetrics.mulloByScaleFactor(hFactor) + (product & LONG_MASK);
 		lScaled |= ((product & LONG_MASK) << 32);
 		hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + hScaled + (product >>> 32);
-
-		if (arith.getOverflowMode() == OverflowMode.CHECKED) {
-			//pre-check for overflow
-			if (Unsigned.compare(hScaled, absDivisor) >= 0) {
-				throw new ArithmeticException("overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
-			}
-
-			final long result = div128by64(rounding, negative, hScaled, lScaled, absDivisor);
-
-			//post-check for overflow 
-			//FIXME not sure if correct especially for neg / neg = pos
-			if (result < 0 & !negative) {
-				throw new ArithmeticException("overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
-			}
-
-			return result;
-		}
 
 		//divide 128 bit product by 64 bit divisor
 		return div128by64(rounding, negative, hScaled, lScaled, absDivisor);

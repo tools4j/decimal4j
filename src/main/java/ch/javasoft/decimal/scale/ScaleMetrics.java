@@ -8,6 +8,7 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
@@ -167,7 +168,7 @@ public interface ScaleMetrics {
 	MutableDecimal<?, ?> createMutable(long unscaled);
 
 	/**
-	 * Returns the default arithmetics for this scale performing unchecked 
+	 * Returns the default arithmetics for this scale performing unchecked
 	 * operations with rounding mode {@link RoundingMode#HALF_UP HALF_UP}.
 	 * 
 	 * @return default arithmetics for this scale
@@ -175,13 +176,15 @@ public interface ScaleMetrics {
 	DecimalArithmetics getDefaultArithmetics();
 
 	/**
-	 * Returns the truncating arithmetics for this scale that performs all
-	 * operations without rounding.
+	 * Returns the truncating arithmetics for this scale and with the specified
+	 * {@code overflowMode} that performs all operations without rounding.
 	 * 
+	 * @param overflowMode
+	 *            the overflow mode used by the returned arithmetics
 	 * @return truncating arithmetics for this scale
 	 * @see RoundingMode#DOWN
 	 */
-	DecimalArithmetics getTruncatingArithmetics();
+	DecimalArithmetics getTruncatingArithmetics(OverflowMode overflowMode);
 
 	/**
 	 * Returns the arithmetics for this scale that performs all operations with
@@ -194,8 +197,8 @@ public interface ScaleMetrics {
 	DecimalArithmetics getArithmetics(RoundingMode roundingMode);
 
 	/**
-	 * Returns the arithmetics for this scale that performs all
-	 * operations with the specified {@code truncationPolicy}.
+	 * Returns the arithmetics for this scale that performs all operations with
+	 * the specified {@code truncationPolicy}.
 	 *
 	 * @param truncationPolicy
 	 *            the truncation policy used by the returned arithmetics

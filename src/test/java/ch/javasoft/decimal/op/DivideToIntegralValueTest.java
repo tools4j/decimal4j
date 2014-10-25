@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * Unit test for {@link Decimal#divideToIntegralValue(Decimal)}
@@ -18,15 +19,16 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 @RunWith(Parameterized.class)
 public class DivideToIntegralValueTest extends AbstractTwoAryDecimalToDecimalTest {
 	
-	public DivideToIntegralValueTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
+	public DivideToIntegralValueTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
-	@Parameters(name = "{index}: scale={0}")
+	@Parameters(name = "{index}: {0} {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			data.add(new Object[] {s, s.getDefaultArithmetics()});
+			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getTruncatingArithmetics(OverflowMode.UNCHECKED)});
+			data.add(new Object[] {s, OverflowMode.CHECKED, s.getTruncatingArithmetics(OverflowMode.CHECKED)});
 		}
 		return data;
 	}
@@ -48,6 +50,9 @@ public class DivideToIntegralValueTest extends AbstractTwoAryDecimalToDecimalTes
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		return a.divideToIntegralValue(b);
+		if (isUnchecked() && rnd.nextBoolean()) {
+			return a.divideToIntegralValue(b);
+		}
+		return a.divideToIntegralValue(b, getOverflowMode());
 	}
 }

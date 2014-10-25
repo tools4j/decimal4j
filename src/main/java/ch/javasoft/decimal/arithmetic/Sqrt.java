@@ -12,7 +12,7 @@ final class Sqrt {
 
 	public static long sqrtLong(long lValue) {
 		if (lValue < 0) {
-			throw new ArithmeticException("square root of a negative value: " + lValue);
+			throw new ArithmeticException("Square root of a negative value: " + lValue);
 		}
 		//http://www.codecodex.com/wiki/Calculate_an_integer_square_root
 		if ((lValue & 0xfff0000000000000L) == 0) {
@@ -24,7 +24,7 @@ final class Sqrt {
 
 	public static long sqrtLong(DecimalRounding rounding, long lValue) {
 		if (lValue < 0) {
-			throw new ArithmeticException("square root of a negative value: " + lValue);
+			throw new ArithmeticException("Square root of a negative value: " + lValue);
 		}
 		//square root
 		//@see http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
@@ -57,7 +57,7 @@ final class Sqrt {
 
 	public static long sqrt(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
 		if (uDecimal < 0) {
-			throw new ArithmeticException("square root of a negative value: " + arith.toString(uDecimal));
+			throw new ArithmeticException("Square root of a negative value: " + arith.toString(uDecimal));
 		}
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 

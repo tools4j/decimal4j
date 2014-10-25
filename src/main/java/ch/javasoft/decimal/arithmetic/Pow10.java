@@ -70,7 +70,7 @@ final class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
 				return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 			}
-			throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " / 10^" + n);
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " / 10^" + n);
 		}
 		if (n <= 18) {
 			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
@@ -94,7 +94,7 @@ final class Pow10 {
 			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 		}
-		throw new ArithmeticException("overflow: " + arith.toString(uDecimal) + " * 10^" + n);
+		throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " * 10^" + n);
 	}
 
 	public static long multiplyByPowerOf10(DecimalRounding rounding, long uDecimal, int n) {

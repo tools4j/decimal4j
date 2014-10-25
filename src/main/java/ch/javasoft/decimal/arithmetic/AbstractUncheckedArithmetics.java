@@ -70,7 +70,7 @@ abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 	@Override
 	public long fromDouble(double value) {
 		if (Double.isNaN(value) || Double.isInfinite(value)) {
-			throw new ArithmeticException("cannot convert double to decimal: " + value);
+			throw new NumberFormatException("cannot convert double to decimal: " + value);
 		}
 		return fromBigDecimal(BigDecimal.valueOf(value));
 	}
