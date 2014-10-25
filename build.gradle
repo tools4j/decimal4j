@@ -10,6 +10,7 @@ jacoco {
 sourceCompatibility = 1.6
 //sourceCompatibility = 1.8
 version = '1.0'
+
 jar {
     manifest {
         attributes 'Implementation-Title': 'javasoft.ch Decimal', 'Implementation-Version': version
@@ -21,6 +22,8 @@ repositories {
 }
 
 dependencies {
+    compile group: 'org.freemarker', name: 'freemarker', version: '2.3.14'
+    compile 'org.apache.commons:commons-io:1.3.2'
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
@@ -34,4 +37,33 @@ uploadArchives {
            dirs 'repos'
        }
     }
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	
+	dependencies {
+		classpath group: 'net.sourceforge.fmpp', name: 'fmpp', version: '0.9.14'
+	}
+	
+	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
+}
+
+def generatedSources = "${buildDir}/generated-src"
+
+task generateSources() << {
+	println "Generating sources...."
+	ant.fmpp(
+		configuration: "src/main/resources/codegen/config.fmpp",
+		sourceRoot: "src/main/resources/codegen/templates",
+		outputRoot: generatedSources
+	)
+}
+	
+compileJava.dependsOn generateSources
+
+sourceSets.main.java {
+	srcDirs generatedSources, 'src/main/java'
 }
