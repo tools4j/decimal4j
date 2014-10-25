@@ -130,7 +130,7 @@ final class Div {
 	public static long divideChecked(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		if (uDecimalDivisor == 0) {
-			return SpecialDivisionResult.DIVISOR_IS_ZERO.divide(arith, uDecimalDividend, uDecimalDivisor);
+			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
 		}
 		try {
 			final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);

@@ -22,7 +22,7 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 	@Override
 	public long invert(long uDecimal) {
 		if (uDecimal == 0) {
-			return SpecialDivisionResult.DIVISOR_IS_ZERO.divide(this, 1, uDecimal);
+			throw new ArithmeticException("Division by zero: " + uDecimal + "^-1");
 		}
 		if (uDecimal == 1) {
 			return 1;

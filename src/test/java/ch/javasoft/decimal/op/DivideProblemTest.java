@@ -14,12 +14,13 @@ import ch.javasoft.decimal.scale.Scale17f;
 import ch.javasoft.decimal.scale.Scale18f;
 import ch.javasoft.decimal.scale.Scale6f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.truncate.OverflowMode;
+import ch.javasoft.decimal.truncate.DecimalRounding;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 public class DivideProblemTest extends DivideTest {
 
-	public DivideProblemTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
-		super(scaleMetrics, OverflowMode.UNCHECKED.getTruncationPolicyFor(roundingMode), arithmetics);
+	public DivideProblemTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
+		super(scaleMetrics, truncationPolicy, arithmetics);
 	}
 	
 	@Parameters(name = "{index}: scale={0}, rounding={1}")
@@ -27,26 +28,38 @@ public class DivideProblemTest extends DivideTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 
 		ScaleMetrics s;
-		RoundingMode r;
-		
-		s = Scale0f.INSTANCE;
-		r = RoundingMode.HALF_EVEN;
-		data.add(new Object[] {s, r, s.getArithmetics(r)});
+		TruncationPolicy tp;
 		
 		s = Scale6f.INSTANCE;
-		r = RoundingMode.HALF_EVEN;
-		data.add(new Object[] {s, r, s.getArithmetics(r)});
+		tp = DecimalRounding.DOWN.getCheckedTruncationPolicy();
+		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		
+		s = Scale0f.INSTANCE;
+		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
+		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		
+		s = Scale6f.INSTANCE;
+		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
+		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
 
 		s = Scale17f.INSTANCE;
-		r = RoundingMode.DOWN;
-		data.add(new Object[] {s, r, s.getArithmetics(r)});
+		tp = DecimalRounding.DOWN.getUncheckedTruncationPolicy();
+		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
 
 		return data;
 	}
 	
 	@Test
+	public void runProblemTest0() {
+		if (getScale() == 6 && !isUnchecked()) {
+			final Decimal<Scale6f> dOpA = newDecimal(Scale6f.INSTANCE, 345);
+			final Decimal<Scale6f> dOpB = newDecimal(Scale6f.INSTANCE, 0);
+			runTest(Scale6f.INSTANCE, "problem", dOpA, dOpB);
+		}
+	}
+	@Test
 	public void runProblemTest1() {
-		if (getScale() == 0 && getRoundingMode() == RoundingMode.HALF_EVEN) {
+		if (getScale() == 0 && isUnchecked() && getRoundingMode() == RoundingMode.HALF_EVEN) {
 			final Decimal<Scale0f> dOpA = newDecimal(Scale0f.INSTANCE, Long.MIN_VALUE + 1);
 			final Decimal<Scale0f> dOpB = newDecimal(Scale0f.INSTANCE, Long.MIN_VALUE);
 			runTest(Scale0f.INSTANCE, "problem", dOpA, dOpB);
@@ -54,7 +67,7 @@ public class DivideProblemTest extends DivideTest {
 	}
 	@Test
 	public void runProblemTest2() {
-		if (getScale() == 0 && getRoundingMode() == RoundingMode.HALF_EVEN) {
+		if (getScale() == 0 && isUnchecked() && getRoundingMode() == RoundingMode.HALF_EVEN) {
 			final Decimal<Scale0f> dOpA = newDecimal(Scale0f.INSTANCE, Long.MIN_VALUE);
 			final Decimal<Scale0f> dOpB = newDecimal(Scale0f.INSTANCE, -Scale18f.INSTANCE.getScaleFactor());
 			runTest(Scale0f.INSTANCE, "problem", dOpA, dOpB);
@@ -62,7 +75,7 @@ public class DivideProblemTest extends DivideTest {
 	}
 	@Test
 	public void runProblemTest3() {
-		if (getScale() == 6 && getRoundingMode() == RoundingMode.HALF_EVEN) {
+		if (getScale() == 6 && isUnchecked() && getRoundingMode() == RoundingMode.HALF_EVEN) {
 			final Decimal<Scale6f> dOpA = newDecimal(Scale6f.INSTANCE, Long.MIN_VALUE);
 			final Decimal<Scale6f> dOpB = newDecimal(Scale6f.INSTANCE, -10000000000000000L);
 			runTest(Scale6f.INSTANCE, "problem", dOpA, dOpB);
@@ -70,7 +83,7 @@ public class DivideProblemTest extends DivideTest {
 	}
 	@Test
 	public void runProblemTest4() {
-		if (getScale() == 6 && getRoundingMode() == RoundingMode.HALF_EVEN) {
+		if (getScale() == 6 && isUnchecked() && getRoundingMode() == RoundingMode.HALF_EVEN) {
 			final Decimal<Scale6f> dOpA = newDecimal(Scale6f.INSTANCE, Long.MIN_VALUE);
 			final Decimal<Scale6f> dOpB = newDecimal(Scale6f.INSTANCE, -4611686018427387905L);
 			runTest(Scale6f.INSTANCE, "problem", dOpA, dOpB);
