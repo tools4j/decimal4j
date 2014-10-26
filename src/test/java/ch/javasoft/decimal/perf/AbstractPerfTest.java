@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -18,10 +19,8 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.Timer;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.scale.Scale0f;
-import ch.javasoft.decimal.scale.Scale17f;
-import ch.javasoft.decimal.scale.Scale6f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 
 /**
  * Base class for tests comparing {@link Decimal}, {@link BigDecimal} and
@@ -31,7 +30,8 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 @RunWith(Parameterized.class)
 abstract public class AbstractPerfTest {
 
-	private static final ScaleMetrics[] SCALE_METRICES = { Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE };
+	private static final List<ScaleMetrics> SCALE_METRICES = Scales.VALUES;
+//	private static final ScaleMetrics[] SCALE_METRICES = { Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE };
 
 	private static final int R = 1*4; //runs
 	private static final int N = 1024/16/4; //numbers per run
@@ -88,9 +88,9 @@ abstract public class AbstractPerfTest {
 
 	@Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
-		final Object[][] data = new Object[SCALE_METRICES.length][];
+		final Object[][] data = new Object[SCALE_METRICES.size()][];
 		for (int i = 0; i < data.length; i++) {
-			data[i] = new Object[] { SCALE_METRICES[i] };
+			data[i] = new Object[] { SCALE_METRICES.get(i) };
 		}
 		return Arrays.asList(data);
 	}

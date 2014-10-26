@@ -9,12 +9,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.scale.Scale18f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
@@ -34,6 +36,7 @@ public class SqrtTest extends AbstractOperandTest {
 	@Parameters(name = "{index}: scale={0}, rounding={1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
+//		for (final ScaleMetrics s : new ScaleMetrics[] {Scale18f.INSTANCE} /*FIXME SCALES*/) {
 		for (final ScaleMetrics s : SCALES) {
 			for (final RoundingMode rm : RoundingMode.values()) {
 				data.add(new Object[] { s, rm, s.getArithmetics(rm) });
@@ -50,6 +53,21 @@ public class SqrtTest extends AbstractOperandTest {
 	@Override
 	public void runSpecialValueTest() {
 		super.runSpecialValueTest();
+	}
+
+	@Test
+	public void runProblemTest0_offByOne() {
+		if (getScale() == 18) {
+			final Decimal<Scale18f> val = newDecimal(Scale18f.INSTANCE, 6900127896905764146L);
+			runTest(val, -1);
+		}
+	}
+	@Test
+	public void runProblemTest2_offByTwo() {
+		if (getScale() == 18) {
+			final Decimal<Scale18f> val = newDecimal(Scale18f.INSTANCE, 8669660385983162309L);
+			runTest(val, -1);
+		}
 	}
 
 	@Override

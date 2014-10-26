@@ -81,6 +81,8 @@ final class Sqrt {
 		int zerosHalf;
 		long rem = 0;
 		long root = 0;
+		
+		//iteration for high 32 bits
 		zerosHalf = Long.numberOfLeadingZeros(hScaled) >> 1;
 		hScaled <<= (zerosHalf << 1);
 		for (int i = zerosHalf; i < 32; i++) {
@@ -95,9 +97,11 @@ final class Sqrt {
 				root--;
 			}
 		}
+
+		//iteration for low 32 bits (last iteration below)
 		zerosHalf = zerosHalf == 32 ? Long.numberOfLeadingZeros(lScaled) >> 1 : 0;
 		lScaled <<= (zerosHalf << 1);
-		for (int i = zerosHalf; i < 32; i++) {
+		for (int i = zerosHalf; i < 31; i++) {
 			root <<= 1;
 			rem = ((rem << 2) + (lScaled >>> 62));
 			lScaled <<= 2;
@@ -110,6 +114,19 @@ final class Sqrt {
 			}
 		}
 
+		//last iteration needs unsigned compare
+		root <<= 1;
+		rem = ((rem << 2) + (lScaled >>> 62));
+		lScaled <<= 2;
+		root++;
+		if (Unsigned.isLessOrEqual(root, rem)) {
+			rem -= root;
+			root++;
+		} else {
+			root--;
+		}
+
+		//round result if necessary
 		final long truncated = root >>> 1;
 		if (rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
 			return truncated;

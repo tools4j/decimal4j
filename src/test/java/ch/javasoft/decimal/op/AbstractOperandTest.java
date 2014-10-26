@@ -3,7 +3,6 @@ package ch.javasoft.decimal.op;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -13,10 +12,8 @@ import org.junit.Test;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.scale.Scale0f;
-import ch.javasoft.decimal.scale.Scale17f;
-import ch.javasoft.decimal.scale.Scale6f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
@@ -28,8 +25,8 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  */
 abstract public class AbstractOperandTest {
 
-	//	protected static final List<ScaleMetrics> SCALES = ScaleMetrics.VALUES;
-	protected static final List<ScaleMetrics> SCALES = Arrays.<ScaleMetrics> asList(Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE);
+	protected static final List<ScaleMetrics> SCALES = Scales.VALUES;
+//	protected static final List<ScaleMetrics> SCALES = Arrays.<ScaleMetrics> asList(Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE);
 
 	protected final Random rnd = new Random();
 

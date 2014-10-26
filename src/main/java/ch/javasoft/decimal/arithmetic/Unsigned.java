@@ -49,9 +49,23 @@ final class Unsigned {
 	 * @return true if {@code one > two}
 	 */
 	public static boolean isGreater(long one, long two) {
-		return (one + Long.MIN_VALUE) > (two + Long.MIN_VALUE);
+		return flip(one) > flip(two);
 	}
-	
+
+	/**
+	 * Compare two longs as if they were unsigned. Returns true iff one is less
+	 * than or equal to two.
+	 * 
+	 * @param one
+	 *            the first unsigned {@code long} to compare
+	 * @param two
+	 *            the second unsigned {@code long} to compare
+	 * @return true if {@code one <= two}
+	 */
+	public static boolean isLessOrEqual(long one, long two) {
+		return flip(one) <= flip(two);
+	}
+
 	// no instances
 	private Unsigned() {
 		super();
