@@ -20,76 +20,32 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 
 	@Override
 	public long add(long uDecimal1, long uDecimal2) {
-		final long result = uDecimal1 + uDecimal2;
-		if ((uDecimal1 ^ uDecimal2) >= 0 & (uDecimal1 ^ result) < 0) {
-			throw new ArithmeticException("Overflow: " + toString(uDecimal1) + " + " + toString(uDecimal2) + " = " + toString(result));
-		}
-		return result;
+		return Checked.add(this, uDecimal1, uDecimal2);
 	}
 
 	@Override
 	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
-		final long result = uDecimalMinuend - uDecimalSubtrahend;
-		if ((uDecimalMinuend ^ uDecimalSubtrahend) < 0 & (uDecimalMinuend ^ result) < 0) {
-			throw new ArithmeticException("Overflow: " + toString(uDecimalMinuend) + " - " + toString(uDecimalSubtrahend) + " = " + toString(result));
-		}
-		return result;
+		return Checked.subtract(this, uDecimalMinuend, uDecimalSubtrahend);
 	}
 
 	@Override
 	public long multiplyByLong(long uDecimal, long lValue) {
-		// Hacker's Delight, Section 2-12
-		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal) + Long.numberOfLeadingZeros(~uDecimal) + Long.numberOfLeadingZeros(lValue) + Long.numberOfLeadingZeros(~lValue);
-		/*
-		 * If leadingZeros > Long.SIZE + 1 it's definitely fine, if it's <
-		 * Long.SIZE it's definitely bad. We do the leadingZeros check to avoid
-		 * the division below if at all possible.
-		 * 
-		 * Otherwise, if b == Long.MIN_VALUE, then the only allowed values of a
-		 * are 0 and 1. We take care of all a < 0 with their own check, because
-		 * in particular, the case a == -1 will incorrectly pass the division
-		 * check below.
-		 * 
-		 * In all other cases, we check that either a is 0 or the result is
-		 * consistent with division.
-		 */
-		final long result = uDecimal * lValue;
-		if (leadingZeros > Long.SIZE + 1) {
-			return result;
-		}
-		if (leadingZeros < Long.SIZE || (uDecimal < 0 & lValue == Long.MIN_VALUE) || (uDecimal != 0 && result / uDecimal != lValue)) {
-			throw new ArithmeticException("Overflow: " + toString(uDecimal) + " * " + toString(lValue) + " = " + toString(result));
-		}
-		return result;
+		return Checked.multiplyByLong(this, uDecimal, lValue);
 	}
 
 	@Override
 	public long divideByLong(long uDecimalDividend, long lDivisor) {
-		if (lDivisor == 0) {
-			throw new ArithmeticException("Division by zero: " + toString(uDecimalDividend) + " / " + lDivisor);
-		}
-		if (lDivisor == -1 & uDecimalDividend == Long.MIN_VALUE) {
-			throw new ArithmeticException("Overflow: " + toString(uDecimalDividend) + " / " + lDivisor + " = " + toString(Long.MIN_VALUE));
-		}
-		return uDecimalDividend / lDivisor;
+		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
 	}
 
 	@Override
 	public long abs(long uDecimal) {
-		final long abs = Math.abs(uDecimal);
-		if (abs < 0) {
-			throw new ArithmeticException("Overflow: abs(" + toString(uDecimal) + ") = " + toString(abs));
-		}
-		return abs;
+		return Checked.abs(this, uDecimal);
 	}
 
 	@Override
 	public long negate(long uDecimal) {
-		final long neg = -uDecimal;
-		if (uDecimal != 0 & (uDecimal ^ neg) >= 0) {
-			throw new ArithmeticException("Overflow: -" + toString(uDecimal) + " = " + toString(neg));
-		}
-		return neg;
+		return Checked.negate(this, uDecimal);
 	}
 
 	@Override

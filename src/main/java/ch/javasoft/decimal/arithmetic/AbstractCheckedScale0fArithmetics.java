@@ -29,14 +29,14 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		return multiplyByLong(uDecimal1, uDecimal2);
+		return Checked.multiplyByLong(this, uDecimal1, uDecimal2);
 	}
-
+	
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		return divideByLong(uDecimalDividend, uDecimalDivisor);
+		return Checked.divideByLong(this, uDecimalDividend, uDecimalDivisor);
 	}
-
+	
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
 		return Pow.powChecked(this, uDecimalBase, exponent);

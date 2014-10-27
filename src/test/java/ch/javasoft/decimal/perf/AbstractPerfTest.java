@@ -30,8 +30,8 @@ import ch.javasoft.decimal.scale.Scales;
 @RunWith(Parameterized.class)
 abstract public class AbstractPerfTest {
 
-	private static final List<ScaleMetrics> SCALE_METRICES = Scales.VALUES;
-//	private static final ScaleMetrics[] SCALE_METRICES = { Scale0f.INSTANCE, Scale6f.INSTANCE, Scale17f.INSTANCE };
+//	private static final List<ScaleMetrics> SCALE_METRICES = Scales.VALUES;
+	private static final List<ScaleMetrics> SCALE_METRICES = Arrays.asList(Scales.valueOf(0), Scales.valueOf(6), Scales.valueOf(9), Scales.valueOf(17), Scales.valueOf(18));
 
 	private static final int R = 1*4; //runs
 	private static final int N = 1024/16/4; //numbers per run
