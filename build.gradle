@@ -1,6 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
+apply plugin: 'me.champeau.gradle.jmh'
 
 //temporary jacoco fix for java8
 jacoco {
@@ -25,7 +26,8 @@ dependencies {
     compile 'org.freemarker:freemarker:2.3.14'
     compile 'org.apache.commons:commons-io:1.3.2'
     testCompile 'junit:junit:4.11'
-    testCompile 'org.openjdk.jmh:jmh-core:1.1.1'
+    jmh 'org.openjdk.jmh:jmh-core:1.1.1'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.1.1'
 }
 
 test {
@@ -43,10 +45,12 @@ uploadArchives {
 buildscript {
 	repositories {
 		mavenCentral()
+		jcenter()
 	}
 	
 	dependencies {
-		classpath group: 'net.sourceforge.fmpp', name: 'fmpp', version: '0.9.14'
+		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
+		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.1.2'
 	}
 	
 	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
@@ -67,4 +71,15 @@ compileJava.dependsOn generateSources
 
 sourceSets.main.java {
 	srcDirs generatedSources, 'src/main/java'
+}
+
+jmh {
+   include = '.*Benchmark.java'
+//   exclude = 'some regular expression' // exclude pattern (regular expression) for benchmarks to be executed
+   iterations = 3 // Number of measurement iterations to do.
+   warmupIterations = 3
+   benchmarkMode = 'all' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
+   batchSize = 1 // Batch size: number of benchmark method calls per operation. (some benchmark modes can ignore this setting)
+   fork = 2 // How many times to forks a single benchmark. Use 0 to disable forking altogether
+   failOnError = false // Should JMH fail immediately if any benchmark had experienced the unrecoverable error?
 }
