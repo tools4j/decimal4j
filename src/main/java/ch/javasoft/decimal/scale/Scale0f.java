@@ -7,15 +7,17 @@ import ch.javasoft.decimal.arithmetic.CheckedScale0fTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScale0fRoundingArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScale0fTruncatingArithmetics;
-import ch.javasoft.decimal.immutable.Decimal0f;
-import ch.javasoft.decimal.mutable.MutableDecimal0f;
 import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
- * Scale class for decimals with 0 {@link #getScale() fraction digits} (aka
- * as integers) and {@link #getScaleFactor() scale factor} 1.
+ * Scale class for decimals with {@link #getScale() scale} 0 (aka as integers)
+ * and {@link #getScaleFactor() scale factor} 1.
  */
 public final class Scale0f extends AbstractScale {
+
+	/**
+	 * The singleton instance for scale 0.
+	 */
 	public static final Scale0f INSTANCE = new Scale0f();
 
 	@Override
@@ -63,10 +65,10 @@ public final class Scale0f extends AbstractScale {
 	}
 
 	@Override
-	public long multiplyByScaleFactorHalf(long dividend) {
-		return dividend >> 1;
+	public long multiplyByScaleFactorExact(long factor) {
+		return factor;
 	}
-
+	
 	@Override
 	public long mulloByScaleFactor(int factor) {
 		return factor & LONG_MASK;
@@ -83,22 +85,8 @@ public final class Scale0f extends AbstractScale {
 	}
 
 	@Override
-	public long divideByScaleFactorHalf(long dividend) {
-		return dividend << 1;
-	}
-
-	@Override
 	public long moduloByScaleFactor(long dividend) {
 		return 0;
 	}
 
-	@Override
-	public Decimal0f createImmutable(long unscaled) {
-		return Decimal0f.valueOfUnscaled(unscaled);
-	}
-
-	@Override
-	public MutableDecimal0f createMutable(long unscaled) {
-		return MutableDecimal0f.unscaled(unscaled);
-	}
 }

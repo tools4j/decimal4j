@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.factory.Factories;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.truncate.OverflowMode;
@@ -161,9 +162,8 @@ abstract public class AbstractOperandTest {
 		return newDecimal(scaleMetrics, unscaled);
 	}
 
-	@SuppressWarnings("unchecked")
 	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
-		return (Decimal<S>) scaleMetrics.createImmutable(unscaled);
+		return Factories.valueOf(scaleMetrics).createImmutable(unscaled);
 	}
 
 	protected BigDecimal toBigDecimal(Decimal<?> decimal) {

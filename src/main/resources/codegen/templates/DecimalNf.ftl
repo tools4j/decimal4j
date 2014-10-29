@@ -10,16 +10,19 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.base.AbstractImmutableDecimal;
 import ch.javasoft.decimal.mutable.MutableDecimal${scale}f;
+import ch.javasoft.decimal.factory.Factory${scale}f;
 import ch.javasoft.decimal.scale.Scale${scale}f;
 
 /**
- * <tt>Decimal${scale}f</tt> represents an immutable decimal number with ${scale} fractional
- * digits.
+ * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
+ * number of ${scale} digits to the right of the decimal point.
  */
 @SuppressWarnings("serial")
 public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scale}f, Decimal${scale}f> {
 
 	public static final Scale${scale}f SCALE = Scale${scale}f.INSTANCE;
+
+	public static final Factory${scale}f FACTORY = Factory${scale}f.INSTANCE;
 	
 	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
 
@@ -62,6 +65,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	@Override
 	public Scale${scale}f getScaleMetrics() {
 		return SCALE;
+	}
+
+	@Override
+	public Factory${scale}f getFactory() {
+		return FACTORY;
 	}
 
 	@Override

@@ -13,6 +13,8 @@ import org.openjdk.jmh.annotations.State;
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.factory.DecimalFactory;
+import ch.javasoft.decimal.factory.Factories;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.truncate.OverflowMode;
@@ -86,7 +88,6 @@ abstract public class AbstractBenchmark {
 	}
 
 	protected static class Values<S extends ScaleMetrics> {
-		public S scaleMetrics;
 		public final long unscaled1;
 		public final long unscaled2;
 		public final double double1;
@@ -97,24 +98,23 @@ abstract public class AbstractBenchmark {
 		public final ImmutableDecimal<S, ?> immutable2;
 		public final MutableDecimal<S, ?> mutable;
 
-		@SuppressWarnings("unchecked")
-		public Values(long unscaled1, long unscaled2, S scaleMetrics) {
+		public Values(long unscaled1, long unscaled2, int scale, DecimalFactory<S> decimalFactory) {
 			this.unscaled1 = unscaled1;
 			this.unscaled2 = unscaled2;
-			this.bigDecimal1 = BigDecimal.valueOf(unscaled1, scaleMetrics.getScale());
-			this.bigDecimal2 = BigDecimal.valueOf(unscaled2, scaleMetrics.getScale());
-			this.immutable1 = (ImmutableDecimal<S, ?>) scaleMetrics.createImmutable(unscaled1);
-			this.immutable2 = (ImmutableDecimal<S, ?>) scaleMetrics.createImmutable(unscaled2);
+			this.bigDecimal1 = BigDecimal.valueOf(unscaled1, scale);
+			this.bigDecimal2 = BigDecimal.valueOf(unscaled2, scale);
+			this.immutable1 = (ImmutableDecimal<S, ?>) decimalFactory.createImmutable(unscaled1);
+			this.immutable2 = (ImmutableDecimal<S, ?>) decimalFactory.createImmutable(unscaled2);
 			this.double1 = bigDecimal1.doubleValue();
 			this.double2 = bigDecimal2.doubleValue();
-			this.mutable = (MutableDecimal<S, ?>) scaleMetrics.createMutable(0);
+			this.mutable = (MutableDecimal<S, ?>) decimalFactory.createMutable(0);
 		}
 		public static Values<?> create(long unscaled1, long unscaled2, int scale) {
 			return create(unscaled1, unscaled2, Scales.valueOf(scale));
 		}
 
 		public static <S extends ScaleMetrics> Values<S> create(long unscaled1, long unscaled2, S scaleMetrics) {
-			return new Values<S>(unscaled1, unscaled2, scaleMetrics);
+			return new Values<S>(unscaled1, unscaled2, scaleMetrics.getScale(), Factories.valueOf(scaleMetrics));
 		}
 	}
 

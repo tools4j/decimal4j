@@ -489,13 +489,6 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
-	public Decimal<?> multiplyExact(Decimal<?> multiplicand) {
-		final int targetScale = getScale() + multiplicand.getScale();
-		final ScaleMetrics targetMetrics = Scales.valueOf(targetScale);
-		return targetMetrics.createMutable(unscaledValue() * multiplicand.unscaledValue());
-	}
-
-	@Override
 	public D multiplyByPowerOfTen(int n) {
 		return createOrAssign(getDefaultArithmetics().multiplyByPowerOf10(unscaledValue(), n));
 	}

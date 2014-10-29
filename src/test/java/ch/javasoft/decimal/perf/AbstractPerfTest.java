@@ -19,6 +19,8 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.Timer;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.factory.DecimalFactory;
+import ch.javasoft.decimal.factory.Factories;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
 
@@ -106,16 +108,14 @@ abstract public class AbstractPerfTest {
 		long cnt = 0;
 
 		//allocate
+		final DecimalFactory<S> factory = Factories.valueOf(scaleMetrics);
 		final BigDecimal[] aBigDec = new BigDecimal[N];
 		final BigDecimal[] bBigDec = new BigDecimal[N];
 		final double[] aDouble = new double[N];
 		final double[] bDouble = new double[N];
-		@SuppressWarnings("unchecked")
-		final Decimal<S>[] aDec = new Decimal[N];
-		@SuppressWarnings("unchecked")
-		final Decimal<S>[] bDec = new Decimal[N];
-		@SuppressWarnings("unchecked")
-		final MutableDecimal<S, ?> mutable = (MutableDecimal<S, ?>) scaleMetrics.createMutable(0);
+		final Decimal<S>[] aDec = factory.createImmutableArray(N);
+		final Decimal<S>[] bDec = factory.createImmutableArray(N);
+		final MutableDecimal<S, ?> mutable = factory.createMutable(0);
 
 		for (int r = 0; r < R; r++) {
 

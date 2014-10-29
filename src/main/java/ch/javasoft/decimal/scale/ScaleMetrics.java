@@ -5,8 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ImmutableDecimal;
-import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
@@ -81,15 +79,6 @@ public interface ScaleMetrics {
 	long multiplyByScaleFactor(long factor);
 
 	/**
-	 * Returns {@code dividend*scaleFactor/2}.
-	 * 
-	 * @param dividend
-	 *            the dividend
-	 * @return {@code dividend*scaleFactor/2}
-	 */
-	long multiplyByScaleFactorHalf(long dividend);
-
-	/**
 	 * Returns {@code factor*scaleFactor}, checking for lost information. If the
 	 * result is out of the range of the {@code long} type, then an
 	 * {@code ArithmeticException} is thrown.
@@ -132,15 +121,6 @@ public interface ScaleMetrics {
 	long divideByScaleFactor(long dividend);
 
 	/**
-	 * Returns {@code dividend/(scaleFactor/2)}.
-	 * 
-	 * @param dividend
-	 *            the dividend
-	 * @return {@code dividend/(scaleFactor/2)}
-	 */
-	long divideByScaleFactorHalf(long dividend);
-
-	/**
 	 * Returns {@code dividend % scaleFactor} also known as reminder.
 	 * 
 	 * @param dividend
@@ -148,24 +128,6 @@ public interface ScaleMetrics {
 	 * @return {@code dividend % scaleFactor}
 	 */
 	long moduloByScaleFactor(long dividend);
-
-	/**
-	 * Creates and returns an immutable value.
-	 *
-	 * @param unscaled
-	 *            the unscaled long value
-	 * @return an immutable value.
-	 */
-	ImmutableDecimal<?, ?> createImmutable(long unscaled);
-
-	/**
-	 * Creates and returns a mutable value.
-	 *
-	 * @param unscaled
-	 *            the unscaled long value
-	 * @return an mutable value.
-	 */
-	MutableDecimal<?, ?> createMutable(long unscaled);
 
 	/**
 	 * Returns the default arithmetics for this scale performing unchecked

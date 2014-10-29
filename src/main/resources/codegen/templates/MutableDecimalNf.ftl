@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.base.AbstractMutableDecimal;
 import ch.javasoft.decimal.immutable.Decimal${scale}f;
+import ch.javasoft.decimal.factory.Factory${scale}f;
 import ch.javasoft.decimal.scale.Scale${scale}f;
 
 @SuppressWarnings("serial")
@@ -107,6 +108,11 @@ public class MutableDecimal${scale}f extends
 	@Override
 	public Scale${scale}f getScaleMetrics() {
 		return Decimal${scale}f.SCALE;
+	}
+
+	@Override
+	public Factory${scale}f getFactory() {
+		return Decimal${scale}f.FACTORY;
 	}
 
 	@Override

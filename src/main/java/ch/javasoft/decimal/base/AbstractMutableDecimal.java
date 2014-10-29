@@ -4,8 +4,8 @@ import java.math.RoundingMode;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.MutableDecimal;
+import ch.javasoft.decimal.factory.Factories;
 import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
@@ -71,7 +71,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		if (scale == getScale()) {
 			return this;
 		}
-		return Scales.valueOf(scale).createMutable(0).set(this, roundingMode);
+		return Factories.valueOf(scale).createMutable(0).set(this, roundingMode);
 	}
 
 	@Override
@@ -79,36 +79,48 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		if (scale == getScale()) {
 			return this;
 		}
-		return Scales.valueOf(scale).createMutable(0).set(this, truncationPolicy);
+		return Factories.valueOf(scale).createMutable(0).set(this, truncationPolicy);
 	}
 
 	@Override
 	@SuppressWarnings("hiding")
 	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?>> scale(S scaleMetrics, RoundingMode roundingMode) {
-		final MutableDecimal<?, ?> value;
 		if (scaleMetrics == getScaleMetrics()) {
-			value = this;
-		} else {
-			value = scaleMetrics.createMutable(0).set(this, roundingMode);
-		}
-		@SuppressWarnings("unchecked")
-		//safe: we know it is the same scale metrics
-		final MutableDecimal<S, ? extends MutableDecimal<S, ?>> result = (MutableDecimal<S, ? extends MutableDecimal<S, ?>>) value;
-		return result;
+			@SuppressWarnings("unchecked")
+			//safe: we know it is the same scale metrics
+			final MutableDecimal<S, ?> self = (MutableDecimal<S, ? extends MutableDecimal<S, ?>>) this;
+			return self;
+		} else {}
+		return Factories.valueOf(scaleMetrics).createMutable(0).set(this, roundingMode);
 	}
 
 	@Override
 	@SuppressWarnings("hiding")
 	public <S extends ScaleMetrics> MutableDecimal<S, ? extends MutableDecimal<S, ?>> scale(S scaleMetrics, TruncationPolicy truncationPolicy) {
-		final MutableDecimal<?, ?> value;
 		if (scaleMetrics == getScaleMetrics()) {
-			value = this;
-		} else {
-			value = scaleMetrics.createMutable(0).set(this, truncationPolicy);
+			@SuppressWarnings("unchecked")
+			//safe: we know it is the same scale metrics
+			final MutableDecimal<S, ?> self = (MutableDecimal<S, ? extends MutableDecimal<S, ?>>) this;
+			return self;
+		} else {}
+		return Factories.valueOf(scaleMetrics).createMutable(0).set(this, truncationPolicy);
+	}
+
+	@Override
+	public MutableDecimal<?, ?> multiplyExact(Decimal<?> multiplicand) {
+		final int targetScale = getScale() + multiplicand.getScale();
+		return Factories.valueOf(targetScale).createMutable(unscaled * multiplicand.unscaledValue());
+	}
+
+	@Override
+	public MutableDecimal<?, ?> multiplyExact(Decimal<?> multiplicand, OverflowMode overflowMode) {
+		final int targetScale = getScale() + multiplicand.getScale();
+		final MutableDecimal<?, ?> result = Factories.valueOf(targetScale).createMutable(unscaled);
+		try {
+			result.multiply(multiplicand.unscaledValue(), overflowMode);
+		} catch (ArithmeticException e) {
+			throw new ArithmeticException("Overflow: " + this + " * " + multiplicand);
 		}
-		@SuppressWarnings("unchecked")
-		//safe: we know it is the same scale metrics
-		final MutableDecimal<S, ? extends MutableDecimal<S, ?>> result = (MutableDecimal<S, ? extends MutableDecimal<S, ?>>) value;
 		return result;
 	}
 

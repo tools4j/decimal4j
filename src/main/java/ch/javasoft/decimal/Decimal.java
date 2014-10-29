@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.factory.DecimalFactory;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
@@ -67,6 +68,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @see ScaleMetrics#getScaleFactor()
 	 */
 	long unscaledValue();
+	
+	DecimalFactory<S> getFactory();
 
 	/**
 	 * Returns a {@code Decimal} whose value represents the integral part of
@@ -787,6 +790,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> multiplyBy(Decimal<?> multiplicand, TruncationPolicy truncationPolicy);
 
 	Decimal<?> multiplyExact(Decimal<?> multiplicand);
+
+	Decimal<?> multiplyExact(Decimal<?> multiplicand, OverflowMode overflowMode);
 
 	Decimal<S> multiply(long multiplicand);
 

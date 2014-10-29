@@ -6,8 +6,6 @@ import java.math.RoundingMode;
 import java.util.EnumMap;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ImmutableDecimal;
-import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.CheckedScaleNfTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScaleNfRoundingArithmetics;
@@ -82,68 +80,42 @@ abstract public class AbstractScale implements ScaleMetrics {
 	}
 
 	@Override
-	public BigInteger getScaleFactorAsBigInteger() {
+	public final BigInteger getScaleFactorAsBigInteger() {
 		return biScaleFactor;
 	}
 
 	@Override
-	public BigDecimal getScaleFactorAsBigDecimal() {
+	public final BigDecimal getScaleFactorAsBigDecimal() {
 		return bdScaleFactor;
 	}
 
 	@Override
-	public long getMaxIntegerValue() {
+	public final long getMaxIntegerValue() {
 		return maxIntegerValue;
 	}
 
 	@Override
-	public long getMinIntegerValue() {
+	public final long getMinIntegerValue() {
 		return minIntegerValue;
 	}
 
 	@Override
-	public long multiplyByScaleFactorExact(long factor) {
-		final long scaleFactor = getScaleFactor();
-		final int leadingZeros = Long.numberOfLeadingZeros(factor) + Long.numberOfLeadingZeros(~factor) + Long.numberOfLeadingZeros(scaleFactor);
-		final long result = multiplyByScaleFactor(factor);
-		if (leadingZeros > Long.SIZE + 1) {
-			return result;
-		}
-		if (leadingZeros < Long.SIZE | divideByScaleFactor(result) != factor) {
-			throw new ArithmeticException("Overflow: " + factor + " * " + scaleFactor + " = " + result);
-		}
-		return result;
-	}
-	
-	@Override
-	public ImmutableDecimal<?, ?> createImmutable(long unscaled) {
-		// FIXME impl
-		throw new RuntimeException("not implemented for " + this);
-	}
-
-	@Override
-	public MutableDecimal<?, ?> createMutable(long unscaled) {
-		// FIXME impl
-		throw new RuntimeException("not implemented for " + this);
-	}
-
-	@Override
-	public DecimalArithmetics getDefaultArithmetics() {
+	public final DecimalArithmetics getDefaultArithmetics() {
 		return getArithmetics(TruncationPolicy.DEFAULT);
 	}
 
 	@Override
-	public DecimalArithmetics getTruncatingArithmetics(OverflowMode overflowMode) {
+	public final DecimalArithmetics getTruncatingArithmetics(OverflowMode overflowMode) {
 		return overflowMode == OverflowMode.UNCHECKED ? roundingModeToArithmetics.get(RoundingMode.DOWN) : roundingModeToCheckedArithmetics.get(RoundingMode.DOWN);
 	}
 
 	@Override
-	public DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
+	public final DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
 		return roundingModeToArithmetics.get(roundingMode);
 	}
 
 	@Override
-	public DecimalArithmetics getArithmetics(TruncationPolicy truncationPolicy) {
+	public final DecimalArithmetics getArithmetics(TruncationPolicy truncationPolicy) {
 		final OverflowMode overflow = truncationPolicy.getOverflowMode();
 		final RoundingMode rounding = truncationPolicy.getRoundingMode();
 		return overflow == OverflowMode.UNCHECKED ? roundingModeToArithmetics.get(rounding) : roundingModeToCheckedArithmetics.get(rounding);
