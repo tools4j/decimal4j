@@ -56,12 +56,6 @@ abstract public class AbstractBenchmark {
 				}
 				return val;
 			}
-		},
-		RandomIntOrLong {
-			@Override
-			public long random(SignType signType) {
-				return RND.nextBoolean() ? Int.random(signType) : Long.random(signType);
-			}
 		};
 
 		abstract public long random(SignType signType);
@@ -78,11 +72,9 @@ abstract public class AbstractBenchmark {
 		public RoundingMode roundingMode;
 		@Param("UNCHECKED")
 		public OverflowMode overflowMode;
-//		@Param({"Int", "Long"})
-		@Param("RandomIntOrLong")
+		@Param({"Int", "Long"})
 		public ValueType valueType1;
-//		@Param({"Int", "Long"})
-		@Param("RandomIntOrLong")
+		@Param({"Int", "Long"})
 		public ValueType valueType2;
 
 		public TruncationPolicy truncationPolicy;
