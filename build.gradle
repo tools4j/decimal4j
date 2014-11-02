@@ -94,8 +94,8 @@ jmh {
 //   profilers = [] // Use profilers to collect additional data.
    timeOnIteration = '1000ms' // Time to spend at each measurement iteration.
    resultFormat = 'CSV' // Result format type (one of CSV, JSON, NONE, SCSV, TEXT)
-   synchronizeIterations = false // Synchronize iterations?
-   threads = 1 // Number of worker threads to run with.
+//   synchronizeIterations = true // Synchronize iterations?
+//   threads = 1 // Number of worker threads to run with.
 //   threadGroups = [2,3,4] //Override thread group distribution for asymmetric benchmarks.
    timeUnit = 'us' // Output time unit. Available time units are: [m, s, ms, us, ns].
    verbosity = 'NORMAL' // Verbosity mode. Available modes are: [SILENT, NORMAL, EXTRA]
