@@ -10,10 +10,10 @@ import ch.javasoft.decimal.truncate.OverflowMode;
 /**
  * Micro benchmarks for multiplication based on the jmh library.
  */
-public class SqrtBenchmark extends AbstractPositiveOnlyBenchmark {
+public class SqrtBenchmark extends AbstractUnaryOpPositiveLongBenchmark {
 
 	@Override
-	protected <S extends ScaleMetrics> double doubles(PositiveOnlyBenchmarkState state, Values<S> values) {
+	protected <S extends ScaleMetrics> double doubles(BenchmarkState state, Values<S> values) {
 		return Math.sqrt(values.double1);
 	}
 	
@@ -41,7 +41,7 @@ public class SqrtBenchmark extends AbstractPositiveOnlyBenchmark {
 		return new BigDecimal(root.shiftRight(1), scale);
 	}
 	@Override
-	protected <S extends ScaleMetrics> BigDecimal bigDecimals(PositiveOnlyBenchmarkState state, Values<S> values) {
+	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
 		final BigDecimal result = sqrt(values.bigDecimal1);
 		if (state.overflowMode == OverflowMode.CHECKED) {
 			//check overflow
@@ -51,17 +51,17 @@ public class SqrtBenchmark extends AbstractPositiveOnlyBenchmark {
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(PositiveOnlyBenchmarkState state, Values<S> values) {
+	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values) {
 		return values.immutable1.sqrt(state.roundingMode);
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(PositiveOnlyBenchmarkState state, Values<S> values) {
+	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values) {
 		return values.mutable.set(values.immutable1).sqrt(state.roundingMode);
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> long nativeDecimals(PositiveOnlyBenchmarkState state, Values<S> values) {
+	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
 		return state.arithmetics.sqrt(values.unscaled1);
 	}
 }

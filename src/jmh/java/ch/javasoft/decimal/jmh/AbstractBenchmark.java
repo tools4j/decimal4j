@@ -27,7 +27,7 @@ abstract public class AbstractBenchmark {
 
 	private static final Random RND = new Random();
 
-	private static enum SignType {
+	public static enum SignType {
 		ALL,
 		NON_ZERO,
 		POSITIVE
@@ -72,10 +72,6 @@ abstract public class AbstractBenchmark {
 		public RoundingMode roundingMode;
 		@Param("UNCHECKED")
 		public OverflowMode overflowMode;
-		@Param({"Int", "Long"})
-		public ValueType valueType1;
-		@Param({"Int", "Long"})
-		public ValueType valueType2;
 
 		public TruncationPolicy truncationPolicy;
 		public DecimalArithmetics arithmetics;
@@ -93,22 +89,6 @@ abstract public class AbstractBenchmark {
 		}
 	}
 	
-	@State(Scope.Benchmark)
-	public static class StandardBenchmarkState extends AbstractBenchmarkState {
-		@Setup
-		public void initValues() {
-			values = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
-		}
-	}
-
-	@State(Scope.Benchmark)
-	public static class PositiveOnlyBenchmarkState extends AbstractBenchmarkState {
-		@Setup
-		public void initValues() {
-			values = Values.create(valueType1.random(SignType.POSITIVE), valueType2.random(SignType.POSITIVE), scale);
-		}
-	}
-
 	protected static class Values<S extends ScaleMetrics> {
 		public final long unscaled1;
 		public final long unscaled2;
