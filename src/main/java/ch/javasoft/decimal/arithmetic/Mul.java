@@ -27,9 +27,15 @@ final class Mul {
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
 		}
-
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
+
+		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
+		if (leadingZeros > Long.SIZE + 1) {
+			//product fits in long, just do it
+			return scaleMetrics.divideByScaleFactor(uDecimal1 * uDecimal2);
+		}
+
 		if (scale <= 9) {
 			//use scale to split into 2 parts: i (integral) and f (fractional)
 			//with this scale, the low order product f1*f2 fits in a long
@@ -80,6 +86,16 @@ final class Mul {
 
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
+		
+		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
+		if (leadingZeros > Long.SIZE + 1) {
+			//product fits in long, just do it
+			final long u1xu2 = uDecimal1 * uDecimal2;
+			final long u1xu2d = scaleMetrics.divideByScaleFactor(u1xu2);
+			final long u1xu2r = u1xu2 - scaleMetrics.multiplyByScaleFactor(u1xu2d);
+			return u1xu2d + Rounding.calculateRoundingIncrement(rounding, u1xu2d, u1xu2r, scaleMetrics.getScaleFactor());
+		}
+		
 		if (scale <= 9) {
 			//use scale to split into 2 parts: i (integral) and f (fractional)
 			//with this scale, the low order product f1*f2 fits in a long

@@ -28,6 +28,7 @@ dependencies {
     testCompile 'junit:junit:4.11'
     jmh 'org.openjdk.jmh:jmh-core:1.1.1'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.1.1'
+    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.1.1'
 }
 
 test {
@@ -77,7 +78,7 @@ jmh {
    include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
 //   exclude = 'some regular expression' // exclude pattern (regular expression) for benchmarks to be executed
    iterations = 3 // Number of measurement iterations to do.
-   benchmarkMode = 'all' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
+   benchmarkMode = 'thrpt' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
    batchSize = 1 // Batch size: number of benchmark method calls per operation. (some benchmark modes can ignore this setting)
    fork = 0 // How many times to forks a single benchmark. Use 0 to disable forking altogether
    failOnError = false // Should JMH fail immediately if any benchmark had experienced the unrecoverable error?
@@ -93,8 +94,8 @@ jmh {
 //   profilers = [] // Use profilers to collect additional data.
 //   timeOnIteration = '1s' // Time to spend at each measurement iteration.
    resultFormat = 'CSV' // Result format type (one of CSV, JSON, NONE, SCSV, TEXT)
-//   synchronizeIterations = false // Synchronize iterations?
-//   threads = 4 // Number of worker threads to run with.
+   synchronizeIterations = false // Synchronize iterations?
+   threads = 1 // Number of worker threads to run with.
 //   threadGroups = [2,3,4] //Override thread group distribution for asymmetric benchmarks.
    timeUnit = 'us' // Output time unit. Available time units are: [m, s, ms, us, ns].
    verbosity = 'NORMAL' // Verbosity mode. Available modes are: [SILENT, NORMAL, EXTRA]

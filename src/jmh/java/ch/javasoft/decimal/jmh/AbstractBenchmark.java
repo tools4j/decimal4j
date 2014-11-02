@@ -27,47 +27,62 @@ abstract public class AbstractBenchmark {
 
 	private static final Random RND = new Random();
 
+	private static enum SignType {
+		ALL,
+		NON_ZERO,
+		POSITIVE
+	}
 	public static enum ValueType {
-		Byte {
-			@Override
-			public long random() {
-				return 0xff & RND.nextInt();
-			}
-		},
-		Short {
-			@Override
-			public long random() {
-				return 0xffff & RND.nextInt();
-			}
-		},
 		Int {
 			@Override
-			public long random() {
-				return RND.nextInt();
+			public long random(SignType signType) {
+				long value = signType == SignType.ALL ? RND.nextInt() : RND.nextInt(Integer.MAX_VALUE);
+				if (signType == SignType.NON_ZERO ) {
+					while (value == 0) {
+						value = signType == SignType.ALL ? RND.nextInt() : RND.nextInt(Integer.MAX_VALUE);
+					}
+				}
+				return value;
 			}
 		},
 		Long {
 			@Override
-			public long random() {
-				return RND.nextLong();
+			public long random(SignType signType) {
+				long val = RND.nextLong();
+				if (signType != SignType.ALL) {
+					while ((val <= 0 && signType == SignType.POSITIVE) || (val == 0 && signType == SignType.NON_ZERO)) {
+						val = RND.nextLong();
+					}
+				}
+				return val;
+			}
+		},
+		RandomIntOrLong {
+			@Override
+			public long random(SignType signType) {
+				return RND.nextBoolean() ? Int.random(signType) : Long.random(signType);
 			}
 		};
 
-		abstract public long random();
+		abstract public long random(SignType signType);
 	}
 
 	@State(Scope.Benchmark)
-	public static class BenchmarkState {
+	abstract public static class AbstractBenchmarkState {
 //		@Param({ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18" })
-		@Param({ "0", "6", "9", "17", "18" })
+//		@Param({ "0", "6", "9", "17", "18" })
+		@Param({ "0", "6", "17"})
 		public int scale;
-		@Param({"DOWN", "HALF_UP"})
+//		@Param({"DOWN", "HALF_UP"})
+		@Param({"HALF_UP"})
 		public RoundingMode roundingMode;
 		@Param("UNCHECKED")
 		public OverflowMode overflowMode;
-		@Param({"Int", "Long"})
+//		@Param({"Int", "Long"})
+		@Param("RandomIntOrLong")
 		public ValueType valueType1;
-		@Param({"Int", "Long"})
+//		@Param({"Int", "Long"})
+		@Param("RandomIntOrLong")
 		public ValueType valueType2;
 
 		public TruncationPolicy truncationPolicy;
@@ -78,12 +93,27 @@ abstract public class AbstractBenchmark {
 		public Values<?> values;
 
 		@Setup
-		public void setup() {
+		public void initParams() {
 			truncationPolicy = overflowMode.getTruncationPolicyFor(roundingMode);
 			arithmetics = Scales.valueOf(scale).getArithmetics(truncationPolicy);
 			mcLong64 = new MathContext(19, roundingMode);
 			mcLong128 = new MathContext(39, roundingMode);
-			values = Values.create(valueType1.random(), valueType2.random(), scale);
+		}
+	}
+	
+	@State(Scope.Benchmark)
+	public static class StandardBenchmarkState extends AbstractBenchmarkState {
+		@Setup
+		public void initValues() {
+			values = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
+		}
+	}
+
+	@State(Scope.Benchmark)
+	public static class PositiveOnlyBenchmarkState extends AbstractBenchmarkState {
+		@Setup
+		public void initValues() {
+			values = Values.create(valueType1.random(SignType.POSITIVE), valueType2.random(SignType.POSITIVE), scale);
 		}
 	}
 
