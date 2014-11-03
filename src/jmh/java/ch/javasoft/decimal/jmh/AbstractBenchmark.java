@@ -1,5 +1,6 @@
 package ch.javasoft.decimal.jmh;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -9,6 +10,7 @@ import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
@@ -28,16 +30,15 @@ abstract public class AbstractBenchmark {
 	private static final Random RND = new Random();
 
 	public static enum SignType {
-		ALL,
-		NON_ZERO,
-		POSITIVE
+		ALL, NON_ZERO, POSITIVE
 	}
+
 	public static enum ValueType {
 		Int {
 			@Override
 			public long random(SignType signType) {
 				long value = signType == SignType.ALL ? RND.nextInt() : RND.nextInt(Integer.MAX_VALUE);
-				if (signType == SignType.NON_ZERO ) {
+				if (signType == SignType.NON_ZERO) {
 					while (value == 0) {
 						value = signType == SignType.ALL ? RND.nextInt() : RND.nextInt(Integer.MAX_VALUE);
 					}
@@ -63,12 +64,12 @@ abstract public class AbstractBenchmark {
 
 	@State(Scope.Benchmark)
 	abstract public static class AbstractBenchmarkState {
-//		@Param({ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18" })
-//		@Param({ "0", "6", "9", "17", "18" })
-		@Param({ "0", "6", "17"})
+		//		@Param({ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18" })
+		//		@Param({ "0", "6", "9", "17", "18" })
+		@Param({ "0", "6", "17" })
 		public int scale;
-//		@Param({"DOWN", "HALF_UP"})
-		@Param({"HALF_UP"})
+		//		@Param({"DOWN", "HALF_UP"})
+		@Param({ "HALF_UP" })
 		public RoundingMode roundingMode;
 		@Param("UNCHECKED")
 		public OverflowMode overflowMode;
@@ -88,7 +89,7 @@ abstract public class AbstractBenchmark {
 			mcLong128 = new MathContext(39, roundingMode);
 		}
 	}
-	
+
 	protected static class Values<S extends ScaleMetrics> {
 		public final long unscaled1;
 		public final long unscaled2;
@@ -111,6 +112,7 @@ abstract public class AbstractBenchmark {
 			this.double2 = bigDecimal2.doubleValue();
 			this.mutable = (MutableDecimal<S, ?>) decimalFactory.createMutable(0);
 		}
+
 		public static Values<?> create(long unscaled1, long unscaled2, int scale) {
 			return create(unscaled1, unscaled2, Scales.valueOf(scale));
 		}
@@ -119,5 +121,8 @@ abstract public class AbstractBenchmark {
 			return new Values<S>(unscaled1, unscaled2, scaleMetrics.getScale(), Factories.valueOf(scaleMetrics));
 		}
 	}
-
+	
+	protected static void run(Class<? extends AbstractBenchmark> benchmarkClass) throws RunnerException, IOException, InterruptedException {
+		new JmhRunner(benchmarkClass).run();
+	}
 }

@@ -1,7 +1,10 @@
 package ch.javasoft.decimal.jmh;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
@@ -63,5 +66,9 @@ public class SqrtBenchmark extends AbstractUnaryOpPositiveLongBenchmark {
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
 		return state.arithmetics.sqrt(values.unscaled1);
+	}
+	
+	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
+		run(SqrtBenchmark.class);
 	}
 }

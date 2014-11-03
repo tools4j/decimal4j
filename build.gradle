@@ -77,8 +77,9 @@ sourceSets.main.java {
 jmh {
    include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
 //   exclude = 'some regular expression' // exclude pattern (regular expression) for benchmarks to be executed
-   iterations = 3 // Number of measurement iterations to do.
    benchmarkMode = 'thrpt' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
+   iterations = 3 // Number of measurement iterations to do.
+   timeOnIteration = '1000ms' // Time to spend at each measurement iteration.
    batchSize = 1 // Batch size: number of benchmark method calls per operation. (some benchmark modes can ignore this setting)
    fork = 1 // How many times to forks a single benchmark. Use 0 to disable forking altogether
    failOnError = false // Should JMH fail immediately if any benchmark had experienced the unrecoverable error?
@@ -88,11 +89,10 @@ jmh {
 //   jvmArgsAppend = 'Custom JVM args to use when forking (append these)'
 //   jvmArgsPrepend = 'Custom JVM args to use when forking (prepend these)'
    humanOutputFile = project.file("${project.buildDir}/reports/jmh/human.txt") // human-readable output file
-   resultsFile = project.file("${project.buildDir}/reports/jmh/results.txt") // results file
+   resultsFile = project.file("${project.buildDir}/reports/jmh/results.csv") // results file
 //   operationsPerInvocation = 10 // Operations per invocation.
 //   benchmarkParameters =  [:] // Benchmark parameters.
 //   profilers = [] // Use profilers to collect additional data.
-   timeOnIteration = '1000ms' // Time to spend at each measurement iteration.
    resultFormat = 'CSV' // Result format type (one of CSV, JSON, NONE, SCSV, TEXT)
 //   synchronizeIterations = true // Synchronize iterations?
 //   threads = 1 // Number of worker threads to run with.

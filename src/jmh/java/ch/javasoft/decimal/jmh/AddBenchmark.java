@@ -1,6 +1,9 @@
 package ch.javasoft.decimal.jmh;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+
+import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
@@ -39,5 +42,9 @@ public class AddBenchmark extends AbstractBinaryOpLongLongBenchmark {
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
 		return state.arithmetics.add(values.unscaled1, values.unscaled2);
+	}
+	
+	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
+		run(AddBenchmark.class);
 	}
 }
