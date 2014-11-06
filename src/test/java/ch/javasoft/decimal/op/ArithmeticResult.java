@@ -44,9 +44,9 @@ class ArithmeticResult<T> {
 	public void assertEquivalentTo(ArithmeticResult<T> expected, String messagePrefix) {
 		if ((expected.exception == null) != (exception == null)) {
 			if (expected.exception != null) {
-		        throw new AssertionError(messagePrefix + " was " + resultString + " but should lead to an exception: " + expected.exception, expected.exception);
+		        throw (AssertionError)new AssertionError(messagePrefix + " was " + resultString + " but should lead to an exception: " + expected.exception).initCause(expected.exception);
 			} else {
-		        throw new AssertionError(messagePrefix + " = " + expected.resultString + " but lead to an exception: " + exception, exception);
+		        throw (AssertionError)new AssertionError(messagePrefix + " = " + expected.resultString + " but lead to an exception: " + exception).initCause(exception);
 			}
 		} else {
 			assertEquals(messagePrefix + " = " + expected.resultString, expected.compareValue, compareValue);
