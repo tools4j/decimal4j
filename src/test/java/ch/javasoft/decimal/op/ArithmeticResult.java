@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.Java8;
+import ch.javasoft.decimal.arithmetic.JDKSupport;
 
 /**
  * Result of an arithmetic operation which can also sometimes lead to an
@@ -31,7 +31,7 @@ class ArithmeticResult<T> {
 	}
 	public static ArithmeticResult<Long> forResult(DecimalArithmetics arithmetics, BigDecimal result) {
 		final BigDecimal rnd = result.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
-		final long resultUnscaled = arithmetics.getOverflowMode().isChecked() ? Java8.bigIntegerToLongValueExact(rnd.unscaledValue()) : rnd.unscaledValue().longValue();
+		final long resultUnscaled = arithmetics.getOverflowMode().isChecked() ? JDKSupport.bigIntegerToLongValueExact(rnd.unscaledValue()) : rnd.unscaledValue().longValue();
 		return forResult(result.toPlainString(), resultUnscaled);
 	}
 	public static ArithmeticResult<Long> forResult(Decimal<?> result) {

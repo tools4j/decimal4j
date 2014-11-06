@@ -65,13 +65,13 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
-		return Java8.bigIntegerToLongValueExact(value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()));
+		return JDKSupport.bigIntegerToLongValueExact(value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()));
 	}
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
 		final BigDecimal scaled = value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode());
-		return Java8.bigIntegerToLongValueExact(scaled.toBigInteger());
+		return JDKSupport.bigIntegerToLongValueExact(scaled.toBigInteger());
 	}
 
 

@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.arithmetic.Java8;
+import ch.javasoft.decimal.arithmetic.JDKSupport;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
@@ -19,7 +19,7 @@ public class SquareCheckedBenchmark extends AbstractUnaryOpIntLongRoundingBenchm
 		try {
 			final BigDecimal result = values.bigDecimal1.multiply(values.bigDecimal1, state.mcLong64);
 			//check overflow
-			Java8.bigIntegerToLongValueExact(result.unscaledValue());
+			JDKSupport.bigIntegerToLongValueExact(result.unscaledValue());
 			return result;
 		} catch (ArithmeticException e) {
 			return null;

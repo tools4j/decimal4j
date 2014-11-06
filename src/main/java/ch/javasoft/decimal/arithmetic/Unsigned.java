@@ -35,7 +35,7 @@ final class Unsigned {
 	 *         equal
 	 */
 	public static int compare(long a, long b) {
-		return Long.compare(flip(a), flip(b));
+		return JDKSupport.longCompare(flip(a), flip(b));
 	}
 
 	/**

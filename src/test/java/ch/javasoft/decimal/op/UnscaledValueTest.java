@@ -11,7 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
-import ch.javasoft.decimal.arithmetic.Java8;
+import ch.javasoft.decimal.arithmetic.JDKSupport;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
@@ -40,7 +40,7 @@ public class UnscaledValueTest extends AbstractOneAryDecimalToAnyTest<Long> {
 	
 	@Override
 	protected Long expectedResult(BigDecimal operand) {
-		return Java8.bigIntegerToLongValueExact(operand.unscaledValue());
+		return JDKSupport.bigIntegerToLongValueExact(operand.unscaledValue());
 	}
 	
 	@Override

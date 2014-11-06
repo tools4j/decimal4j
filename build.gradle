@@ -8,8 +8,7 @@ jacoco {
     toolVersion = "0.7.0.201403182114"
 }
 
-sourceCompatibility = 1.7
-//sourceCompatibility = 1.8
+sourceCompatibility = 1.6
 version = '1.0'
 
 jar {

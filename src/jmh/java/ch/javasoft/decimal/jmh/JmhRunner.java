@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Mode;
@@ -26,7 +25,10 @@ public class JmhRunner {
 	private final Class<?> benchmarkClass;
 
 	public JmhRunner(Class<?> benchmarkClass) {
-		this.benchmarkClass = Objects.requireNonNull(benchmarkClass, "benchmarkClass cannot be null");
+		if (benchmarkClass == null) {
+			throw new NullPointerException("benchmarkClass cannot be null");
+		}
+		this.benchmarkClass = benchmarkClass;
 	}
 	public void run() throws RunnerException, IOException, InterruptedException {
 		final Process process = Runtime.getRuntime().exec("java -cp ./build/libs/javasoft-decimal-1.0-jmh.jar " + JmhRunner.class.getName() + " " + benchmarkClass.getSimpleName());
