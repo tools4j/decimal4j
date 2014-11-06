@@ -7,36 +7,25 @@ import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
- * Micro benchmarks for multiplication based on the jmh library.
+ * Micro benchmarks for unchecked square.
  */
-public class SquareBenchmark extends AbstractUnaryOpIntLongBenchmark {
+public class SquareBenchmark extends AbstractUnaryOpIntLongRoundingBenchmark {
 
 	@Override
-	protected <S extends ScaleMetrics> double doubles(BenchmarkState state, Values<S> values) {
-		return values.double1 * values.double1;
-	}
-	
-	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
-		final BigDecimal result = values.bigDecimal1.multiply(values.bigDecimal1, state.mcLong64);
-		if (state.overflowMode == OverflowMode.CHECKED) {
-			//check overflow
-			result.unscaledValue().longValueExact();
-		}
-		return result;
+		return values.bigDecimal1.multiply(values.bigDecimal1, state.mcLong64);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values) {
-		return values.immutable1.square(state.truncationPolicy);
+		return values.immutable1.square(state.roundingMode);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values) {
-		return values.mutable.set(values.immutable1).square(state.truncationPolicy);
+		return values.mutable.set(values.immutable1).square(state.roundingMode);
 	}
 
 	@Override

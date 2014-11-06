@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Random;
 
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
@@ -27,74 +26,54 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  */
 abstract public class AbstractBenchmark {
 
-	private static final Random RND = new Random();
-
-	public static enum SignType {
-		ALL, NON_ZERO, POSITIVE
-	}
-
-	public static enum ValueType {
-		Int {
-			@Override
-			public long random(SignType signType) {
-				long value = signType == SignType.ALL ? RND.nextInt() : RND.nextInt(Integer.MAX_VALUE);
-				if (signType == SignType.NON_ZERO) {
-					while (value == 0) {
-						value = signType == SignType.ALL ? RND.nextInt() : RND.nextInt(Integer.MAX_VALUE);
-					}
-				}
-				return value;
-			}
-		},
-		Long {
-			@Override
-			public long random(SignType signType) {
-				long val = RND.nextLong();
-				if (signType != SignType.ALL) {
-					while ((val <= 0 && signType == SignType.POSITIVE) || (val == 0 && signType == SignType.NON_ZERO)) {
-						val = RND.nextLong();
-					}
-				}
-				return val;
-			}
-		};
-
-		abstract public long random(SignType signType);
-	}
-
 	@State(Scope.Benchmark)
 	abstract public static class AbstractBenchmarkState {
 		//		@Param({ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18" })
 		//		@Param({ "0", "6", "9", "17", "18" })
 		@Param({ "0", "6", "17" })
 		public int scale;
-		//		@Param({"DOWN", "HALF_UP"})
-		@Param({ "HALF_UP" })
-		public RoundingMode roundingMode;
-		@Param("UNCHECKED")
-		public OverflowMode overflowMode;
 
-		public TruncationPolicy truncationPolicy;
 		public DecimalArithmetics arithmetics;
 		public MathContext mcLong64;
 		public MathContext mcLong128;
 
 		public Values<?> values;
 
-		@Setup
-		public void initParams() {
-			truncationPolicy = overflowMode.getTruncationPolicyFor(roundingMode);
-			arithmetics = Scales.valueOf(scale).getArithmetics(truncationPolicy);
+		//for checked benchmarks only
+		public TruncationPolicy checkedTruncationPolicy;
+		public DecimalArithmetics checkedArithmetics;
+
+		protected void initParams(RoundingMode roundingMode) {
+			arithmetics = Scales.valueOf(scale).getArithmetics(roundingMode);
+			checkedTruncationPolicy = OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode);
+			checkedArithmetics = Scales.valueOf(scale).getArithmetics(checkedTruncationPolicy);
 			mcLong64 = new MathContext(19, roundingMode);
 			mcLong128 = new MathContext(39, roundingMode);
 		}
 	}
+	@State(Scope.Benchmark)
+	abstract public static class TruncatingBenchmarkState extends AbstractBenchmarkState {
+		@Setup
+		public void initParams() {
+			super.initParams(RoundingMode.DOWN);
+		}
+	}
 
+	@State(Scope.Benchmark)
+	abstract public static class RoundingBenchmarkState extends AbstractBenchmarkState {
+		//@Param({ "HALF_UP" })
+		@Param({"DOWN", "HALF_UP"})
+		public RoundingMode roundingMode;
+
+		@Setup
+		public void initParams() {
+			super.initParams(roundingMode);
+		}
+	}
+	
 	protected static class Values<S extends ScaleMetrics> {
 		public final long unscaled1;
 		public final long unscaled2;
-		public final double double1;
-		public final double double2;
 		public final BigDecimal bigDecimal1;
 		public final BigDecimal bigDecimal2;
 		public final ImmutableDecimal<S, ?> immutable1;
@@ -108,8 +87,6 @@ abstract public class AbstractBenchmark {
 			this.bigDecimal2 = BigDecimal.valueOf(unscaled2, scale);
 			this.immutable1 = (ImmutableDecimal<S, ?>) decimalFactory.createImmutable(unscaled1);
 			this.immutable2 = (ImmutableDecimal<S, ?>) decimalFactory.createImmutable(unscaled2);
-			this.double1 = bigDecimal1.doubleValue();
-			this.double2 = bigDecimal2.doubleValue();
 			this.mutable = (MutableDecimal<S, ?>) decimalFactory.createMutable(0);
 		}
 

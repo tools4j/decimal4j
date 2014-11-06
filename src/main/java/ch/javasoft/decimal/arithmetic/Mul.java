@@ -46,7 +46,7 @@ final class Mul {
 			return scaleMetrics.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + scaleMetrics.divideByScaleFactor(f1 * f2);
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
-			final ScaleMetrics scale9f = Scale9f.INSTANCE;
+			final Scale9f scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
 			final long h1 = scale9f.divideByScaleFactor(uDecimal1);

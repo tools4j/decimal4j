@@ -65,7 +65,7 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 		if (value.length() < 18) {
 			return Long.parseLong(value);
 		}
-		return new BigInteger(value).longValueExact();
+		return Java8.bigIntegerToLongValueExact(new BigInteger(value));
 	}
 
 	@Override

@@ -8,18 +8,12 @@ import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
- * Micro benchmarks for multiplication based on the jmh library.
+ * Micro benchmarks for square root.
  */
-public class SqrtBenchmark extends AbstractUnaryOpPositiveLongBenchmark {
+public class SqrtBenchmark extends AbstractUnaryOpPositiveLongRoundingBenchmark {
 
-	@Override
-	protected <S extends ScaleMetrics> double doubles(BenchmarkState state, Values<S> values) {
-		return Math.sqrt(values.double1);
-	}
-	
 	private static BigDecimal sqrt(BigDecimal bigDecimal) {
 		if (bigDecimal.signum() < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + bigDecimal);
@@ -45,12 +39,7 @@ public class SqrtBenchmark extends AbstractUnaryOpPositiveLongBenchmark {
 	}
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
-		final BigDecimal result = sqrt(values.bigDecimal1);
-		if (state.overflowMode == OverflowMode.CHECKED) {
-			//check overflow
-			result.unscaledValue().longValueExact();
-		}
-		return result;
+		return sqrt(values.bigDecimal1);
 	}
 
 	@Override

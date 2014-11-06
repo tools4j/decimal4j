@@ -1,5 +1,6 @@
 package ch.javasoft.decimal.arithmetic;
 
+
 /**
  * Helper class for checked arithmetics with longs.
  */

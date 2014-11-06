@@ -9,31 +9,33 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
 /**
- * Micro benchmarks for unchecked multiplication.
+ * Micro benchmarks for average.
  */
-public class MultiplyBenchmark extends AbstractBinaryOpIntLongRoundingBenchmark {
+public class AvgBenchmark extends AbstractBinaryOpLongLongRoundingBenchmark {
+	
+	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
-		return values.bigDecimal1.multiply(values.bigDecimal2, state.mcLong64);
+		return values.bigDecimal1.add(values.bigDecimal2).divide(TWO, state.mcLong64);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values) {
-		return values.immutable1.multiply(values.immutable2, state.roundingMode);
+		return values.immutable1.avg(values.immutable2, state.roundingMode);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values) {
-		return values.mutable.set(values.immutable1).multiply(values.immutable2, state.roundingMode);
+		return values.mutable.set(values.immutable1).avg(values.immutable2, state.roundingMode);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
-		return state.arithmetics.multiply(values.unscaled1, values.unscaled2);
+		return state.arithmetics.avg(values.unscaled1, values.unscaled2);
 	}
 	
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
-		run(MultiplyBenchmark.class);
+		run(AvgBenchmark.class);
 	}
 }

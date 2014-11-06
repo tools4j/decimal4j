@@ -23,8 +23,9 @@ import org.openjdk.jmh.runner.options.TimeValue;
 
 public class JmhRunner {
 	
-	private final Class<? extends AbstractBenchmark> benchmarkClass;
-	public JmhRunner(Class<? extends AbstractBenchmark> benchmarkClass) {
+	private final Class<?> benchmarkClass;
+
+	public JmhRunner(Class<?> benchmarkClass) {
 		this.benchmarkClass = Objects.requireNonNull(benchmarkClass, "benchmarkClass cannot be null");
 	}
 	public void run() throws RunnerException, IOException, InterruptedException {

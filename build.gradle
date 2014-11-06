@@ -8,7 +8,7 @@ jacoco {
     toolVersion = "0.7.0.201403182114"
 }
 
-sourceCompatibility = 1.6
+sourceCompatibility = 1.7
 //sourceCompatibility = 1.8
 version = '1.0'
 
@@ -76,7 +76,7 @@ sourceSets.main.java {
     
 jmh {
    include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
-//   exclude = 'some regular expression' // exclude pattern (regular expression) for benchmarks to be executed
+   exclude = '.*CheckedBenchmark.*' // exclude pattern (regular expression) for benchmarks to be executed
    benchmarkMode = 'thrpt' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
    iterations = 3 // Number of measurement iterations to do.
    timeOnIteration = '1000ms' // Time to spend at each measurement iteration.

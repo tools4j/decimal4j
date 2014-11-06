@@ -11,21 +11,17 @@ import org.openjdk.jmh.annotations.State;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
-abstract public class AbstractBinaryOpLongLongBenchmark extends AbstractBenchmark {
+abstract public class AbstractBinaryOpIntLongRoundingBenchmark extends AbstractBenchmark {
 	@State(Scope.Benchmark)
-	public static class BenchmarkState extends AbstractBenchmarkState {
-		@Param("Long")
+	public static class BenchmarkState extends RoundingBenchmarkState {
+		@Param({"Int", "Long"})
 		public ValueType valueType1;
-		@Param("Long")
+		@Param({"Int", "Long"})
 		public ValueType valueType2;
 		@Setup
 		public void initValues() {
 			values = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
 		}
-	}
-	@Benchmark
-	public double doubles(BenchmarkState state) {
-		return doubles(state, state.values);
 	}
 
 	@Benchmark
@@ -48,8 +44,6 @@ abstract public class AbstractBinaryOpLongLongBenchmark extends AbstractBenchmar
 		return nativeDecimals(state, state.values);
 	}
 
-	abstract protected <S extends ScaleMetrics> double doubles(BenchmarkState state, Values<S> values);
-	
 	abstract protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values);
 
 	abstract protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values);
