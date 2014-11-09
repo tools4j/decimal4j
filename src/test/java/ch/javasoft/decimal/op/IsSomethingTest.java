@@ -18,7 +18,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * as {@link Decimal#isZero()}, {@link Decimal#isOne()}, {@link Decimal#isNegative()} etc.
  */
 @RunWith(Parameterized.class)
-public class IsSomethingTest extends AbstractOneAryDecimalToAnyTest<Boolean> {
+public class IsSomethingTest extends Abstract1DecimalArgToAnyResultTest<Boolean> {
 	
 	public static enum Operation {
 		isZero {

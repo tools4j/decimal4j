@@ -17,7 +17,7 @@ import ch.javasoft.decimal.truncate.OverflowMode;
  * Unit test for {@link Decimal#divideToIntegralValue(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class DivideToIntegralValueTest extends AbstractTwoAryDecimalToDecimalTest {
+public class DivideToIntegralValueTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	public DivideToIntegralValueTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);

@@ -14,7 +14,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * 
  * @param <R> the result type of the operation, common type for {@link Decimal} and {@link BigDecimal}
  */
-abstract public class AbstractOneAryDecimalToAnyTest<R> extends AbstractOperandTest {
+abstract public class Abstract1DecimalArgToAnyResultTest<R> extends AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -24,7 +24,7 @@ abstract public class AbstractOneAryDecimalToAnyTest<R> extends AbstractOperandT
 	 *            the arithmetics determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractOneAryDecimalToAnyTest(DecimalArithmetics arithmetics) {
+	public Abstract1DecimalArgToAnyResultTest(DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 

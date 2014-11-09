@@ -17,7 +17,7 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * Unit test for {@link Decimal#square()}
  */
 @RunWith(Parameterized.class)
-public class SquareTest extends AbstractOneAryDecimalToDecimalTest {
+public class SquareTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	public SquareTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);

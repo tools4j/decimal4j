@@ -3,6 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * Arithmetics implementation throwing an exception if an operation leads to on
@@ -36,6 +37,11 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideChecked(this, uDecimalDividend, uDecimalDivisor);
+	}
+
+	@Override
+	public long pow(long uDecimal, int exponent) {
+		return Pow.powChecked(this, DecimalRounding.DOWN, uDecimal, exponent);
 	}
 
 	@Override

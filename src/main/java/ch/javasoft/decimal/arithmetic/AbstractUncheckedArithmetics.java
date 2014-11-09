@@ -53,11 +53,6 @@ abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public long pow(long uDecimal, int exponent) {
-		return Pow.pow(this, uDecimal, exponent);
-	}
-
-	@Override
 	public long fromLong(long value) {
 		return getScaleMetrics().multiplyByScaleFactor(value);
 	}

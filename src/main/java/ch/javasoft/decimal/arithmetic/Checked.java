@@ -22,6 +22,32 @@ final class Checked {
 		return result;
 	}
 
+	public static final long multiplyLong(long lValue1, long lValue2) {
+		// Hacker's Delight, Section 2-12
+		final int leadingZeros = Long.numberOfLeadingZeros(lValue1) + Long.numberOfLeadingZeros(~lValue1) + Long.numberOfLeadingZeros(lValue2) + Long.numberOfLeadingZeros(~lValue2);
+		/*
+		 * If leadingZeros > Long.SIZE + 1 it's definitely fine, if it's <
+		 * Long.SIZE it's definitely bad. We do the leadingZeros check to avoid
+		 * the division below if at all possible.
+		 * 
+		 * Otherwise, if b == Long.MIN_VALUE, then the only allowed values of a
+		 * are 0 and 1. We take care of all a < 0 with their own check, because
+		 * in particular, the case a == -1 will incorrectly pass the division
+		 * check below.
+		 * 
+		 * In all other cases, we check that either a is 0 or the result is
+		 * consistent with division.
+		 */
+		final long result = lValue1 * lValue2;
+		if (leadingZeros > Long.SIZE + 1) {
+			return result;
+		}
+		if (leadingZeros < Long.SIZE || (lValue1 < 0 & lValue2 == Long.MIN_VALUE) || (lValue1 != 0 && result / lValue1 != lValue2)) {
+			throw new ArithmeticException("Overflow: " + lValue1 + " * " + lValue2 + " = " + result);
+		}
+		return result;
+	}
+
 	public static final long multiplyByLong(DecimalArithmetics arith, long uDecimal, long lValue) {
 		// Hacker's Delight, Section 2-12
 		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal) + Long.numberOfLeadingZeros(~uDecimal) + Long.numberOfLeadingZeros(lValue) + Long.numberOfLeadingZeros(~lValue);

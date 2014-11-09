@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#divideAndRemainder(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class DivideAndRemainderTest extends AbstractTwoAryDecimalToAnyTest<Object[]> {
+public class DivideAndRemainderTest extends Abstract2DecimalArgsToAnyResultTest<Object[]> {
 	
 	public DivideAndRemainderTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

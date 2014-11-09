@@ -29,12 +29,6 @@ abstract public class AbstractCheckedScaleNfArithmetics extends AbstractCheckedA
 	}
 
 	@Override
-	public long pow(long uDecimalBase, int exponent) {
-		//NOTE: we assume that multiply with this arithmetics does the correct rounding
-		return Pow.powChecked(this, uDecimalBase, exponent);
-	}
-
-	@Override
 	public long fromLong(long value) {
 		return getScaleMetrics().multiplyByScaleFactorExact(value);
 	}

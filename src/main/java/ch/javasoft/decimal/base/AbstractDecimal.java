@@ -863,19 +863,21 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public boolean isIntegralPartZero() {
-		return getScaleMetrics().divideByScaleFactor(unscaledValue()) == 0;
+		final long unscaled = unscaledValue();
+		final long one = getScaleMetrics().getScaleFactor();
+		return one > unscaled & unscaled > -one;
 	}
 
 	@Override
 	public boolean isBetweenZeroAndOne() {
 		final long unscaled = unscaledValue();
-		return unscaled >= 0 && getScaleMetrics().divideByScaleFactor(unscaled) == 0;
+		return 0 <= unscaled && unscaled < getScaleMetrics().getScaleFactor();  
 	}
 
 	@Override
 	public boolean isBetweenZeroAndMinusOne() {
 		final long unscaled = unscaledValue();
-		return unscaled <= 0 && getScaleMetrics().divideByScaleFactor(unscaled) == 0;
+		return 0 >= unscaled && unscaled > -getScaleMetrics().getScaleFactor();  
 	}
 
 	@Override

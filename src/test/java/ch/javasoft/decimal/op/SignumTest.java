@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#signum()}
  */
 @RunWith(Parameterized.class)
-public class SignumTest extends AbstractOneAryDecimalToAnyTest<Integer> {
+public class SignumTest extends Abstract1DecimalArgToAnyResultTest<Integer> {
 	
 	public SignumTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

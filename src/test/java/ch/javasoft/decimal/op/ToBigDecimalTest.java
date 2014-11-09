@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#toBigDecimal()} and {@link Decimal#toBigDecimal(int, RoundingMode)} 
  */
 @RunWith(Parameterized.class)
-public class ToBigDecimalTest extends AbstractOneAryDecimalToAnyTest<BigDecimal> {
+public class ToBigDecimalTest extends Abstract1DecimalArgToAnyResultTest<BigDecimal> {
 
 	private final Integer newScale;
 	

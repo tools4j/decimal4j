@@ -12,7 +12,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * of the {@link BigDecimal}. The test operand values created based on random
  * long values.
  */
-abstract public class AbstractTwoAryDecimalToDecimalTest extends
+abstract public class Abstract2DecimalArgsToDecimalResultTest extends
 		AbstractOperandTest {
 
 	/**
@@ -23,7 +23,7 @@ abstract public class AbstractTwoAryDecimalToDecimalTest extends
 	 *            the arithmetics determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractTwoAryDecimalToDecimalTest(DecimalArithmetics arithmetics) {
+	public Abstract2DecimalArgsToDecimalResultTest(DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 

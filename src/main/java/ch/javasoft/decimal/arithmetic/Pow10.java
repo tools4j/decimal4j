@@ -131,6 +131,9 @@ final class Pow10 {
 			return uDecimal;
 		}
 		if (n > 0) {
+			if (rounding == DecimalRounding.DOWN) {
+				return divideByPowerOf10(uDecimal, n);
+			}
 			if (n <= 18) {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);

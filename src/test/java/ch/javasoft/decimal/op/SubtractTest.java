@@ -17,7 +17,7 @@ import ch.javasoft.decimal.truncate.OverflowMode;
  * Unit test for {@link Decimal#subtract(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class SubtractTest extends AbstractTwoAryDecimalToDecimalTest {
+public class SubtractTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	public SubtractTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);

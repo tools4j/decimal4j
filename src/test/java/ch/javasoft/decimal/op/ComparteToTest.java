@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#compareTo(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class ComparteToTest extends AbstractTwoAryDecimalToAnyTest<Integer> {
+public class ComparteToTest extends Abstract2DecimalArgsToAnyResultTest<Integer> {
 	
 	public ComparteToTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

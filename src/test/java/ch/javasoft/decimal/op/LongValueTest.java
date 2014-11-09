@@ -19,7 +19,7 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * and {@link Decimal#longValue(RoundingMode)}.
  */
 @RunWith(Parameterized.class)
-public class LongValueTest extends AbstractOneAryDecimalToAnyTest<Long> {
+public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 	
 	private final boolean exact;
 

@@ -7,6 +7,7 @@ import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.infra.Blackhole;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
@@ -20,28 +21,38 @@ abstract public class AbstractBinaryOpLongLongRoundingBenchmark extends Abstract
 		public ValueType valueType2;
 		@Setup
 		public void initValues() {
-			values = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
+			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+				values[i] = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
+			}
 		}
 	}
 
 	@Benchmark
-	public BigDecimal bigDecimals(BenchmarkState state) {
-		return bigDecimals(state, state.values);
+	public void bigDecimals(BenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(bigDecimals(state, state.values[i]));
+		}
 	}
 
 	@Benchmark
-	public Decimal<?> immutableDecimals(BenchmarkState state) {
-		return immitableDecimals(state, state.values);
+	public void immutableDecimals(BenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(immitableDecimals(state, state.values[i]));
+		}
 	}
 
 	@Benchmark
-	public Decimal<?> mutableDecimals(BenchmarkState state) {
-		return mutableDecimals(state, state.values);
+	public void mutableDecimals(BenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(mutableDecimals(state, state.values[i]));
+		}
 	}
 
 	@Benchmark
-	public long nativeDecimals(BenchmarkState state) {
-		return nativeDecimals(state, state.values);
+	public void nativeDecimals(BenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(nativeDecimals(state, state.values[i]));
+		}
 	}
 
 	abstract protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values);

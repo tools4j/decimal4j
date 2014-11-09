@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#floatValue()}
  */
 @RunWith(Parameterized.class)
-public class FloatValueTest extends AbstractOneAryDecimalToAnyTest<Float> {
+public class FloatValueTest extends Abstract1DecimalArgToAnyResultTest<Float> {
 
 	public FloatValueTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

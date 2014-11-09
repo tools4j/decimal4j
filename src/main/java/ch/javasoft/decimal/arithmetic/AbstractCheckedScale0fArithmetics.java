@@ -38,11 +38,6 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 	}
 	
 	@Override
-	public long pow(long uDecimalBase, int exponent) {
-		return Pow.powChecked(this, uDecimalBase, exponent);
-	}
-
-	@Override
 	public long avg(long a, long b) {
 		return Avg.avg(a, b);
 	}

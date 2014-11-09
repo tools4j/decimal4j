@@ -17,7 +17,7 @@ import ch.javasoft.decimal.truncate.OverflowMode;
  * Unit test for {@link Decimal#add(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class AddTest extends AbstractTwoAryDecimalToDecimalTest {
+public class AddTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	public AddTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);

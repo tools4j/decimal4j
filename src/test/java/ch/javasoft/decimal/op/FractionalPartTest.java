@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#fractionalPart()}
  */
 @RunWith(Parameterized.class)
-public class FractionalPartTest extends AbstractOneAryDecimalToDecimalTest {
+public class FractionalPartTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	public FractionalPartTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

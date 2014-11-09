@@ -26,6 +26,8 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  */
 abstract public class AbstractBenchmark {
 
+	public static final int OPERATIONS_PER_INVOCATION = 100;
+
 	@State(Scope.Benchmark)
 	abstract public static class AbstractBenchmarkState {
 		//		@Param({ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18" })
@@ -37,7 +39,7 @@ abstract public class AbstractBenchmark {
 		public MathContext mcLong64;
 		public MathContext mcLong128;
 
-		public Values<?> values;
+		public Values<?>[] values = new Values<?>[OPERATIONS_PER_INVOCATION];
 
 		//for checked benchmarks only
 		public TruncationPolicy checkedTruncationPolicy;

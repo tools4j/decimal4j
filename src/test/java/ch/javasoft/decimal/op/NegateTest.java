@@ -17,7 +17,7 @@ import ch.javasoft.decimal.truncate.OverflowMode;
  * Unit test for {@link Decimal#negate()}
  */
 @RunWith(Parameterized.class)
-public class NegateTest extends AbstractOneAryDecimalToDecimalTest {
+public class NegateTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	public NegateTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);

@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#min(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class MinTest extends AbstractTwoAryDecimalToDecimalTest {
+public class MinTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	public MinTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

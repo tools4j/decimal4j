@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#max(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class MaxTest extends AbstractTwoAryDecimalToDecimalTest {
+public class MaxTest extends Abstract2DecimalArgsToDecimalResultTest {
 
 	public MaxTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

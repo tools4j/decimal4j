@@ -10,7 +10,6 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  */
 abstract public class AbstractUncheckedScale0fArithmetics extends AbstractUncheckedArithmetics {
 	
-	
 	@Override
 	public ScaleMetrics getScaleMetrics() {
 		return Scale0f.INSTANCE;

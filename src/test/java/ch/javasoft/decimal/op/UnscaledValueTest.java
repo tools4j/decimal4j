@@ -18,7 +18,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#abs()}
  */
 @RunWith(Parameterized.class)
-public class UnscaledValueTest extends AbstractOneAryDecimalToAnyTest<Long> {
+public class UnscaledValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 	
 	public UnscaledValueTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
 		super(arithmetics);

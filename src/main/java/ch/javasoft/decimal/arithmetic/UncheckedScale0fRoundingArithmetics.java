@@ -79,8 +79,7 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 
 	@Override
 	public long pow(long uDecimal, int exponent) {
-		//FIXME implement with rounding (not only on multiplications!)
-		return super.pow(uDecimal, exponent);
+		return Pow.powLong(this, rounding, uDecimal, exponent);
 	}
 
 //	@Override

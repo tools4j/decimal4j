@@ -18,7 +18,7 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * Unit test for {@link Decimal#multiply(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class MultiplyTest extends AbstractTwoAryDecimalToDecimalTest {
+public class MultiplyTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	public MultiplyTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);

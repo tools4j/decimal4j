@@ -2,6 +2,8 @@ package ch.javasoft.decimal.arithmetic;
 
 import java.math.RoundingMode;
 
+import ch.javasoft.decimal.truncate.DecimalRounding;
+
 /**
  * Arithmetics implementation for the special case {@code scale=0}, that is, for
  * long values. The implementation throws an exception if an operation leads to on
@@ -33,6 +35,11 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 		return 0;
 	}
 	
+	@Override
+	public long pow(long uDecimalBase, int exponent) {
+		return Pow.powLongChecked(this, DecimalRounding.DOWN, uDecimalBase, exponent);
+	}
+
 	@Override
 	public long sqrt(long uDecimal) {
 		return Sqrt.sqrtLong(uDecimal);

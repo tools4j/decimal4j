@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#intValue()} and {@link Decimal#intValueExact()}.
  */
 @RunWith(Parameterized.class)
-public class IntValueTest extends AbstractOneAryDecimalToAnyTest<Integer> {
+public class IntValueTest extends Abstract1DecimalArgToAnyResultTest<Integer> {
 	
 	private final boolean exact;
 

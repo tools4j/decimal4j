@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * {@link Decimal#shortValueExact()}.
  */
 @RunWith(Parameterized.class)
-public class ShortValueTest extends AbstractOneAryDecimalToAnyTest<Short> {
+public class ShortValueTest extends Abstract1DecimalArgToAnyResultTest<Short> {
 
 	private final boolean exact;
 

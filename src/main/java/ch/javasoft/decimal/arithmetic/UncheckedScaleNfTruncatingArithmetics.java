@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
@@ -72,6 +73,11 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	@Override
 	public long divideByPowerOf10(long uDecimal, int positions) {
 		return Pow10.divideByPowerOf10(uDecimal, positions);
+	}
+
+	@Override
+	public long pow(long uDecimal, int exponent) {
+		return Pow.pow(this, DecimalRounding.DOWN, uDecimal, exponent);
 	}
 
 	@Override

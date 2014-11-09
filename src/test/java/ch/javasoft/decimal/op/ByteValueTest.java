@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * {@link Decimal#byteValueExact()}.
  */
 @RunWith(Parameterized.class)
-public class ByteValueTest extends AbstractOneAryDecimalToAnyTest<Byte> {
+public class ByteValueTest extends Abstract1DecimalArgToAnyResultTest<Byte> {
 
 	private final boolean exact;
 

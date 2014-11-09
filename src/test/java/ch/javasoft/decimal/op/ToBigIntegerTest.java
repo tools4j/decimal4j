@@ -19,7 +19,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * and {@link Decimal#toBigInteger(RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class ToBigIntegerTest extends AbstractOneAryDecimalToAnyTest<BigInteger> {
+public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInteger> {
 	
 	private final boolean exact;
 

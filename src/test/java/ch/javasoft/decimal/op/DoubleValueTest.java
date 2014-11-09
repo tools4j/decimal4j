@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#doubleValue()}
  */
 @RunWith(Parameterized.class)
-public class DoubleValueTest extends AbstractOneAryDecimalToAnyTest<Double> {
+public class DoubleValueTest extends Abstract1DecimalArgToAnyResultTest<Double> {
 
 	public DoubleValueTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

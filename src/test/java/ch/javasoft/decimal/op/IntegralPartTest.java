@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#integralPart()}
  */
 @RunWith(Parameterized.class)
-public class IntegralPartTest extends AbstractOneAryDecimalToDecimalTest {
+public class IntegralPartTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	public IntegralPartTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

@@ -17,7 +17,7 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * Unit test for {@link Decimal#invert()}
  */
 @RunWith(Parameterized.class)
-public class InvertTest extends AbstractOneAryDecimalToDecimalTest {
+public class InvertTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	public InvertTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);

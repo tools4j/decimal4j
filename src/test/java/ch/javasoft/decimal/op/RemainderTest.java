@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#remainder(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class RemainderTest extends AbstractTwoAryDecimalToDecimalTest {
+public class RemainderTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	public RemainderTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
 		super(arithmetics);

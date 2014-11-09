@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
@@ -46,6 +47,11 @@ public class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScal
 		return Pow10.divideByPowerOf10(uDecimal, positions);
 	}
 	
+	@Override
+	public long pow(long uDecimal, int exponent) {
+		return Pow.powLong(this, DecimalRounding.DOWN, uDecimal, exponent);
+	}
+
 	@Override
 	public long avg(long a, long b) {
 		return Avg.avg(a, b);

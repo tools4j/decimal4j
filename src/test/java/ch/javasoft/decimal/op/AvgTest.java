@@ -17,7 +17,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Unit test for {@link Decimal#avg(Decimal)} and {@link Decimal#avg(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class AvgTest extends AbstractTwoAryDecimalToDecimalTest {
+public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	

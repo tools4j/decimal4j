@@ -16,7 +16,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  *            the result type of the operation, common type for {@link Decimal}
  *            and {@link BigDecimal}
  */
-abstract public class AbstractTwoAryDecimalToAnyTest<R> extends
+abstract public class Abstract2DecimalArgsToAnyResultTest<R> extends
 		AbstractOperandTest {
 
 	/**
@@ -27,7 +27,7 @@ abstract public class AbstractTwoAryDecimalToAnyTest<R> extends
 	 *            the arithmetics determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractTwoAryDecimalToAnyTest(DecimalArithmetics arithmetics) {
+	public Abstract2DecimalArgsToAnyResultTest(DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 

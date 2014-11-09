@@ -119,6 +119,9 @@ abstract public class AbstractOperandTest {
 			if (s > Long.MIN_VALUE) {
 				specials.add(s - 1);
 			}
+			//without fractional part
+			specials.add(s - scaleMetrics.moduloByScaleFactor(s));
+			specials.add(-(s - scaleMetrics.moduloByScaleFactor(s)));
 			//half value and neighbours
 			specials.add(s / 2);
 			specials.add(s / 2 - 1);
