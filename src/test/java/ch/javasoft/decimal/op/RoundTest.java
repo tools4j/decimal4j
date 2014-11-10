@@ -30,7 +30,8 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			for (int precision = -20; precision <= s.getScale() + 1; precision++) {
+			final int scale = s.getScale();
+			for (int precision = (scale - 18) - 1; precision <= scale + 1; precision++) {
 				for (final RoundingMode roundingMode : RoundingMode.values()) {
 					final DecimalArithmetics arith = s.getArithmetics(roundingMode);
 					data.add(new Object[] {s, precision, roundingMode, arith});
