@@ -105,6 +105,11 @@ public class UncheckedScaleNfRoundingArithmetics extends
 	}
 
 	@Override
+	public long round(long uDecimal, int precision) {
+		return Round.round(this, rounding, uDecimal, precision);
+	}
+
+	@Override
 	public long fromBigDecimal(BigDecimal value) {
 		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode()).longValue();
 	}

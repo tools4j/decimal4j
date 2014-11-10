@@ -82,6 +82,11 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 		return Pow.powLong(this, rounding, uDecimal, exponent);
 	}
 
+	@Override
+	public long round(long uDecimal, int precision) {
+		return Round.round(this, rounding, uDecimal, precision);
+	}
+
 //	@Override
 //	public long fromDouble(double value) {
 //		// FIXME impl with rounding

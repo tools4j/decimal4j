@@ -65,6 +65,11 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 	}
 
 	@Override
+	public long round(long uDecimal, int precision) {
+		return Round.round(this, uDecimal, precision);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		initDoubleMinMax();
 		if (value <= maxDouble & value >= minDouble) { 

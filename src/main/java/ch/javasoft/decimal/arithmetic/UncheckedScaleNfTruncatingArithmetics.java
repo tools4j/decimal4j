@@ -79,6 +79,11 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	public long pow(long uDecimal, int exponent) {
 		return Pow.pow(this, DecimalRounding.DOWN, uDecimal, exponent);
 	}
+	
+	@Override
+	public long round(long uDecimal, int precision) {
+		return Round.round(this, uDecimal, precision);
+	}
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {

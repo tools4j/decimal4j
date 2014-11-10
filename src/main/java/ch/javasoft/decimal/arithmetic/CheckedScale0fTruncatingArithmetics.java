@@ -56,6 +56,11 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 	}
 
 	@Override
+	public long round(long uDecimal, int precision) {
+		return Round.round(this, uDecimal, precision);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		if (value <= Long.MAX_VALUE & value >= Long.MIN_VALUE) { 
 			return (long)value;

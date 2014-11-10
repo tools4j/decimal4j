@@ -19,7 +19,7 @@ final class Rounding {
 	 *            the sign of the total value, either +1 or -1; determines the
 	 *            result value if rounded
 	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
+	 *            the truncated result before rounding is applied (only used for HALF_EVEN rounding)
 	 * @param firstTruncatedDigit
 	 *            the first truncated digit, must be in {@code [0, 1, ..., 9]}
 	 * @param zeroAfterFirstTruncatedDigit
@@ -40,7 +40,7 @@ final class Rounding {
 	 * @param rounding
 	 *            the rounding mode to apply
 	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
+	 *            the truncated result before rounding is applied (only used for HALF_EVEN rounding)
 	 * @param truncatedDigits
 	 *            the truncated part, it most hold that
 	 *            {@code abs(truncatedDigits) < abs(divisor)}
@@ -65,7 +65,7 @@ final class Rounding {
 	 * @param rounding
 	 *            the rounding mode to apply
 	 * @param truncatedValue
-	 *            the truncated result before rounding is applied
+	 *            the truncated result before rounding is applied (only used for HALF_EVEN rounding)
 	 * @param truncatedDigits
 	 *            the truncated part of a double, must be {@code >-one} and
 	 *            {@code <one}

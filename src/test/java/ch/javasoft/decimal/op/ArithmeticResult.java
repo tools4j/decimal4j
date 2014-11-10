@@ -18,16 +18,21 @@ import ch.javasoft.decimal.arithmetic.JDKSupport;
 class ArithmeticResult<T> {
 	private final String resultString;
 	private final T compareValue;
-	private final ArithmeticException exception;
+	private final Exception exception;
 
 	private ArithmeticResult(String resultString, T compareValue, ArithmeticException exception) {
 		this.resultString = resultString;
 		this.compareValue = compareValue;
 		this.exception = exception;
 	}
+	private ArithmeticResult(String resultString, T compareValue, IllegalArgumentException exception) {
+		this.resultString = resultString;
+		this.compareValue = compareValue;
+		this.exception = exception;
+	}
 
 	public static <T> ArithmeticResult<T> forResult(String resultString, T comparableValue) {
-		return new ArithmeticResult<T>(resultString, comparableValue, null);
+		return new ArithmeticResult<T>(resultString, comparableValue, (ArithmeticException)null);
 	}
 	public static ArithmeticResult<Long> forResult(DecimalArithmetics arithmetics, BigDecimal result) {
 		final BigDecimal rnd = result.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
@@ -40,6 +45,9 @@ class ArithmeticResult<T> {
 	public static <T> ArithmeticResult<T> forException(ArithmeticException e) {
 		return new ArithmeticResult<T>(null, null, e);
 	}
+	public static <T> ArithmeticResult<T> forException(IllegalArgumentException e) {
+		return new ArithmeticResult<T>(null, null, e);
+	}
 
 	public void assertEquivalentTo(ArithmeticResult<T> expected, String messagePrefix) {
 		if ((expected.exception == null) != (exception == null)) {
@@ -48,6 +56,8 @@ class ArithmeticResult<T> {
 			} else {
 		        throw (AssertionError)new AssertionError(messagePrefix + " = " + expected.resultString + " but lead to an exception: " + exception).initCause(exception);
 			}
+		} else if ((expected.exception != null) != (exception != null) && expected.exception.getClass() != expected.exception.getClass()) {
+	        throw (AssertionError)new AssertionError(messagePrefix + " exception lead to exception " + exception + " but expected was exception type: " + expected.exception).initCause(expected.exception);
 		} else {
 			assertEquals(messagePrefix + " = " + expected.resultString, expected.compareValue, compareValue);
 		}

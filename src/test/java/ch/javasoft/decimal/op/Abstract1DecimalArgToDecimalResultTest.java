@@ -52,6 +52,8 @@ abstract public class Abstract1DecimalArgToDecimalResultTest extends AbstractOpe
 			expected = ArithmeticResult.forResult(arithmetics, expectedResult(bdOperand));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
+		} catch (IllegalArgumentException e) {
+			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
@@ -59,6 +61,8 @@ abstract public class Abstract1DecimalArgToDecimalResultTest extends AbstractOpe
 		try {
 			actual = ArithmeticResult.forResult(actualResult(dOperand));
 		} catch (ArithmeticException e) {
+			actual = ArithmeticResult.forException(e);
+		} catch (IllegalArgumentException e) {
 			actual = ArithmeticResult.forException(e);
 		}
 		

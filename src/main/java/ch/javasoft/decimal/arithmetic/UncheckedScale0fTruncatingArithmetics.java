@@ -58,6 +58,11 @@ public class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScal
 	}
 
 	@Override
+	public long round(long uDecimal, int precision) {
+		return Round.round(this, uDecimal, precision);
+	}
+
+	@Override
 	public long fromLong(long value) {
 		return value;
 	}

@@ -408,6 +408,37 @@ public interface DecimalArithmetics {
 	long shiftRight(long uDecimal, int n);
 
 	/**
+	 * Returns an unscaled decimal whose value is rounded to the specified
+	 * {@code precision} using the rounding mode of this arithmetics.
+	 * <p>
+	 * Note that this method does not change the scale of the value --- extra
+	 * digits are simply zeroised.
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 * <li>rounding to precision 0 rounds the value to an integer value</li>
+	 * <li>rounding to precision -2 rounds the value to the second digit after
+	 * the decimal point</li>
+	 * <li>rounding to precision +3 rounds the value to the thousands</li>
+	 * <li>rounding to precision {@code <= scale} leaves the value unchanged</li>
+	 * </ul>
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value to round
+	 * @param precision
+	 *            the precision to use for the rounding, for instance 2 to round
+	 *            to the second digit after the decimal point; must be smaller
+	 *            than {@code (scale - 18)}
+	 * @return an unsigned decimal rounded to the given precision
+	 * @throws IllegalArgumentException
+	 *             if {@code precision < scale - 18}
+	 * @throws ArithmeticException
+	 *             if {@code this.getRoundingMode()=UNNECESSARY} and rounding is
+	 *             necessary
+	 */
+	long round(long uDecimal, int precision);
+
+	/**
 	 * Converts the specified long value to an unscaled decimal.
 	 * 
 	 * @param value

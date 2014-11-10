@@ -200,6 +200,24 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return createOrAssign(getScaleMetrics().moduloByScaleFactor(unscaledValue()));
 	}
 
+	/* ----------------------------- rounding ------------------------------ */
+	@Override
+	public D round(int precision) {
+		if (precision <= getScale()) {
+			return createOrAssign(getDefaultArithmetics().round(unscaledValue(), precision));
+		}
+		return self();
+	}
+	
+	@Override
+	public D round(int precision, RoundingMode roundingMode) {
+		if (precision <= getScale()) {
+			return createOrAssign(getArithmeticsFor(roundingMode).round(unscaledValue(), precision));
+		}
+		return self();
+	}
+	
+	
 	/* -------------------------------- add -------------------------------- */
 
 	@Override
