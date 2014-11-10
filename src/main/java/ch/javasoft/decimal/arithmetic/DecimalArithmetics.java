@@ -417,9 +417,9 @@ public interface DecimalArithmetics {
 	 * Examples:
 	 * <ul>
 	 * <li>rounding to precision 0 rounds the value to an integer value</li>
-	 * <li>rounding to precision -2 rounds the value to the second digit after
+	 * <li>rounding to precision 2 rounds the value to the second digit after
 	 * the decimal point</li>
-	 * <li>rounding to precision +3 rounds the value to the thousands</li>
+	 * <li>rounding to precision -3 rounds the value to the thousands</li>
 	 * <li>rounding to precision {@code <= scale} leaves the value unchanged</li>
 	 * </ul>
 	 * 
