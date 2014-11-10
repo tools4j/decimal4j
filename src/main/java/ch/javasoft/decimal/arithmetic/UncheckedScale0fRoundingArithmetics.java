@@ -49,7 +49,7 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 		if (uDecimal == -1) {
 			return -1;
 		}
-		return Rounding.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
+		return RoundingUtil.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
 	}
 
 	@Override

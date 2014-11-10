@@ -51,8 +51,8 @@ final class Round {
 		final long truncatedDigits = deltaMetrics.moduloByScaleFactor(uDecimal);
 		final long truncatedValue = uDecimal - truncatedDigits;
 		final long truncatedOddEven = truncatedValue >> deltaScale; //move odd bit into place for HALF_EVEN rounding
-		final long roundingInc = Rounding.calculateRoundingIncrement(rounding, truncatedOddEven, truncatedDigits, deltaMetrics.getScaleFactor());
-		return truncatedValue + (roundingInc == 0 ? 0 : deltaMetrics.multiplyByScaleFactor(roundingInc));
+		final long roundingInc = RoundingUtil.calculateRoundingIncrement(rounding, truncatedOddEven, truncatedDigits, deltaMetrics.getScaleFactor());
+		return arith.add(truncatedValue, roundingInc == 0 ? 0 : deltaMetrics.multiplyByScaleFactor(roundingInc));//must add via arith to check for overflow
 	}
 
 	// no instances

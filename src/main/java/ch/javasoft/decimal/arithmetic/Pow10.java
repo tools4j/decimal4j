@@ -117,7 +117,7 @@ final class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
 			}
 			//truncated part is always larger 0 (see first if) 
@@ -138,7 +138,7 @@ final class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
 			}
 			//truncated part is always larger 0 (see first if) 
@@ -182,9 +182,9 @@ final class Pow10 {
 			final long truncatedValue = scaler.divideByScaleFactor(uDecimalDividend);
 			final long truncatedDigits = uDecimalDividend - scaler.multiplyByScaleFactor(truncatedValue);
 			if (pow10divisorIsPositive) {
-				return truncatedValue + Rounding.calculateRoundingIncrementForDivision(rounding, truncatedValue, truncatedDigits, scaler.getScaleFactor());
+				return truncatedValue + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncatedValue, truncatedDigits, scaler.getScaleFactor());
 			}
-			return -truncatedValue + Rounding.calculateRoundingIncrementForDivision(rounding, -truncatedValue, -truncatedDigits, scaler.getScaleFactor());
+			return -truncatedValue + RoundingUtil.calculateRoundingIncrementForDivision(rounding, -truncatedValue, -truncatedDigits, scaler.getScaleFactor());
 
 		} else {
 			//multiply

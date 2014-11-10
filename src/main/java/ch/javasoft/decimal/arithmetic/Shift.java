@@ -31,7 +31,7 @@ final class Shift {
 			if (positions < 63) {
 				final long truncated = uDecimal >> positions;
 				final long remainder = uDecimal - (truncated << positions);
-				final TruncatedPart truncatedPart = Rounding.truncatedPartFor(Math.abs(remainder), 1L << positions);
+				final TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(Math.abs(remainder), 1L << positions);
 				return truncated + rounding.calculateRoundingIncrement(Long.signum(uDecimal), truncated, truncatedPart);
 			}
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);

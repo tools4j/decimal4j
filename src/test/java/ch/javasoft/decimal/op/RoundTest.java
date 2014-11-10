@@ -1,7 +1,6 @@
 package ch.javasoft.decimal.op;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
  * Unit test for {@link Decimal#pow(int)}
@@ -21,7 +21,7 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	private final int precision;
 	
-	public RoundTest(ScaleMetrics scaleMetrics, int precision, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
+	public RoundTest(ScaleMetrics scaleMetrics, int precision, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 		this.precision = precision;
 	}
@@ -32,9 +32,11 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 		for (final ScaleMetrics s : SCALES) {
 			final int scale = s.getScale();
 			for (int precision = (scale - 18) - 1; precision <= scale + 1; precision++) {
-				for (final RoundingMode roundingMode : RoundingMode.values()) {
-					final DecimalArithmetics arith = s.getArithmetics(roundingMode);
-					data.add(new Object[] {s, precision, roundingMode, arith});
+				for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
+					final DecimalArithmetics arith = s.getArithmetics(tp);
+					if (arith != null) {//FIXME this if can be removed later
+						data.add(new Object[] {s, precision, tp, arith});
+					}
 				}
 			}
 		}
@@ -61,11 +63,15 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
 			return operand.round(precision);
+		} else {
+			if (isUnchecked() && rnd.nextBoolean()) {
+				return operand.round(precision, getRoundingMode());
+			} else {
+				return operand.round(precision, getTruncationPolicy());
+			}
 		}
-		return operand.round(precision, getRoundingMode());
 	}
-	
 	
 }

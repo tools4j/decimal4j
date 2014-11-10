@@ -7,7 +7,7 @@ import ch.javasoft.decimal.truncate.TruncatedPart;
  * Calculates rounding results utilizing {@link DecimalRounding} and
  * {@link TruncatedPart}.
  */
-final class Rounding {
+final class RoundingUtil {
 
 	/**
 	 * Returns the rounding increment appropriate for the specified
@@ -112,7 +112,7 @@ final class Rounding {
 	}
 
 	// no instances
-	private Rounding() {
+	private RoundingUtil() {
 		super();
 	}
 }

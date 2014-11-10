@@ -217,6 +217,13 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return self();
 	}
 	
+	@Override
+	public Decimal<S> round(int precision, TruncationPolicy truncationPolicy) {
+		if (precision <= getScale()) {
+			return createOrAssign(getArithmeticsFor(truncationPolicy).round(unscaledValue(), precision));
+		}
+		return self();
+	}
 	
 	/* -------------------------------- add -------------------------------- */
 

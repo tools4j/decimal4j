@@ -357,6 +357,46 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> round(int precision, RoundingMode roundingMode);
 
 	/**
+	 * Returns a {@code Decimal} value rounded to the specified
+	 * {@code precision} using the given truncation policy.
+	 * <p>
+	 * Note that as opposed the results returned by the {@code scale(..)}
+	 * operations, this method does not change the scale of the value --- extra
+	 * digits are simply zeroised.
+	 * <p>
+	 * <i>Examples and special cases:</i>
+	 * <dl>
+	 * <dt>precision = 0</dt>
+	 * <dd>value is rounded to an integer value</dd>
+	 * <dt>precision = 2</dt>
+	 * <dd>value is rounded to the second digit after the decimal point</dd>
+	 * <dt>precision = -3</dt>
+	 * <dd>value is rounded to the thousands</dd>
+	 * <dt>precision >= scale</dt>
+	 * <dd>values is left unchanged</dd>
+	 * <dt>precision < scale - 18</dt>
+	 * <dd>{@code IllegalArgumentException} is thrown</dd>
+	 * </dl>
+	 * 
+	 * @param precision
+	 *            the precision to use for the rounding, for instance 2 to round
+	 *            to the second digit after the decimal point; must be at least
+	 *            {@code (scale - 18)}
+	 * @param truncationPolicy
+	 *            the truncation policy to apply when rounding to the desired
+	 *            precision
+	 * @return a decimal instance rounded to the given precision
+	 * @throws IllegalArgumentException
+	 *             if {@code precision < scale - 18}
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} specifies
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
+	Decimal<S> round(int precision, TruncationPolicy truncationPolicy);
+
+	/**
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. {@link RoundingMode#HALF_UP HALF_UP} rounding
 	 * is used if the scale change involves rounding.

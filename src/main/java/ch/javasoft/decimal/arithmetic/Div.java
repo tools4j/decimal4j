@@ -15,7 +15,7 @@ final class Div {
 	public static long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
 		final long quotient = uDecimalDividend / lDivisor;
 		final long remainder = uDecimalDividend - quotient * lDivisor;
-		return quotient + Rounding.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
+		return quotient + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
 	}
 
 	/**
@@ -97,7 +97,7 @@ final class Div {
 			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
 			final long quot = scaledDividend / uDecimalDivisor;
 			final long rem = scaledDividend - quot * uDecimalDivisor;
-			return quot + Rounding.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
+			return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
 		}
 		//perform component wise division
 		final long integralPart = uDecimalDividend / uDecimalDivisor;
@@ -107,7 +107,7 @@ final class Div {
 			final long fractionalPart = scaledReminder / uDecimalDivisor;
 			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
 			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
-			return truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
+			return truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
 		} else {
 			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
@@ -280,7 +280,7 @@ final class Div {
 		}
 
 		r = ((un21 << 32) + (un0 - (q0 * v))) >>> s;
-		final TruncatedPart truncatedPart = Rounding.truncatedPartFor(Math.abs(r), Math.abs(v0));
+		final TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(Math.abs(r), Math.abs(v0));
 		final int inc = rounding.calculateRoundingIncrement(neg ? -1 : 1, q, truncatedPart);
 		return (neg ? -q : q) + inc;
 	}

@@ -438,8 +438,10 @@ public interface DecimalArithmetics {
 	 * @throws IllegalArgumentException
 	 *             if {@code precision < scale - 18}
 	 * @throws ArithmeticException
-	 *             if {@code this.getRoundingMode()=UNNECESSARY} and rounding is
-	 *             necessary
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
 	 */
 	long round(long uDecimal, int precision);
 

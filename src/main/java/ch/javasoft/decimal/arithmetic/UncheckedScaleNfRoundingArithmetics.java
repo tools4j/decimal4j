@@ -152,7 +152,7 @@ public class UncheckedScaleNfRoundingArithmetics extends
 				fractionDigits /= 10;
 			}
 			//rounding
-			fractionDigits += Rounding.calculateRoundingIncrement(rounding, 1, fractionDigits, lastDigit, zeroAfterLastDigit);
+			fractionDigits += RoundingUtil.calculateRoundingIncrement(rounding, 1, fractionDigits, lastDigit, zeroAfterLastDigit);
 			fValue = fractionDigits;
 		} else {
 			fValue = 0;
@@ -166,7 +166,7 @@ public class UncheckedScaleNfRoundingArithmetics extends
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long reminder = scaleMetrics.moduloByScaleFactor(uDecimal);
-		return truncated + Rounding.calculateRoundingIncrement(rounding, truncated, reminder, one());
+		return truncated + RoundingUtil.calculateRoundingIncrement(rounding, truncated, reminder, one());
 	}
 
 	@Override
