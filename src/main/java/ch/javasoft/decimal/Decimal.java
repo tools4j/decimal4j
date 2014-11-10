@@ -295,19 +295,24 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * operations, this method does not change the scale of the value --- extra
 	 * digits are simply zeroised.
 	 * <p>
-	 * Examples:
-	 * <ul>
-	 * <li>rounding to precision 0 rounds the value to an integer value</li>
-	 * <li>rounding to precision 2 rounds the value to the second digit after
-	 * the decimal point</li>
-	 * <li>rounding to precision -3 rounds the value to the thousands</li>
-	 * <li>rounding to precision {@code <= scale} leaves the value unchanged</li>
-	 * </ul>
+	 * <i>Examples and special cases:</i>
+	 * <dl>
+	 * <dt>precision = 0</dt>
+	 * <dd>value is rounded to an integer value</dd>
+	 * <dt>precision = 2</dt>
+	 * <dd>value is rounded to the second digit after the decimal point</dd>
+	 * <dt>precision = -3</dt>
+	 * <dd>value is rounded to the thousands</dd>
+	 * <dt>precision >= scale</dt>
+	 * <dd>values is left unchanged</dd>
+	 * <dt>precision < scale - 18</dt>
+	 * <dd>{@code IllegalArgumentException} is thrown</dd>
+	 * </dl>
 	 * 
 	 * @param precision
 	 *            the precision to use for the rounding, for instance 2 to round
-	 *            to the second digit after the decimal point; must be smaller
-	 *            than {@code (scale - 18)}
+	 *            to the second digit after the decimal point; must be at least
+	 *            {@code (scale - 18)}
 	 * @return a decimal instance rounded to the given precision
 	 * @throws IllegalArgumentException
 	 *             if {@code precision < scale - 18}
@@ -322,19 +327,24 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * operations, this method does not change the scale of the value --- extra
 	 * digits are simply zeroised.
 	 * <p>
-	 * Examples:
-	 * <ul>
-	 * <li>rounding to precision 0 rounds the value to an integer value</li>
-	 * <li>rounding to precision 2 rounds the value to the second digit after
-	 * the decimal point</li>
-	 * <li>rounding to precision -3 rounds the value to the thousands</li>
-	 * <li>rounding to precision {@code <= scale} leaves the value unchanged</li>
-	 * </ul>
+	 * <i>Examples and special cases:</i>
+	 * <dl>
+	 * <dt>precision = 0</dt>
+	 * <dd>value is rounded to an integer value</dd>
+	 * <dt>precision = 2</dt>
+	 * <dd>value is rounded to the second digit after the decimal point</dd>
+	 * <dt>precision = -3</dt>
+	 * <dd>value is rounded to the thousands</dd>
+	 * <dt>precision >= scale</dt>
+	 * <dd>values is left unchanged</dd>
+	 * <dt>precision < scale - 18</dt>
+	 * <dd>{@code IllegalArgumentException} is thrown</dd>
+	 * </dl>
 	 * 
 	 * @param precision
 	 *            the precision to use for the rounding, for instance 2 to round
-	 *            to the second digit after the decimal point; must be smaller
-	 *            than {@code (scale - 18)}
+	 *            to the second digit after the decimal point; must be at least
+	 *            {@code (scale - 18)}
 	 * @param roundingMode
 	 *            the rounding mode to apply when rounding to the desired
 	 *            precision
