@@ -20,38 +20,145 @@ import ch.javasoft.decimal.scale.Scale${scale}f;
 @SuppressWarnings("serial")
 public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scale}f, Decimal${scale}f> {
 
+	/** Scale metrics constant for Decimal${scale}f returned by {@link #getScaleMetrics()}*/
 	public static final Scale${scale}f SCALE = Scale${scale}f.INSTANCE;
 
+	/** Factory constant for Decimal${scale}f returned by {@link #getFactory()}.*/
 	public static final Factory${scale}f FACTORY = Factory${scale}f.INSTANCE;
 	
+	/** The unscaled long value that represents one.*/
 	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
 
+	/** The Decimal${scale}f constant zero.*/
 	public static final Decimal${scale}f ZERO = new Decimal${scale}f(0);
+    /**
+     * A constant holding the smallest positive value a {@code Decimal${scale}f}
+     * can have, 10<sup>-${scale}</sup><#if scale==0>=1</#if>.
+     */
 	public static final Decimal${scale}f ULP = new Decimal${scale}f(1);
 
-	public static final Decimal${scale}f ONE = new Decimal${scale}f(1 * ONE_UNSCALED);
-	public static final Decimal${scale}f TWO = new Decimal${scale}f(2 * ONE_UNSCALED);
-	public static final Decimal${scale}f THREE = new Decimal${scale}f(3 * ONE_UNSCALED);
-	public static final Decimal${scale}f FOUR = new Decimal${scale}f(4 * ONE_UNSCALED);
-	public static final Decimal${scale}f FIVE = new Decimal${scale}f(5 * ONE_UNSCALED);
-	public static final Decimal${scale}f SIX = new Decimal${scale}f(6 * ONE_UNSCALED);
-	public static final Decimal${scale}f SEVEN = new Decimal${scale}f(7 * ONE_UNSCALED);
-	public static final Decimal${scale}f EIGHT = new Decimal${scale}f(8 * ONE_UNSCALED);
-	public static final Decimal${scale}f NINE = new Decimal${scale}f(9 * ONE_UNSCALED);
+    /**
+     * Initialize static constant array when class is loaded.
+     */
+    private static final int MAX_CONSTANT = 9;
+    private static Decimal${scale}f POS_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
+    private static Decimal${scale}f NEG_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
 
+    static {
+        for (int i = 1; i <= MAX_CONSTANT; i++) {
+            POS_CONST[i] = new Decimal${scale}f(ONE_UNSCALED * i);
+            NEG_CONST[i] = new Decimal${scale}f(-ONE_UNSCALED * i);
+        }
+    }
+
+	/** The Decimal${scale}f constant 1.*/
+	public static final Decimal${scale}f ONE = valueOf(1);
+	/** The Decimal${scale}f constant 2.*/
+	public static final Decimal${scale}f TWO = valueOf(2);
+	/** The Decimal${scale}f constant 3.*/
+	public static final Decimal${scale}f THREE = valueOf(3);
+	/** The Decimal${scale}f constant 4.*/
+	public static final Decimal${scale}f FOUR = valueOf(4);
+	/** The Decimal${scale}f constant 5.*/
+	public static final Decimal${scale}f FIVE = valueOf(5);
+	/** The Decimal${scale}f constant 6.*/
+	public static final Decimal${scale}f SIX = valueOf(6);
+	/** The Decimal${scale}f constant 7.*/
+	public static final Decimal${scale}f SEVEN = valueOf(7);
+	/** The Decimal${scale}f constant 8.*/
+	public static final Decimal${scale}f EIGHT = valueOf(8);
+	/** The Decimal${scale}f constant 9.*/
+	public static final Decimal${scale}f NINE = valueOf(9);
+<#if (scale <= 17)>
+	/** The Decimal${scale}f constant 10.*/
 	public static final Decimal${scale}f TEN = new Decimal${scale}f(10 * ONE_UNSCALED);
+<#if (scale <= 16)>
+	/** The Decimal${scale}f constant 100.*/
+	public static final Decimal${scale}f HUNDRED = new Decimal${scale}f(100 * ONE_UNSCALED);
+<#if (scale <= 15)>
+	/** The Decimal${scale}f constant 1000.*/
+	public static final Decimal${scale}f THOUSAND = new Decimal${scale}f(1000 * ONE_UNSCALED);
+<#if (scale <= 12)>
+	/** The Decimal${scale}f constant 10<sup>6</sup>.*/
+	public static final Decimal${scale}f MILLION = new Decimal${scale}f(1000000 * ONE_UNSCALED);
+<#if (scale <= 9)>
+	/** The Decimal${scale}f constant 10<sup>9</sup>.*/
+	public static final Decimal${scale}f BILLION = new Decimal${scale}f(1000000000 * ONE_UNSCALED);
+<#if (scale <= 6)>
+	/** The Decimal${scale}f constant 10<sup>12</sup>.*/
+	public static final Decimal${scale}f TRILLION = new Decimal${scale}f(1000000000000L * ONE_UNSCALED);
+<#if (scale <= 3)>
+	/** The Decimal${scale}f constant 10<sup>15</sup>.*/
+	public static final Decimal${scale}f QUADRILLION = new Decimal${scale}f(1000000000000000L * ONE_UNSCALED);
+<#if (scale <= 0)>
+	/** The Decimal${scale}f constant 10<sup>18</sup>.*/
+	public static final Decimal${scale}f QUINTILLION = new Decimal${scale}f(1000000000000000000L * ONE_UNSCALED);
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
 
+	/** The Decimal${scale}f constant -1.*/
+	public static final Decimal${scale}f MINUS_ONE = valueOf(-1);
+
+<#if (scale >= 1)>
+	/** The Decimal${scale}f constant 0.5.*/
 	public static final Decimal${scale}f HALF = new Decimal${scale}f(ONE_UNSCALED / 2);
+	/** The Decimal${scale}f constant 0.1.*/
 	public static final Decimal${scale}f TENTH = new Decimal${scale}f(ONE_UNSCALED / 10);
+<#if (scale >= 2)>
+	/** The Decimal${scale}f constant 0.01.*/
 	public static final Decimal${scale}f HUNDREDTH = new Decimal${scale}f(ONE_UNSCALED / 100);
+<#if (scale >= 3)>
+	/** The Decimal${scale}f constant 0.001.*/
 	public static final Decimal${scale}f THOUSANDTH = new Decimal${scale}f(ONE_UNSCALED / 1000);
+<#if (scale >= 6)>
+	/** The Decimal${scale}f constant 10<sup>-6</sup>.*/
 	public static final Decimal${scale}f MILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000);
+<#if (scale >= 9)>
+	/** The Decimal${scale}f constant 10<sup>-9</sup>.*/
+	public static final Decimal${scale}f BILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000);
+<#if (scale >= 12)>
+	/** The Decimal${scale}f constant 10<sup>-12</sup>.*/
+	public static final Decimal${scale}f TRILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000000L);
+<#if (scale >= 15)>
+	/** The Decimal${scale}f constant 10<sup>-15</sup>.*/
+	public static final Decimal${scale}f QUADRILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000000000L);
+<#if (scale >= 18)>
+	/** The Decimal${scale}f constant 10<sup>-18</sup>.*/
+	public static final Decimal${scale}f QUINTILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000000000000L);
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
 
-	public static final Decimal${scale}f MINUS_ONE = new Decimal${scale}f(-ONE_UNSCALED);
-
+    /**
+     * A constant holding the maximum value a {@code Decimal${scale}f} can have,
+     * ${"9223372036854775807"?substring(0, 19-scale)}<#if (scale>0)>.${"9223372036854775807"?substring(19-scale)}</#if>.
+     */
 	public static final Decimal${scale}f MAX_VALUE = new Decimal${scale}f(Long.MAX_VALUE);
+    /**
+     * A constant holding the maximum integer value a {@code Decimal${scale}f}
+     * can have, ${"9223372036854775807"?substring(0, 19-scale)}<#if (scale>0)>.${"0000000000000000000"?substring(19-scale)}</#if>.
+     */
 	public static final Decimal${scale}f MAX_INTEGER_VALUE = new Decimal${scale}f((Long.MAX_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
+    /**
+     * A constant holding the minimum value a {@code Decimal${scale}f} can have,
+     * ${"9223372036854775807"?substring(0, 19-scale)}<#if (scale>0)>.${"9223372036854775808"?substring(19-scale)}</#if>.
+     */
 	public static final Decimal${scale}f MIN_VALUE = new Decimal${scale}f(Long.MIN_VALUE);
+    /**
+     * A constant holding the minimum integer value a {@code Decimal${scale}f}
+     * can have, -${"9223372036854775808"?substring(0, 19-scale)}<#if (scale>0)>.${"0000000000000000000"?substring(19-scale)}</#if>.
+     */
 	public static final Decimal${scale}f MIN_INTEGER_VALUE = new Decimal${scale}f((Long.MIN_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 
 	private Decimal${scale}f(long unscaled) {
@@ -77,7 +184,20 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return this;
 	}
 
+    /**
+     * Returns a Decimal${scale}f whose value is equal to that of the
+     * specified {@code long}.
+     *
+     * @param  value value of the Decimal${scale}f to return.
+     * @return a Decimal${scale}f with the specified value.
+     */
 	public static Decimal${scale}f valueOf(long value) {
+        if (value == 0)
+            return ZERO;
+        if (value > 0 && value <= MAX_CONSTANT)
+            return POS_CONST[(int) value];
+        else if (value < 0 && value >= -MAX_CONSTANT)
+            return NEG_CONST[(int) -value];
 		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromLong(value));
 	}
 

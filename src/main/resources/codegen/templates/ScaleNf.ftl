@@ -16,7 +16,7 @@ public final class Scale${scale}f extends AbstractScale {
 
 	private static final long SCALE_FACTOR = ${"1"?right_pad(scale+1, "0")}L;
 
-<#if 9 < scale>
+<#if (scale > 9)>
 	private static final long SCALE_FACTOR_HIGH_BITS = SCALE_FACTOR >>> 32;
 	private static final long SCALE_FACTOR_LOW_BITS = SCALE_FACTOR & LONG_MASK;
 </#if>
@@ -51,7 +51,7 @@ public final class Scale${scale}f extends AbstractScale {
 	
 	@Override
 	public final long mulloByScaleFactor(int factor) {
-	<#if 9 < scale>
+	<#if (scale > 9)>
 		return (factor & LONG_MASK) * SCALE_FACTOR_LOW_BITS;
 	<#else>
 		return (factor & LONG_MASK) * SCALE_FACTOR;
@@ -60,7 +60,7 @@ public final class Scale${scale}f extends AbstractScale {
 
 	@Override
 	public final long mulhiByScaleFactor(int factor) {
-	<#if 9 < scale>
+	<#if (scale > 9)>
 		return (factor & LONG_MASK) * SCALE_FACTOR_HIGH_BITS;
 	<#else>
 		return 0;

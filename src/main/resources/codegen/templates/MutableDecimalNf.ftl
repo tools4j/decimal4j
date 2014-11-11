@@ -120,81 +120,302 @@ public class MutableDecimal${scale}f extends
 		return new MutableDecimal${scale}f(this);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to {@code unscaledValue*10<sup>-${scale}}</sup>.
+	 * 
+	 * @param unscaledValue
+	 *            the unscaled decimal value to convert
+	 * @return a new MutableDecimal${scale}f value initialised with {@code unscaledValue*10^-${scale}}
+	 */
 	public static MutableDecimal${scale}f unscaled(long unscaledValue) {
 		return new MutableDecimal${scale}f(unscaledValue, Decimal${scale}f.SCALE);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to zero.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 0.
+	 */
 	public static MutableDecimal${scale}f zero() {
 		return new MutableDecimal${scale}f();
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one ULP.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-${scale}</sup><#if scale==0>=1</#if>.
+	 */
 	public static MutableDecimal${scale}f ulp() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.ULP);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 1.
+	 */
 	public static MutableDecimal${scale}f one() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.ONE);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to two.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 2.
+	 */
 	public static MutableDecimal${scale}f two() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.TWO);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to three.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 3.
+	 */
 	public static MutableDecimal${scale}f three() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.THREE);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to four.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 4.
+	 */
 	public static MutableDecimal${scale}f four() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.FOUR);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to five.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 5.
+	 */
 	public static MutableDecimal${scale}f five() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.FIVE);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to six.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 6.
+	 */
 	public static MutableDecimal${scale}f six() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.SIX);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to seven.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 7.
+	 */
 	public static MutableDecimal${scale}f seven() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.SEVEN);
 	}
 
-	public static MutableDecimal${scale}f eigth() {
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to eight.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 8.
+	 */
+	public static MutableDecimal${scale}f eight() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.EIGHT);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to nine.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 9.
+	 */
 	public static MutableDecimal${scale}f nine() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.NINE);
 	}
 
+<#if (scale <= 17)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to ten.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10.
+	 */
 	public static MutableDecimal${scale}f ten() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.TEN);
 	}
+<#if (scale <= 16)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one hundred.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 100.
+	 */
+	public static MutableDecimal${scale}f hundred() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.HUNDRED);
+	}
+<#if (scale <= 15)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one thousand.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 1000.
+	 */
+	public static MutableDecimal${scale}f thousand() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.THOUSAND);
+	}
+<#if (scale <= 12)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one million.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>6</sup>.
+	 */
+	public static MutableDecimal${scale}f million() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.MILLION);
+	}
+<#if (scale <= 9)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one billion.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>9</sup>.
+	 */
+	public static MutableDecimal${scale}f billion() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.BILLION);
+	}
+<#if (scale <= 6)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one trillion.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>12</sup>.
+	 */
+	public static MutableDecimal${scale}f trillion() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.TRILLION);
+	}
+<#if (scale <= 3)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one quadrillion.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>15</sup>.
+	 */
+	public static MutableDecimal${scale}f quadrillion() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.QUADRILLION);
+	}
+<#if (scale <= 0)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one quintillion.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>18</sup>.
+	 */
+	public static MutableDecimal${scale}f quintillion() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.QUINTILLION);
+	}
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to minus one.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with -1.
+	 */
 	public static MutableDecimal${scale}f minusOne() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.MINUS_ONE);
 	}
 
+<#if (scale >= 1)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one half.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 0.5.
+	 */
 	public static MutableDecimal${scale}f half() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.HALF);
 	}
 
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one tenth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 0.1.
+	 */
 	public static MutableDecimal${scale}f tenth() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.TENTH);
 	}
 
+<#if (scale >= 2)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one hundredth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 0.01.
+	 */
 	public static MutableDecimal${scale}f hundredth() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.HUNDREDTH);
 	}
 
+<#if (scale >= 3)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one thousandth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 0.001.
+	 */
 	public static MutableDecimal${scale}f thousandth() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.THOUSANDTH);
 	}
 
+<#if (scale >= 6)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one millionth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-6/sup>.
+	 */
 	public static MutableDecimal${scale}f millionth() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.MILLIONTH);
 	}
+
+<#if (scale >= 9)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one billionth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-9</sup>.
+	 */
+	public static MutableDecimal${scale}f billionth() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.BILLIONTH);
+	}
+
+<#if (scale >= 12)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one trillionth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-12</sup>.
+	 */
+	public static MutableDecimal${scale}f trillionth() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.TRILLIONTH);
+	}
+
+<#if (scale >= 15)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one quadrillionth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-15</sup>.
+	 */
+	public static MutableDecimal${scale}f quadrillionth() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.QUADRILLIONTH);
+	}
+
+<#if (scale >= 18)>
+	/**
+	 * Returns a new MutableDecimal${scale}f whose value is equal to one quintillionth.
+	 * 
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-18</sup>.
+	 */
+	public static MutableDecimal${scale}f quintillionth() {
+		return new MutableDecimal${scale}f(Decimal${scale}f.QUINTILLIONTH);
+	}
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
+</#if>
 
 	@Override
 	public Decimal${scale}f toImmutableDecimal() {
