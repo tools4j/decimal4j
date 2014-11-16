@@ -291,9 +291,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using {@link RoundingMode#HALF_UP HALF_UP} rounding.
 	 * <p>
-	 * Note that as opposed the results returned by the {@code scale(..)}
-	 * operations, this method does not change the scale of the value --- extra
-	 * digits are simply zeroised.
+	 * Note that contrary to the {@code scale(..)} operations this method does 
+	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
 	 * <dl>
@@ -323,9 +322,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using the given rounding mode.
 	 * <p>
-	 * Note that as opposed the results returned by the {@code scale(..)}
-	 * operations, this method does not change the scale of the value --- extra
-	 * digits are simply zeroised.
+	 * Note that contrary to the {@code scale(..)} operations this method does 
+	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
 	 * <dl>
@@ -360,9 +358,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using the given truncation policy.
 	 * <p>
-	 * Note that as opposed the results returned by the {@code scale(..)}
-	 * operations, this method does not change the scale of the value --- extra
-	 * digits are simply zeroised.
+	 * Note that contrary to the {@code scale(..)} operations this method does 
+	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
 	 * <dl>
