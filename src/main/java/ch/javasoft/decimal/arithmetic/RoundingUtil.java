@@ -111,6 +111,27 @@ final class RoundingUtil {
 		return TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
 	}
 
+	/**
+	 * Returns a truncated part constant given a non-negative remainder
+	 * resulting from a division by 10^19.
+	 * 
+	 * @param remainder
+	 *            the remainder part
+	 * @return the truncated part constant equivalent to the given arguments
+	 */
+	public static final TruncatedPart truncatedPartForScale19(long remainder) {
+		if (remainder == 0) {
+			return TruncatedPart.ZERO;
+		}
+		if (5000000000000000000L > remainder & remainder > -5000000000000000000L) {
+			return TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
+		}
+		if (remainder == 5000000000000000000L) {
+			return TruncatedPart.EQUAL_TO_HALF;
+		}
+		return TruncatedPart.GREATER_THAN_HALF;
+	}
+
 	// no instances
 	private RoundingUtil() {
 		super();

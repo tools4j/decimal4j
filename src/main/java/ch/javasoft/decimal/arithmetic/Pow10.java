@@ -119,9 +119,11 @@ final class Pow10 {
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
 				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
+			} else if (n == -19) {
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
 			}
 			//truncated part is always larger 0 (see first if) 
-			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
+			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}
 	}
@@ -140,9 +142,11 @@ final class Pow10 {
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
 				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
+			} else if (n == 19) {
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
 			}
 			//truncated part is always larger 0 (see first if) 
-			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^19 < 0.5
+			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		} else {
 			int pos = n;

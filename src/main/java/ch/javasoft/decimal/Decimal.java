@@ -792,7 +792,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> addUnscaled(long unscaledAugend, OverflowMode overflowMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
+	 * squared value is rounded <i>before</i> the addition if necessary using
+	 * default {@link RoundingMode#HALF_UP HALF_UP} rounding.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -806,8 +808,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> addSquared(Decimal<S> value);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}
-	 * applying the specified rounding mode.
+	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
+	 * squared value is rounded <i>before</i> the addition if necessary using
+	 * the specified rounding mode.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -825,8 +828,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> addSquared(Decimal<S> value, RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}
-	 * applying the specified rounding mode.
+	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
+	 * squared value is rounded <i>before</i> the addition if necessary using
+	 * the rounding mode specified by the truncation policy. 
+	 * <p>
+	 * Note that if {@link OverflowMode#CHECKED CHECKED} arithmetics is used
+	 * according to the specified truncation policy, squaring and adding both
+	 * perform an overflow check. If this value is negative, an overflow 
+	 * exception may be thrown even if the final result would actually still fit 
+	 * in a {@code Decimal} value of the present scale. 
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its

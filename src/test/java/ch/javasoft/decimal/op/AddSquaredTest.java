@@ -10,16 +10,17 @@ import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.JDKSupport;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
- * Unit test for {@link Decimal#square()}
+ * Unit test for {@link Decimal#addSquared(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class SquareTest extends Abstract1DecimalArgToDecimalResultTest {
+public class AddSquaredTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
-	public SquareTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
+	public AddSquaredTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, DecimalArithmetics arithmetics) {
 		super(arithmetics);
 	}
 
@@ -39,24 +40,27 @@ public class SquareTest extends Abstract1DecimalArgToDecimalResultTest {
 
 	@Override
 	protected String operation() {
-		return "^2";
+		return "+ square ";
 	}
 	
 	@Override
-	protected BigDecimal expectedResult(BigDecimal operand) {
-		return operand.multiply(operand);
-	}
-	
-	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
-			return operand.square();
-		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
-				return operand.square(getRoundingMode());
-			} else {
-				return operand.square(getTruncationPolicy());
-			}
+	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
+		//NOTE: by definition we apply rounding and overflow check to the squaring
+		final BigDecimal b2 = b.multiply(b).setScale(getScale(), getRoundingMode());
+		if (!isUnchecked()) {
+			JDKSupport.bigIntegerToLongValueExact(b2.unscaledValue());
 		}
+		return a.add(b2);
+	}
+	
+	@Override
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+			return a.addSquared(b);
+		}
+		if (isUnchecked() && rnd.nextBoolean()) {
+			return a.addSquared(b, getRoundingMode());
+		}
+		return a.addSquared(b, getTruncationPolicy());
 	}
 }
