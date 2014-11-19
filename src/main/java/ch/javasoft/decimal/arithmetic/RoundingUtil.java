@@ -126,10 +126,49 @@ final class RoundingUtil {
 		if (5000000000000000000L > remainder & remainder > -5000000000000000000L) {
 			return TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
 		}
-		if (remainder == 5000000000000000000L) {
+		if (remainder == 5000000000000000000L | remainder == -5000000000000000000L) {
 			return TruncatedPart.EQUAL_TO_HALF;
 		}
 		return TruncatedPart.GREATER_THAN_HALF;
+	}
+
+	/**
+	 * Returns a truncated part constant given a non-negative remainder
+	 * resulting from a division by 2^63
+	 * 
+	 * @param remainder
+	 *            the remainder part
+	 * @return the truncated part constant equivalent to the given arguments
+	 */
+	public static final TruncatedPart truncatedPartFor2pow63(long remainder) {
+		if (remainder == 0) {
+			return TruncatedPart.ZERO;
+		}
+		if ((1L << 62) > remainder & remainder > -(1L << 62)) {
+			return TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
+		}
+		if (remainder == (1L << 62) | remainder == -(1L << 62)) {
+			return TruncatedPart.EQUAL_TO_HALF;
+		}
+		return TruncatedPart.GREATER_THAN_HALF;
+	}
+
+	/**
+	 * Returns a truncated part constant given a non-negative remainder
+	 * resulting from a division by 2^64
+	 * 
+	 * @param remainder
+	 *            the remainder part
+	 * @return the truncated part constant equivalent to the given arguments
+	 */
+	public static final TruncatedPart truncatedPartFor2pow64(long remainder) {
+		if (remainder == 0) {
+			return TruncatedPart.ZERO;
+		}
+		if (remainder == 0x8000000000000000L) {
+			return TruncatedPart.EQUAL_TO_HALF;
+		}
+		return TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
 	}
 
 	// no instances

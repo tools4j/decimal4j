@@ -11,42 +11,47 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 abstract public class AbstractUncheckedScale0fArithmetics extends AbstractUncheckedArithmetics {
 	
 	@Override
-	public ScaleMetrics getScaleMetrics() {
+	public final ScaleMetrics getScaleMetrics() {
 		return Scale0f.INSTANCE;
 	}
 
 	@Override
-	public int getScale() {
+	public final int getScale() {
 		return 0;
 	}
 
 	@Override
-	public long one() {
+	public final long one() {
 		return 1L;
 	}
 
 	@Override
-	public long multiply(long uDecimal1, long uDecimal2) {
+	public final long multiply(long uDecimal1, long uDecimal2) {
 		return uDecimal1 * uDecimal2;
 	}
 	
 	@Override
-	public long fromLong(long value) {
+	public final long square(long uDecimal) {
+		return uDecimal * uDecimal;
+	}
+
+	@Override
+	public final long fromLong(long value) {
 		return value;
 	}
 
 	@Override
-	public long fromBigInteger(BigInteger value) {
+	public final long fromBigInteger(BigInteger value) {
 		return value.longValue();
 	}
 
 	@Override
-	public long parse(String value) {
+	public final long parse(String value) {
 		return Long.parseLong(value);
 	}
 
 	@Override
-	public long toLong(long uDecimal) {
+	public final long toLong(long uDecimal) {
 		return uDecimal;
 	}
 
@@ -61,7 +66,7 @@ abstract public class AbstractUncheckedScale0fArithmetics extends AbstractUnchec
 	}
 
 	@Override
-	public String toString(long uDecimal) {
+	public final String toString(long uDecimal) {
 		return Long.toString(uDecimal);
 	}
 

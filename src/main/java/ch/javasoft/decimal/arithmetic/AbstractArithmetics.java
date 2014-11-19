@@ -31,12 +31,12 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public int signum(long uDecimal) {
+	public final int signum(long uDecimal) {
 		return (int) ((uDecimal >> 63) | (-uDecimal >>> 63));
 	}
 
 	@Override
-	public int compare(long uDecimal1, long uDecimal2) {
+	public final int compare(long uDecimal1, long uDecimal2) {
 		return (uDecimal1 < uDecimal2) ? -1 : ((uDecimal1 == uDecimal2) ? 0 : 1);
 	}
 
@@ -45,11 +45,6 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 		return divide(one(), uDecimal);
 	}
 	
-	@Override
-	public long square(long uDecimal) {
-		return multiply(uDecimal, uDecimal);
-	}
-
 	@Override
 	public BigDecimal toBigDecimal(long uDecimal) {
 		return BigDecimal.valueOf(uDecimal, getScale());

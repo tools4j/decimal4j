@@ -43,16 +43,6 @@ abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public long shiftLeft(long uDecimal, int positions) {
-		return uDecimal << positions;
-	}
-
-	@Override
-	public long shiftRight(long uDecimal, int positions) {
-		return uDecimal >> positions;
-	}
-
-	@Override
 	public long fromLong(long value) {
 		return getScaleMetrics().multiplyByScaleFactor(value);
 	}

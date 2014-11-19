@@ -81,6 +81,16 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	}
 	
 	@Override
+	public long shiftLeft(long uDecimal, int positions) {
+		return Shift.shiftLeft(DecimalRounding.DOWN, uDecimal, positions);
+	}
+
+	@Override
+	public long shiftRight(long uDecimal, int positions) {
+		return Shift.shiftRight(DecimalRounding.DOWN, uDecimal, positions);
+	}
+
+	@Override
 	public long round(long uDecimal, int precision) {
 		return Round.round(this, uDecimal, precision);
 	}

@@ -13,42 +13,47 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 		AbstractCheckedArithmetics {
 
 	@Override
-	public Scale0f getScaleMetrics() {
+	public final Scale0f getScaleMetrics() {
 		return Scale0f.INSTANCE;
 	}
 
 	@Override
-	public int getScale() {
+	public final int getScale() {
 		return 0;
 	}
 
 	@Override
-	public long one() {
+	public final long one() {
 		return 1;
 	}
 
 	@Override
-	public long multiply(long uDecimal1, long uDecimal2) {
+	public final long multiply(long uDecimal1, long uDecimal2) {
 		return Checked.multiplyByLong(this, uDecimal1, uDecimal2);
 	}
 	
 	@Override
-	public long divide(long uDecimalDividend, long uDecimalDivisor) {
+	public final long square(long uDecimal) {
+		return Checked.multiplyByLong(this, uDecimal, uDecimal);
+	}
+	
+	@Override
+	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Checked.divideByLong(this, uDecimalDividend, uDecimalDivisor);
 	}
 	
 	@Override
-	public long avg(long a, long b) {
+	public final long avg(long a, long b) {
 		return Avg.avg(a, b);
 	}
 
 	@Override
-	public long fromLong(long value) {
+	public final long fromLong(long value) {
 		return value;
 	}
 
 	@Override
-	public long fromUnscaled(long unscaledValue, int scale) {
+	public final long fromUnscaled(long unscaledValue, int scale) {
 		if (scale == 0 | unscaledValue == 0) {
 			return unscaledValue;
 		}
@@ -64,7 +69,7 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 	}
 
 	@Override
-	public long toLong(long uDecimal) {
+	public final long toLong(long uDecimal) {
 		return uDecimal;
 	}
 
@@ -79,7 +84,7 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 	}
 
 	@Override
-	public String toString(long uDecimal) {
+	public final String toString(long uDecimal) {
 		return Long.toString(uDecimal);
 	}
 

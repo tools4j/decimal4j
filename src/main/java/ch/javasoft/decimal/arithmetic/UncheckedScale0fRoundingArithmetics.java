@@ -1,7 +1,6 @@
 package ch.javasoft.decimal.arithmetic;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import ch.javasoft.decimal.scale.Scale0f;
@@ -94,11 +93,6 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 //	}
 
 	@Override
-	public long fromBigInteger(BigInteger value) {
-		return value.longValue();
-	}
-
-	@Override
 	public long fromBigDecimal(BigDecimal value) {
 		return value.setScale(0, getRoundingMode()).longValue();
 	}
@@ -109,15 +103,5 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 			return unscaledValue;
 		}
 		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
-	}
-
-	@Override
-	public long parse(String value) {
-		return Long.parseLong(value);
-	}
-
-	@Override
-	public String toString(long uDecimal) {
-		return Long.toString(uDecimal);
 	}
 }

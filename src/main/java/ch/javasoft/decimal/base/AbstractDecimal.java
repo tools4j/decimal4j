@@ -766,7 +766,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D shiftLeft(int n) {
-		return createOrAssign(getDefaultArithmetics().shiftLeft(unscaledValue(), n));
+		return shiftLeft(n, RoundingMode.FLOOR);//FLOOR is default for shift!
 	}
 
 	@Override
@@ -781,7 +781,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D shiftRight(int n) {
-		return createOrAssign(getDefaultArithmetics().shiftRight(unscaledValue(), n));
+		return shiftRight(n, RoundingMode.FLOOR);//FLOOR is default for shift!
 	}
 
 	@Override

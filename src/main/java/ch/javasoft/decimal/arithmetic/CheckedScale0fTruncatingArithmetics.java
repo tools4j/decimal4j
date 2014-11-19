@@ -56,6 +56,16 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 	}
 
 	@Override
+	public long shiftLeft(long uDecimal, int positions) {
+		return Shift.shiftLeftChecked(this, DecimalRounding.DOWN, uDecimal, positions);
+	}
+
+	@Override
+	public long shiftRight(long uDecimal, int positions) {
+		return Shift.shiftRightChecked(this, DecimalRounding.DOWN, uDecimal, positions);
+	}
+
+	@Override
 	public long round(long uDecimal, int precision) {
 		return Round.round(this, uDecimal, precision);
 	}

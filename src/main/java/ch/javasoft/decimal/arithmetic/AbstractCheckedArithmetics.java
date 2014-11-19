@@ -49,16 +49,6 @@ abstract public class AbstractCheckedArithmetics extends AbstractArithmetics {
 	}
 
 	@Override
-	public long shiftLeft(long uDecimal, int positions) {
-		return Shift.shiftLeftChecked(this, uDecimal, positions);
-	}
-
-	@Override
-	public long shiftRight(long uDecimal, int positions) {
-		return Shift.shiftRightChecked(this, uDecimal, positions);
-	}
-
-	@Override
 	public long fromLong(long value) {
 		return getScaleMetrics().multiplyByScaleFactorExact(value);
 	}
