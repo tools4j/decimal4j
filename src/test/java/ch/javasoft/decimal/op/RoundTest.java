@@ -32,11 +32,9 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 		for (final ScaleMetrics s : SCALES) {
 			final int scale = s.getScale();
 			for (int precision = (scale - 18) - 1; precision <= scale + 1; precision++) {
-				for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
+				for (final TruncationPolicy tp : POLICIES) {
 					final DecimalArithmetics arith = s.getArithmetics(tp);
-					if (arith != null) {//FIXME this if can be removed later
-						data.add(new Object[] {s, precision, tp, arith});
-					}
+					data.add(new Object[] {s, precision, tp, arith});
 				}
 			}
 		}

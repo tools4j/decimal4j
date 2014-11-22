@@ -29,7 +29,7 @@ public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			for (final RoundingMode rm : RoundingMode.values()) {
+			for (final RoundingMode rm : UNCHECKED_ROUNDING_MODES) {
 				data.add(new Object[] {s, rm, s.getArithmetics(rm)});
 			}
 		}

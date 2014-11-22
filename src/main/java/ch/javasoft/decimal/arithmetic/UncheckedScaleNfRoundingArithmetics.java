@@ -115,14 +115,6 @@ public class UncheckedScaleNfRoundingArithmetics extends
 	}
 
 	@Override
-	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0) {
-			return fromLong(unscaledValue);
-		}
-		return Pow10.multiplyByPowerOf10(rounding, unscaledValue, getScale() - scale);
-	}
-
-	@Override
 	public long parse(String value) {
 		final int indexOfDot = value.indexOf('.');
 		if (indexOfDot < 0) {

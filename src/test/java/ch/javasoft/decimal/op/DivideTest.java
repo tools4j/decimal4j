@@ -28,11 +28,9 @@ public class DivideTest extends Abstract2DecimalArgsToDecimalResultTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
-			for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
+			for (final TruncationPolicy tp : POLICIES) {
 				final DecimalArithmetics arith = s.getArithmetics(tp);
-				if (arith != null) {//FIXME this if can be removed later
-					data.add(new Object[] {s, tp, arith});
-				}
+				data.add(new Object[] {s, tp, arith});
 			}
 		}
 		return data;

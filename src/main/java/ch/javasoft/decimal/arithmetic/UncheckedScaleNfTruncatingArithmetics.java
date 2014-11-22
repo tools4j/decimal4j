@@ -101,14 +101,6 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	}
 
 	@Override
-	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0) {
-			return fromLong(unscaledValue);
-		}
-		return Pow10.multiplyByPowerOf10(unscaledValue, getScale() - scale);
-	}
-
-	@Override
 	public long toLong(long uDecimal) {
 		return getScaleMetrics().divideByScaleFactor(uDecimal);
 	}

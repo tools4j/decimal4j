@@ -86,6 +86,11 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 		return Round.round(this, rounding, uDecimal, precision);
 	}
 
+	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
+	}
+
 //	@Override
 //	public long fromDouble(double value) {
 //		// FIXME impl with rounding
@@ -95,13 +100,5 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
 		return value.setScale(0, getRoundingMode()).longValue();
-	}
-
-	@Override
-	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0 | unscaledValue == 0) {
-			return unscaledValue;
-		}
-		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
 	}
 }

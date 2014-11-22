@@ -33,7 +33,7 @@ public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInte
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
 			data.add(new Object[] {s, RoundingMode.DOWN, true, s.getDefaultArithmetics()});
-			for (final RoundingMode rounding : RoundingMode.values()) {
+			for (final RoundingMode rounding : UNCHECKED_ROUNDING_MODES) {
 				data.add(new Object[] {s, rounding, false, s.getArithmetics(rounding)});
 			}
 		}

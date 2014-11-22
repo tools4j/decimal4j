@@ -53,14 +53,6 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 	}
 
 	@Override
-	public final long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0 | unscaledValue == 0) {
-			return unscaledValue;
-		}
-		return multiplyByPowerOf10(unscaledValue, scale);
-	}
-
-	@Override
 	public long parse(String value) {
 		if (value.length() < 18) {
 			return Long.parseLong(value);

@@ -3,11 +3,10 @@ package ch.javasoft.decimal.op;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -15,7 +14,10 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.factory.Factories;
 import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.test.TestCases;
+import ch.javasoft.decimal.test.TestScales;
+import ch.javasoft.decimal.test.TestSettings;
+import ch.javasoft.decimal.test.TestTruncationPolicies;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
@@ -27,8 +29,12 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  */
 abstract public class AbstractOperandTest {
 
-//	protected static final List<ScaleMetrics> SCALES = Scales.VALUES;
-	protected static final List<ScaleMetrics> SCALES = Arrays.asList(Scales.valueOf(0), Scales.valueOf(6), Scales.valueOf(9), Scales.valueOf(17), Scales.valueOf(18));
+	private static final TestScales TEST_SCALES = TestSettings.getTestScales(); 
+	private static final TestTruncationPolicies TEST_POLICIES = TestSettings.getTestTruncationPolicies();
+	protected static final TestCases TEST_CASES = TestSettings.getTestCases();
+	protected static final List<ScaleMetrics> SCALES = TEST_SCALES.getScales();
+	protected static final Collection<TruncationPolicy> POLICIES = TEST_POLICIES.getPolicies();
+	protected static final Set<RoundingMode> UNCHECKED_ROUNDING_MODES = TEST_POLICIES.getUncheckedRoundingModes();
 
 	protected final Random rnd = new Random();
 
@@ -52,6 +58,10 @@ abstract public class AbstractOperandTest {
 
 	protected int getScale() {
 		return arithmetics.getScale();
+	}
+	
+	protected ScaleMetrics getScaleMetrics() {
+		return arithmetics.getScaleMetrics();
 	}
 
 	protected TruncationPolicy getTruncationPolicy() {
@@ -102,62 +112,22 @@ abstract public class AbstractOperandTest {
 	abstract protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics);
 
 	protected int getRandomTestCount() {
-		return 10000;
+		switch (TEST_CASES) {
+		case ALL:
+			return 10000;
+		case STANDARD:
+			return 10000;
+		case SMALL:
+			return 1000;
+		case TINY:
+			return 100;
+		default:
+			throw new RuntimeException("unsupported: " + TEST_CASES);
+		}
 	}
 
-	private static final long[] SPECIALS = { Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE, Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE, };
-
 	protected long[] getSpecialValues(ScaleMetrics scaleMetrics) {
-		final Set<Long> specials = new TreeSet<Long>();
-		//boundary values of different types
-		for (final long s : SPECIALS) {
-			specials.add(s);
-			//value +/- 1
-			if (s < Long.MAX_VALUE) {
-				specials.add(s + 1);
-			}
-			if (s > Long.MIN_VALUE) {
-				specials.add(s - 1);
-			}
-			//without fractional part
-			specials.add(s - scaleMetrics.moduloByScaleFactor(s));
-			specials.add(-(s - scaleMetrics.moduloByScaleFactor(s)));
-			//half value and neighbours
-			specials.add(s / 2);
-			specials.add(s / 2 - 1);
-			specials.add(s / 2 + 1);
-			//divided by scale ten, pos and neg
-			for (long d = s / 10; Math.abs(d) >= 10; d /= 10) {
-				specials.add(d);
-				specials.add(-d);
-				specials.add(d + 1);
-				specials.add(d - 1);
-				specials.add(-d - 1);
-				specials.add(-d + 1);
-			}
-		}
-		//small numbers including zero
-		for (long i = -9; i <= 9; i++) {
-			specials.add(i);
-		}
-		//powers of 10
-		long pow10 = 1;
-		for (int i = 1; i <= 18; i++) {
-			pow10 *= 10;
-			specials.add(pow10);
-			specials.add(-pow10);
-			specials.add(pow10 + 1);
-			specials.add(pow10 - 1);
-			specials.add(-pow10 - 1);
-			specials.add(-pow10 + 1);
-		}
-		//convert to array
-		final long[] result = new long[specials.size()];
-		int index = 0;
-		for (long s : specials) {
-			result[index++] = s;
-		}
-		return result;
+		return TEST_CASES.getSpecialValuesFor(scaleMetrics);
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {

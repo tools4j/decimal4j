@@ -32,7 +32,7 @@ public class ToBigDecimalTest extends Abstract1DecimalArgToAnyResultTest<BigDeci
 		for (final ScaleMetrics s : SCALES) {
 			data.add(new Object[] { s, null, RoundingMode.DOWN, s.getDefaultArithmetics() });
 			for (int scale = -100; scale < 100; scale++) {
-				for (final RoundingMode rounding : RoundingMode.values()) {
+				for (final RoundingMode rounding : UNCHECKED_ROUNDING_MODES) {
 					data.add(new Object[] { s, scale, rounding, s.getArithmetics(rounding) });
 				}
 			}

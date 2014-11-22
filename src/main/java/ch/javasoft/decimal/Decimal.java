@@ -707,8 +707,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param unscaledAugend
 	 *            value to be added to this {@code Decimal}
 	 * @param scale
-	 *            the scale to apply to {@code unscaledAugend}, must be in
-	 *            {@code [0,18]}
+	 *            the scale to apply to {@code unscaledAugend}, positive to
+	 *            indicate the number of fraction digits to the right of the 
+	 *            decimal point and negative to indicate up-scaling with a power 
+	 *            of ten
 	 * @param roundingMode
 	 *            the rounding mode to apply if the augend argument needs to be
 	 *            truncated when converted into a decimal number of the same
@@ -738,8 +740,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param unscaledAugend
 	 *            value to be added to this {@code Decimal}
 	 * @param scale
-	 *            the scale to apply to {@code unscaledAugend}, must be in
-	 *            {@code [0,18]}
+	 *            the scale to apply to {@code unscaledAugend}, positive to
+	 *            indicate the number of fraction digits to the right of the 
+	 *            decimal point and negative to indicate up-scaling with a power 
+	 *            of ten
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the augend argument needs to
 	 *            be truncated when converted into a decimal number of the same

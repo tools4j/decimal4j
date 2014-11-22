@@ -37,6 +37,11 @@ abstract public class AbstractUncheckedScaleNfArithmetics extends
 	}
 
 	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return Scale.rescale(this, unscaledValue, scale, getScale());
+	}
+
+	@Override
 	public String toString(long uDecimal) {
 		final int scale = getScale();
 		final int negativeOffset = uDecimal < 0 ? 1 : 0;

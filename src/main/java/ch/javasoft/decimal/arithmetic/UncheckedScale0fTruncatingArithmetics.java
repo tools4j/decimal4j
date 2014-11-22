@@ -72,6 +72,11 @@ public final class UncheckedScale0fTruncatingArithmetics extends AbstractUncheck
 	}
 
 	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return Pow10.divideByPowerOf10(unscaledValue, scale);
+	}
+
+	@Override
 	public final long fromDouble(double value) {
 		return (long)value;
 	}
@@ -79,14 +84,6 @@ public final class UncheckedScale0fTruncatingArithmetics extends AbstractUncheck
 	@Override
 	public final long fromBigDecimal(BigDecimal value) {
 		return value.longValue();
-	}
-
-	@Override
-	public final long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0 | unscaledValue == 0) {
-			return unscaledValue;
-		}
-		return Pow10.divideByPowerOf10(unscaledValue, scale);
 	}
 
 	@Override

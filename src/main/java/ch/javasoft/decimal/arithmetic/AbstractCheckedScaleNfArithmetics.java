@@ -34,6 +34,11 @@ abstract public class AbstractCheckedScaleNfArithmetics extends AbstractCheckedA
 	}
 
 	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return Scale.rescale(this, unscaledValue, scale, getScale());
+	}
+
+	@Override
 	public long toLong(long uDecimal) {
 		return unchecked.toLong(uDecimal);
 	}

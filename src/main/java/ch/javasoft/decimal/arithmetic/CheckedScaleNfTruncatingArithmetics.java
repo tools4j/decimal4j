@@ -96,13 +96,4 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 			maxDouble = toDouble(Long.MAX_VALUE);
 		}
 	}
-
-	@Override
-	public long fromUnscaled(long unscaledValue, int scale) {
-		if (scale == 0) {
-			return fromLong(unscaledValue);
-		}
-		return Pow10.multiplyByPowerOf10Checked(this, unscaledValue, getScale() - scale);
-	}
-
 }

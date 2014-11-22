@@ -71,6 +71,11 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 	}
 
 	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return Pow10.divideByPowerOf10Checked(this, unscaledValue, scale);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		if (value <= Long.MAX_VALUE & value >= Long.MIN_VALUE) { 
 			return (long)value;

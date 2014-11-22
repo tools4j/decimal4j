@@ -33,11 +33,8 @@ public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : SCALES) {
 			data.add(new Object[] {s, TruncationPolicy.DEFAULT, true, s.getDefaultArithmetics()});
-			for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
-				final DecimalArithmetics arith = s.getArithmetics(tp);
-				if (arith != null) {//FIXME this if can be removed later
-					data.add(new Object[] {s, tp, false, s.getArithmetics(tp)});
-				}
+			for (final TruncationPolicy tp : POLICIES) {
+				data.add(new Object[] {s, tp, false, s.getArithmetics(tp)});
 			}
 		}
 		return data;
