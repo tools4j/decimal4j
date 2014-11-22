@@ -8,13 +8,13 @@ import java.util.Arrays;
  */
 public class TestSettings {
 
-	public static final String SYSTEM_PROPERTY_TEST_EXTENT = "testExtent";
+	public static final String SYSTEM_PROPERTY_TEST_VARIANT = "testVariant";
 	public static final String SYSTEM_PROPERTY_TEST_SCALES = "testScales";
 	public static final String SYSTEM_PROPERTY_TEST_CASES = "testCases";
 
 	public static TestScales getTestScales() {
-		final String testExtent = System.getProperty(SYSTEM_PROPERTY_TEST_EXTENT, TestScales.STANDARD.name());
-		final String testScales = System.getProperty(SYSTEM_PROPERTY_TEST_SCALES, testExtent);
+		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_VARIANT, TestScales.STANDARD.name());
+		final String testScales = System.getProperty(SYSTEM_PROPERTY_TEST_SCALES, testVariant);
 		try {
 			return TestScales.valueOf(testScales);
 		} catch (IllegalArgumentException e) {
@@ -23,9 +23,9 @@ public class TestSettings {
 	}
 
 	public static TestCases getTestCases() {
-		final String testExtent = System.getProperty(SYSTEM_PROPERTY_TEST_EXTENT, TestCases.STANDARD.name());
-//		final String testExtent = System.getProperty(SYSTEM_PROPERTY_TEST_EXTENT, TestCases.SMALL.name());
-		final String testCases = System.getProperty(SYSTEM_PROPERTY_TEST_CASES, testExtent);
+		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_VARIANT, TestCases.STANDARD.name());
+//		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_EXTENT, TestCases.SMALL.name());
+		final String testCases = System.getProperty(SYSTEM_PROPERTY_TEST_CASES, testVariant);
 		try {
 			return TestCases.valueOf(testCases);
 		} catch (IllegalArgumentException e) {
@@ -34,11 +34,11 @@ public class TestSettings {
 	}
 	
 	public static TestTruncationPolicies getTestTruncationPolicies() {
-		final String testExtent = System.getProperty(SYSTEM_PROPERTY_TEST_EXTENT, TestCases.STANDARD.name());
+		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_VARIANT, TestCases.STANDARD.name());
 		try {
-			return TestTruncationPolicies.valueOf(testExtent);
+			return TestTruncationPolicies.valueOf(testVariant);
 		} catch (IllegalArgumentException e) {
-			throw new IllegalArgumentException("illegal system property for test truncation policies, must be one of " + Arrays.toString(TestTruncationPolicies.values()) + " but was <" + testExtent + ">");
+			throw new IllegalArgumentException("illegal system property for test truncation policies, must be one of " + Arrays.toString(TestTruncationPolicies.values()) + " but was <" + testVariant + ">");
 		}
 	}
 }

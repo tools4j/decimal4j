@@ -31,7 +31,7 @@ dependencies {
 }
 
 test {
-    systemProperties 'property': 'value'
+    systemProperties = System.getProperties()
 }
 
 uploadArchives {
