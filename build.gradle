@@ -31,6 +31,11 @@ dependencies {
 }
 
 test {
+	//supported system properties for test sets:
+	//
+	//-DtestVariant=TINY,SMALL,STANDARD,ALL
+	//-DtestCases=TINY,SMALL,STANDARD,ALL
+	//-DtestScales=TINY,SMALL,STANDARD,ALL
     systemProperties = System.getProperties()
 }
 
