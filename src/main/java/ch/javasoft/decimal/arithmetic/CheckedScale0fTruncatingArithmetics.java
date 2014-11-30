@@ -6,7 +6,7 @@ import ch.javasoft.decimal.truncate.DecimalRounding;
 
 /**
  * Arithmetics implementation for the special case {@code scale=0}, that is, for
- * long values. The implementation throws an exception if an operation leads to on
+ * long values. The implementation throws an exception if an operation leads to an
  * overflow. Decimals after the last scale digit are truncated without rounding.
  */
 public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fArithmetics {

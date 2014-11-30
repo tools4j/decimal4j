@@ -45,7 +45,6 @@ public final class JDKSupport {
 
 	// no instances
 	private JDKSupport() {
-		super();
 	}
 
 }
