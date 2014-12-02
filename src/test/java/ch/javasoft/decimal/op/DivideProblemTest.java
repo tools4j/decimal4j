@@ -42,6 +42,10 @@ public class DivideProblemTest extends DivideTest {
 		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
 		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
 
+		s = Scale6f.INSTANCE;
+		tp = DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy();
+		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+
 		s = Scale17f.INSTANCE;
 		tp = DecimalRounding.DOWN.getUncheckedTruncationPolicy();
 		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
@@ -91,10 +95,26 @@ public class DivideProblemTest extends DivideTest {
 	}
 	@Test
 	public void runProblemTest5() {
-		if (getScale() == 17) {
+		if (getScale() == 17 && isUnchecked()) {
 			final Decimal<Scale17f> dOpA = newDecimal(Scale17f.INSTANCE, Scale17f.INSTANCE.getScaleFactor());
 			final Decimal<Scale17f> dOpB = newDecimal(Scale17f.INSTANCE, -92233720368547L);
 			runTest(Scale17f.INSTANCE, "problem", dOpA, dOpB);
+		}
+	}
+	@Test
+	public void runProblemTest6() {
+		if (getScale() == 17 && isUnchecked()) {
+			final Decimal<Scale17f> dOpA = newDecimal(Scale17f.INSTANCE, Scale17f.INSTANCE.getScaleFactor());
+			final Decimal<Scale17f> dOpB = newDecimal(Scale17f.INSTANCE, Integer.MIN_VALUE * 1000L);
+			runTest(Scale17f.INSTANCE, "problem", dOpA, dOpB);
+		}
+	}
+	@Test
+	public void runProblemTest7() {
+		if (getScale() == 6 && isUnchecked() && getRoundingMode() == RoundingMode.UNNECESSARY) {
+			final Decimal<Scale6f> dOpA = newDecimal(Scale6f.INSTANCE, 99999999000000L);
+			final Decimal<Scale6f> dOpB = newDecimal(Scale6f.INSTANCE, 5);
+			runTest(Scale6f.INSTANCE, "problem", dOpA, dOpB);
 		}
 	}
 

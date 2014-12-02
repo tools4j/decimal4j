@@ -53,6 +53,20 @@ final class Unsigned {
 	}
 
 	/**
+	 * Compare two longs as if they were unsigned. Returns true iff one is
+	 * smaller than two.
+	 * 
+	 * @param one
+	 *            the first unsigned {@code long} to compare
+	 * @param two
+	 *            the second unsigned {@code long} to compare
+	 * @return true if {@code one < two}
+	 */
+	public static boolean isLess(long one, long two) {
+		return flip(one) < flip(two);
+	}
+
+	/**
 	 * Compare two longs as if they were unsigned. Returns true iff one is less
 	 * than or equal to two.
 	 * 
@@ -64,6 +78,44 @@ final class Unsigned {
 	 */
 	public static boolean isLessOrEqual(long one, long two) {
 		return flip(one) <= flip(two);
+	}
+
+	/**
+	 * Returns dividend / divisor, where the dividend and divisor are treated as
+	 * unsigned 64-bit quantities.
+	 *
+	 * @param dividend
+	 *            the dividend (numerator)
+	 * @param divisor
+	 *            the divisor (denominator)
+	 * @return {@code dividend / divisor}
+	 * @throws ArithmeticException
+	 *             if divisor is 0
+	 */
+	public static long divide(long dividend, long divisor) {
+		if (divisor < 0) { // i.e., divisor >= 2^63:
+			if (compare(dividend, divisor) < 0) {
+				return 0; // dividend < divisor
+			} else {
+				return 1; // dividend >= divisor
+			}
+		}
+
+		// Optimization - use signed division if dividend < 2^63
+		if (dividend >= 0) {
+			return dividend / divisor;
+		}
+
+		/*
+		 * Otherwise, approximate the quotient, check, and correct if necessary.
+		 * Our approximation is guaranteed to be either exact or one less than
+		 * the correct value. This follows from fact that floor(floor(x)/i) ==
+		 * floor(x/i) for any real x and integer i != 0. The proof is not quite
+		 * trivial.
+		 */
+		long quotient = ((dividend >>> 1) / divisor) << 1;
+		long rem = dividend - quotient * divisor;
+		return quotient + (compare(rem, divisor) >= 0 ? 1 : 0);
 	}
 
 	// no instances

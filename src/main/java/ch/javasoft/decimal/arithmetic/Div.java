@@ -60,6 +60,7 @@ final class Div {
 			fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
 		}
 		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+//		return scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, uDecimalDividend, uDecimalDivisor);
 	}
 
 	/**
@@ -112,6 +113,7 @@ final class Div {
 			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 		}
+//		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	/**
@@ -170,28 +172,42 @@ final class Div {
 	}
 
 	private static long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
-		final boolean negative = (uDecimalDividend < 0) != (uDecimalDivisor < 0);
+		final boolean negative = (uDecimalDividend ^ uDecimalDivisor) < 0;
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
 
 		//multiply by scale factor into a 128bit integer
+		//HD + Knuth's Algorithm M from [Knu2] section 4.3.1.
 		final int lFactor = (int) (absDividend & LONG_MASK);
 		final int hFactor = (int) (absDividend >>> 32);
-		long lScaled;
-		long hScaled;
-		long product;
+		final long w1, w2, w3;
+		long k, t;
 
-		product = scaleMetrics.mulloByScaleFactor(lFactor);
-		lScaled = product & LONG_MASK;
-		product = scaleMetrics.mulhiByScaleFactor(lFactor) + (product >>> 32);
-		hScaled = product >>> 32;
-		product = scaleMetrics.mulloByScaleFactor(hFactor) + (product & LONG_MASK);
-		lScaled |= ((product & LONG_MASK) << 32);
-		hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + hScaled + (product >>> 32);
+		t = scaleMetrics.mulloByScaleFactor(lFactor);
+		w3 = t & LONG_MASK;
+		k = t >>> 32;
+
+		t = scaleMetrics.mulloByScaleFactor(hFactor) + k;
+		w2 = t & LONG_MASK;
+		w1 = t >>> 32;
+
+		t = scaleMetrics.mulhiByScaleFactor(lFactor) + w2;
+		k = t >>> 32;
+
+		final long hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + w1 + k;
+		final long lScaled = (t << 32) + w3;
 
 		//divide 128 bit product by 64 bit divisor
-		return div128by64(rounding, negative, hScaled, lScaled, absDivisor);
-
+		final long hQuotient, lQuotient;
+		if (Unsigned.isLess(hScaled, absDivisor)) {
+			hQuotient = 0;
+			lQuotient = div128by64(rounding, negative, hScaled, lScaled, absDivisor);
+		} else {
+			hQuotient = Unsigned.divide(hScaled, absDivisor);
+			final long rem = hScaled - hQuotient * absDivisor;
+			lQuotient = div128by64(rounding, negative, rem, lScaled, absDivisor);
+		}
+		return lQuotient;
 	}
 
 	/**
@@ -216,10 +232,10 @@ final class Div {
 	 * @return the signed quotient, rounded if {@code rounding != null}
 	 */
 	private static long div128by64(final DecimalRounding rounding, final boolean neg, final long u1, final long u0, final long v0) {
-		long q;
-		long r;
+		final long q, r;
 
-		long un1, un0, vn1, vn0, q1, q0, un32, un21, un10, rhat, left, right;
+		final long un1, un0, vn1, vn0, un32, un21, un10;
+		long q1, q0, rhat, left, right;
 
 		final int s = Long.numberOfLeadingZeros(v0);
 
@@ -227,13 +243,8 @@ final class Div {
 		vn1 = v >>> 32;
 		vn0 = v & LONG_MASK;
 
-		if (s > 0) {
-			un32 = (u1 << s) | (u0 >>> (64 - s));
-			un10 = u0 << s;
-		} else {
-			un32 = u1;
-			un10 = u0;
-		}
+		un32 = (u1 << s) | (u0 >>> (64 - s)) & (-s >> 63);
+		un10 = u0 << s;
 
 		un1 = un10 >>> 32;
 		un0 = un10 & LONG_MASK;
@@ -242,10 +253,9 @@ final class Div {
 		rhat = un32 - q1 * vn1;
 
 		left = q1 * vn0;
-		right = (rhat << 32) + un1;
-
-		while (((q1 >>> 32) != 0) | Unsigned.isGreater(left, right)) {
-			--q1;
+		right = (rhat << 32) | un1;
+		while (((q1 >>> 32) != 0) || Unsigned.isGreater(left, right)) {
+			q1--;
 			rhat += vn1;
 			if ((rhat >>> 32) != 0) {
 				break;
@@ -261,9 +271,8 @@ final class Div {
 
 		left = q0 * vn0;
 		right = (rhat << 32) | un0;
-
-		while (((q0 >>> 32) != 0) | Unsigned.isGreater(left, right)) {
-			--q0;
+		while (((q0 >>> 32) != 0) || Unsigned.isGreater(left, right)) {
+			q0--;
 			rhat += vn1;
 			if ((rhat >>> 32) != 0) {
 				break;
@@ -279,7 +288,7 @@ final class Div {
 			return neg ? -q : q;
 		}
 
-		r = ((un21 << 32) + (un0 - (q0 * v))) >>> s;
+		r = ((un21 << 32) + un0 - q0 * v) >>> s;
 		final TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(Math.abs(r), Math.abs(v0));
 		final int inc = rounding.calculateRoundingIncrement(neg ? -1 : 1, q, truncatedPart);
 		return (neg ? -q : q) + inc;
@@ -317,7 +326,7 @@ final class Div {
 		 */
 		final long quotient = ((dividend >>> 1) / divisor) << 1;
 		final long rem = dividend - quotient * divisor;
-		return quotient + (((rem > divisor) | (rem < 0)) ? 1 : 0);
+		return quotient + (((rem >= divisor) | (rem < 0)) ? 1 : 0);
 	}
 
 	//no instances

@@ -1,5 +1,6 @@
 package ch.javasoft.decimal.op;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.TreeSet;
 import org.junit.runners.Parameterized.Parameters;
 
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.arithmetic.JDKSupport;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
@@ -72,6 +74,20 @@ abstract public class AbstractUnscaledTest extends Abstract1DecimalArg1LongArgTo
 	@Override
 	protected int getRandomTestCount() {
 		return 1000;
+	}
+	
+	protected BigDecimal toBigDecimal(long unscaled) {
+		BigDecimal other = BigDecimal.valueOf(unscaled, scale);
+		if (scale != getScale()) {
+			other = other.setScale(getScale(), getRoundingMode());
+			if (isUnchecked()) {
+				other = BigDecimal.valueOf(other.unscaledValue().longValue(), getScale());
+			} else {
+				//check for overflow
+				JDKSupport.bigIntegerToLongValueExact(other.unscaledValue());
+			}
+		}
+		return other;
 	}
 	
 }

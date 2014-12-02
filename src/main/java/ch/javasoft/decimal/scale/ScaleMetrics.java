@@ -10,15 +10,26 @@ import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
- * <tt>ScaleMetrics</tt> is associated with {@link Decimal} numbers and
- * represents the factor applied to the {@code long} value underlying a
- * {@code Decimal}. Scale stands for the fixed number of fraction digits of a
- * {@code Decimal}.
+ * <tt>ScaleMetrics</tt> defines various metrics associated with the scale of a
+ * {@link Decimal} number. It is mainly used internally from code implementing
+ * the arithmetic operations of a {@code Decimal}.
  * <p>
- * The <tt>Scale</tt> class contains a number of subclasses used by different
- * decimal types. With <tt>Scale</tt> subclasses, it is possible to distinguish
- * different decimal types and we can ensure that only decimals of the same
- * scale can directly operate with each other.
+ * The {@link #getScale() scale} determines the number of fraction digits of the
+ * {@code Decimal}. The {@link #getScaleFactor() scale factor} is the
+ * multiplier/divisor for conversions between the {@code Decimal} value and the
+ * unscaled {@code long} value underlying every {@code Decimal}.
+ * <p>
+ * Operations such as {@link #multiplyByScaleFactor(long)
+ * multiplyByScaleFactor(..)} are defined here as separate methods to allow for
+ * compiler optimizations. Multiplications and divisions are for instance
+ * translated into shifts and adds by the compiler instead of the more expensive
+ * multiplication and division operations with non-constant long values.
+ * <p>
+ * {@code ScaleMetrics} also provides access to {@link DecimalArithmetics}
+ * instances for different rounding modes and overflow policies.
+ * {@code DecimalArithmetics} objects can be used to deal with decimal numbers
+ * <i>natively</i> which means that {@code Decimal} numbers are passed to the
+ * arithmetics class in their native form as unscaled {@code long} values.
  */
 public interface ScaleMetrics {
 	/**

@@ -14,36 +14,36 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * Unit test for {@link Decimal#addUnscaled(long)}
  */
 @RunWith(Parameterized.class)
-public class AddUnscaledTest extends AbstractUnscaledTest {
+public class SubtractUnscaledTest extends AbstractUnscaledTest {
 	
-	public AddUnscaledTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
+	public SubtractUnscaledTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
 		super(scale, arithmetics);
 	}
 
 	@Override
 	protected String operation() {
-		return "+ 10^" + (-scale) + " *";
+		return "- 10^" + (-scale) + " *";
 	}
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, long b) {
-		return a.add(toBigDecimal(b));
+		return a.subtract(toBigDecimal(b));
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
 		if (scale == getScale() && rnd.nextBoolean()) {
 			if (isUnchecked() && rnd.nextBoolean()) {
-				return a.addUnscaled(b);
+				return a.subtractUnscaled(b);
 			}
-			return a.addUnscaled(b, getOverflowMode());
+			return a.subtractUnscaled(b, getOverflowMode());
 		}
 		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
-			return a.addUnscaled(b, scale);
+			return a.subtractUnscaled(b, scale);
 		}
 		if (isUnchecked() && rnd.nextBoolean()) {
-			return a.addUnscaled(b, scale, getRoundingMode());
+			return a.subtractUnscaled(b, scale, getRoundingMode());
 		}
-		return a.addUnscaled(b, scale, getTruncationPolicy());
+		return a.subtractUnscaled(b, scale, getTruncationPolicy());
 	}
 }
