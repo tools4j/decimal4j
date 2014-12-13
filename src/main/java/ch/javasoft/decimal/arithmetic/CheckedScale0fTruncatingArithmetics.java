@@ -77,10 +77,7 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 
 	@Override
 	public long fromDouble(double value) {
-		if (value <= Long.MAX_VALUE & value >= Long.MIN_VALUE) { 
-			return (long)value;
-		}
-		throw new ArithmeticException("Overflow for conversion from double: " + value);
+		return DoubleConversion.doubleToLong(value);
 	}
 
 }

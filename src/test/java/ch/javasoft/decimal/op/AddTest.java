@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.test.TestSettings;
 import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
@@ -26,7 +27,7 @@ public class AddTest extends Abstract2DecimalArgsToDecimalResultTest {
 	@Parameters(name = "{index}: {0}, {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : SCALES) {
+		for (final ScaleMetrics s : TestSettings.SCALES) {
 			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getTruncatingArithmetics(OverflowMode.UNCHECKED)});
 			data.add(new Object[] {s, OverflowMode.CHECKED, s.getTruncatingArithmetics(OverflowMode.CHECKED)});
 		}

@@ -48,7 +48,7 @@ public enum TestTruncationPolicies {
 				rounding.add(policy.getRoundingMode());
 			}
 		}
-		return rounding;
+		return Collections.unmodifiableSet(rounding);
 	}
 
 }

@@ -15,10 +15,10 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * Unit test for {@link Decimal#addUnscaled(long)}
  */
 @RunWith(Parameterized.class)
-public class DivideUnscaledTest extends AbstractUnscaledTest {
+public class DivideUnscaledTest extends AbstractUnscaledOperandTest {
 	
-	public DivideUnscaledTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
-		super(scale, arithmetics);
+	public DivideUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
+		super(sm, tp, scale, arithmetics);
 	}
 
 	@Override

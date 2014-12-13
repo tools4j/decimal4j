@@ -15,6 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.test.TestSettings;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
@@ -30,8 +31,8 @@ public class ShiftRightTest extends Abstract1DecimalArg1IntArgToDecimalResultTes
 	@Parameters(name = "{index}: {0}, {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : SCALES) {
-			for (final TruncationPolicy tp : POLICIES) {
+		for (final ScaleMetrics s : TestSettings.SCALES) {
+			for (final TruncationPolicy tp : TestSettings.POLICIES) {
 				final DecimalArithmetics arith = s.getArithmetics(tp);
 				data.add(new Object[] {s, tp, arith});
 			}

@@ -99,6 +99,11 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	public long fromBigDecimal(BigDecimal value) {
 		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).longValue();
 	}
+	
+	@Override
+	public long fromDouble(double value) {
+		return DoubleConversion.doubleToUnscaled(this, value);
+	}
 
 	@Override
 	public long toLong(long uDecimal) {
@@ -107,13 +112,12 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 
 	@Override
 	public float toFloat(long uDecimal) {
-		//NOTE: not very efficient
-		return Float.valueOf(toString(uDecimal));
+		return (float)toDouble(uDecimal);
 	}
 
 	@Override
 	public double toDouble(long uDecimal) {
-		//NOTE: not very efficient
+		//FIXME: not very efficient and not garbage free
 		return Double.valueOf(toString(uDecimal));
 	}
 

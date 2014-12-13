@@ -19,7 +19,8 @@ final class RoundingUtil {
 	 *            the sign of the total value, either +1 or -1; determines the
 	 *            result value if rounded
 	 * @param truncatedValue
-	 *            the truncated result before rounding is applied (only used for HALF_EVEN rounding)
+	 *            the truncated result before rounding is applied (only used for
+	 *            HALF_EVEN rounding)
 	 * @param firstTruncatedDigit
 	 *            the first truncated digit, must be in {@code [0, 1, ..., 9]}
 	 * @param zeroAfterFirstTruncatedDigit
@@ -40,7 +41,8 @@ final class RoundingUtil {
 	 * @param rounding
 	 *            the rounding mode to apply
 	 * @param truncatedValue
-	 *            the truncated result before rounding is applied (only used for HALF_EVEN rounding)
+	 *            the truncated result before rounding is applied (only used for
+	 *            HALF_EVEN rounding)
 	 * @param truncatedDigits
 	 *            the truncated part, it most hold that
 	 *            {@code abs(truncatedDigits) < abs(divisor)}
@@ -65,7 +67,8 @@ final class RoundingUtil {
 	 * @param rounding
 	 *            the rounding mode to apply
 	 * @param truncatedValue
-	 *            the truncated result before rounding is applied (only used for HALF_EVEN rounding)
+	 *            the truncated result before rounding is applied (only used for
+	 *            HALF_EVEN rounding)
 	 * @param truncatedDigits
 	 *            the truncated part of a double, must be {@code >-one} and
 	 *            {@code <one}
@@ -134,6 +137,59 @@ final class RoundingUtil {
 
 	/**
 	 * Returns a truncated part constant given a non-negative remainder
+	 * resulting from a division by 2^n
+	 * 
+	 * @param remainder
+	 *            the remainder part
+	 * @param n
+	 *            the power of 2 of the divisor, must be > 0
+	 * @return the truncated part constant equivalent to the given arguments
+	 */
+	public static final TruncatedPart truncatedPartFor2powN(long remainder, int n) {
+		if (n < 63) {
+			return truncatedPartFor(remainder, 1L << n);
+		} else if (n == 63) {
+			return truncatedPartFor2pow63(remainder);
+		} else if (n == 64) {
+			return truncatedPartFor2pow64(remainder);
+		} else {
+			return remainder == 0 ? TruncatedPart.ZERO : TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
+		}
+	}
+
+	/**
+	 * Returns a truncated part constant given a non-negative 128 bit remainder
+	 * resulting from a division by 2^n
+	 * 
+	 * @param hRemainder
+	 *            the high bits of the remainder part
+	 * @param lRemainder
+	 *            the low bits of the remainder part
+	 * @param n
+	 *            the power of 2 of the divisor, must be > 0
+	 * @return the truncated part constant equivalent to the given arguments
+	 */
+	public static final TruncatedPart truncatedPartFor2powN(long hRemainder, long lRemainder, int n) {
+		if (hRemainder == 0) {
+			return truncatedPartFor2powN(lRemainder, n);
+		}
+		final TruncatedPart hPart = truncatedPartFor2powN(hRemainder, n - Long.SIZE);
+		switch (hPart) {
+		case ZERO:
+			return lRemainder == 0 ? TruncatedPart.ZERO : TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
+		case LESS_THAN_HALF_BUT_NOT_ZERO:
+			return hPart; 
+		case EQUAL_TO_HALF:
+			return lRemainder == 0 ? TruncatedPart.EQUAL_TO_HALF: TruncatedPart.GREATER_THAN_HALF;
+		case GREATER_THAN_HALF:
+			return hPart; 
+		default:
+			throw new RuntimeException("internal error: unsupported truncated part: " + hPart);
+		}
+	}
+
+	/**
+	 * Returns a truncated part constant given a non-negative remainder
 	 * resulting from a division by 2^63
 	 * 
 	 * @param remainder
@@ -167,6 +223,9 @@ final class RoundingUtil {
 		}
 		if (remainder == 0x8000000000000000L) {
 			return TruncatedPart.EQUAL_TO_HALF;
+		}
+		if (remainder < 0) {
+			return TruncatedPart.GREATER_THAN_HALF;
 		}
 		return TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
 	}

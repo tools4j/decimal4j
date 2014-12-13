@@ -1,6 +1,5 @@
 package ch.javasoft.decimal.arithmetic;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import ch.javasoft.decimal.truncate.OverflowMode;
@@ -51,13 +50,4 @@ abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
 	public long fromBigInteger(BigInteger value) {
 		return value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()).longValue();
 	}
-
-	@Override
-	public long fromDouble(double value) {
-		if (Double.isNaN(value) || Double.isInfinite(value)) {
-			throw new NumberFormatException("cannot convert double to decimal: " + value);
-		}
-		return fromBigDecimal(BigDecimal.valueOf(value));
-	}
-
 }

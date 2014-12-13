@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.test.TestSettings;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
@@ -29,10 +30,10 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 	@Parameters(name = "{index}: {0}, precision={1}, {2}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : SCALES) {
+		for (final ScaleMetrics s : TestSettings.SCALES) {
 			final int scale = s.getScale();
 			for (int precision = (scale - 18) - 1; precision <= scale + 1; precision++) {
-				for (final TruncationPolicy tp : POLICIES) {
+				for (final TruncationPolicy tp : TestSettings.POLICIES) {
 					final DecimalArithmetics arith = s.getArithmetics(tp);
 					data.add(new Object[] {s, precision, tp, arith});
 				}

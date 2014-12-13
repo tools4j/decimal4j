@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.test.TestSettings;
 
 /**
  * Unit test for the diverse comparison methods returning a boolean value, such
@@ -84,7 +85,7 @@ public class IsCompartedToTest extends Abstract2DecimalArgsToAnyResultTest<Boole
 	@Parameters(name = "{index}: scale={0}, operation={1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : SCALES) {
+		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final Operation op : Operation.values()) {
 				data.add(new Object[] {s, op, s.getDefaultArithmetics()});
 			}

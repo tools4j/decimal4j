@@ -11,6 +11,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.test.TestSettings;
 
 /**
  * Unit test for {@link Decimal#byteValue()} and
@@ -29,7 +30,7 @@ public class ByteValueTest extends Abstract1DecimalArgToAnyResultTest<Byte> {
 	@Parameters(name = "{index}: scale={0}, exact={1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : SCALES) {
+		for (final ScaleMetrics s : TestSettings.SCALES) {
 			data.add(new Object[] { s, true, s.getDefaultArithmetics() });
 			data.add(new Object[] { s, false, s.getDefaultArithmetics() });
 		}

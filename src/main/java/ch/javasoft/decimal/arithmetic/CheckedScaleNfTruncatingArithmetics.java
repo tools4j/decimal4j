@@ -11,10 +11,6 @@ import ch.javasoft.decimal.truncate.DecimalRounding;
  */
 public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfArithmetics {
 
-	//lazy init
-	private Double minDouble;
-	private Double maxDouble;
-
 	public CheckedScaleNfTruncatingArithmetics(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
@@ -81,19 +77,6 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 
 	@Override
 	public long fromDouble(double value) {
-		initDoubleMinMax();
-		if (value <= maxDouble & value >= minDouble) { 
-			return unchecked.fromDouble(value);
-		}
-		throw new ArithmeticException("Overflow for conversion from double: " + value);
-	}
-
-	private void initDoubleMinMax() {
-		if (minDouble == null) {
-			minDouble = toDouble(Long.MIN_VALUE);
-		}
-		if (maxDouble == null) {
-			maxDouble = toDouble(Long.MAX_VALUE);
-		}
+		return DoubleConversion.doubleToLong(value, getRoundingMode());
 	}
 }

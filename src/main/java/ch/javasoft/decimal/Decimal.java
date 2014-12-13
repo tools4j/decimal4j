@@ -291,7 +291,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using {@link RoundingMode#HALF_UP HALF_UP} rounding.
 	 * <p>
-	 * Note that contrary to the {@code scale(..)} operations this method does 
+	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
@@ -322,7 +322,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using the given rounding mode.
 	 * <p>
-	 * Note that contrary to the {@code scale(..)} operations this method does 
+	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
@@ -358,7 +358,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using the given truncation policy.
 	 * <p>
-	 * Note that contrary to the {@code scale(..)} operations this method does 
+	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
@@ -605,11 +605,17 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * The augend argument is converted into a decimal number of the same scale
 	 * as {@code this} decimal before performing the operation. If the
 	 * conversion involves rounding, {@link RoundingMode#HALF_UP HALF_UP}
-	 * rounding is used.
+	 * rounding is used. If the augend argument is NaN, infinite or has a
+	 * magnitude that is too large to be represented as a decimal, an exception
+	 * is thrown.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @return {@code this + augend}
+	 * @throws NumberFormatException
+	 *             if {@code augend} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a
+	 *             {@code Decimal}
 	 */
 	Decimal<S> add(double augend);
 
@@ -624,6 +630,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * The augend argument is converted into a decimal number of the same scale
 	 * as {@code this} decimal before performing the operation. If the
 	 * conversion involves rounding, the specified {@code roundingMode} is used.
+	 * If the augend argument is NaN, infinite or has a magnitude that is too
+	 * large to be represented as a decimal, an exception is thrown.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
@@ -632,6 +640,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            truncated when converted into a decimal number of the same
 	 *            scale as {@code this} decimal
 	 * @return {@code this + augend}
+	 * @throws NumberFormatException
+	 *             if {@code augend} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a
+	 *             {@code Decimal}
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
 	 */
@@ -648,7 +660,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * The augend argument is converted into a decimal number of the same scale
 	 * as {@code this} decimal before performing the operation. If the
 	 * conversion involves rounding, the specified {@code truncationPolicy} is
-	 * used.
+	 * used. If the augend argument is NaN, infinite or has a magnitude that is
+	 * too large to be represented as a decimal, an exception is thrown.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
@@ -657,11 +670,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            be truncated when converted into a decimal number of the same
 	 *            scale as {@code this} decimal
 	 * @return {@code this + augend}
+	 * @throws NumberFormatException
+	 *             if {@code augend} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a
+	 *             {@code Decimal}
 	 * @throws ArithmeticException
 	 *             if {@code truncationPolicy} specifies
 	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
-	 *             if an overflow occurs and the policy declares
-	 *             {@link OverflowMode#CHECKED}
+	 *             if the operation (not the conversion) causes an overflow and
+	 *             the policy declares {@link OverflowMode#CHECKED}
 	 */
 	Decimal<S> add(double augend, TruncationPolicy truncationPolicy);
 
@@ -708,8 +725,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            value to be added to this {@code Decimal}
 	 * @param scale
 	 *            the scale to apply to {@code unscaledAugend}, positive to
-	 *            indicate the number of fraction digits to the right of the 
-	 *            decimal point and negative to indicate up-scaling with a power 
+	 *            indicate the number of fraction digits to the right of the
+	 *            decimal point and negative to indicate up-scaling with a power
 	 *            of ten
 	 * @param roundingMode
 	 *            the rounding mode to apply if the augend argument needs to be
@@ -741,8 +758,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            value to be added to this {@code Decimal}
 	 * @param scale
 	 *            the scale to apply to {@code unscaledAugend}, positive to
-	 *            indicate the number of fraction digits to the right of the 
-	 *            decimal point and negative to indicate up-scaling with a power 
+	 *            indicate the number of fraction digits to the right of the
+	 *            decimal point and negative to indicate up-scaling with a power
 	 *            of ten
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the augend argument needs to
@@ -834,13 +851,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
 	 * squared value is rounded <i>before</i> the addition if necessary using
-	 * the rounding mode specified by the truncation policy. 
+	 * the rounding mode specified by the truncation policy.
 	 * <p>
 	 * Note that if {@link OverflowMode#CHECKED CHECKED} arithmetics is used
 	 * according to the specified truncation policy, squaring and adding both
-	 * perform an overflow check. If this value is negative, an overflow 
-	 * exception may be thrown even if the final result would actually still fit 
-	 * in a {@code Decimal} value of the present scale. 
+	 * perform an overflow check. If this value is negative, an overflow
+	 * exception may be thrown even if the final result would actually still fit
+	 * in a {@code Decimal} value of the present scale.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its

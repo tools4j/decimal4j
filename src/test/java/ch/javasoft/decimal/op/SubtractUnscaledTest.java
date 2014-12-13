@@ -14,10 +14,10 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  * Unit test for {@link Decimal#addUnscaled(long)}
  */
 @RunWith(Parameterized.class)
-public class SubtractUnscaledTest extends AbstractUnscaledTest {
+public class SubtractUnscaledTest extends AbstractUnscaledOperandTest {
 	
-	public SubtractUnscaledTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
-		super(scale, arithmetics);
+	public SubtractUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
+		super(sm, tp, scale, arithmetics);
 	}
 
 	@Override

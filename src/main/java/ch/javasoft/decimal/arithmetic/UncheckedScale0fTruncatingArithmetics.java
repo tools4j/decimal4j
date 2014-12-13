@@ -78,7 +78,7 @@ public final class UncheckedScale0fTruncatingArithmetics extends AbstractUncheck
 
 	@Override
 	public final long fromDouble(double value) {
-		return (long)value;
+		return DoubleConversion.doubleToLong(value);
 	}
 
 	@Override

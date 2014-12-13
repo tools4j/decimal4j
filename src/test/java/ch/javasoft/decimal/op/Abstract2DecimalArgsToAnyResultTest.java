@@ -9,7 +9,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Base class for tests comparing the result of some binary operation of the
  * {@link Decimal} with the expected result produced by the equivalent operation
- * of the {@link BigDecimal}. The test operand values created based on random
+ * of the {@link BigDecimal}. The test operand values are created based on random
  * long values.
  * 
  * @param <R>

@@ -91,11 +91,10 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
 	}
 
-//	@Override
-//	public long fromDouble(double value) {
-//		// FIXME impl with rounding
-//		return (long) value;
-//	}
+	@Override
+	public long fromDouble(double value) {
+		return DoubleConversion.doubleToLong(value, getRoundingMode());
+	}
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {

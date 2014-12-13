@@ -10,7 +10,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
  * Base class for tests comparing the result of some binary operation of the
  * {@link Decimal} with a Decimal argument and a long argument. The expected 
  * result is produced by the equivalent operation of the {@link BigDecimal}. The 
- * test operand values created based on random long values.
+ * test operand values are created based on random long values.
  */
 abstract public class Abstract1DecimalArg1LongArgToDecimalResultTest extends AbstractOperandTest {
 

@@ -12,6 +12,7 @@ import org.junit.runners.Parameterized.Parameters;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.test.TestSettings;
 
 /**
  * Unit test for {@link Decimal#avg(Decimal)} and {@link Decimal#avg(Decimal, RoundingMode)}
@@ -28,8 +29,8 @@ public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
 	@Parameters(name = "{index}: {0}, {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : SCALES) {
-			for (final RoundingMode rm : UNCHECKED_ROUNDING_MODES) {
+		for (final ScaleMetrics s : TestSettings.SCALES) {
+			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
 				data.add(new Object[] {s, rm, s.getArithmetics(rm)});
 			}
 		}

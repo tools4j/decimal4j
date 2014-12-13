@@ -115,6 +115,11 @@ public class UncheckedScaleNfRoundingArithmetics extends
 	}
 
 	@Override
+	public long fromDouble(double value) {
+		return DoubleConversion.doubleToUnscaled(this, value, rounding);
+	}
+
+	@Override
 	public long parse(String value) {
 		final int indexOfDot = value.indexOf('.');
 		if (indexOfDot < 0) {
@@ -160,7 +165,7 @@ public class UncheckedScaleNfRoundingArithmetics extends
 		final long reminder = scaleMetrics.moduloByScaleFactor(uDecimal);
 		return truncated + RoundingUtil.calculateRoundingIncrement(rounding, truncated, reminder, one());
 	}
-
+	
 	@Override
 	public float toFloat(long uDecimal) {
 		//FIXME apply proper rounding mode

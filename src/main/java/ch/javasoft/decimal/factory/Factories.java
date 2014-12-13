@@ -52,9 +52,10 @@ public final class Factories {
 	 *            the scale metrics
 	 * @return the factory constant corresponding to {@code scaleMetrics}
 	 */
-	@SuppressWarnings("unchecked")
 	public static <S extends ScaleMetrics> DecimalFactory<S> valueOf(S scaleMetrics) {
-		return (DecimalFactory<S>)valueOf(scaleMetrics.getScale());
+		@SuppressWarnings("unchecked")
+		final DecimalFactory<S> factory = (DecimalFactory<S>)valueOf(scaleMetrics.getScale());
+		return factory;
 	}
 
 	//no instances

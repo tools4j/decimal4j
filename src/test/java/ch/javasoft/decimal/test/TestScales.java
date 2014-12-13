@@ -1,6 +1,7 @@
 package ch.javasoft.decimal.test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
@@ -18,7 +19,7 @@ public enum TestScales {
 	private final List<ScaleMetrics> scales;
 
 	private TestScales(List<ScaleMetrics> scales) {
-		this.scales = scales;
+		this.scales = Collections.unmodifiableList(scales);
 	}
 
 	public List<ScaleMetrics> getScales() {
