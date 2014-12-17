@@ -83,6 +83,11 @@ public final class Scale0f extends AbstractScale {
 	public long divideByScaleFactor(long dividend) {
 		return dividend;
 	}
+	
+	@Override
+	public long divideUnsignedByScaleFactor(long unsignedDividend) {
+		return unsignedDividend;
+	}
 
 	@Override
 	public long moduloByScaleFactor(long dividend) {

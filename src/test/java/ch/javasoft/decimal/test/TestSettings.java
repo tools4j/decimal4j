@@ -27,6 +27,21 @@ public class TestSettings {
 	public static final Collection<TruncationPolicy> POLICIES = TestSettings.TEST_POLICIES.getPolicies();
 	public static final Set<RoundingMode> UNCHECKED_ROUNDING_MODES = TestSettings.TEST_POLICIES.getUncheckedRoundingModes();
 
+	public static int getRandomTestCount() {
+		switch (TEST_CASES) {
+		case ALL:
+			return 10000;
+		case STANDARD:
+			return 10000;
+		case SMALL:
+			return 1000;
+		case TINY:
+			return 100;
+		default:
+			throw new RuntimeException("unsupported: " + TestSettings.TEST_CASES);
+		}
+	}
+
 	private static TestScales getTestScales() {
 		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_VARIANT, TestScales.STANDARD.name());
 		final String testScales = System.getProperty(SYSTEM_PROPERTY_TEST_SCALES, testVariant);

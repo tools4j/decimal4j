@@ -43,6 +43,7 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	protected int randomIntOperand() {
 		return rnd.nextInt(200) - 100;
 	}
+	
 	@Override
 	protected int getRandomTestCount() {
 		return 1000;

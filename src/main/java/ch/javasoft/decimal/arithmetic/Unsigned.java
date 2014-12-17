@@ -3,7 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 /**
  * Helper class for division.
  */
-final class Unsigned {
+public final class Unsigned {
 
 	/**
 	 * A (self-inverse) bijection which converts the ordering on unsigned longs
@@ -115,7 +115,7 @@ final class Unsigned {
 		 */
 		long quotient = ((dividend >>> 1) / divisor) << 1;
 		long rem = dividend - quotient * divisor;
-		return quotient + (compare(rem, divisor) >= 0 ? 1 : 0);
+		return quotient + (isLess(rem, divisor) ? 0 : 1);
 	}
 
 	// no instances

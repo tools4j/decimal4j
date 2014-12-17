@@ -44,7 +44,7 @@ abstract public class Abstract1DecimalArgToAnyResultTest<R> extends AbstractOper
 		}
 	}
 
-	private <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperand) {
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperand) {
 		final BigDecimal bdOperand = toBigDecimal(dOperand);
 
 		//expected

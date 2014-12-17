@@ -3,6 +3,8 @@
 <@pp.changeOutputFile name=pp.home + "ch/javasoft/decimal/scale/Scale" + scale + "f.java" />
 package ch.javasoft.decimal.scale;
 
+import ch.javasoft.decimal.arithmetic.Unsigned;
+
 /**
  * Scale class for decimals with {@link #getScale() scale} ${scale} and
  * {@link #getScaleFactor() scale factor} ${"1"?right_pad(scale+1, "0")}.
@@ -70,6 +72,18 @@ public final class Scale${scale}f extends AbstractScale {
 	@Override
 	public final long divideByScaleFactor(long dividend) {
 		return dividend / SCALE_FACTOR;
+	}
+
+	@Override
+	public final long divideUnsignedByScaleFactor(long unsignedDividend) {
+		// Optimization - use signed division if dividend < 2^63
+		if (unsignedDividend >= 0) {
+			return unsignedDividend / SCALE_FACTOR;
+		}
+
+		final long quotient = ((unsignedDividend >>> 1) / SCALE_FACTOR) << 1;
+		final long rem = unsignedDividend - quotient * SCALE_FACTOR;
+		return quotient + (Unsigned.isLess(rem, SCALE_FACTOR) ? 0 : 1);
 	}
 
 	@Override

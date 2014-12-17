@@ -67,12 +67,7 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 
 	@Override
 	public float toFloat(long uDecimal) {
-		return (float) uDecimal;
-	}
-
-	@Override
-	public double toDouble(long uDecimal) {
-		return (double) uDecimal;
+		return (float) uDecimal;//TODO impl proper rounding if mantissa cannot take all the bits
 	}
 
 	@Override

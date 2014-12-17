@@ -77,6 +77,7 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 
 	@Override
 	public long fromDouble(double value) {
-		return DoubleConversion.doubleToLong(value, getRoundingMode());
+		return DoubleConversion.doubleToUnscaled(this, DecimalRounding.DOWN, value);
 	}
+
 }

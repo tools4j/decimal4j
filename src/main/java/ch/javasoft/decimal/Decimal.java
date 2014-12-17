@@ -188,11 +188,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * analogous to the <i>narrowing primitive conversion</i> from
 	 * {@code double} to {@code short} as defined in section 5.1.3 of <cite>The
 	 * Java&trade; Language Specification</cite>: any fractional part of this
-	 * {@code Decimal} will be discarded, and if the resulting "
-	 * {@code BigInteger}" is too big to fit in a {@code long}, only the
-	 * low-order 64 bits are returned. Note that this conversion can lose
-	 * information about the overall magnitude and precision of this
-	 * {@code Decimal} value as well as return a result with the opposite sign.
+	 * {@code Decimal} will be discarded. Note that this conversion can lose
+	 * information about the precision of the {@code Decimal} value.
 	 *
 	 * @return this {@code Decimal} converted to a {@code long}.
 	 * @see Number#longValue()
@@ -207,8 +204,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *
 	 * @return this {@code Decimal} converted to a {@code long}.
 	 * @throws ArithmeticException
-	 *             if {@code this} has a nonzero fractional part, or will not
-	 *             fit in a {@code long}.
+	 *             if {@code this} has a nonzero fractional part
 	 */
 	long longValueExact();
 

@@ -56,13 +56,8 @@ abstract public class AbstractUncheckedScale0fArithmetics extends AbstractUnchec
 	}
 
 	@Override
-	public double toDouble(long uDecimal) {
-		return (double)uDecimal;
-	}
-	
-	@Override
 	public float toFloat(long uDecimal) {
-		return (float)uDecimal;
+		return (float)uDecimal;//TODO impl proper rounding if mantissa cannot take all the bits
 	}
 
 	@Override

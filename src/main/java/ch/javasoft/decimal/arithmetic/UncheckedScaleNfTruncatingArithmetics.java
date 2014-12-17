@@ -117,8 +117,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 
 	@Override
 	public double toDouble(long uDecimal) {
-		//FIXME: not very efficient and not garbage free
-		return Double.valueOf(toString(uDecimal));
+		return DoubleConversion.unscaledToDouble(this, uDecimal);
 	}
 
 	@Override

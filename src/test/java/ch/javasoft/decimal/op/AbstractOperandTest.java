@@ -72,6 +72,10 @@ abstract public class AbstractOperandTest {
 		return !arithmetics.getOverflowMode().isChecked();
 	}
 
+	protected int getRandomTestCount() {
+		return TestSettings.getRandomTestCount();
+	}
+
 	@Test
 	public void runRandomTest() {
 		final int n = getRandomTestCount();
@@ -97,21 +101,6 @@ abstract public class AbstractOperandTest {
 	abstract protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index);
 
 	abstract protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics);
-
-	protected int getRandomTestCount() {
-		switch (TestSettings.TEST_CASES) {
-		case ALL:
-			return 10000;
-		case STANDARD:
-			return 10000;
-		case SMALL:
-			return 1000;
-		case TINY:
-			return 100;
-		default:
-			throw new RuntimeException("unsupported: " + TestSettings.TEST_CASES);
-		}
-	}
 
 	protected long[] getSpecialValues(ScaleMetrics scaleMetrics) {
 		return TestSettings.TEST_CASES.getSpecialValuesFor(scaleMetrics);

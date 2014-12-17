@@ -104,6 +104,31 @@ class Doubles {
 			throw new ArithmeticException(e.toString() + ": " + converted);
 		}
 	}
+	
+	
+	public static RoundingMode getOppositeRoundingMode(RoundingMode roundingMode) {
+		switch (roundingMode) {
+		case UP:
+			return RoundingMode.DOWN;
+		case DOWN:
+			return RoundingMode.UP;
+		case CEILING:
+			return RoundingMode.FLOOR;
+		case FLOOR:
+			return RoundingMode.CEILING;
+		case HALF_UP:
+			return RoundingMode.HALF_DOWN;
+		case HALF_DOWN:
+			return RoundingMode.HALF_UP;
+		case HALF_EVEN:
+			return RoundingMode.HALF_EVEN;//HALF_UNEVEN?
+		case UNNECESSARY:
+			return RoundingMode.UNNECESSARY;
+		default:
+			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
+		}
+	}
+
 
 	//no instances
 	private Doubles() {

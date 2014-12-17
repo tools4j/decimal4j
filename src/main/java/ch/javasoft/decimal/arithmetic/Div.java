@@ -211,6 +211,8 @@ final class Div {
 	}
 
 	/**
+	 * PRECONDITION: Unsigned.isLess(u1, v0)
+	 * <p>
 	 * Divides a 128 bit divisor by a 64 bit dividend and returns the signed 64
 	 * bit result. Rounding is applied if {@code rounding != null}, otherwise
 	 * the value is truncated.
@@ -231,7 +233,7 @@ final class Div {
 	 *            rounding to apply, or null to truncate result
 	 * @return the signed quotient, rounded if {@code rounding != null}
 	 */
-	private static long div128by64(final DecimalRounding rounding, final boolean neg, final long u1, final long u0, final long v0) {
+	static long div128by64(final DecimalRounding rounding, final boolean neg, final long u1, final long u0, final long v0) {
 		final long q, r;
 
 		final long un1, un0, vn1, vn0, un32, un21, un10;

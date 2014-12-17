@@ -11,32 +11,32 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
- * Unit test for {@link Decimal#add(double)} etc. 
+ * Unit test for {@link Decimal#multiply(double)} etc. 
  */
 @RunWith(Parameterized.class)
-public class AddDoubleTest extends AbstractDoubleOperandTest {
+public class MultiplyDoubleTest extends AbstractDoubleOperandTest {
 	
-	public AddDoubleTest(ScaleMetrics sm, TruncationPolicy tp, DecimalArithmetics arithmetics) {
+	public MultiplyDoubleTest(ScaleMetrics sm, TruncationPolicy tp, DecimalArithmetics arithmetics) {
 		super(sm, tp, arithmetics);
 	}
 
 	@Override
 	protected String operation() {
-		return "+";
+		return "*";
 	}
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, double b) {
-		return a.add(toBigDecimal(b));
+		return a.multiply(toBigDecimal(b));
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, double b) {
 		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
-			return a.add(b);
+			return a.multiply(b);
 		} else if (isUnchecked() && rnd.nextBoolean()) {
-			return a.add(b, getRoundingMode());
+			return a.multiply(b, getRoundingMode());
 		}
-		return a.add(b, getTruncationPolicy());
+		return a.multiply(b, getTruncationPolicy());
 	}
 }

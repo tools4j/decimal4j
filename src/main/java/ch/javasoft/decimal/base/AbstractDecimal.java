@@ -145,7 +145,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public float floatValue() {
-		return getDefaultArithmetics().toFloat(unscaledValue());
+		//NOTE: Must be HALF_EVEN rounding mode according to The Java Language Specification
+		//      @see section 5.1.3 narrowing primitive conversion
+		//      @see section 4.2.3. Floating-Point Types, Formats, and Values
+		//		@see IEEE 754-1985 Standard for Binary Floating-Point Arithmetic
+		return floatValue(RoundingMode.HALF_EVEN);//half even according to
 	}
 
 	@Override
@@ -155,7 +159,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public double doubleValue() {
-		return getDefaultArithmetics().toDouble(unscaledValue());
+		//NOTE: Must be HALF_EVEN rounding mode according to The Java Language Specification
+		//      @see section 5.1.3 narrowing primitive conversion
+		//      @see section 4.2.3. Floating-Point Types, Formats, and Values
+		//		@see IEEE 754-1985 Standard for Binary Floating-Point Arithmetic
+		return doubleValue(RoundingMode.HALF_EVEN);
 	}
 
 	@Override

@@ -93,11 +93,16 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 
 	@Override
 	public long fromDouble(double value) {
-		return DoubleConversion.doubleToLong(value, getRoundingMode());
+		return DoubleConversion.doubleToLong(rounding, value);
 	}
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.setScale(0, getRoundingMode()).longValue();
+		return value.setScale(0, getRoundingMode()).longValue();//FIXME make garbage free
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		return DoubleConversion.unscaledToDouble(this, rounding, uDecimal);
 	}
 }

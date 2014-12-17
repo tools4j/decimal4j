@@ -130,6 +130,15 @@ public interface ScaleMetrics {
 	 * @return {@code dividend/scaleFactor}
 	 */
 	long divideByScaleFactor(long dividend);
+	
+	/**
+	 * Returns {@code unsignedDividend/scaleFactor} using unsigned division.
+	 * 
+	 * @param unsignedDividend
+	 *            the unsigned dividend
+	 * @return {@code unsignedDividend/scaleFactor}
+	 */
+	long divideUnsignedByScaleFactor(long unsignedDividend);
 
 	/**
 	 * Returns {@code dividend % scaleFactor} also known as reminder.
