@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Random;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,7 +21,6 @@ import ch.javasoft.decimal.test.TestSettings;
  * are used and some tolerance is allowed for 2 possible truncations).
  */
 @RunWith(Parameterized.class)
-@Ignore	//FIXME define proper tolerance and enable this test
 public class DoubleFromToTest {
 
 	private static final Random RND = new Random();
@@ -70,11 +68,15 @@ public class DoubleFromToTest {
 		try {
 			final long uDecimal = arithmetics.fromDouble(d);
 			final double result = arithmetics.getScaleMetrics().getArithmetics(backRounding).toDouble(uDecimal);
-			final double tolerance = 1.0/arithmetics.getScaleMetrics().getScaleFactor();
-			Assert.assertEquals(name + ": result after 2 conversions should be same as input", d, result, tolerance);
+			final double tolerance = 2.0*max(Math.ulp(result), Math.ulp(d), 1.0/arithmetics.getScaleMetrics().getScaleFactor());
+			Assert.assertEquals(name + ": result after 2 conversions should be same as input with tolerance=<" + tolerance + ">, delta=<" + Math.abs(d-result) + ">",  d, result, tolerance);
 		} catch (NumberFormatException e) {
 			//ignore, must be out of range, tested elsewhere
 		}
+	}
+	
+	private static double max(double val1, double val2, double val3) {
+		return Math.max(Math.max(val1, val2), val3);
 	}
 
 }
