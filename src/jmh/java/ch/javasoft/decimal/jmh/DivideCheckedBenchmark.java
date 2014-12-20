@@ -12,7 +12,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for checked division.
  */
-public class DivideCheckedBenchmark extends AbstractBinaryOpIntLongRoundingBenchmark {
+public class DivideCheckedBenchmark extends AbstractBinaryOpIntLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

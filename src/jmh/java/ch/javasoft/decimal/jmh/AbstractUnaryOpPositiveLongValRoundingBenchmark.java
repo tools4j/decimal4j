@@ -13,15 +13,16 @@ import org.openjdk.jmh.infra.Blackhole;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
-abstract public class AbstractUnaryOpIntLongRoundingBenchmark extends AbstractBenchmark {
+abstract public class AbstractUnaryOpPositiveLongValRoundingBenchmark extends AbstractBenchmark {
 	@State(Scope.Benchmark)
 	public static class BenchmarkState extends RoundingBenchmarkState {
-		@Param({"Int", "Long"})
+		@Param({ "Int", "Long" })
 		public ValueType valueType;
+
 		@Setup
 		public void initValues() {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType.random(SignType.ALL), 0, scale);
+				values[i] = Values.create(valueType.random(SignType.POSITIVE), 0, scale);
 			}
 		}
 	}
@@ -57,7 +58,7 @@ abstract public class AbstractUnaryOpIntLongRoundingBenchmark extends AbstractBe
 			blackhole.consume(nativeDecimals(state, state.values[i]));
 		}
 	}
-	
+
 	abstract protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values);
 
 	abstract protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values);

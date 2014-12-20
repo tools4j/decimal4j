@@ -12,7 +12,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for checked multiplication.
  */
-public class MultiplyCheckedBenchmark extends AbstractBinaryOpIntLongRoundingBenchmark {
+public class MultiplyCheckedBenchmark extends AbstractBinaryOpIntLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

@@ -12,7 +12,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for checked subtraction.
  */
-public class SubtractCheckedBenchmark extends AbstractBinaryOpLongLongTruncatingBenchmark {
+public class SubtractCheckedBenchmark extends AbstractBinaryOpLongValTruncatingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

@@ -12,7 +12,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for checked square.
  */
-public class SquareCheckedBenchmark extends AbstractUnaryOpIntLongRoundingBenchmark {
+public class SquareCheckedBenchmark extends AbstractUnaryOpIntLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

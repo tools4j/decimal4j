@@ -12,7 +12,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for square root.
  */
-public class SqrtBenchmark extends AbstractUnaryOpPositiveLongRoundingBenchmark {
+public class SqrtBenchmark extends AbstractUnaryOpPositiveLongValRoundingBenchmark {
 
 	private static BigDecimal sqrt(BigDecimal bigDecimal) {
 		if (bigDecimal.signum() < 0) {

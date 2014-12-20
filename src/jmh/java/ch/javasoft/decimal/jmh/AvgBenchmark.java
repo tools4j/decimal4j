@@ -11,7 +11,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for average.
  */
-public class AvgBenchmark extends AbstractBinaryOpLongLongRoundingBenchmark {
+public class AvgBenchmark extends AbstractBinaryOpLongValRoundingBenchmark {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 

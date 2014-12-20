@@ -13,7 +13,7 @@ import org.openjdk.jmh.infra.Blackhole;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
-abstract public class AbstractBinaryOpLongLongTruncatingBenchmark extends AbstractBenchmark {
+abstract public class AbstractBinaryOpLongValTruncatingBenchmark extends AbstractBenchmark {
 	@State(Scope.Benchmark)
 	public static class BenchmarkState extends TruncatingBenchmarkState {
 		@Param("Long")

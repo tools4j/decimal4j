@@ -11,7 +11,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for unchecked division.
  */
-public class DivideBenchmark extends AbstractBinaryOpIntLongRoundingBenchmark {
+public class DivideBenchmark extends AbstractBinaryOpIntLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

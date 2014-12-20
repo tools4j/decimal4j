@@ -1,6 +1,7 @@
 package ch.javasoft.decimal.jmh;
 
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.math.RoundingMode;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.OperationsPerInvocation;
@@ -9,20 +10,29 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.runner.RunnerException;
 
-import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
-abstract public class AbstractUnaryOpPositiveLongRoundingBenchmark extends AbstractBenchmark {
-	@State(Scope.Benchmark)
-	public static class BenchmarkState extends RoundingBenchmarkState {
-		@Param({ "Int", "Long" })
-		public ValueType valueType;
+/**
+ * Micro benchmarks for to-double conversion.
+ */
+public class ConvertToDoubleBenchmark extends AbstractBenchmark {
 
+	@State(Scope.Benchmark)
+	public static class BenchmarkState extends AbstractBenchmarkState {
+		@Param({ "HALF_EVEN" , "DOWN"})
+		public RoundingMode roundingMode;
+		@Param({"Int", "Long"})
+		public ValueType valueType;
+		@Setup
+		public void initParams() {
+			super.initParams(roundingMode);
+		}
 		@Setup
 		public void initValues() {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType.random(SignType.POSITIVE), 0, scale);
+				values[i] = Values.create(valueType.random(SignType.ALL), 0, scale);
 			}
 		}
 	}
@@ -58,13 +68,24 @@ abstract public class AbstractUnaryOpPositiveLongRoundingBenchmark extends Abstr
 			blackhole.consume(nativeDecimals(state, state.values[i]));
 		}
 	}
+	
+	protected <S extends ScaleMetrics> double bigDecimals(BenchmarkState state, Values<S> values) {
+		return values.bigDecimal1.doubleValue();//rounding mode not supported
+	}
 
-	abstract protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values);
+	protected <S extends ScaleMetrics> double immitableDecimals(BenchmarkState state, Values<S> values) {
+		return values.immutable1.doubleValue(state.roundingMode);
+	}
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values);
+	protected <S extends ScaleMetrics> double mutableDecimals(BenchmarkState state, Values<S> values) {
+		return values.mutable.set(values.immutable1).doubleValue(state.roundingMode);
+	}
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values);
+	protected <S extends ScaleMetrics> double nativeDecimals(BenchmarkState state, Values<S> values) {
+		return state.arithmetics.toDouble(values.unscaled1);//rounding mode is in arithmetics
+	}
 
-	abstract protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values);
-
+	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
+		run(ConvertToDoubleBenchmark.class);
+	}
 }

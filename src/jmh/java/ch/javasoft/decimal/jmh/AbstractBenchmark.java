@@ -36,6 +36,7 @@ abstract public class AbstractBenchmark {
 		public int scale;
 
 		public DecimalArithmetics arithmetics;
+		public DecimalFactory<?> factory;
 		public MathContext mcLong64;
 		public MathContext mcLong128;
 
@@ -47,6 +48,7 @@ abstract public class AbstractBenchmark {
 
 		protected void initParams(RoundingMode roundingMode) {
 			arithmetics = Scales.valueOf(scale).getArithmetics(roundingMode);
+			factory = Factories.valueOf(scale);
 			checkedTruncationPolicy = OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode);
 			checkedArithmetics = Scales.valueOf(scale).getArithmetics(checkedTruncationPolicy);
 			mcLong64 = new MathContext(19, roundingMode);
@@ -72,7 +74,7 @@ abstract public class AbstractBenchmark {
 			super.initParams(roundingMode);
 		}
 	}
-	
+
 	protected static class Values<S extends ScaleMetrics> {
 		public final long unscaled1;
 		public final long unscaled2;

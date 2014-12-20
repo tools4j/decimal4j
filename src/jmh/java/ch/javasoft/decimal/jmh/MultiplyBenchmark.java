@@ -11,7 +11,7 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 /**
  * Micro benchmarks for unchecked multiplication.
  */
-public class MultiplyBenchmark extends AbstractBinaryOpIntLongRoundingBenchmark {
+public class MultiplyBenchmark extends AbstractBinaryOpIntLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

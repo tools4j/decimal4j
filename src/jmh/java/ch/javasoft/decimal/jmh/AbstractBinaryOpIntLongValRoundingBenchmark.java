@@ -13,12 +13,12 @@ import org.openjdk.jmh.infra.Blackhole;
 import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 
-abstract public class AbstractBinaryOpLongLongRoundingBenchmark extends AbstractBenchmark {
+abstract public class AbstractBinaryOpIntLongValRoundingBenchmark extends AbstractBenchmark {
 	@State(Scope.Benchmark)
 	public static class BenchmarkState extends RoundingBenchmarkState {
-		@Param("Long")
+		@Param({"Int", "Long"})
 		public ValueType valueType1;
-		@Param("Long")
+		@Param({"Int", "Long"})
 		public ValueType valueType2;
 		@Setup
 		public void initValues() {
