@@ -60,6 +60,11 @@ public final class Scale0f extends AbstractScale {
 	}
 
 	@Override
+	public final int getScaleFactorNumberOfLeadingZeros() {
+		return 63;
+	}
+
+	@Override
 	public long multiplyByScaleFactor(long factor) {
 		return factor;
 	}
@@ -93,5 +98,4 @@ public final class Scale0f extends AbstractScale {
 	public long moduloByScaleFactor(long dividend) {
 		return 0;
 	}
-
 }

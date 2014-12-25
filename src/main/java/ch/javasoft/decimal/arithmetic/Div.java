@@ -237,7 +237,7 @@ final class Div {
 		final long q, r;
 
 		final long un1, un0, vn1, vn0, un32, un21, un10;
-		long q1, q0, rhat, left, right;
+		long q1, q0;
 
 		final int s = Long.numberOfLeadingZeros(v0);
 
@@ -250,39 +250,10 @@ final class Div {
 
 		un1 = un10 >>> 32;
 		un0 = un10 & LONG_MASK;
-
-		q1 = unsignedDiv64by32(un32, vn1);
-		rhat = un32 - q1 * vn1;
-
-		left = q1 * vn0;
-		right = (rhat << 32) | un1;
-		while (((q1 >>> 32) != 0) || Unsigned.isGreater(left, right)) {
-			q1--;
-			rhat += vn1;
-			if ((rhat >>> 32) != 0) {
-				break;
-			}
-			left -= vn0;
-			right = (rhat << 32) | un1;
-		}
-
+		
+		q1 = div128by64part(un32, un1, vn1, vn0);
 		un21 = (un32 << 32) + (un1 - (q1 * v));
-
-		q0 = unsignedDiv64by32(un21, vn1);
-		rhat = un21 - q0 * vn1;
-
-		left = q0 * vn0;
-		right = (rhat << 32) | un0;
-		while (((q0 >>> 32) != 0) || Unsigned.isGreater(left, right)) {
-			q0--;
-			rhat += vn1;
-			if ((rhat >>> 32) != 0) {
-				break;
-			}
-			left -= vn0;
-			right = (rhat << 32) | un0;
-		}
-
+		q0 = div128by64part(un21, un0, vn1, vn0);
 		q = (q1 << 32) | q0;
 
 		//apply sign and rounding
@@ -291,9 +262,37 @@ final class Div {
 		}
 
 		r = ((un21 << 32) + un0 - q0 * v) >>> s;
-		final TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(Math.abs(r), Math.abs(v0));
+		final TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(Math.abs(r), v0);
 		final int inc = rounding.calculateRoundingIncrement(neg ? -1 : 1, q, truncatedPart);
 		return (neg ? -q : q) + inc;
+	}
+
+	private static long div128by64part(final long unCB, final long unA, final long vn1, final long vn0) {
+		//quotient and reminder, first guess
+		long q = unsignedDiv64by32(unCB, vn1);
+		long rhat = unCB - q * vn1;
+		
+		//correct, first attempt
+		while ((q >>> 32) != 0) {
+			q--;
+			rhat += vn1;
+			if ((rhat >>> 32) != 0) {
+				return q;
+			}
+		}
+		//correct, second attempt
+		long left = q * vn0;
+		long right = (rhat << 32) | unA;
+		while (Unsigned.isGreater(left, right)) {
+			q--;
+			rhat += vn1;
+			if ((rhat >>> 32) != 0) {
+				return q;
+			}
+			left -= vn0;
+			right = (rhat << 32) | unA;
+		}
+		return q;
 	}
 
 	/**

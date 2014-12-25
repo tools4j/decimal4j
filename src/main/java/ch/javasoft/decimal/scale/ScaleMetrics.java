@@ -63,6 +63,12 @@ public interface ScaleMetrics {
 	 * @return the scale factor as big decimal
 	 */
 	BigDecimal getScaleFactorAsBigDecimal();
+	
+	/**
+	 * Returns the number of leading zeros of the scale factor
+	 * @return {@link Long#numberOfLeadingZeros(long)} applied to the scale factor
+	 */
+	int getScaleFactorNumberOfLeadingZeros();
 
 	/**
 	 * Returns the largest integer value that can be represented using this

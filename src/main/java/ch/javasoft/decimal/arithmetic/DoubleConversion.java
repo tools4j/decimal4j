@@ -17,11 +17,12 @@ class DoubleConversion {
 
 	// The mask for the exponent, according to the {@link
 	// Double#doubleToRawLongBits(double)} spec.
-	static final long EXPONENT_MASK = 0x7ff0000000000000L;
+	@SuppressWarnings("unused")
+	private static final long EXPONENT_MASK = 0x7ff0000000000000L;
 
 	// The mask for the sign, according to the {@link
 	// Double#doubleToRawLongBits(double)} spec.
-	static final long SIGN_MASK = 0x8000000000000000L;
+	private static final long SIGN_MASK = 0x8000000000000000L;
 
 	private static final int SIGNIFICAND_BITS = 52;
 
@@ -30,7 +31,7 @@ class DoubleConversion {
 	/**
 	 * The implicit 1 bit that is omitted in significands of normal doubles.
 	 */
-	static final long IMPLICIT_BIT = SIGNIFICAND_MASK + 1;
+	private static final long IMPLICIT_BIT = SIGNIFICAND_MASK + 1;
 
 	private static final double MIN_LONG_AS_DOUBLE = -0x1p63;
 	/*
@@ -254,7 +255,7 @@ class DoubleConversion {
 		final int exp;
 		final int mantissaShift;
 		final long valModFactor;
-		final int alignShift = Long.numberOfLeadingZeros(absVal) - Long.numberOfLeadingZeros(factor);  
+		final int alignShift = Long.numberOfLeadingZeros(absVal) - scaleMetrics.getScaleFactorNumberOfLeadingZeros();  
 		if (alignShift >= 0) {
 			final long scaledAbsVal = absVal << alignShift;
 			final long diff = scaledAbsVal - factor;
@@ -331,7 +332,7 @@ class DoubleConversion {
 	//@return value % (2^n)
 	private static final long modPow2(long value, int n) {
 		//		return value & ((1L << n) - 1);
-		return n == 0 ? 0 : value & (-1L >>> (Long.SIZE - n));
+		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);//last bracket is for case n=0
 	}
 
 	private static boolean isInLongRange(double value) {

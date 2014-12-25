@@ -17,7 +17,10 @@ public final class Scale${scale}f extends AbstractScale {
 	public static final Scale${scale}f INSTANCE = new Scale${scale}f();
 
 	private static final long SCALE_FACTOR = ${"1"?right_pad(scale+1, "0")}L;
-
+	
+	/** Long.numberOfLeadingZeros(SCALE_FACTOR)*/
+	private static final int NLZ_SCALE_FACTOR = ${nlzScaleFactor[scale]};
+	
 <#if (scale > 9)>
 	private static final long SCALE_FACTOR_HIGH_BITS = SCALE_FACTOR >>> 32;
 	private static final long SCALE_FACTOR_LOW_BITS = SCALE_FACTOR & LONG_MASK;
@@ -32,6 +35,11 @@ public final class Scale${scale}f extends AbstractScale {
 	public final long getScaleFactor() {
 		return SCALE_FACTOR;
 	}
+	
+	@Override
+	public final int getScaleFactorNumberOfLeadingZeros() {
+		return NLZ_SCALE_FACTOR;
+	}
 
 	@Override
 	public final long multiplyByScaleFactor(long factor) {
@@ -40,7 +48,7 @@ public final class Scale${scale}f extends AbstractScale {
 
 	@Override
 	public final long multiplyByScaleFactorExact(long factor) {
-		final int leadingZeros = Long.numberOfLeadingZeros(factor) + Long.numberOfLeadingZeros(~factor) + Long.numberOfLeadingZeros(SCALE_FACTOR);
+		final int leadingZeros = Long.numberOfLeadingZeros(factor) + Long.numberOfLeadingZeros(~factor) + NLZ_SCALE_FACTOR;
 		final long result = multiplyByScaleFactor(factor);
 		if (leadingZeros > Long.SIZE + 1) {
 			return result;
@@ -89,6 +97,6 @@ public final class Scale${scale}f extends AbstractScale {
 	@Override
 	public final long moduloByScaleFactor(long dividend) {
 		return dividend % SCALE_FACTOR;
-	}	
+	}
 }
 </#list>
