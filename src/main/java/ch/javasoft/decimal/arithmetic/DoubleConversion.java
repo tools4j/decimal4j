@@ -227,6 +227,15 @@ class DoubleConversion {
 		return (value >= 0 ? absResult : -absResult) + inc;
 	}
 
+	public static double longToDouble(DecimalArithmetics arith, long value) {
+		return unscaledToDouble(arith, DecimalRounding.DOWN, value);
+	}
+	public static double longToDouble(DecimalArithmetics arith, DecimalRounding rounding, long value) {
+		if (rounding == DecimalRounding.HALF_EVEN) {
+			return (double)value;
+		}
+		return unscaledToDouble(arith, rounding, value);
+	}
 	public static double unscaledToDouble(DecimalArithmetics arith, long unscaled) {
 		return unscaledToDouble(arith, DecimalRounding.DOWN, unscaled);
 	}
@@ -235,12 +244,14 @@ class DoubleConversion {
 			return 0;
 		}
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final long factor = scaleMetrics.getScaleFactor();
-
 		//eliminate sign and trailing power-of-2 zero bits
 		final long absUnscaled = Math.abs(unscaled);
 		final int pow2 = Long.numberOfTrailingZeros(absUnscaled);
 		final long absVal = absUnscaled >>> pow2;
+		final int nlzAbsVal = Long.numberOfLeadingZeros(absVal);
+		if (Long.SIZE - nlzAbsVal <= SIGNIFICAND_BITS + 1 & rounding == DecimalRounding.HALF_EVEN) {
+			return unscaledToDoubleWithDoubleDivisionRoundHalfEven(scaleMetrics, unscaled, pow2, absVal);
+		}
 
 		/*
 		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor
@@ -255,15 +266,15 @@ class DoubleConversion {
 		final int exp;
 		final int mantissaShift;
 		final long valModFactor;
-		final int alignShift = Long.numberOfLeadingZeros(absVal) - scaleMetrics.getScaleFactorNumberOfLeadingZeros();  
+		final int alignShift = nlzAbsVal - scaleMetrics.getScaleFactorNumberOfLeadingZeros();  
 		if (alignShift >= 0) {
 			final long scaledAbsVal = absVal << alignShift;
-			final long diff = scaledAbsVal - factor;
+			final long diff = scaledAbsVal - scaleMetrics.getScaleFactor();
 			exp = -alignShift + (int)(diff >> 63);
 			valModFactor = diff + ((diff >> 63) & scaledAbsVal);//if scaledAbsVal < factor we shift left by 1, i.e. we add the absVal
 			mantissaShift = SIGNIFICAND_BITS;
 		} else {
-			final long scaledFactor = factor << -alignShift;
+			final long scaledFactor = scaleMetrics.getScaleFactor() << -alignShift;
 			if (Unsigned.isLess(absVal, scaledFactor)) {
 				exp = -alignShift - 1;
 				valModFactor = absVal - (scaledFactor >>> 1);//if absVal < scaledFactor we shift by 1 (right shift of scaledFactor to avoid overflow)
@@ -281,6 +292,17 @@ class DoubleConversion {
 		return unscaledToDoubleShiftAndDivideByScaleFactor(scaleMetrics, rounding, unscaled, exp + pow2, mantissaShift, valModFactor);
 	}
 		
+	private static double unscaledToDoubleWithDoubleDivisionRoundHalfEven(ScaleMetrics scaleMetrics, long unscaled, int pow2, long absVal) {
+		final int scale = scaleMetrics.getScale();
+		final double dividend = (double)absVal;
+		final double divisor = (double)(scaleMetrics.getScaleFactor() >> scale);
+		final double quotient = dividend / divisor;
+		final int exponent = Math.getExponent(quotient) + pow2 - scale;
+		final long significand = Double.doubleToRawLongBits(quotient) & SIGNIFICAND_MASK;
+		final long raw = (unscaled & SIGN_MASK) | (((long)(exponent + EXPONENT_BIAS)) << SIGNIFICAND_BITS) | significand;
+		return Double.longBitsToDouble(raw);
+	}
+
 	private static double unscaledToDoubleShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, long unscaled, int exp, int mantissaShift, long valModFactor) {
 		final long quot;
 		if (mantissaShift >= 0) {

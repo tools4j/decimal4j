@@ -82,7 +82,7 @@ public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fA
 
 	@Override
 	public double toDouble(long uDecimal) {
-		return DoubleConversion.unscaledToDouble(this, uDecimal);
+		return DoubleConversion.longToDouble(this, uDecimal);
 	}
 
 }

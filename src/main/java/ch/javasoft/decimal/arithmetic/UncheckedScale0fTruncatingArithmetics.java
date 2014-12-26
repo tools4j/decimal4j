@@ -88,7 +88,7 @@ public final class UncheckedScale0fTruncatingArithmetics extends AbstractUncheck
 
 	@Override
 	public final double toDouble(long uDecimal) {
-		return DoubleConversion.unscaledToDouble(this, uDecimal);
+		return DoubleConversion.longToDouble(this, uDecimal);
 	}
 	
 	@Override

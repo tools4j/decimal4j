@@ -103,6 +103,6 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 
 	@Override
 	public double toDouble(long uDecimal) {
-		return DoubleConversion.unscaledToDouble(this, rounding, uDecimal);
+		return DoubleConversion.longToDouble(this, rounding, uDecimal);
 	}
 }

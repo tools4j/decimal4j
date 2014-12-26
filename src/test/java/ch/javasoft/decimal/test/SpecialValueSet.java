@@ -20,6 +20,7 @@ public enum SpecialValueSet {
 	POW_10_POSITIVE(powLoop(1, 1000000000000000000L, 10)),
 	POW_10_NEGATIVE(powLoop(-1000000000000000000L, -1, 10)),
 	POW_10(POW_10_NEGATIVE, POW_10_POSITIVE),
+	@SuppressWarnings("unchecked")
 	POW_10_HALF(div(POW_10_NEGATIVE, 2), div(POW_10_POSITIVE, 2)),
 	//min/max-value-sets
 	MIN_MAX_LONG_INT(Long.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Long.MAX_VALUE),
