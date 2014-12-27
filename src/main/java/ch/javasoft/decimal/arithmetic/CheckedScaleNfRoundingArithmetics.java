@@ -6,8 +6,6 @@ import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.OverflowMode;
 
-import com.google.common.math.DoubleMath;
-
 public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfArithmetics {
 
 	private final DecimalRounding rounding;
@@ -45,73 +43,78 @@ public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfAri
 	}
 
 	@Override
+	public long invert(long uDecimal) {
+		// special cases first
+		if (uDecimal == 0) {
+			throw new ArithmeticException("Division by zero: " + uDecimal
+					+ "^-1");
+		}
+		if (uDecimal == one()) {
+			return one();
+		}
+		if (uDecimal == -one()) {
+			return -one();
+		}
+		
+		return divide(one(), uDecimal);
+	}
+	
+	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		// TODO Auto-generated method stub
-		return 0;
+		// FIXME implement proper rounding
+		return Mul.multiplyChecked(this, uDecimal1, uDecimal2);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		// FIXME implement proper rounding
+		return Pow10.multiplyByPowerOf10Checked(this, uDecimal, n);
 	}
 
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Div.divideChecked(this, rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		// FIXME implement proper rounding
+		return Pow10.divideByPowerOf10Checked(this, uDecimal, n);
 	}
 
 	@Override
 	public long square(long uDecimal) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Mul.squareChecked(this, rounding, uDecimal);
 	}
 
 	@Override
 	public long sqrt(long uDecimal) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Sqrt.sqrt(this, rounding, uDecimal);
 	}
 
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Pow.powChecked(this, rounding, uDecimalBase, exponent);
 	}
 
 	@Override
 	public long shiftLeft(long uDecimal, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Shift.shiftLeftChecked(this, rounding, uDecimal, n);
 	}
 
 	@Override
 	public long shiftRight(long uDecimal, int n) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Shift.shiftRightChecked(this, rounding, uDecimal, n);
 	}
 
 	@Override
 	public long round(long uDecimal, int precision) {
-		// TODO Auto-generated method stub
-		return 0;
+		return Round.round(this, rounding, uDecimal, precision);
 	}
 
 	@Override
 	public long fromDouble(double value) {
-		// FIXME should be in a helper like checkExtremalDoubleValue(value)
-		if (Double.isNaN(value) || Double.isInfinite(value)) {
-			throw new NumberFormatException("cannot convert double to long: " + value);
-		}
-
-		return DoubleMath.roundToLong(value, getRoundingMode());
+		return DoubleConversion.doubleToUnscaled(this, rounding, value);
 	}
 
 }

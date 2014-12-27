@@ -189,7 +189,6 @@ final class Pow10 {
 				return truncatedValue + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncatedValue, truncatedDigits, scaler.getScaleFactor());
 			}
 			return -truncatedValue + RoundingUtil.calculateRoundingIncrementForDivision(rounding, -truncatedValue, -truncatedDigits, scaler.getScaleFactor());
-
 		} else {
 			//multiply
 			final ScaleMetrics scaler = Scales.valueOf(scaleDiff);
@@ -204,7 +203,27 @@ final class Pow10 {
 			//divide
 			final ScaleMetrics scaleMetrics = Scales.valueOf(-scaleDiff);
 			quot = scaleMetrics.divideByScaleFactor(uDecimalDividend);
+		} else {
+			//multiply
+			final ScaleMetrics scaleMetrics = Scales.valueOf(scaleDiff);
+			quot = scaleMetrics.multiplyByScaleFactorExact(uDecimalDividend);
+		}
+		return pow10divisorIsPositive ? quot : arith.negate(quot);
+	}
+	
+	static long divideByPowerOf10Checked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, ScaleMetrics dividendMetrics, boolean pow10divisorIsPositive, ScaleMetrics pow10divisorMetrics) {
+		final int scaleDiff = dividendMetrics.getScale() - pow10divisorMetrics.getScale();
+		final long quot;
+		if (scaleDiff <= 0) {
+			//divide
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-scaleDiff);
+			quot = scaleMetrics.divideByScaleFactor(uDecimalDividend);
 
+			final long truncatedDigits = uDecimalDividend - scaleMetrics.multiplyByScaleFactor(quot);
+			if (pow10divisorIsPositive) {
+				return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, truncatedDigits, scaleMetrics.getScaleFactor());
+			}
+			return -quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, -quot, -truncatedDigits, scaleMetrics.getScaleFactor());
 		} else {
 			//multiply
 			final ScaleMetrics scaleMetrics = Scales.valueOf(scaleDiff);

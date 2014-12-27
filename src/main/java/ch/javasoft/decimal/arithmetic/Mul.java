@@ -212,6 +212,68 @@ final class Mul {
 			return unrounded + RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
+	
+	// FIXME merge with other versions
+	public static long squareChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
+		try {
+			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+			final int scale = scaleMetrics.getScale();
+			if (scale <= 9) {
+				// use scale to split into 2 parts: i (integral) and f (fractional)
+				final long i = scaleMetrics.divideByScaleFactor(uDecimal);
+				final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
+
+				// checked operations
+				final long ixi = arith.multiplyByLong(i, i);
+				final long ixiScaled = scaleMetrics.multiplyByScaleFactorExact(ixi);
+
+				// with this scale, the low order product f*f fits in a long
+				final long fxf = f * f;
+
+				final long fxfd = scaleMetrics.divideByScaleFactor(fxf);
+				final long fxfr = fxf - scaleMetrics.multiplyByScaleFactor(fxfd);
+				
+				final long unrounded = ixiScaled + ((i * f) << 1) + fxfd;
+				return unrounded + RoundingUtil.calculateRoundingIncrement(rounding,
+								unrounded, fxfr, scaleMetrics.getScaleFactor());
+			}
+			else {
+				// use scale9 to split into 2 parts: h (high) and l (low)
+				final ScaleMetrics scale9f = Scale9f.INSTANCE;
+				final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
+				final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+				final long h = scale9f.divideByScaleFactor(uDecimal);
+				final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
+				
+				// checked operations
+				final long hxh = arith.multiplyByLong(h, h);
+				final long hxhScaled = scaleDiff18.multiplyByScaleFactorExact(hxh);
+				
+				final long hxl = h * l;
+				final long hxld = scaleDiff09.divideByScaleFactor(hxl);
+
+				final long lxl = l * l;
+				final long lxld = scale9f.divideByScaleFactor(lxl);
+				final long lxlr = lxl - scale9f.multiplyByScaleFactor(lxld);
+				
+				final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
+				final long hxlx2_lxl = (hxlr << 1) + lxld;
+				final long hxlx2_lxld = scaleDiff09.divideByScaleFactor(hxlx2_lxl);
+				final long hxlx2_lxlr = hxlx2_lxl - scaleDiff09.multiplyByScaleFactor(hxlx2_lxld);
+				
+				final long unrounded = hxhScaled + (hxld << 1) + hxlx2_lxld;
+				final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;
+				
+				return unrounded + RoundingUtil.calculateRoundingIncrement(rounding,
+								unrounded, remainder,
+								scaleMetrics.getScaleFactor());
+			}
+		} catch (ArithmeticException e) {
+			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal) + "^2");
+			ex.initCause(e);
+			throw ex;
+		}
+	}
 
 	public static long multiplyChecked(DecimalArithmetics arith, long uDecimal1, long uDecimal2) {
 		try {
@@ -321,6 +383,5 @@ final class Mul {
 
 	//no instances
 	private Mul() {
-		super();
 	}
 }

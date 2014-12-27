@@ -52,12 +52,12 @@ final class Div {
 		}
 		//perform component wise division
 		final long integralPart = uDecimalDividend / uDecimalDivisor;
-		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+		final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
 		final long fractionalPart;
-		if (reminder <= maxInteger & reminder >= minInteger) {
-			fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
+		if (remainder <= maxInteger & remainder >= minInteger) {
+			fractionalPart = scaleMetrics.multiplyByScaleFactor(remainder) / uDecimalDivisor;
 		} else {
-			fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
+			fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, remainder, uDecimalDivisor);
 		}
 		return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 //		return scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, uDecimalDividend, uDecimalDivisor);
@@ -93,7 +93,7 @@ final class Div {
 		//WE WANT: uDecimalDividend * one / uDecimalDivisor
 		final long maxInteger = scaleMetrics.getMaxIntegerValue();
 		final long minInteger = scaleMetrics.getMinIntegerValue();
-		if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
+		if (uDecimalDividend <= maxInteger && uDecimalDividend >= minInteger) {
 			//just do it, multiplication result fits in long
 			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
 			final long quot = scaledDividend / uDecimalDivisor;
@@ -102,20 +102,105 @@ final class Div {
 		}
 		//perform component wise division
 		final long integralPart = uDecimalDividend / uDecimalDivisor;
-		final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
-		if (reminder <= maxInteger & reminder >= minInteger) {
-			final long scaledReminder = scaleMetrics.multiplyByScaleFactor(reminder);
+		final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
+
+		if (remainder <= maxInteger && remainder >= minInteger) {
+			final long scaledReminder = scaleMetrics.multiplyByScaleFactor(remainder);
 			final long fractionalPart = scaledReminder / uDecimalDivisor;
 			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
 			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 			return truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
-		} else {
-			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, reminder, uDecimalDivisor);
+		} 
+		else {
+			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, remainder, uDecimalDivisor);
 			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
 		}
 //		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
+	/**
+	 * Calculates {@code (uDecimalDividend * scaleFactor) / uDecimalDivisor}
+	 * with rounding.
+	 * 
+	 * @param arith
+	 *            the arithmetics with scale metrics and overflow mode
+	 * @param rounding
+	 *            the decimal rounding to apply if rounding is necessary
+	 * @param uDecimalDividend
+	 *            the unscaled decimal dividend
+	 * @param uDecimalDivisor
+	 *            the unscaled decimal divisor
+	 * @return the division result with rounding and overflow checks
+	 */
+	public static long divideChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+		//special cases first
+		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
+		if (special != null) {
+			return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+		}
+		//div by power of 10
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
+		if (pow10 != null) {
+			return Pow10.divideByPowerOf10Checked(arith, rounding, uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
+		}
+		//WE WANT: uDecimalDividend * one / uDecimalDivisor
+		final long maxInteger = scaleMetrics.getMaxIntegerValue();
+		final long minInteger = scaleMetrics.getMinIntegerValue();
+		if (uDecimalDividend <= maxInteger && uDecimalDividend >= minInteger) {
+			//just do it, multiplication result fits in long
+			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
+			final long quot = scaledDividend / uDecimalDivisor;
+			final long rem = scaledDividend - quot * uDecimalDivisor;
+			return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
+		}
+		//perform component wise division
+		final long integralPart = uDecimalDividend / uDecimalDivisor;
+		final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
+
+		checkOverflow(arith, uDecimalDividend, uDecimalDivisor, integralPart, remainder);
+		
+		if (remainder <= maxInteger && remainder >= minInteger) {
+			final long scaledRemainder = scaleMetrics.multiplyByScaleFactor(remainder);
+			final long fractionalPart = scaledRemainder / uDecimalDivisor;
+			final long subFractionalPart = scaledRemainder - fractionalPart * uDecimalDivisor;
+			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+			return truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
+		} 
+		else {
+			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, remainder, uDecimalDivisor);
+			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+		}
+//		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
+	}
+
+	private static void checkOverflow(final DecimalArithmetics arith, final long uDecimalDividend, 
+			final long uDecimalDivisor, final long integralPart, final long reminder) {
+		
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final long minInteger = scaleMetrics.getMinIntegerValue();
+		final long maxInteger = scaleMetrics.getMaxIntegerValue();
+		
+		// FIXME how to spare these calculations
+		final double actualFractionalPart = Math.abs(((double)reminder) / uDecimalDivisor);
+
+		final double maxReminderForMaxValue = Long.MAX_VALUE - scaleMetrics.multiplyByScaleFactor(maxInteger);
+		final double maxFractionalPart = maxReminderForMaxValue / scaleMetrics.getScaleFactor();
+		/////
+		
+		if (integralPart < minInteger || (integralPart == minInteger && actualFractionalPart > maxFractionalPart)){
+			throw newArithmeticException(arith, uDecimalDividend, uDecimalDivisor);
+		}
+		else if (integralPart > maxInteger || (integralPart == maxInteger && actualFractionalPart >= maxFractionalPart)){
+			throw newArithmeticException(arith, uDecimalDividend, uDecimalDivisor);
+		}
+	}
+
+	private static ArithmeticException newArithmeticException(DecimalArithmetics arith,
+			long uDecimalDividend, long uDecimalDivisor) {
+		throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
+	}
+				
 	/**
 	 * Calculates {@code (uDecimalDividend * scaleFactor) / uDecimalDivisor}
 	 * without rounding.
