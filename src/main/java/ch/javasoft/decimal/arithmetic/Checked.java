@@ -81,9 +81,6 @@ final class Checked {
 		if (lDivisor == -1 && uDecimalDividend == Long.MIN_VALUE) {
 			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + lDivisor + " = " + arith.toString(Long.MIN_VALUE));
 		} 
-//		else if (lDivisor == Long.MIN_VALUE && uDecimalDividend == -1) {
-//			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + lDivisor + " = " + arith.toString(Long.MIN_VALUE));
-//		}
 		return uDecimalDividend / lDivisor;
 	}
 
@@ -105,7 +102,6 @@ final class Checked {
 
 	// no instances
 	private Checked() {
-		super();
 	}
 
 }

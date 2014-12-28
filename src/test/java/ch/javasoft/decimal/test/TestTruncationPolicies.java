@@ -5,14 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
-
-import com.google.common.collect.ImmutableList;
 
 public enum TestTruncationPolicies {
 	
@@ -30,24 +27,7 @@ public enum TestTruncationPolicies {
 	private final Collection<TruncationPolicy> policies;
 	
 	private TestTruncationPolicies(Collection<TruncationPolicy> policies) {
-		this.policies = ImmutableList.copyOf(filterSupportedPolicies(policies));
-	}
-	
-	//FIXME remove this method
-	private Collection<TruncationPolicy> filterSupportedPolicies(Collection<TruncationPolicy> policies) {
-		final Set<TruncationPolicy> supported = new LinkedHashSet<TruncationPolicy>();
-		for (final TruncationPolicy p : policies) {
-			if (!p.getOverflowMode().isChecked() || RoundingMode.DOWN.equals(p.getRoundingMode())) {
-				supported.add(p);
-			}
-			
-			// FIXME
-			if (p.getOverflowMode().isChecked() || RoundingMode.DOWN != p.getRoundingMode()) {
-				supported.add(p);
-			}
-			
-		}
-		return supported;
+		this.policies = Collections.unmodifiableCollection(policies);
 	}
 	
 	public Collection<TruncationPolicy> getPolicies() {
