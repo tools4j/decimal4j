@@ -249,6 +249,16 @@ class DoubleConversion {
 		final int pow2 = Long.numberOfTrailingZeros(absUnscaled);
 		final long absVal = absUnscaled >>> pow2;
 		final int nlzAbsVal = Long.numberOfLeadingZeros(absVal);
+		
+		/*
+		 * NOTE: a) If absVal has no more than 53 bits it can be represented as a double 
+		 *          value without loss of precision (52 mantissa bits plus the implicit 
+		 *          leading 1 bit)
+		 *       b) The scale factor has never more than 53 bits if shifted right by the 
+		 *          trailing power-of-2 zero bits
+		 *      ==> For HALF_EVEN rounding mode we can therefore apply the scale factor 
+		 *          via double division without losing information 
+		 */
 		if (Long.SIZE - nlzAbsVal <= SIGNIFICAND_BITS + 1 & rounding == DecimalRounding.HALF_EVEN) {
 			return unscaledToDoubleWithDoubleDivisionRoundHalfEven(scaleMetrics, unscaled, pow2, absVal);
 		}
