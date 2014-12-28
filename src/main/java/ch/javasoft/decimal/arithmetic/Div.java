@@ -117,88 +117,56 @@ final class Div {
 		}
 //		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
-
-	/**
-	 * Calculates {@code (uDecimalDividend * scaleFactor) / uDecimalDivisor}
-	 * with rounding.
-	 * 
-	 * @param arith
-	 *            the arithmetics with scale metrics and overflow mode
-	 * @param rounding
-	 *            the decimal rounding to apply if rounding is necessary
-	 * @param uDecimalDividend
-	 *            the unscaled decimal dividend
-	 * @param uDecimalDivisor
-	 *            the unscaled decimal divisor
-	 * @return the division result with rounding and overflow checks
-	 */
+	
+	// FIXME reconcile this method with the other overloaded versions
 	public static long divideChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
-		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
-		if (special != null) {
-			return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+		if (uDecimalDivisor == 0) {
+			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
 		}
-		//div by power of 10
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
-		if (pow10 != null) {
-			return Pow10.divideByPowerOf10Checked(arith, rounding, uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
-		}
-		//WE WANT: uDecimalDividend * one / uDecimalDivisor
-		final long maxInteger = scaleMetrics.getMaxIntegerValue();
-		final long minInteger = scaleMetrics.getMinIntegerValue();
-		if (uDecimalDividend <= maxInteger && uDecimalDividend >= minInteger) {
-			//just do it, multiplication result fits in long
-			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
-			final long quot = scaledDividend / uDecimalDivisor;
-			final long rem = scaledDividend - quot * uDecimalDivisor;
-			return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
-		}
-		//perform component wise division
-		final long integralPart = uDecimalDividend / uDecimalDivisor;
-		final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
-
-		checkOverflow(arith, uDecimalDividend, uDecimalDivisor, integralPart, remainder);
+		try {
+			final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
+			if (special != null) {
+				return special.divide(arith, uDecimalDividend, uDecimalDivisor);
+			}
+			//div by power of 10
+			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+			final ScaleMetrics pow10 = Scales.findByScaleFactor(Math.abs(uDecimalDivisor));
+			if (pow10 != null) {
+				return Pow10.divideByPowerOf10Checked(arith, rounding, uDecimalDividend, scaleMetrics, uDecimalDivisor > 0, pow10);
+			}
+			//WE WANT: uDecimalDividend * one / uDecimalDivisor
+			final long maxInteger = scaleMetrics.getMaxIntegerValue();
+			final long minInteger = scaleMetrics.getMinIntegerValue();
+			if (uDecimalDividend <= maxInteger && uDecimalDividend >= minInteger) {
+				//just do it, multiplication result fits in long
+				final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
+				final long quot = scaledDividend / uDecimalDivisor;
+				final long rem = scaledDividend - quot * uDecimalDivisor;
+				
+				return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
+			}
+			//perform component wise division
+			final long integralPart = uDecimalDividend / uDecimalDivisor;
+			final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
 		
-		if (remainder <= maxInteger && remainder >= minInteger) {
-			final long scaledRemainder = scaleMetrics.multiplyByScaleFactor(remainder);
-			final long fractionalPart = scaledRemainder / uDecimalDivisor;
-			final long subFractionalPart = scaledRemainder - fractionalPart * uDecimalDivisor;
-			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
-			return truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
-		} 
-		else {
-			final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, remainder, uDecimalDivisor);
-			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+			if (remainder <= maxInteger && remainder >= minInteger) {
+				final long scaledReminder = scaleMetrics.multiplyByScaleFactorExact(remainder);
+				final long fractionalPart = scaledReminder / uDecimalDivisor;
+				final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
+				
+				long result = arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
+				return arith.add(result,RoundingUtil.calculateRoundingIncrementForDivision(rounding, result, subFractionalPart, uDecimalDivisor));
+			} 
+			else {
+				final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, remainder, uDecimalDivisor);
+				return arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
+			}
+		} catch (ArithmeticException e) {
+			final ArithmeticException ae = new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
+			ae.initCause(e);
+			throw ae;
 		}
-//		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
-	}
-
-	private static void checkOverflow(final DecimalArithmetics arith, final long uDecimalDividend, 
-			final long uDecimalDivisor, final long integralPart, final long reminder) {
-		
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final long minInteger = scaleMetrics.getMinIntegerValue();
-		final long maxInteger = scaleMetrics.getMaxIntegerValue();
-		
-		// FIXME how to spare these calculations
-		final double actualFractionalPart = Math.abs(((double)reminder) / uDecimalDivisor);
-
-		final double maxReminderForMaxValue = Long.MAX_VALUE - scaleMetrics.multiplyByScaleFactor(maxInteger);
-		final double maxFractionalPart = maxReminderForMaxValue / scaleMetrics.getScaleFactor();
-		/////
-		
-		if (integralPart < minInteger || (integralPart == minInteger && actualFractionalPart > maxFractionalPart)){
-			throw newArithmeticException(arith, uDecimalDividend, uDecimalDivisor);
-		}
-		else if (integralPart > maxInteger || (integralPart == maxInteger && actualFractionalPart >= maxFractionalPart)){
-			throw newArithmeticException(arith, uDecimalDividend, uDecimalDivisor);
-		}
-	}
-
-	private static ArithmeticException newArithmeticException(DecimalArithmetics arith,
-			long uDecimalDividend, long uDecimalDivisor) {
-		throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
 	}
 				
 	/**
@@ -239,14 +207,14 @@ final class Div {
 			}
 			//perform component wise division
 			final long integralPart = uDecimalDividend / uDecimalDivisor;
-			final long reminder = uDecimalDividend - integralPart * uDecimalDivisor;
+			final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
 			final long fractionalPart;
-			if (reminder <= maxInteger & reminder >= minInteger) {
+			if (remainder <= maxInteger & remainder >= minInteger) {
 				//scaling and result can't overflow because of the above condition
-				fractionalPart = scaleMetrics.multiplyByScaleFactor(reminder) / uDecimalDivisor;
+				fractionalPart = scaleMetrics.multiplyByScaleFactor(remainder) / uDecimalDivisor;
 			} else {
 				//result can't overflow because reminder is smaller than divisor, i.e. -1 < result < 1
-				fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, reminder, uDecimalDivisor);
+				fractionalPart = scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, remainder, uDecimalDivisor);
 			}
 			return arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
 		} catch (ArithmeticException e) {
