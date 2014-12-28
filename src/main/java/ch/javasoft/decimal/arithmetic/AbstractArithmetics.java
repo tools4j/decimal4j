@@ -41,11 +41,6 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 	}
 
 	@Override
-	public long invert(long uDecimal) {
-		return divide(one(), uDecimal);
-	}
-	
-	@Override
 	public BigDecimal toBigDecimal(long uDecimal) {
 		return BigDecimal.valueOf(uDecimal, getScale());
 	}

@@ -44,19 +44,7 @@ public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfAri
 
 	@Override
 	public long invert(long uDecimal) {
-		// special cases first
-		if (uDecimal == 0) {
-			throw new ArithmeticException("Division by zero: " + uDecimal
-					+ "^-1");
-		}
-		if (uDecimal == one()) {
-			return one();
-		}
-		if (uDecimal == -one()) {
-			return -one();
-		}
-		
-		return divide(one(), uDecimal);
+		return Invert.invert(this, rounding, uDecimal);
 	}
 	
 	@Override

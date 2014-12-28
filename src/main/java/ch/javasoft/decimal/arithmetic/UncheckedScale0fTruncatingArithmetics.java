@@ -47,6 +47,11 @@ public final class UncheckedScale0fTruncatingArithmetics extends AbstractUncheck
 	}
 	
 	@Override
+	public long invert(long uDecimal) {
+		return Invert.invertLong(uDecimal);
+	}
+	
+	@Override
 	public final long pow(long uDecimal, int exponent) {
 		return Pow.powLong(this, DecimalRounding.DOWN, uDecimal, exponent);
 	}

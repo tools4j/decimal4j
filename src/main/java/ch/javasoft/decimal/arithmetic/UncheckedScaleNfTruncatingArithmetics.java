@@ -59,6 +59,11 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divide(this, uDecimalDividend, uDecimalDivisor);
 	}
+	
+	@Override
+	public long invert(long uDecimal) {
+		return Invert.invert(this, uDecimal);
+	}
 
 	@Override
 	public long avg(long a, long b) {

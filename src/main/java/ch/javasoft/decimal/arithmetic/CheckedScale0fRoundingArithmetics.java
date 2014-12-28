@@ -24,19 +24,7 @@ public class CheckedScale0fRoundingArithmetics extends
 
 	@Override
 	public long invert(long uDecimal) {
-		// special cases first
-		if (uDecimal == 0) {
-			throw new ArithmeticException("Division by zero: " + uDecimal
-					+ "^-1");
-		}
-		if (uDecimal == 1) {
-			return 1;
-		}
-		if (uDecimal == -1) {
-			return -1;
-		}
-		
-		return divide(one(), uDecimal);
+		return Invert.invertLong(rounding, uDecimal);
 	}
 
 	@Override

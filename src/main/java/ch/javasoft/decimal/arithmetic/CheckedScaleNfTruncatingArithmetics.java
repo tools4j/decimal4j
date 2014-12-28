@@ -54,6 +54,11 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 	public long divideByPowerOf10(long uDecimal, int positions) {
 		return Pow10.divideByPowerOf10Checked(this, uDecimal, positions);
 	}
+	
+	@Override
+	public long invert(long uDecimal) {
+		return Invert.invert(this, uDecimal);
+	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int positions) {

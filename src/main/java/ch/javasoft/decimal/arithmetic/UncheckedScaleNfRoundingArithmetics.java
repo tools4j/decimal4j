@@ -78,6 +78,11 @@ public class UncheckedScaleNfRoundingArithmetics extends
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divide(this, rounding, uDecimalDividend, uDecimalDivisor);
 	}
+	
+	@Override
+	public long invert(long uDecimal) {
+		return Invert.invert(this, rounding, uDecimal);
+	}
 
 	@Override
 	public long pow(long uDecimal, int exponent) {
