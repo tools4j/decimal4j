@@ -46,7 +46,7 @@ public class CheckedScale0fRoundingArithmetics extends
 	
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int n) {
-		return Pow10.multiplyByPowerOf10Checked(this, uDecimal, n);
+		return Pow10.multiplyByPowerOf10Checked(this, rounding, uDecimal, n);
 	}
 
 	@Override

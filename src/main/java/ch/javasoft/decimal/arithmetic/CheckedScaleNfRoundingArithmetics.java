@@ -61,14 +61,12 @@ public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfAri
 	
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		// FIXME implement proper rounding
-		return Mul.multiplyChecked(this, uDecimal1, uDecimal2);
+		return Mul.multiplyChecked(this, rounding, uDecimal1, uDecimal2);
 	}
 
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int n) {
-		// FIXME implement proper rounding
-		return Pow10.multiplyByPowerOf10Checked(this, uDecimal, n);
+		return Pow10.multiplyByPowerOf10Checked(this, rounding, uDecimal, n);
 	}
 
 	@Override
