@@ -38,7 +38,7 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 	}
 	
 	@Override
-	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
+	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Checked.divideByLong(this, uDecimalDividend, uDecimalDivisor);
 	}
 	
@@ -67,7 +67,12 @@ abstract public class AbstractCheckedScale0fArithmetics extends
 
 	@Override
 	public float toFloat(long uDecimal) {
-		return (float) uDecimal;//TODO impl proper rounding if mantissa cannot take all the bits
+		return uDecimal;//TODO impl proper rounding if mantissa cannot take all the bits
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		return uDecimal;
 	}
 
 	@Override

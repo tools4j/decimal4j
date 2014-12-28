@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.util.EnumMap;
 
 import ch.javasoft.decimal.Decimal;
+import ch.javasoft.decimal.arithmetic.CheckedScaleNfRoundingArithmetics;
 import ch.javasoft.decimal.arithmetic.CheckedScaleNfTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScaleNfRoundingArithmetics;
@@ -72,8 +73,7 @@ abstract public class AbstractScale implements ScaleMetrics {
 			if (roundingMode == RoundingMode.DOWN) {
 				map.put(roundingMode, new CheckedScaleNfTruncatingArithmetics(this));
 			} else {
-				//FIXME add when implemented
-				//				map.put(roundingMode, new CheckedScaledRoundingArithmetics(this, dr));
+				map.put(roundingMode, new CheckedScaleNfRoundingArithmetics(this, dr));
 			}
 		}
 		return map;

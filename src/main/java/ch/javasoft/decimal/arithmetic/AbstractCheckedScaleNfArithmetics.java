@@ -1,6 +1,7 @@
 package ch.javasoft.decimal.arithmetic;
 
 import ch.javasoft.decimal.scale.ScaleMetrics;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
@@ -11,11 +12,19 @@ import ch.javasoft.decimal.truncate.OverflowMode;
 abstract public class AbstractCheckedScaleNfArithmetics extends AbstractCheckedArithmetics {
 
 	private final ScaleMetrics scaleMetrics;
+	
+	// FIXME why is it called unchecked?
+	// FIXME field should not be protected
 	protected final DecimalArithmetics unchecked;
 
 	public AbstractCheckedScaleNfArithmetics(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.unchecked = scaleMetrics.getArithmetics(getRoundingMode());
+	}
+	
+	public AbstractCheckedScaleNfArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
+		this.scaleMetrics = scaleMetrics;
+		this.unchecked = scaleMetrics.getArithmetics(rounding.getRoundingMode());
 	}
 
 	@Override

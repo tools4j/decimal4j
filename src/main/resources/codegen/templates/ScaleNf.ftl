@@ -24,8 +24,8 @@ public final class Scale${scale}f extends AbstractScale {
 <#if (scale > 9)>
 	private static final long SCALE_FACTOR_HIGH_BITS = SCALE_FACTOR >>> 32;
 	private static final long SCALE_FACTOR_LOW_BITS = SCALE_FACTOR & LONG_MASK;
-</#if>
 
+</#if>
 	@Override
 	public final int getScale() {
 		return ${scale};

@@ -61,4 +61,5 @@ public class DoubleValueTest extends Abstract1DecimalArgToAnyResultTest<Double> 
 		}
 		return operand.doubleValue(getRoundingMode());
 	}
+	
 }
