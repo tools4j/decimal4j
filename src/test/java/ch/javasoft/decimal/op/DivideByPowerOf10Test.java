@@ -90,7 +90,7 @@ public class DivideByPowerOf10Test extends Abstract1DecimalArg1IntArgToDecimalRe
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b) {
-		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
 			return a.divideByPowerOfTen(b);
 		} else {
 			if (isUnchecked() && rnd.nextBoolean()) {

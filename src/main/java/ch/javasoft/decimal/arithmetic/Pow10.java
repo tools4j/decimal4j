@@ -61,6 +61,41 @@ final class Pow10 {
 		}
 	}
 	
+	// FIXME reconcile this method with other overloaded versions
+	public static long divideByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
+		if (uDecimal == 0 | n == 0) {
+			return uDecimal;
+		}
+		if (n > 0) {
+			if (rounding == DecimalRounding.DOWN) {
+				return divideByPowerOf10(uDecimal, n);
+			}
+			if (n <= 18) {
+				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
+				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
+				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
+				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+				return truncated + inc;
+			} else if (n == 19) {
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
+			}
+			//truncated part is always larger 0 (see first if) 
+			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
+			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+		} else {
+			int pos = n;
+			long result = uDecimal;
+			//NOTE: this is not very efficient for n << -18
+			//      but how else do we get the correct truncated value?
+			while (pos < -18) {
+				result = Scale18f.INSTANCE.multiplyByScaleFactorExact(result);
+				pos += 18;
+			}
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
+			return scaleMetrics.multiplyByScaleFactorExact(result);
+		}
+	}
+	
 	public static long divideByPowerOf10Checked(DecimalArithmetics arith, long uDecimal, int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;

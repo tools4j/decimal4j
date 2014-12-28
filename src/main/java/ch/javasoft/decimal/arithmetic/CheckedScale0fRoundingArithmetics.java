@@ -51,7 +51,7 @@ public class CheckedScale0fRoundingArithmetics extends
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int n) {
-		return Pow10.divideByPowerOf10(rounding, uDecimal, n);
+		return Pow10.divideByPowerOf10Checked(this, rounding, uDecimal, n);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class CheckedScale0fRoundingArithmetics extends
 
 	@Override
 	public long fromUnscaled(long unscaledValue, int scale) {
-		return Pow10.divideByPowerOf10Checked(this, unscaledValue, scale);
+		return Scale.rescale(this, unscaledValue, scale, getScale());
 	}
 
 }

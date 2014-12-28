@@ -78,8 +78,7 @@ public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfAri
 
 	@Override
 	public long divideByPowerOf10(long uDecimal, int n) {
-		// FIXME implement proper rounding
-		return Pow10.divideByPowerOf10Checked(this, uDecimal, n);
+		return Pow10.divideByPowerOf10Checked(this, rounding, uDecimal, n);
 	}
 
 	@Override
