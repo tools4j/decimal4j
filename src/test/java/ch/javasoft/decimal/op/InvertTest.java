@@ -48,7 +48,7 @@ public class InvertTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
 			return operand.invert();
 		} else {
 			if (isUnchecked() && rnd.nextBoolean()) {

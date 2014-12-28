@@ -7,7 +7,7 @@ import ch.javasoft.decimal.truncate.DecimalRounding;
 /**
  * Performs rounding of decimal values.
  */
-final class Round {
+class Round {
 
 	public static long round(DecimalArithmetics arith, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
@@ -28,6 +28,7 @@ final class Round {
 		}
 		return uDecimal - deltaMetrics.moduloByScaleFactor(uDecimal);
 	}
+	
 	public static long round(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
@@ -57,6 +58,7 @@ final class Round {
 
 	// no instances
 	private Round() {
-		super();
+		
 	}
+	
 }

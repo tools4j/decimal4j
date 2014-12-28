@@ -62,8 +62,8 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 	}
 
 	@Override
-	public long divideByPowerOf10(long uDecimal, int positions) {
-		return Pow10.divideByPowerOf10(rounding, uDecimal, positions);
+	public long divideByPowerOf10(long uDecimal, int n) {
+		return Pow10.divideByPowerOf10(rounding, uDecimal, n);
 	}
 
 	@Override
@@ -105,4 +105,5 @@ public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0
 	public double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, rounding, uDecimal);
 	}
+	
 }

@@ -3,6 +3,7 @@ package ch.javasoft.decimal.scale;
 import java.math.RoundingMode;
 import java.util.EnumMap;
 
+import ch.javasoft.decimal.arithmetic.CheckedScale0fRoundingArithmetics;
 import ch.javasoft.decimal.arithmetic.CheckedScale0fTruncatingArithmetics;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.arithmetic.UncheckedScale0fRoundingArithmetics;
@@ -42,8 +43,7 @@ public final class Scale0f extends AbstractScale {
 			if (roundingMode == RoundingMode.DOWN) {
 				map.put(roundingMode, CheckedScale0fTruncatingArithmetics.INSTANCE);
 			} else {
-				//FIXME add when implemented
-				//					map.put(roundingMode, new CheckedLongRoundingArithmetics(dr));
+				map.put(roundingMode, new CheckedScale0fRoundingArithmetics(dr));
 			}
 		}
 		return map;
