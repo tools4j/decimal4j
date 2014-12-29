@@ -66,10 +66,16 @@ final class Pow10 {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
+		
+		if (n < -18) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " / 10^" + n);
+		}
+		
+		if (rounding == DecimalRounding.DOWN) {
+			return divideByPowerOf10Checked(arith, uDecimal, Math.abs(n));
+		}
+		
 		if (n > 0) {
-			if (rounding == DecimalRounding.DOWN) {
-				return divideByPowerOf10(uDecimal, n);
-			}
 			if (n <= 18) {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
@@ -83,16 +89,8 @@ final class Pow10 {
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		} else {
-			int pos = n;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for n << -18
-			//      but how else do we get the correct truncated value?
-			while (pos < -18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactorExact(result);
-				pos += 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
-			return scaleMetrics.multiplyByScaleFactorExact(result);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
+			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 		}
 	}
 	
@@ -133,22 +131,22 @@ final class Pow10 {
 	}
 
 	// FIXME reconcile this method with the other overloaded versions
-	// hint: only the 2 calls for multiplyByScaleFactor were changed to multiplyByScaleFactorExact
 	public static long multiplyByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
+
+		if (n > 18) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " * 10^" + n);
+		}
+		
+		if (rounding == DecimalRounding.DOWN) {
+			return multiplyByPowerOf10Checked(arith, uDecimal, Math.abs(n));
+		}
+		
 		if (n > 0) {
-			int pos = n;
-			long result = uDecimal;
-			//NOTE: this is not very efficient for n >> 18
-			//      but how else do we get the correct truncated value?
-			while (pos > 18) {
-				result = Scale18f.INSTANCE.multiplyByScaleFactorExact(result);
-				pos -= 18;
-			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
-			return scaleMetrics.multiplyByScaleFactorExact(result);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
+			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 		} else {
 			if (n >= -18) {
 				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
