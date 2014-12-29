@@ -189,6 +189,6 @@ final class Pow {
 	}
 	//no instances
 	private Pow() {
-		super();
 	}
+	
 }

@@ -118,6 +118,21 @@ final class Div {
 //		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
 	
+	/**
+	 * Calculates {@code (uDecimalDividend * scaleFactor) / uDecimalDivisor}
+	 * with rounding.
+	 * 
+	 * @param arith
+	 *            the arithmetics with scale metrics and overflow mode
+	 * @param rounding
+	 *            the decimal rounding to apply if rounding is necessary
+	 * @param uDecimalDividend
+	 *            the unscaled decimal dividend
+	 * @param uDecimalDivisor
+	 *            the unscaled decimal divisor
+	 * 
+	 * @return the division result with rounding and overflow checking
+	 */
 	// FIXME reconcile this method with the other overloaded versions
 	public static long divideChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first

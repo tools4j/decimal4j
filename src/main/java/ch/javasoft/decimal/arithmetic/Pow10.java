@@ -35,83 +35,38 @@ final class Pow10 {
 			return 0;
 		}
 	}
-	
-	public static long divideByPowerOf10(long uDecimal, int n) {
+
+	public static long multiplyByPowerOf10(DecimalRounding rounding, long uDecimal, int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
 		if (n > 0) {
-			if (n <= 18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
-				return scaleMetrics.divideByScaleFactor(uDecimal);
-			}
-			//truncated result is 0
-			return 0;
-		} else {
 			int pos = n;
 			long result = uDecimal;
-			//NOTE: this is not very efficient for n << -18
+			//NOTE: this is not very efficient for n >> 18
 			//      but how else do we get the correct truncated value?
-			while (pos < -18) {
+			while (pos > 18) {
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos += 18;
+				pos -= 18;
 			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
 			return scaleMetrics.multiplyByScaleFactor(result);
-		}
-	}
-	
-	// FIXME reconcile this method with other overloaded versions
-	public static long divideByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
-		if (uDecimal == 0 | n == 0) {
-			return uDecimal;
-		}
-		
-		if (n < -18) {
-			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " / 10^" + n);
-		}
-		
-		if (rounding == DecimalRounding.DOWN) {
-			return divideByPowerOf10Checked(arith, uDecimal, Math.abs(n));
-		}
-		
-		if (n > 0) {
-			if (n <= 18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
+		} else {
+			if (n >= -18) {
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
 				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
-			} else if (n == 19) {
+			} else if (n == -19) {
 				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
-		} else {
-			final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
 		}
 	}
 	
-	public static long divideByPowerOf10Checked(DecimalArithmetics arith, long uDecimal, int n) {
-		if (uDecimal == 0 | n == 0) {
-			return uDecimal;
-		}
-		if (n < 0) {
-			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-				return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
-			}
-			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " / 10^" + n);
-		}
-		if (n <= 18) {
-			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
-			return scaleMetrics.divideByScaleFactor(uDecimal);
-		}
-		return 0;
-	}
-
 	public static long multiplyByPowerOf10Checked(DecimalArithmetics arith, long uDecimal, int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
@@ -130,7 +85,6 @@ final class Pow10 {
 		throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " * 10^" + n);
 	}
 
-	// FIXME reconcile this method with the other overloaded versions
 	public static long multiplyByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
@@ -163,37 +117,31 @@ final class Pow10 {
 		}
 	}
 	
-	public static long multiplyByPowerOf10(DecimalRounding rounding, long uDecimal, int n) {
+	public static long divideByPowerOf10(long uDecimal, int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
 		if (n > 0) {
+			if (n <= 18) {
+				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
+				return scaleMetrics.divideByScaleFactor(uDecimal);
+			}
+			//truncated result is 0
+			return 0;
+		} else {
 			int pos = n;
 			long result = uDecimal;
-			//NOTE: this is not very efficient for n >> 18
+			//NOTE: this is not very efficient for n << -18
 			//      but how else do we get the correct truncated value?
-			while (pos > 18) {
+			while (pos < -18) {
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
-				pos -= 18;
+				pos += 18;
 			}
-			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
 			return scaleMetrics.multiplyByScaleFactor(result);
-		} else {
-			if (n >= -18) {
-				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
-				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
-				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
-				return truncated + inc;
-			} else if (n == -19) {
-				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
-			}
-			//truncated part is always larger 0 (see first if) 
-			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
-			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}
 	}
-
+	
 	public static long divideByPowerOf10(DecimalRounding rounding, long uDecimal, int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
@@ -227,7 +175,57 @@ final class Pow10 {
 			return scaleMetrics.multiplyByScaleFactor(result);
 		}
 	}
+	
+	public static long divideByPowerOf10Checked(DecimalArithmetics arith, long uDecimal, int n) {
+		if (uDecimal == 0 | n == 0) {
+			return uDecimal;
+		}
+		if (n < 0) {
+			if (n >= -18) {
+				final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
+				return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
+			}
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " / 10^" + n);
+		}
+		if (n <= 18) {
+			final ScaleMetrics scaleMetrics = Scales.valueOf(n);
+			return scaleMetrics.divideByScaleFactor(uDecimal);
+		}
+		return 0;
+	}
 
+	public static long divideByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
+		if (uDecimal == 0 | n == 0) {
+			return uDecimal;
+		}
+		
+		if (n < -18) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " / 10^" + n);
+		}
+		
+		if (rounding == DecimalRounding.DOWN) {
+			return divideByPowerOf10Checked(arith, uDecimal, Math.abs(n));
+		}
+		
+		if (n > 0) {
+			if (n <= 18) {
+				final ScaleMetrics scaleMetrics = Scales.valueOf(n);
+				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
+				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
+				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+				return truncated + inc;
+			} else if (n == 19) {
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
+			}
+			//truncated part is always larger 0 (see first if) 
+			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
+			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
+		} else {
+			final ScaleMetrics scaleMetrics = Scales.valueOf(-n);
+			return scaleMetrics.multiplyByScaleFactorExact(uDecimal);
+		}
+	}
+	
 	static long divideByPowerOf10(long uDecimalDividend, ScaleMetrics dividendMetrics, boolean pow10divisorIsPositive, ScaleMetrics pow10divisorMetrics) {
 		final int scaleDiff = dividendMetrics.getScale() - pow10divisorMetrics.getScale();
 		final long quot;
@@ -300,6 +298,6 @@ final class Pow10 {
 
 	// no instances
 	private Pow10() {
-		super();
 	}
+	
 }

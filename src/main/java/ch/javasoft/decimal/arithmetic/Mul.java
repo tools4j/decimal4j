@@ -135,8 +135,21 @@ final class Mul {
 		}
 	}
 
+	/**
+	 * Calculates the multiple {@code uDecimal1 * uDecimal2 / scaleFactor}
+	 * with rounding.
+	 * 
+	 * @param arith
+	 *            the arithmetics with access to scale metrics etc.
+	 * @param uDecimal1
+	 *            the first unscaled decimal factor
+	 * @param uDecimal2
+	 *            the second unscaled decimal factor
+	 *            
+	 * @return the multiplication result with rounding and overflow checking
+	 */
 	// FIXME refactor/reconcile the rounding/overflow checking versions of these methods
-	public static long multiplyChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
+	public static long multiplyChecked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal1, final long uDecimal2) {
 		try {
 			final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 			if (special != null) {
