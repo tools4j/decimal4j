@@ -49,7 +49,7 @@ public class MultiplyTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
 			return a.multiply(b);
 		} else {
 			if (isUnchecked() && rnd.nextBoolean()) {

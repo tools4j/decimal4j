@@ -93,7 +93,7 @@ final class Div {
 		//WE WANT: uDecimalDividend * one / uDecimalDivisor
 		final long maxInteger = scaleMetrics.getMaxIntegerValue();
 		final long minInteger = scaleMetrics.getMinIntegerValue();
-		if (uDecimalDividend <= maxInteger && uDecimalDividend >= minInteger) {
+		if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
 			//just do it, multiplication result fits in long
 			final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
 			final long quot = scaledDividend / uDecimalDivisor;
@@ -104,7 +104,7 @@ final class Div {
 		final long integralPart = uDecimalDividend / uDecimalDivisor;
 		final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
 
-		if (remainder <= maxInteger && remainder >= minInteger) {
+		if (remainder <= maxInteger & remainder >= minInteger) {
 			final long scaledReminder = scaleMetrics.multiplyByScaleFactor(remainder);
 			final long fractionalPart = scaledReminder / uDecimalDivisor;
 			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
@@ -138,7 +138,7 @@ final class Div {
 			//WE WANT: uDecimalDividend * one / uDecimalDivisor
 			final long maxInteger = scaleMetrics.getMaxIntegerValue();
 			final long minInteger = scaleMetrics.getMinIntegerValue();
-			if (uDecimalDividend <= maxInteger && uDecimalDividend >= minInteger) {
+			if (uDecimalDividend <= maxInteger & uDecimalDividend >= minInteger) {
 				//just do it, multiplication result fits in long
 				final long scaledDividend = scaleMetrics.multiplyByScaleFactor(uDecimalDividend);
 				final long quot = scaledDividend / uDecimalDivisor;
@@ -150,7 +150,7 @@ final class Div {
 			final long integralPart = uDecimalDividend / uDecimalDivisor;
 			final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
 		
-			if (remainder <= maxInteger && remainder >= minInteger) {
+			if (remainder <= maxInteger & remainder >= minInteger) {
 				final long scaledReminder = scaleMetrics.multiplyByScaleFactorExact(remainder);
 				final long fractionalPart = scaledReminder / uDecimalDivisor;
 				final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;

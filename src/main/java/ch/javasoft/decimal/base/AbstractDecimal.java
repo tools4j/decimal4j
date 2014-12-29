@@ -910,7 +910,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public boolean isBetweenZeroAndMinusOne() {
 		final long unscaled = unscaledValue();
-		return 0 >= unscaled && unscaled > -getScaleMetrics().getScaleFactor();  
+		return 0 >= unscaled && unscaled > -(getScaleMetrics().getScaleFactor());  
 	}
 
 	@Override

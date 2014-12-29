@@ -64,7 +64,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			final int diff = scale - thisScale;
 			if (diff <= 18) {
 				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
-				if (uDecimal >= diffMetrics.getMinIntegerValue() & uDecimal <= diffMetrics.getMaxIntegerValue()) {
+				if (uDecimal >= diffMetrics.getMinIntegerValue() && uDecimal <= diffMetrics.getMaxIntegerValue()) {
 					final long rescaled = diffMetrics.multiplyByScaleFactor(uDecimal);
 					return BigDecimal.valueOf(rescaled, scale);
 				}

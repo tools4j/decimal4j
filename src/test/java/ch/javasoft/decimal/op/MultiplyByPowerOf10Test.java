@@ -90,7 +90,7 @@ public class MultiplyByPowerOf10Test extends Abstract1DecimalArg1IntArgToDecimal
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b) {
-		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
 			return a.multiplyByPowerOfTen(b);
 		} else {
 			if (isUnchecked() && rnd.nextBoolean()) {

@@ -194,9 +194,9 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	public static Decimal${scale}f valueOf(long value) {
         if (value == 0)
             return ZERO;
-        if (value > 0 && value <= MAX_CONSTANT)
+        if (value > 0 & value <= MAX_CONSTANT)
             return POS_CONST[(int) value];
-        else if (value < 0 && value >= -MAX_CONSTANT)
+        else if (value < 0 & value >= -MAX_CONSTANT)
             return NEG_CONST[(int) -value];
 		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromLong(value));
 	}

@@ -52,6 +52,7 @@ class ArithmeticResult<T> {
 	public void assertEquivalentTo(ArithmeticResult<T> expected, String messagePrefix) {
 		if ((expected.exception == null) != (exception == null)) {
 			if (expected.exception != null) {
+				// XXX use proper throws declaration
 		        throw (AssertionError)new AssertionError(messagePrefix + " was " + resultString + " but should lead to an exception: " + expected.exception).initCause(expected.exception);
 			} else {
 		        throw (AssertionError)new AssertionError(messagePrefix + " = " + expected.resultString + " but lead to an exception: " + exception).initCause(exception);

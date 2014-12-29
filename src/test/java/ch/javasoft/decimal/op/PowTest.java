@@ -93,7 +93,7 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b) {
-		if (isStandardTruncationPolicy() & rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
 			return a.pow(b);
 		} else {
 			if (isUnchecked() && rnd.nextBoolean()) {

@@ -134,7 +134,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 		final long iValue;
 		if (indexOfDot > 0) {
 			//NOTE: here we handle the special case "-.xxx" e.g. "-.25"
-			iValue = indexOfDot == 1 && value.charAt(0) == '-' ? 0 : Long.parseLong(value.substring(0, indexOfDot));
+			iValue = (indexOfDot == 1 && value.charAt(0) == '-') ? 0 : Long.parseLong(value.substring(0, indexOfDot));
 		} else {
 			iValue = 0;
 		}
