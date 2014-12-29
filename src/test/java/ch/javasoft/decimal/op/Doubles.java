@@ -47,7 +47,7 @@ class Doubles {
 			set.add(d);
 		}
 		for (final long l : TestSettings.TEST_CASES.getSpecialValuesFor(scaleMetrics)) {
-			final double dbl = (double) l;
+			final double dbl = l;
 			set.add(dbl);
 			set.add(dbl + Math.ulp(dbl));
 			set.add(dbl - Math.ulp(dbl));
@@ -129,9 +129,9 @@ class Doubles {
 		}
 	}
 
-
 	//no instances
 	private Doubles() {
 		super();
 	}
+	
 }

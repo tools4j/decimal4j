@@ -130,7 +130,7 @@ public class SqrtTest extends AbstractOperandTest {
 			return;
 		}
 		
-		if (rnd.nextBoolean() && (getRoundingMode() == RoundingMode.DOWN || getRoundingMode() == RoundingMode.FLOOR)) {
+		if ((getRoundingMode() == RoundingMode.DOWN || getRoundingMode() == RoundingMode.FLOOR) && rnd.nextBoolean()) {
 			//when: positive
 			final Decimal<S> actual = actualResult(operand);
 			

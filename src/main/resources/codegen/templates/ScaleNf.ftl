@@ -53,7 +53,7 @@ public final class Scale${scale}f extends AbstractScale {
 		if (leadingZeros > Long.SIZE + 1) {
 			return result;
 		}
-		if (leadingZeros < Long.SIZE | divideByScaleFactor(result) != factor) {
+		if (leadingZeros < Long.SIZE || divideByScaleFactor(result) != factor) {
 			throw new ArithmeticException("Overflow: " + factor + " * " + SCALE_FACTOR + " = " + result);
 		}
 		return result;

@@ -171,7 +171,7 @@ class DoubleConversion {
 			final long absResult = lScaled << shift;
 			return value >= 0 ? absResult : -absResult;
 		} else if (shift == 0) {
-			if (hScaled != 0 || lScaled < 0) {
+			if (hScaled != 0 | lScaled < 0) {
 				throw new NumberFormatException("Overflow for conversion from double to decimal: " + value);
 			}
 			return value >= 0 ? lScaled : -lScaled;
@@ -232,7 +232,7 @@ class DoubleConversion {
 	}
 	public static double longToDouble(DecimalArithmetics arith, DecimalRounding rounding, long value) {
 		if (rounding == DecimalRounding.HALF_EVEN) {
-			return (double)value;
+			return value;
 		}
 		return unscaledToDouble(arith, rounding, value);
 	}
@@ -304,8 +304,8 @@ class DoubleConversion {
 		
 	private static double unscaledToDoubleWithDoubleDivisionRoundHalfEven(ScaleMetrics scaleMetrics, long unscaled, int pow2, long absVal) {
 		final int scale = scaleMetrics.getScale();
-		final double dividend = (double)absVal;
-		final double divisor = (double)(scaleMetrics.getScaleFactor() >> scale);
+		final double dividend = absVal;
+		final double divisor = scaleMetrics.getScaleFactor() >> scale;
 		final double quotient = dividend / divisor;
 		final int exponent = Math.getExponent(quotient) + pow2 - scale;
 		final long significand = Double.doubleToRawLongBits(quotient) & SIGNIFICAND_MASK;

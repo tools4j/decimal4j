@@ -87,7 +87,7 @@ public class ShiftLeftTest extends Abstract1DecimalArg1IntArgToDecimalResultTest
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, int b) {
 		final int exp = Math.max(Math.min(b, Long.SIZE+1), -Long.SIZE-1);
-		if (getRoundingMode() == RoundingMode.FLOOR || b >= 0) {
+		if (b >= 0 || getRoundingMode() == RoundingMode.FLOOR) {
 			return new BigDecimal(a.unscaledValue().shiftLeft(exp), a.scale());
 		}
 //		System.out.println(a + "<<" + b + ": " + exp);
