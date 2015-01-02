@@ -220,7 +220,7 @@ final class Mul {
 				result = arith.add(result, scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d));
 				
 				final long remainder = scale9f.multiplyByScaleFactorExact(h1xl2_h2xl1_l1xl1r) + l1xl2r;
-				return result + RoundingUtil.calculateRoundingIncrement(rounding, result, remainder, scaleMetrics.getScaleFactor());
+				return arith.add(result, RoundingUtil.calculateRoundingIncrement(rounding, result, remainder, scaleMetrics.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
 			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal1) + " * " + arith.toString(uDecimal2));
