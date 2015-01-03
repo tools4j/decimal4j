@@ -141,6 +141,8 @@ final class Mul {
 	 * 
 	 * @param arith
 	 *            the arithmetics with access to scale metrics etc.
+	 * @param rounding
+	 *            the rounding to apply for truncated decimals
 	 * @param uDecimal1
 	 *            the first unscaled decimal factor
 	 * @param uDecimal2
