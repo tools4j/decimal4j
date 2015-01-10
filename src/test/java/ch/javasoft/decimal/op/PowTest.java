@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -38,10 +39,34 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		return data;
 	}
 	
+	@Override
+	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
+		final long one = scaleMetrics.getScaleFactor();
+		final long unscaled = one * (4 - rnd.nextInt(9)) + rnd.nextInt((int)Math.min(Integer.MAX_VALUE, one));
+//		final long unscaled = one * (2 - rnd.nextInt(3)) + rnd.nextInt((int)Math.min(Integer.MAX_VALUE, one));
+		return newDecimal(scaleMetrics, unscaled);
+	}
 //	private static final int MAX_EXPONENT = 999999999;
 	@Override
 	protected int randomIntOperand() {
-		return rnd.nextInt(200) - 100;
+//		return rnd.nextInt(200) - 100;//FIXME
+		return rnd.nextInt(30);
+	}
+	
+	@Test
+	public void test3pow27() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "3^27", newDecimal(m, m.multiplyByScaleFactor(3)), 27);
+	}
+	@Test
+	public void test3pow28() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "3^28", newDecimal(m, m.multiplyByScaleFactor(3)), 28);
+	}
+	@Test
+	public void test3pow29() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "3^29", newDecimal(m, m.multiplyByScaleFactor(3)), 29);
 	}
 	
 	@Override

@@ -16,7 +16,10 @@ public final class Scale${scale}f extends AbstractScale {
 	 */
 	public static final Scale${scale}f INSTANCE = new Scale${scale}f();
 
-	private static final long SCALE_FACTOR = ${"1"?right_pad(scale+1, "0")}L;
+	/**
+	 * The scale factor <code>10<sup>${scale}</sup></code>.
+	 */
+	public static final long SCALE_FACTOR = ${"1"?right_pad(scale+1, "0")}L;
 	
 	/** Long.numberOfLeadingZeros(SCALE_FACTOR)*/
 	private static final int NLZ_SCALE_FACTOR = ${nlzScaleFactor[scale]};
