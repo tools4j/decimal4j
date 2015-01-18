@@ -18,10 +18,13 @@ final class Pow10 {
 		if (n > 0) {
 			int pos = n;
 			long result = uDecimal;
-			//NOTE: this is not very efficient for n >> 18
-			//      but how else do we get the correct truncated value?
+			//NOTE: result will be 0 after at most 1+64/18 rounds
+			//      because 10^64 contains 2^64 which is a shift left by 64
 			while (pos > 18) {
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				if (result == 0) {
+					return 0;
+				}
 				pos -= 18;
 			}
 			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
@@ -43,10 +46,13 @@ final class Pow10 {
 		if (n > 0) {
 			int pos = n;
 			long result = uDecimal;
-			//NOTE: this is not very efficient for n >> 18
-			//      but how else do we get the correct truncated value?
+			//NOTE: result will be 0 after at most 1+64/18 rounds
+			//      because 10^64 contains 2^64 which is a shift left by 64
 			while (pos > 18) {
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				if (result == 0) {
+					return 0;
+				}
 				pos -= 18;
 			}
 			final ScaleMetrics scaleMetrics = Scales.valueOf(pos);
@@ -136,10 +142,13 @@ final class Pow10 {
 		} else {
 			int pos = n;
 			long result = uDecimal;
-			//NOTE: this is not very efficient for n << -18
-			//      but how else do we get the correct truncated value?
+			//NOTE: result will be 0 after at most 1+64/18 rounds
+			//      because 10^64 contains 2^64 which is a shift left by 64
 			while (pos < -18) {
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				if (result == 0) {
+					return 0;
+				}
 				pos += 18;
 			}
 			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
@@ -173,10 +182,13 @@ final class Pow10 {
 		} else {
 			int pos = n;
 			long result = uDecimal;
-			//NOTE: this is not very efficient for n << -18
-			//      but how else do we get the correct truncated value?
+			//NOTE: result will be 0 after at most 1+64/18 rounds
+			//      because 10^64 contains 2^64 which is a shift left by 64
 			while (pos < -18) {
 				result = Scale18f.INSTANCE.multiplyByScaleFactor(result);
+				if (result == 0) {
+					return 0;
+				}
 				pos += 18;
 			}
 			final ScaleMetrics scaleMetrics = Scales.valueOf(-pos);
