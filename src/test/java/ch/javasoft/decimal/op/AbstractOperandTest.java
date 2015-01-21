@@ -110,6 +110,18 @@ abstract public class AbstractOperandTest {
 		final long unscaled = rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
 		return newDecimal(scaleMetrics, unscaled);
 	}
+	
+	protected long randomLong(long n) {
+        if (n <= 0)
+            throw new IllegalArgumentException("n must be positive, but was " + n);
+
+        long bits, val;
+        do {
+            bits = rnd.nextLong() >>> 1;
+            val = bits % n;
+        } while (bits - val + (n-1) < 0);
+        return val;
+	}
 
 	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
 		return Factories.valueOf(scaleMetrics).createImmutable(unscaled);

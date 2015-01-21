@@ -133,14 +133,14 @@ public interface DecimalArithmetics {
 	long add(long uDecimal1, long uDecimal2);
 
 	/**
-	 * Returns an unscaled decimal whose value is {@code (uDecimalMinuend +
+	 * Returns an unscaled decimal whose value is {@code (uDecimalMinuend -
 	 * uDecimalSubtrahend)}.
 	 * 
 	 * @param uDecimalMinuend
 	 *            unscaled decimal value to be subtracted from
 	 * @param uDecimalSubtrahend
 	 *            unscaled decimal value to subtract from the minuend
-	 * @return {@code uDecimalMinuend + uDecimalSubtrahend}
+	 * @return {@code uDecimalMinuend - uDecimalSubtrahend}
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the {@link #getOverflowMode()
 	 *             overflow mode} is set to throw an exception
