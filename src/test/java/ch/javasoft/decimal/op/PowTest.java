@@ -1,6 +1,7 @@
 package ch.javasoft.decimal.op;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -16,6 +17,7 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.test.TestSettings;
+import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
@@ -40,20 +42,19 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		return data;
 	}
 	
-	private double absBase;
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
 		final long one = scaleMetrics.getScaleFactor();
 		final long unscaled = one * (4 - rnd.nextInt(9)) + one - randomLong(2*one + 1);
 //		final long unscaled = one * (2 - rnd.nextInt(3)) + rnd.nextInt((int)Math.min(Integer.MAX_VALUE, one));
-		absBase = Math.abs(unscaled) / (double)one;
 		return newDecimal(scaleMetrics, unscaled);
 	}
 //	private static final int MAX_EXPONENT = 999999999;
 	@Override
-	protected int randomIntOperand() {
+	protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand) {
 //		return rnd.nextInt(200) - 100;//FIXME
 //		return 30 - rnd.nextInt(61);
+		final double absBase = Math.abs(decimalOperand.doubleValue(RoundingMode.UP));
 //		final int maxPow = Math.min(999999999+1, (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.log(absBase)));
 		final int maxPow = Math.min(1000, (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.max(1e-10, Math.log(absBase))));
 		return rnd.nextInt(maxPow);
@@ -121,8 +122,65 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		return "^";
 	}
 	
+	@Override
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, int b) {
+		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
+
+		//expected
+		ArithmeticResult<Long> expected;
+		try {
+			expected = ArithmeticResult.forResult(arithmetics, expectedResult(bdOperandA, b));
+		} catch (ArithmeticException e) {
+			expected = ArithmeticResult.forException(e);
+		}
+
+		//actual
+		ArithmeticResult<Long> actual;
+		try {
+			actual = ArithmeticResult.forResult(actualResult(dOperandA, b));
+		} catch (ArithmeticException e) {
+			actual = ArithmeticResult.forException(e);
+		}
+		
+		//assert
+		try {
+			actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
+		} catch (AssertionError e) {
+			if (!isWithinAllowedTolerance(expected, actual)) {
+				throw e;
+			}
+		}
+	}
 	
-	
+	//By definition pow precision is 1 ULP
+	private boolean isWithinAllowedTolerance(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual) {
+		final Long exp = expected.getCompareValue();
+		final Long act = actual.getCompareValue();
+		if (exp == null || act == null) {
+			return false;
+		}
+		final boolean neg = (exp < 0 & act < 0) && ((exp == 0 | act == 0) & (exp < 0 | act < 0));
+		final long diff = act - exp;
+		switch (getRoundingMode()) {
+		case UP:
+			return neg ? diff == -1 : diff == 1;
+		case DOWN:
+			return neg ? diff == 1 : diff == -1;
+		case CEILING:
+			return diff == 1;
+		case FLOOR:
+			return diff == -1;
+		case HALF_UP://fallthrough
+		case HALF_DOWN://fallthrough
+		case HALF_EVEN:
+			return diff == 1 | diff == -1;
+		case UNNECESSARY:
+			return false;
+		default:
+			throw new IllegalArgumentException("unsupported rounding mode: " + getRoundingMode());
+		}
+	}
+
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, int b) {
 		final BigDecimal result = a.pow(Math.abs(b));

@@ -42,7 +42,7 @@ public class ShiftRightTest extends Abstract1DecimalArg1IntArgToDecimalResultTes
 	
 //	private static final int MAX_EXPONENT = 999999999;
 	@Override
-	protected int randomIntOperand() {
+	protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand) {
 		return rnd.nextInt(200) - 100;
 	}
 	@Override

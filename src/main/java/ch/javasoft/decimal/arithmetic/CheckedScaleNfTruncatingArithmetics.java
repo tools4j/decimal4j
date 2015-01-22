@@ -37,7 +37,7 @@ public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfA
 
 	@Override
 	public long pow(long uDecimal, int exponent) {
-		return Pow.powChecked(this, DecimalRounding.DOWN, uDecimal, exponent);
+		return Pow.pow(this, DecimalRounding.DOWN, uDecimal, exponent);
 	}
 
 	@Override

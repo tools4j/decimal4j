@@ -30,13 +30,14 @@ abstract public class Abstract1DecimalArg1IntArgToDecimalResultTest extends Abst
 
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b);
 	
-	abstract protected int randomIntOperand();
+	abstract protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand);
 
 	abstract protected int[] getSpecialIntOperands();
 	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics), randomIntOperand());
+		final Decimal<S> decimalOperand = randomDecimal(scaleMetrics);
+		runTest(scaleMetrics, "[" + index + "]", decimalOperand, randomIntOperand(decimalOperand));
 	}
 
 	@Override

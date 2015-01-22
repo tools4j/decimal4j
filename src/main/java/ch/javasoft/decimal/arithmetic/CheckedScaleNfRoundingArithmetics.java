@@ -79,7 +79,7 @@ public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfAri
 
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
-		return Pow.powChecked(this, rounding, uDecimalBase, exponent);
+		return Pow.pow(this, rounding, uDecimalBase, exponent);
 	}
 
 	@Override

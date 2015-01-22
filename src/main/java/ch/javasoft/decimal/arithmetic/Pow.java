@@ -56,6 +56,15 @@ final class Pow {
 		return arith.getOverflowMode() == OverflowMode.UNCHECKED ? powLong(arith, rounding, longBase, exponent) : powLongChecked(arith, rounding, longBase, exponent);
 	}
 
+	/**
+	 * Power function for checked or unchecked arithmetics. The result is within 1 ULP.
+	 * 
+	 * @param arith			the arithmetics
+	 * @param rounding		the rounding to apply
+	 * @param uDecimalBase	the unscaled base
+	 * @param exponent		the exponent
+	 * @return {@code uDecimalbase ^ exponent}
+	 */
 	public static long pow(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
 		if (exponent < -999999999 || exponent > 999999999) {
 			throw new ArithmeticException("Exponent must be in [-999999999,999999999] but was: " + exponent);
@@ -188,51 +197,6 @@ final class Pow {
 		final long inverted = arith18.invert(divisor);//can't overflow as divisor is in [-2, 2]
 		final long shifted = arith18.shiftRight(inverted, acc.getPow2());//no overflow as this is a division
 		return arith.fromUnscaled(shifted, 18);
-	}
-	
-	public static long powChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
-		final SpecialPowResult special = SpecialPowResult.getFor(arith, uDecimalBase, exponent);
-		if (special != null) {
-			return special.pow(arith, uDecimalBase, exponent);
-		}
-
-		//some other special cases
-		try {
-			if (exponent > 0) {
-				final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-				final long fractionalPart = scaleMetrics.moduloByScaleFactor(uDecimalBase);
-				if (fractionalPart == 0) {
-					final long lBase = scaleMetrics.divideByScaleFactor(uDecimalBase);
-					final long lResult = powLongCheckedWithPositiveExponent(lBase, exponent);
-					return scaleMetrics.multiplyByScaleFactorExact(lResult);
-				}
-
-				//try long method checked
-				try {
-					final long powered = powLongCheckedWithPositiveExponent(uDecimalBase, exponent);
-					return Pow10.divideByPowerOf10(rounding, powered, (exponent - 1) * scaleMetrics.getScale());
-				} catch (ArithmeticException e) {
-					//ignore, fallback to slower method below
-				}
-			}
-
-			//ok, then the slow method via BigDecimal
-			final BigDecimal bigDecimalResult = powToBigDecimal(arith, uDecimalBase, exponent);
-			return JDKSupport.bigIntegerToLongValueExact(bigDecimalResult.unscaledValue());
-		} catch (ArithmeticException e) {
-			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalBase) + "^" + exponent);
-		}
-	}
-
-	private static BigDecimal powToBigDecimal(DecimalArithmetics arith, long uDecimal, int exponent) {
-		//don't know how to do better than by using a BigInteger
-		final int scale = arith.getScale();
-		final BigDecimal bigDecimalBase = BigDecimal.valueOf(uDecimal, scale);
-		if (exponent >= 0) {
-			return bigDecimalBase.pow(exponent).setScale(scale, arith.getRoundingMode());
-		} else {
-			return BigDecimal.ONE.divide(bigDecimalBase.pow(-exponent), scale, arith.getRoundingMode());
-		}
 	}
 
 	private static long powLongWithPositiveExponent(DecimalArithmetics arith, long lBase, int exponent) {

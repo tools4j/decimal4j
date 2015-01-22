@@ -64,6 +64,10 @@ class ArithmeticResult<T> {
 		}
 	}
 	
+	public T getCompareValue() {
+		return compareValue;
+	}
+	
 	@Override
 	public String toString() {
 		if (exception == null) {

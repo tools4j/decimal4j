@@ -137,7 +137,7 @@ public enum DecimalRounding {
 		@Override
 		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
-				if (truncatedPart.isGreaterThanHalf() || ((truncatedValue & 0x1) != 0)) {
+				if (truncatedPart.isGreaterThanHalf() | ((truncatedValue & 0x1) != 0)) {
 					return sgn;
 				}
 			}
