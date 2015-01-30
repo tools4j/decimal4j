@@ -6,6 +6,13 @@ package ch.javasoft.decimal.arithmetic;
  */
 final class Checked {
 
+	public static final long addLong(long long1, long long2) {
+		final long result = long1 + long2;
+		if ((long1 ^ long2) >= 0 & (long1 ^ result) < 0) {
+			throw new ArithmeticException("Overflow: " + long1 + " + " + long2 + " = " + result);
+		}
+		return result;
+	}
 	public static final long add(DecimalArithmetics arith, long uDecimal1, long uDecimal2) {
 		final long result = uDecimal1 + uDecimal2;
 		if ((uDecimal1 ^ uDecimal2) >= 0 & (uDecimal1 ^ result) < 0) {

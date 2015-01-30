@@ -25,8 +25,11 @@ final class Pow {
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
 		}
+		return powLong(rounding, lBase, exponent);
+	}
+	private static long powLong(DecimalRounding rounding, long lBase, int exponent) {
 		if (exponent >= 0) {
-			return powLongWithPositiveExponent(arith, lBase, exponent);
+			return powLongWithPositiveExponent(lBase, exponent);
 		} else {
 			//result is 1/powered
 			//we have dealt with special cases above hence powered is neither of 0, 1, -1
@@ -41,6 +44,9 @@ final class Pow {
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
 		}
+		return powLongChecked(rounding, lBase, exponent);
+	}
+	private static long powLongChecked(DecimalRounding rounding, long lBase, int exponent) {
 		if (exponent >= 0) {
 			return powLongCheckedWithPositiveExponent(lBase, exponent);
 		} else {
@@ -52,8 +58,8 @@ final class Pow {
 		}
 	}
 	
-	private static long powLongCheckedOrUnchecked(DecimalArithmetics arith, DecimalRounding rounding, long longBase, int exponent) {
-		return arith.getOverflowMode() == OverflowMode.UNCHECKED ? powLong(arith, rounding, longBase, exponent) : powLongChecked(arith, rounding, longBase, exponent);
+	private static long powLongCheckedOrUnchecked(OverflowMode overflowMode, DecimalRounding rounding, long longBase, int exponent) {
+		return overflowMode == OverflowMode.UNCHECKED ? powLong(rounding, longBase, exponent) : powLongChecked(rounding, longBase, exponent);
 	}
 
 	/**
@@ -77,15 +83,15 @@ final class Pow {
 		//some other special cases
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 
-		//integer?
-		if (scaleMetrics.moduloByScaleFactor(uDecimalBase) == 0) {
+		final long intVal = scaleMetrics.divideByScaleFactor(uDecimalBase);
+		final long fraVal = uDecimalBase - scaleMetrics.multiplyByScaleFactor(intVal);
+		if (fraVal == 0) {
 			//integer
-			final long intval = scaleMetrics.divideByScaleFactor(uDecimalBase);
-			final long result = powLongCheckedOrUnchecked(arith, rounding, intval, exponent);
+			final long result = powLongCheckedOrUnchecked(arith.getOverflowMode(), rounding, intVal, exponent);
 			return arith.fromLong(result);
 		}
 
-		return powWithPrecision18(arith, rounding, uDecimalBase, exponent);
+		return powWithPrecision18(arith, rounding, intVal, fraVal, exponent);
 	}
 	
 	/**
@@ -142,17 +148,18 @@ final class Pow {
 	 * @since 1.5
 	 */
 	//PRECONDITION: n != 0 and n in [-999999999,999999999]
-	private static long powWithPrecision18(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalBase, int n) {
+	private static long powWithPrecision18(DecimalArithmetics arith, DecimalRounding rounding, long ival, long fval, int n) {
 		//eliminate sign
-		final int sgn = ((n & 0x1) != 0) ? Long.signum(uDecimalBase) : 1;
-		final long absBase = Math.abs(uDecimalBase);
+		final int sgn = ((n & 0x1) != 0) ? Long.signum(ival | fval) : 1;
+		final long absInt = Math.abs(ival);
+		final long absFra = Math.abs(fval);
 		final DecimalRounding powRounding = n >= 0 ? rounding : getOppositeRoundingMode(rounding);
 		
 		//36 digit left hand side, initialized with absBase
-		final UnsignedDecimal36f lhs = new UnsignedDecimal36f(absBase, arith.getScaleMetrics());
+		final UnsignedDecimal9x36f lhs = new UnsignedDecimal9x36f(absInt, absFra, arith.getScaleMetrics());
 		
 		//36 digit accumulator, initialized with one without leading 1 digit
-		final UnsignedDecimal36f acc = UnsignedDecimal36f.one();
+		final UnsignedDecimal9x36f acc = UnsignedDecimal9x36f.one();
 		
 		// ready to carry out power calculation...
 		int mag = Math.abs(n);
@@ -171,35 +178,36 @@ final class Pow {
         }
         
         if (n < 0) {
-//    		return invert(arith, rounding, powRounding, acc);
-			return acc.getInverted(sgn, arith, rounding);
+    		return invert(sgn, arith, rounding, powRounding, acc);
+//			return acc.getInverted(sgn, arith, rounding);
         }
         return acc.getDecimal(sgn, arith, rounding);
 	}
 
-	private static long invert(int sgn, DecimalArithmetics arith, DecimalRounding rounding, final DecimalRounding powRounding, final UnsignedDecimal36f acc) {
+	private static long invert(int sgn, DecimalArithmetics arith, DecimalRounding rounding, final DecimalRounding powRounding, final UnsignedDecimal9x36f acc) {
 		//we apply pow2 after division
-		final DecimalArithmetics arith18 = Scale18f.INSTANCE.getArithmetics(rounding.getRoundingMode());//unchecked is fine, see comments below 
-		if (acc.getPow2() <= 0) {
-			//rescale first, then multiply by pow2
+		final DecimalArithmetics arith18 = Scale18f.INSTANCE.getArithmetics(rounding.getRoundingMode());//unchecked is fine, see comments below
+		int pow10 = acc.getRawPow10();
+		if (pow10 <= 0) {
+			//rescale first, then multiply by pow10
 			final int scale = arith.getScale();
 			if (scale < 18) {
 				final ScaleMetrics diffMetrics = Scales.valueOf(18 - scale);
-				final UnsignedDecimal36f scaleFactor = new UnsignedDecimal36f(diffMetrics.getScaleFactor());
+				final UnsignedDecimal9x36f scaleFactor = new UnsignedDecimal9x36f(diffMetrics.getScaleFactor());
 				acc.multiply(sgn, scaleFactor, powRounding);
 			}
 			final long divisor = acc.getRaw(sgn, arith, powRounding);
 			final long inverted = arith18.invert(divisor);//can't overflow as divisor is in [-2, 2]
-			return arith.shiftLeft(inverted, -acc.getPow2());//overflow possible
+			return arith.multiplyByPowerOf10(inverted, -acc.getRawPow10());//overflow possible
 		}
-		//divide by pow2 first, then rescale
+		//divide by pow10 first, then rescale
 		final long divisor = acc.getRaw(sgn, arith, powRounding);
 		final long inverted = arith18.invert(divisor);//can't overflow as divisor is in [-2, 2]
-		final long shifted = arith18.shiftRight(inverted, acc.getPow2());//no overflow as this is a division
+		final long shifted = arith18.divideByPowerOf10(inverted, pow10);//no overflow as this is a division
 		return arith.fromUnscaled(shifted, 18);
 	}
 
-	private static long powLongWithPositiveExponent(DecimalArithmetics arith, long lBase, int exponent) {
+	private static long powLongWithPositiveExponent(long lBase, int exponent) {
 		assert (exponent > 0);
 
 		long accum = 1;

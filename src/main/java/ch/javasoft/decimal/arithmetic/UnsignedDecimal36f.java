@@ -44,6 +44,7 @@ final class UnsignedDecimal36f {
 		int pow2 = 0;
 		long l3 = fval18;
 		long l2 = 0;
+		long l1 = 0;
 		long iv = ival;
 		while (iv >= 2 | iv < 0) {
 			if ((iv & 0x1) != 0) {

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -17,7 +16,6 @@ import ch.javasoft.decimal.Decimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.test.TestSettings;
-import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.TruncationPolicy;
 
 /**
@@ -57,7 +55,8 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		final double absBase = Math.abs(decimalOperand.doubleValue(RoundingMode.UP));
 //		final int maxPow = Math.min(999999999+1, (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.log(absBase)));
 		final int maxPow = Math.min(1000, (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.max(1e-10, Math.log(absBase))));
-		return rnd.nextInt(maxPow);
+//		return rnd.nextInt(maxPow);
+		return maxPow - rnd.nextInt(2*maxPow);
 	}
 	
 	@Test
@@ -75,9 +74,35 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		final ScaleMetrics m = getScaleMetrics();
 		runTest(m, "3^29", newDecimal(m, m.multiplyByScaleFactor(3)), 29);
 	}
+	@Test
+	public void test10pow3() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "10^3", newDecimal(m, m.multiplyByScaleFactor(10)), 3);
+	}
+	@Test
+	public void test100pow3() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "100^3", newDecimal(m, m.multiplyByScaleFactor(100)), 3);
+	}
+	@Test
+	public void test0_84pow254() {
+		if (getScale() == 18) {
+			//0.849628138173771215^254
+			final ScaleMetrics m = getScaleMetrics();
+			runTest(m, "test0_84pow254", newDecimal(m, 849628138173771215L), 254);
+		}
+	}
+	@Test
+	public void test0_9979046pow914() {
+		if (getScale() == 7) {
+			//0.849628138173771215^254
+			final ScaleMetrics m = getScaleMetrics();
+			runTest(m, "test0_9979046pow914", newDecimal(m, 9979046), 914);
+		}
+	}
 	
 	@Override
-	@Ignore //FIXME unignore this test
+	//@Ignore //FIXME unignore this test
 	@Test
 	public void runSpecialValueTest() {
 		super.runSpecialValueTest();
@@ -154,6 +179,9 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	
 	//By definition pow precision is 1 ULP
 	private boolean isWithinAllowedTolerance(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual) {
+		return false;
+	}
+	private boolean isWithinAllowedToleranceOld(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual) {
 		final Long exp = expected.getCompareValue();
 		final Long act = actual.getCompareValue();
 		if (exp == null || act == null) {
