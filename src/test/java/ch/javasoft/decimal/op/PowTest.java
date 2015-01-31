@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -24,8 +25,25 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
 @RunWith(Parameterized.class)
 public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	
+	public static final int MAX_POW_EXPONENT = getMaxPowExponent();
+	
 	public PowTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);
+	}
+
+	private static int getMaxPowExponent() {
+		switch (TestSettings.TEST_CASES) {
+		case ALL:
+			return 2000;
+		case STANDARD:
+			return 500;
+		case SMALL:
+			return 200;
+		case TINY:
+			return 100;
+		default:
+			throw new RuntimeException("unsupported: " + TestSettings.TEST_CASES);
+		}
 	}
 
 	@Parameters(name = "{index}: {0}, {1}")
@@ -43,20 +61,31 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
 		final long one = scaleMetrics.getScaleFactor();
-		final long unscaled = one * (4 - rnd.nextInt(9)) + one - randomLong(2*one + 1);
-//		final long unscaled = one * (2 - rnd.nextInt(3)) + rnd.nextInt((int)Math.min(Integer.MAX_VALUE, one));
+//		final long unscaled = one * (4 - rnd.nextInt(9)) + one - randomLong(2*one + 1);
+		final long unscaled = one * (8 - rnd.nextInt(17)) + one - randomLong(2*one + 1);
 		return newDecimal(scaleMetrics, unscaled);
 	}
-//	private static final int MAX_EXPONENT = 999999999;
+
 	@Override
 	protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand) {
-//		return rnd.nextInt(200) - 100;//FIXME
-//		return 30 - rnd.nextInt(61);
-		final double absBase = Math.abs(decimalOperand.doubleValue(RoundingMode.UP));
-//		final int maxPow = Math.min(999999999+1, (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.log(absBase)));
-		final int maxPow = Math.min(1000, (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.max(1e-10, Math.log(absBase))));
-//		return rnd.nextInt(maxPow);
-		return maxPow - rnd.nextInt(2*maxPow);
+		if (decimalOperand.isZero() || decimalOperand.isOne() || decimalOperand.isMinusOne()) {
+			return MAX_POW_EXPONENT - rnd.nextInt(2 * MAX_POW_EXPONENT + 1);
+		}
+		final boolean posExp = rnd.nextBoolean();
+		final double absBase;
+		if (posExp) {
+			absBase = Math.abs(decimalOperand.doubleValue(RoundingMode.UP));
+		} else {
+			absBase = Math.abs(1.0/decimalOperand.doubleValue(RoundingMode.DOWN));
+		}
+		final int maxPow;
+		if (absBase >= 1) {
+			maxPow = (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.max(1e-10, Math.log(absBase)));
+		} else {
+			maxPow = -(int)(64 / (Math.log(absBase) / Math.log(2)));
+		}
+		final int pow = Math.max(1, Math.min(MAX_POW_EXPONENT, maxPow));
+		return posExp ? rnd.nextInt(pow) : -rnd.nextInt(pow);
 	}
 	
 	@Test
@@ -85,26 +114,44 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		runTest(m, "100^3", newDecimal(m, m.multiplyByScaleFactor(100)), 3);
 	}
 	@Test
+	public void test2powNeg16() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "2^-16", newDecimal(m, m.multiplyByScaleFactor(3)), -16);
+	}
+	@Test
+	public void test3powNeg10() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "3^-10", newDecimal(m, m.multiplyByScaleFactor(3)), -10);
+	}
+	@Test
+	public void test3_1powNeg2() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "3.1^-2", newDecimal(m, m.multiplyByScaleFactor(3) + m.getScaleFactor()/10), -2);
+	}
+	@Test
+	public void test3_2powNeg2() {
+		final ScaleMetrics m = getScaleMetrics();
+		runTest(m, "3.2^-2", newDecimal(m, m.multiplyByScaleFactor(3) + m.getScaleFactor()/5), -2);
+	}
+	@Test
 	public void test0_84pow254() {
 		if (getScale() == 18) {
-			//0.849628138173771215^254
 			final ScaleMetrics m = getScaleMetrics();
-			runTest(m, "test0_84pow254", newDecimal(m, 849628138173771215L), 254);
+			runTest(m, "0.849628138173771215^254", newDecimal(m, 849628138173771215L), 254);
 		}
 	}
 	@Test
 	public void test0_9979046pow914() {
 		if (getScale() == 7) {
-			//0.849628138173771215^254
 			final ScaleMetrics m = getScaleMetrics();
-			runTest(m, "test0_9979046pow914", newDecimal(m, 9979046), 914);
+			runTest(m, "0.9979046^914", newDecimal(m, 9979046), 914);
 		}
 	}
 	
 	@Override
-	//@Ignore //FIXME unignore this test
 	@Test
 	public void runSpecialValueTest() {
+		Assume.assumeTrue("overflown results without CHECKED mode don't match", getOverflowMode().isChecked());
 		super.runSpecialValueTest();
 	}
 	
@@ -171,41 +218,43 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		try {
 			actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
 		} catch (AssertionError e) {
-			if (!isWithinAllowedTolerance(expected, actual)) {
+			if (!isWithinAllowedTolerance(expected, actual, b)) {
 				throw e;
 			}
 		}
 	}
 	
-	//By definition pow precision is 1 ULP
-	private boolean isWithinAllowedTolerance(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual) {
-		return false;
-	}
-	private boolean isWithinAllowedToleranceOld(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual) {
+	//By definition pow precision is
+	//n >= 0: rounding = HALF_UP, HALF_DOWN, HALF_EVEN: 1 ULP
+	//n >= 0: other rounding modes: 0
+	//n < 0: 15 ULP ??? 
+	private boolean isWithinAllowedTolerance(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual, int exponent) {
+		final int maxTolerance = exponent >= 0 ? 0 : 15;
+		final int maxRoundingHalfTolerance = exponent >= 0 ? 1 : 15;
 		final Long exp = expected.getCompareValue();
 		final Long act = actual.getCompareValue();
 		if (exp == null || act == null) {
 			return false;
 		}
-		final boolean neg = (exp < 0 & act < 0) && ((exp == 0 | act == 0) & (exp < 0 | act < 0));
+		final boolean neg = (exp < 0 & act < 0) | ((exp == 0 | act == 0) & (exp < 0 | act < 0));
 		final long diff = act - exp;
 		switch (getRoundingMode()) {
 		case UP:
-			return neg ? diff == -1 : diff == 1;
+			return neg ? diff <= 0 & diff >= -maxTolerance : diff >= 0 & diff <= maxTolerance;
 		case DOWN:
-			return neg ? diff == 1 : diff == -1;
+			return neg ? diff >= 0 & diff <= maxTolerance : diff <= 0 & diff >= -maxTolerance;
 		case CEILING:
-			return diff == 1;
+			return diff >= 0 & diff <= maxTolerance;
 		case FLOOR:
-			return diff == -1;
+			return diff <= 0 & diff >= -maxTolerance;
 		case HALF_UP://fallthrough
 		case HALF_DOWN://fallthrough
 		case HALF_EVEN:
-			return diff == 1 | diff == -1;
+			return diff <= maxRoundingHalfTolerance & diff >= -maxRoundingHalfTolerance;
 		case UNNECESSARY:
 			return false;
 		default:
-			throw new IllegalArgumentException("unsupported rounding mode: " + getRoundingMode());
+			return false;
 		}
 	}
 

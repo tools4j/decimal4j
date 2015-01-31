@@ -39,9 +39,6 @@ final class UnsignedDecimal9x36f {
 	public int getPow10() {
 		return pow10;
 	}
-	public int getRawPow10() {
-		return pow10 + log10(ival) - 1;
-	}
 	private void normalizeAndRound(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, DecimalRounding rounding) {
 		while (ival == 0) {
 			ival = val3;
@@ -211,13 +208,26 @@ final class UnsignedDecimal9x36f {
 			return rounding.calculateRoundingIncrement(1, absValue, truncatedPart); 
 		}
 	}
-	public final long getRaw(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
+	private int getInvNormPow10() {
 		final int log10 = log10(ival);
-		final int pow10 = -log10 + 1;//we want to normalize the ival part to be between 1 and 9 (inclusive)
+		return (ival >= Scales.valueOf(log10 - 1).getScaleFactor()*3) ? log10 : log10 - 1;//we want to normalize the ival part to be between 1 and 5
+	}
+	private final long getInvNorm(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
+		final int pow10 = -getInvNormPow10();
 		if (pow10 >= 0) {
 			return getDecimal(sgn, pow10, ival, val3, val2, val1, val0, 0, 0, 0, 0, arith, rounding);
 		}
 		return getDecimal(sgn, pow10 + 18, 0, ival, val3, val2, val1, val0, 0, 0, 0, arith, rounding);
+	}
+	public long getInverted(int sgn, DecimalArithmetics arith, DecimalRounding rounding, DecimalRounding powRounding, UnsignedDecimal9x36f acc) {
+		//1) get scale18 value normalized to 0.3 <= x < 3 (i.e. make it invertible without overflow for uninverted and inverted value)
+		final DecimalArithmetics arith18 = Scale18f.INSTANCE.getArithmetics(rounding.getRoundingMode());//unchecked is fine, see comments below
+		final long divisor = acc.getInvNorm(sgn, arith18, powRounding);
+		//2) invert normalized scale18 value 
+		final long inverted = arith18.invert(divisor);//can't overflow as for x=abs(divisor): 0.9 <= x < 9 
+		//3) apply inverted powers of 10, including powers from normalization and rescaling 
+		final int pow10 = acc.getPow10() + acc.getInvNormPow10() + (18 - arith.getScale());
+		return arith.multiplyByPowerOf10(inverted, -pow10);//overflow possible
 	}
 	public final long getDecimal(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
 		if (pow10 >= 0) {
@@ -405,4 +415,5 @@ final class UnsignedDecimal9x36f {
 		sb.append("*10^").append(pow10);
 		return sb.toString();
 	}
+
 }

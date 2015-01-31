@@ -3,9 +3,7 @@ package ch.javasoft.decimal.arithmetic;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-import ch.javasoft.decimal.scale.Scale18f;
 import ch.javasoft.decimal.scale.ScaleMetrics;
-import ch.javasoft.decimal.scale.Scales;
 import ch.javasoft.decimal.truncate.DecimalRounding;
 import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncatedPart;
@@ -85,10 +83,18 @@ final class Pow {
 
 		final long intVal = scaleMetrics.divideByScaleFactor(uDecimalBase);
 		final long fraVal = uDecimalBase - scaleMetrics.multiplyByScaleFactor(intVal);
-		if (fraVal == 0) {
+		if (exponent >= 0 & fraVal == 0) {
 			//integer
 			final long result = powLongCheckedOrUnchecked(arith.getOverflowMode(), rounding, intVal, exponent);
 			return arith.fromLong(result);
+		}
+		if (exponent < 0 & intVal == 0) {
+			final long one = scaleMetrics.getScaleFactor();
+			if ((one % fraVal) == 0) {
+				//inverted value is an integer
+				final long result = powLongCheckedOrUnchecked(arith.getOverflowMode(), rounding, one / fraVal, -exponent);
+				return arith.fromLong(result);
+			}
 		}
 
 		return powWithPrecision18(arith, rounding, intVal, fraVal, exponent);
@@ -178,33 +184,10 @@ final class Pow {
         }
         
         if (n < 0) {
-    		return invert(sgn, arith, rounding, powRounding, acc);
+    		return acc.getInverted(sgn, arith, rounding, powRounding, acc);
 //			return acc.getInverted(sgn, arith, rounding);
         }
         return acc.getDecimal(sgn, arith, rounding);
-	}
-
-	private static long invert(int sgn, DecimalArithmetics arith, DecimalRounding rounding, final DecimalRounding powRounding, final UnsignedDecimal9x36f acc) {
-		//we apply pow2 after division
-		final DecimalArithmetics arith18 = Scale18f.INSTANCE.getArithmetics(rounding.getRoundingMode());//unchecked is fine, see comments below
-		int pow10 = acc.getRawPow10();
-		if (pow10 <= 0) {
-			//rescale first, then multiply by pow10
-			final int scale = arith.getScale();
-			if (scale < 18) {
-				final ScaleMetrics diffMetrics = Scales.valueOf(18 - scale);
-				final UnsignedDecimal9x36f scaleFactor = new UnsignedDecimal9x36f(diffMetrics.getScaleFactor());
-				acc.multiply(sgn, scaleFactor, powRounding);
-			}
-			final long divisor = acc.getRaw(sgn, arith, powRounding);
-			final long inverted = arith18.invert(divisor);//can't overflow as divisor is in [-2, 2]
-			return arith.multiplyByPowerOf10(inverted, -acc.getRawPow10());//overflow possible
-		}
-		//divide by pow10 first, then rescale
-		final long divisor = acc.getRaw(sgn, arith, powRounding);
-		final long inverted = arith18.invert(divisor);//can't overflow as divisor is in [-2, 2]
-		final long shifted = arith18.divideByPowerOf10(inverted, pow10);//no overflow as this is a division
-		return arith.fromUnscaled(shifted, 18);
 	}
 
 	private static long powLongWithPositiveExponent(long lBase, int exponent) {
