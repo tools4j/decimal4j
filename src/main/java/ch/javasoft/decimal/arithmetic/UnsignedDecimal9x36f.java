@@ -10,6 +10,21 @@ import ch.javasoft.decimal.truncate.OverflowMode;
 import ch.javasoft.decimal.truncate.TruncatedPart;
 
 final class UnsignedDecimal9x36f {
+	/** Thread local for (L)eft (H)and (S)ide operator*/
+	static final ThreadLocal<UnsignedDecimal9x36f> LHS = new ThreadLocal<UnsignedDecimal9x36f>() {
+		@Override
+		protected UnsignedDecimal9x36f initialValue() {
+			return new UnsignedDecimal9x36f();
+		}
+	};
+	/** Thread local for accumulator*/
+	static final ThreadLocal<UnsignedDecimal9x36f> ACC = new ThreadLocal<UnsignedDecimal9x36f>() {
+		@Override
+		protected UnsignedDecimal9x36f initialValue() {
+			return new UnsignedDecimal9x36f();
+		}
+	};
+	
 	private int pow10;
 	private long ival;
 	private long val3;
@@ -18,23 +33,31 @@ final class UnsignedDecimal9x36f {
 	private long val0;
 	
 	/** Constructor for ONE*/
-	public UnsignedDecimal9x36f() {
+	private UnsignedDecimal9x36f() {
+		super();
+	}
+	public UnsignedDecimal9x36f initOne() {
 		this.pow10 = 0;
 		this.ival = 1;
 		this.val3 = 0;
 		this.val2 = 0;
 		this.val1 = 0;
 		this.val0 = 0;
+		return this;
 	}
-	public static UnsignedDecimal9x36f one() {
-		return new UnsignedDecimal9x36f();
+	public UnsignedDecimal9x36f init(UnsignedDecimal9x36f copy) {
+		this.pow10 = copy.pow10;
+		this.ival = copy.ival;
+		this.val3 = copy.val3;
+		this.val2 = copy.val2;
+		this.val1 = copy.val1;
+		this.val0 = copy.val0;
+		return this;
 	}
-	public UnsignedDecimal9x36f(long ival, long fval, ScaleMetrics scaleMetrics) {
+	public UnsignedDecimal9x36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
 		final ScaleMetrics diffMetrics = Scales.valueOf(18 - scaleMetrics.getScale());
 		normalizeAndRound(1, 0, ival, diffMetrics.multiplyByScaleFactor(fval), 0, 0, 0, DecimalRounding.UNNECESSARY);
-	}
-	public UnsignedDecimal9x36f(long longValue) {
-		normalizeAndRound(1, 0, longValue, 0, 0, 0, 0, DecimalRounding.UNNECESSARY);
+		return this;
 	}
 	public int getPow10() {
 		return pow10;

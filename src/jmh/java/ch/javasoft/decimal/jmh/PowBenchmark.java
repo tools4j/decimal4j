@@ -2,6 +2,7 @@ package ch.javasoft.decimal.jmh;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Random;
 
 import org.openjdk.jmh.annotations.Benchmark;
@@ -18,6 +19,7 @@ import org.openjdk.jmh.runner.RunnerException;
  */
 public class PowBenchmark extends AbstractBenchmark {
 	
+	private static final MathContext MC_ANSI_X3_274 = new MathContext(18);
 	private static final Random RND = new Random();
 	
 	@State(Scope.Benchmark)
@@ -49,6 +51,15 @@ public class PowBenchmark extends AbstractBenchmark {
 			} else {
 				blackhole.consume(BigDecimal.ONE.divide(state.values[i].bigDecimal1.pow(-exp), state.scale, state.roundingMode));
 			}
+		}
+	}
+
+	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
+	@Benchmark
+	public void bigDecimals_ANSI_X3_274(BenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			final int exp = state.exponents[i];
+			blackhole.consume(state.values[i].bigDecimal1.pow(exp, MC_ANSI_X3_274).setScale(state.scale, state.roundingMode));
 		}
 	}
 

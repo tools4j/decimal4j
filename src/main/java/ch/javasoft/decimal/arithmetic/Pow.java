@@ -162,10 +162,10 @@ final class Pow {
 		final DecimalRounding powRounding = n >= 0 ? rounding : getOppositeRoundingMode(rounding);
 		
 		//36 digit left hand side, initialized with absBase
-		final UnsignedDecimal9x36f lhs = new UnsignedDecimal9x36f(absInt, absFra, arith.getScaleMetrics());
+		final UnsignedDecimal9x36f lhs = UnsignedDecimal9x36f.LHS.get().init(absInt, absFra, arith.getScaleMetrics());
 		
 		//36 digit accumulator, initialized with one without leading 1 digit
-		final UnsignedDecimal9x36f acc = UnsignedDecimal9x36f.one();
+		final UnsignedDecimal9x36f acc = UnsignedDecimal9x36f.ACC.get().initOne();
 		
 		// ready to carry out power calculation...
 		int mag = Math.abs(n);
@@ -173,19 +173,24 @@ final class Pow {
         for (int i=1;;i++) {            // for each bit [top bit ignored]
             mag += mag;                 // shift left 1 bit
             if (mag < 0) {              // top bit is set
-            	seenbit = true;
-                acc.multiply(sgn, lhs, powRounding); // acc=acc*x
+            	if (seenbit) {
+            		acc.multiply(sgn, lhs, powRounding);// acc=acc*x
+            	} else {
+            		seenbit = true;
+            		acc.init(lhs);						// acc=x
+            	}
             }
-            if (i == 31)
+            if (i == 31) {
                 break;                  // that was the last bit
-            if (seenbit)
-            	acc.multiply(sgn, acc, powRounding);   // acc=acc*acc [square]
+            }
+            if (seenbit) {
+            	acc.multiply(sgn, acc, powRounding);	// acc=acc*acc [square]
                 // else (!seenbit) no point in squaring ONE
+            }
         }
         
         if (n < 0) {
     		return acc.getInverted(sgn, arith, rounding, powRounding, acc);
-//			return acc.getInverted(sgn, arith, rounding);
         }
         return acc.getDecimal(sgn, arith, rounding);
 	}
