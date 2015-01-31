@@ -64,7 +64,7 @@ abstract public class AbstractUnscaledOperandTest extends Abstract1DecimalArg1Lo
 
 	@Override
 	protected long randomLongOperand() {
-		return rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
+		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
 	}
 	
 	@Override

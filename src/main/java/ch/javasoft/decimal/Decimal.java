@@ -263,8 +263,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *
 	 * @return this {@code Decimal} converted to a {@code BigDecimal} with the
 	 *         same scale as this decimal value.
-	 * @throws ArithmeticException
-	 *             if {@code this} has a nonzero fractional part.
 	 */
 	BigDecimal toBigDecimal();
 
@@ -1313,6 +1311,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>.
+	 * For {@code n >= 0} the result is exact. No precision is guaranteed for
+	 * {@code n < 0} but the result is usually exact up to 10-15 ULP.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to.
@@ -1324,7 +1324,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>
-	 * applying the specified rounding mode.
+	 * applying the specified rounding mode. For {@code n >= 0} the result is
+	 * exact up to 1 ULP; the result is actually exact for all rounding modes
+	 * other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed
+	 * for {@code n < 0} but the result is usually exact up to 10-15 ULP.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to.

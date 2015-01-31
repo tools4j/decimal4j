@@ -32,16 +32,16 @@ public class AddUnscaledTest extends AbstractUnscaledOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
-		if (scale == getScale() && rnd.nextBoolean()) {
-			if (isUnchecked() && rnd.nextBoolean()) {
+		if (scale == getScale() && RND.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.addUnscaled(b);
 			}
 			return a.addUnscaled(b, getOverflowMode());
 		}
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.addUnscaled(b, scale);
 		}
-		if (isUnchecked() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
 			return a.addUnscaled(b, scale, getRoundingMode());
 		}
 		return a.addUnscaled(b, scale, getTruncationPolicy());

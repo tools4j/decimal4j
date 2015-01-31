@@ -51,7 +51,7 @@ public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 		if (exact) {
 			return operand.longValueExact();
 		}
-		if (isRoundingDown() && rnd.nextBoolean()) {
+		if (isRoundingDown() && RND.nextBoolean()) {
 			return operand.longValue();
 		}
 		return operand.setScale(0, getRoundingMode()).longValue();
@@ -62,10 +62,10 @@ public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 		if (exact) {
 			return operand.longValueExact();
 		}
-		if (isUnchecked() && isRoundingDown() && rnd.nextBoolean()) {
+		if (isUnchecked() && isRoundingDown() && RND.nextBoolean()) {
 			return operand.longValue();
 		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return operand.longValue(getRoundingMode());
 			} else {
 				return operand.longValue(getTruncationPolicy());

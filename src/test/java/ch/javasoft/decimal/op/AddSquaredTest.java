@@ -54,10 +54,10 @@ public class AddSquaredTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.addSquared(b);
 		}
-		if (isUnchecked() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
 			return a.addSquared(b, getRoundingMode());
 		}
 		return a.addSquared(b, getTruncationPolicy());

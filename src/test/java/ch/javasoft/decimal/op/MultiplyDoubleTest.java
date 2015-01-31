@@ -32,9 +32,9 @@ public class MultiplyDoubleTest extends AbstractDoubleOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, double b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.multiply(b);
-		} else if (isUnchecked() && rnd.nextBoolean()) {
+		} else if (isUnchecked() && RND.nextBoolean()) {
 			return a.multiply(b, getRoundingMode());
 		}
 		return a.multiply(b, getTruncationPolicy());

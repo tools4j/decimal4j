@@ -49,10 +49,10 @@ public class MultiplyTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.multiply(b);
 		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.multiply(b, getRoundingMode());
 			} else {
 				return a.multiply(b, getTruncationPolicy());

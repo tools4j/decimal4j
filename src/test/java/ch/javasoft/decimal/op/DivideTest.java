@@ -54,10 +54,10 @@ public class DivideTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.divide(b);
 		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.divide(b, getRoundingMode());
 			} else {
 				return a.divide(b, getTruncationPolicy());

@@ -25,7 +25,7 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
 @RunWith(Parameterized.class)
 public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	
-	public static final int MAX_POW_EXPONENT = getMaxPowExponent();
+	private static final int MAX_POW_EXPONENT = getMaxPowExponent();
 	
 	public PowTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
 		super(arithmetics);
@@ -61,17 +61,17 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
 		final long one = scaleMetrics.getScaleFactor();
-//		final long unscaled = one * (4 - rnd.nextInt(9)) + one - randomLong(2*one + 1);
-		final long unscaled = one * (8 - rnd.nextInt(17)) + one - randomLong(2*one + 1);
+//		final long unscaled = one * (4 - RND.nextInt(9)) + one - randomLong(2*one + 1);
+		final long unscaled = one * (8 - RND.nextInt(17)) + one - randomLong(2*one + 1);
 		return newDecimal(scaleMetrics, unscaled);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand) {
 		if (decimalOperand.isZero() || decimalOperand.isOne() || decimalOperand.isMinusOne()) {
-			return MAX_POW_EXPONENT - rnd.nextInt(2 * MAX_POW_EXPONENT + 1);
+			return MAX_POW_EXPONENT - RND.nextInt(2 * MAX_POW_EXPONENT + 1);
 		}
-		final boolean posExp = rnd.nextBoolean();
+		final boolean posExp = RND.nextBoolean();
 		final double absBase;
 		if (posExp) {
 			absBase = Math.abs(decimalOperand.doubleValue(RoundingMode.UP));
@@ -80,12 +80,12 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		}
 		final int maxPow;
 		if (absBase >= 1) {
-			maxPow = (int)(Math.log(arithmetics.getScaleMetrics().getMaxIntegerValue())/Math.max(1e-10, Math.log(absBase)));
+			maxPow = (int)(Math.log(decimalOperand.getScaleMetrics().getMaxIntegerValue())/Math.max(1e-10, Math.log(absBase)));
 		} else {
 			maxPow = -(int)(64 / (Math.log(absBase) / Math.log(2)));
 		}
 		final int pow = Math.max(1, Math.min(MAX_POW_EXPONENT, maxPow));
-		return posExp ? rnd.nextInt(pow) : -rnd.nextInt(pow);
+		return posExp ? RND.nextInt(pow) : -RND.nextInt(pow);
 	}
 	
 	@Test
@@ -266,10 +266,10 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.pow(b);
 		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.pow(b, getRoundingMode());
 			} else {
 				return a.pow(b, getTruncationPolicy());

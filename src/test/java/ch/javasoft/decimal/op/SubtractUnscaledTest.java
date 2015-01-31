@@ -32,16 +32,16 @@ public class SubtractUnscaledTest extends AbstractUnscaledOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
-		if (scale == getScale() && rnd.nextBoolean()) {
-			if (isUnchecked() && rnd.nextBoolean()) {
+		if (scale == getScale() && RND.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.subtractUnscaled(b);
 			}
 			return a.subtractUnscaled(b, getOverflowMode());
 		}
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.subtractUnscaled(b, scale);
 		}
-		if (isUnchecked() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
 			return a.subtractUnscaled(b, scale, getRoundingMode());
 		}
 		return a.subtractUnscaled(b, scale, getTruncationPolicy());

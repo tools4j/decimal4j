@@ -46,7 +46,7 @@ public class NegateTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isUnchecked() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
 			return operand.negate();
 		}
 		return operand.negate(getOverflowMode());

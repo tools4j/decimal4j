@@ -47,19 +47,19 @@ public class DivideUnscaledTest extends AbstractUnscaledOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
-			if (scale == getScale() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+			if (scale == getScale() && RND.nextBoolean()) {
 				return a.divideUnscaled(b);
 			}
 			return a.divideUnscaled(b, scale);
 		}
-		if (isUnchecked() && rnd.nextBoolean()) {
-			if (scale == getScale() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
+			if (scale == getScale() && RND.nextBoolean()) {
 				return a.divideUnscaled(b, getRoundingMode());
 			}
 			return a.divideUnscaled(b, scale, getRoundingMode());
 		}
-		if (scale == getScale() && rnd.nextBoolean()) {
+		if (scale == getScale() && RND.nextBoolean()) {
 			return a.divideUnscaled(b, getTruncationPolicy());
 		}
 		return a.divideUnscaled(b, scale, getTruncationPolicy());

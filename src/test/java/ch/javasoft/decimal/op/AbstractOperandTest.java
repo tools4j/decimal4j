@@ -23,7 +23,7 @@ import ch.javasoft.decimal.truncate.TruncationPolicy;
  */
 abstract public class AbstractOperandTest {
 
-	protected final Random rnd = new Random();
+	protected static final Random RND = new Random();
 
 	protected final DecimalArithmetics arithmetics;
 	protected final MathContext mathContextLong64;
@@ -107,27 +107,27 @@ abstract public class AbstractOperandTest {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
-		final long unscaled = rnd.nextBoolean() ? rnd.nextLong() : rnd.nextInt();
+		final long unscaled = RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
 		return newDecimal(scaleMetrics, unscaled);
 	}
 	
-	protected long randomLong(long n) {
+	protected static long randomLong(long n) {
         if (n <= 0)
             throw new IllegalArgumentException("n must be positive, but was " + n);
 
         long bits, val;
         do {
-            bits = rnd.nextLong() >>> 1;
+            bits = RND.nextLong() >>> 1;
             val = bits % n;
         } while (bits - val + (n-1) < 0);
         return val;
 	}
 
-	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
+	protected static <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
 		return Factories.valueOf(scaleMetrics).createImmutable(unscaled);
 	}
 
-	protected BigDecimal toBigDecimal(Decimal<?> decimal) {
+	protected static BigDecimal toBigDecimal(Decimal<?> decimal) {
 		return decimal.toBigDecimal();
 	}
 }

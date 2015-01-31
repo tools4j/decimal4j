@@ -32,19 +32,19 @@ public class MultiplyUnscaledTest extends AbstractUnscaledOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
-			if (scale == getScale() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+			if (scale == getScale() && RND.nextBoolean()) {
 				return a.multiplyUnscaled(b);
 			}
 			return a.multiplyUnscaled(b, scale);
 		}
-		if (isUnchecked() && rnd.nextBoolean()) {
-			if (scale == getScale() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
+			if (scale == getScale() && RND.nextBoolean()) {
 				return a.multiplyUnscaled(b, getRoundingMode());
 			}
 			return a.multiplyUnscaled(b, scale, getRoundingMode());
 		}
-		if (scale == getScale() && rnd.nextBoolean()) {
+		if (scale == getScale() && RND.nextBoolean()) {
 			return a.multiplyUnscaled(b, getTruncationPolicy());
 		}
 		return a.multiplyUnscaled(b, scale, getTruncationPolicy());

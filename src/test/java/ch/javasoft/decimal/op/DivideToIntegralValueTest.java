@@ -51,7 +51,7 @@ public class DivideToIntegralValueTest extends Abstract2DecimalArgsToDecimalResu
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isUnchecked() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
 			return a.divideToIntegralValue(b);
 		}
 		return a.divideToIntegralValue(b, getOverflowMode());

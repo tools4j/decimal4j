@@ -51,7 +51,7 @@ public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInte
 		if (exact) {
 			return operand.toBigIntegerExact();
 		}
-		if (isRoundingDown() && rnd.nextBoolean()) {
+		if (isRoundingDown() && RND.nextBoolean()) {
 			return operand.toBigInteger();
 		}
 		return operand.setScale(0, getRoundingMode()).toBigInteger();
@@ -62,7 +62,7 @@ public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInte
 		if (exact) {
 			return operand.toBigIntegerExact();
 		}
-		if (isRoundingDown() && rnd.nextBoolean()) {
+		if (isRoundingDown() && RND.nextBoolean()) {
 			return operand.toBigInteger();
 		}
 		return operand.toBigInteger(getRoundingMode());

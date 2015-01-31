@@ -46,7 +46,7 @@ public class AddTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isUnchecked() && rnd.nextBoolean()) {
+		if (isUnchecked() && RND.nextBoolean()) {
 			return a.add(b);
 		}
 		return a.add(b, getTruncationPolicy());

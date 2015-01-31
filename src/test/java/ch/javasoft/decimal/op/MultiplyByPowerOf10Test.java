@@ -41,7 +41,7 @@ public class MultiplyByPowerOf10Test extends Abstract1DecimalArg1IntArgToDecimal
 //	private static final int MAX_EXPONENT = 999999999;
 	@Override
 	protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand) {
-		return rnd.nextInt(200) - 100;
+		return RND.nextInt(200) - 100;
 	}
 	@Override
 	protected int getRandomTestCount() {
@@ -90,10 +90,10 @@ public class MultiplyByPowerOf10Test extends Abstract1DecimalArg1IntArgToDecimal
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b) {
-		if (isStandardTruncationPolicy() && rnd.nextBoolean()) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.multiplyByPowerOfTen(b);
 		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.multiplyByPowerOfTen(b, getRoundingMode());
 			} else {
 				return a.multiplyByPowerOfTen(b, getTruncationPolicy());

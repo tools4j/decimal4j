@@ -31,7 +31,7 @@ abstract public class Abstract1DoubleArgToDecimalResultTest extends
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, double operand);
 
 	protected double randomDoubleOperand() {
-		return Doubles.randomDoubleOperand(rnd);
+		return Doubles.randomDoubleOperand(RND);
 	}
 
 	protected double[] getSpecialDoubleOperands() {

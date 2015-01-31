@@ -43,7 +43,7 @@ public class ShiftRightTest extends Abstract1DecimalArg1IntArgToDecimalResultTes
 //	private static final int MAX_EXPONENT = 999999999;
 	@Override
 	protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand) {
-		return rnd.nextInt(200) - 100;
+		return RND.nextInt(200) - 100;
 	}
 	@Override
 	protected int getRandomTestCount() {
@@ -97,10 +97,10 @@ public class ShiftRightTest extends Abstract1DecimalArg1IntArgToDecimalResultTes
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b) {
-		if (getRoundingMode() == RoundingMode.FLOOR && isUnchecked() && rnd.nextBoolean()) {
+		if (getRoundingMode() == RoundingMode.FLOOR && isUnchecked() && RND.nextBoolean()) {
 			return a.shiftRight(b);
 		} else {
-			if (isUnchecked() && rnd.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
 				return a.shiftRight(b, getRoundingMode());
 			} else {
 				return a.shiftRight(b, getTruncationPolicy());

@@ -56,7 +56,7 @@ public class DoubleValueTest extends Abstract1DecimalArgToAnyResultTest<Double> 
 
 	@Override
 	protected <S extends ScaleMetrics> Double actualResult(Decimal<S> operand) {
-		if (getRoundingMode() == RoundingMode.HALF_EVEN && rnd.nextBoolean()) {
+		if (getRoundingMode() == RoundingMode.HALF_EVEN && RND.nextBoolean()) {
 			return operand.doubleValue();
 		}
 		return operand.doubleValue(getRoundingMode());
