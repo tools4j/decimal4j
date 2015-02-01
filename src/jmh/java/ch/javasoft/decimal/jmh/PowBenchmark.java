@@ -15,11 +15,12 @@ import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.RunnerException;
 
 import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.ImmutableDecimal;
 import ch.javasoft.decimal.MutableDecimal;
 import ch.javasoft.decimal.arithmetic.DecimalArithmetics;
+import ch.javasoft.decimal.factory.Factories;
 import ch.javasoft.decimal.scale.ScaleMetrics;
 import ch.javasoft.decimal.scale.Scales;
+import ch.javasoft.decimal.truncate.OverflowMode;
 
 /**
  * Micro benchmarks for power function.
@@ -50,13 +51,16 @@ public class PowBenchmark extends AbstractBenchmark {
 			initValues(Scales.valueOf(scale));
 		}
 		private <S extends ScaleMetrics> void initValues(S scaleMetrics) {
+			final double maxBase = Math.pow(scaleMetrics.getMaxIntegerValue(), 1.0/maxExponent);
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				final Decimal<S> value = PowUtil.randomBaseOperand(scaleMetrics); 
+				final double doubleValue = maxBase * Math.random() * Math.signum(Math.random());
+				final long unscaledValue = scaleMetrics.getTruncatingArithmetics(OverflowMode.CHECKED).fromDouble(doubleValue);
+				final Decimal<S> value = Factories.valueOf(scaleMetrics).createImmutable(unscaledValue);
 				bigDecimals[i] = value.toBigDecimal();
 				immutables[i] = value;
-				mutables[i] = ((ImmutableDecimal<?, ?>)value).toMutableDecimal();
-				unscaled[i] = value.unscaledValue();
-				exponents[i] = PowUtil.randomExponentForBase(value, maxExponent);
+				mutables[i] = Factories.valueOf(scaleMetrics).createMutable(unscaledValue);
+				unscaled[i] = unscaledValue;
+				exponents[i] = maxExponent;
 			}
 			arithmetics = scaleMetrics.getArithmetics(roundingMode);
 		}
