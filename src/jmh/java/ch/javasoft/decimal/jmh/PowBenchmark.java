@@ -85,6 +85,14 @@ public class PowBenchmark extends AbstractBenchmark {
 
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
 	@Benchmark
+	public void decimalDoubleDecimal(BenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(state.arithmetics.fromDouble(Math.pow(state.immutables[i].doubleValue(), state.exponents[i])));
+		}
+	}
+
+	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
+	@Benchmark
 	public void immutableDecimals(BenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
 			blackhole.consume(state.immutables[i].pow(state.exponents[i]));
