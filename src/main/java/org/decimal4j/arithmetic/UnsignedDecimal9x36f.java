@@ -11,21 +11,27 @@ import org.decimal4j.scale.Scale8f;
 import org.decimal4j.scale.Scale9f;
 
 final class UnsignedDecimal9x36f {
-	/** Thread local for (L)eft (H)and (S)ide operator*/
-	static final ThreadLocal<UnsignedDecimal9x36f> LHS = new ThreadLocal<UnsignedDecimal9x36f>() {
+	/** Thread local for factor 1*/
+	static final ThreadLocal<UnsignedDecimal9x36f> THREAD_LOCAL_1 = new ThreadLocal<UnsignedDecimal9x36f>() {
 		@Override
 		protected UnsignedDecimal9x36f initialValue() {
 			return new UnsignedDecimal9x36f();
 		}
 	};
 	/** Thread local for accumulator*/
-	static final ThreadLocal<UnsignedDecimal9x36f> ACC = new ThreadLocal<UnsignedDecimal9x36f>() {
+	static final ThreadLocal<UnsignedDecimal9x36f> THREAD_LOCAL_2 = new ThreadLocal<UnsignedDecimal9x36f>() {
 		@Override
 		protected UnsignedDecimal9x36f initialValue() {
 			return new UnsignedDecimal9x36f();
 		}
 	};
 	
+	private static enum Norm {
+		UNNORMALIZED,
+		NORMALIZED_18,
+		NORMALIZED_09
+	}
+	private Norm norm;
 	private int pow10;
 	private long ival;
 	private long val3;
@@ -33,11 +39,12 @@ final class UnsignedDecimal9x36f {
 	private long val1;
 	private long val0;
 	
-	/** Constructor for ONE*/
+	/** Constructor */
 	private UnsignedDecimal9x36f() {
 		super();
 	}
 	public UnsignedDecimal9x36f initOne() {
+		this.norm = Norm.NORMALIZED_18;
 		this.pow10 = 0;
 		this.ival = 1;
 		this.val3 = 0;
@@ -47,6 +54,7 @@ final class UnsignedDecimal9x36f {
 		return this;
 	}
 	public UnsignedDecimal9x36f init(UnsignedDecimal9x36f copy) {
+		this.norm = copy.norm;
 		this.pow10 = copy.pow10;
 		this.ival = copy.ival;
 		this.val3 = copy.val3;
@@ -137,6 +145,7 @@ final class UnsignedDecimal9x36f {
 				}
 			}
 		}
+		this.norm = Norm.NORMALIZED_18;
 		this.pow10 = pow10;
 		this.ival = ival;
 		this.val3 = val3;
@@ -144,74 +153,110 @@ final class UnsignedDecimal9x36f {
 		this.val1 = 0;
 		this.val0 = 0;
 	}
+	private void normalize09() {
+		final long val3 = this.val3;
+		final long val2 = this.val2;
+		final long v3 = val3 / Scale9f.SCALE_FACTOR;
+		final long v2 = val3 - v3 * Scale9f.SCALE_FACTOR;
+		final long v1 = val2 / Scale9f.SCALE_FACTOR;
+		final long v0 = val2 - v1 * Scale9f.SCALE_FACTOR;
+		this.norm = Norm.NORMALIZED_09;
+		this.val3 = v3;
+		this.val2 = v2;
+		this.val1 = v1;
+		this.val0 = v0;
+	}
 	public final void multiply(int sgn, UnsignedDecimal9x36f factor, DecimalRounding rounding) {
-		normalizeAndRound(sgn, pow10, ival, val3, val2, val1, val0, rounding);
+		if (norm != Norm.NORMALIZED_18) {
+			normalizeAndRound(sgn, pow10, ival, val3, val2, val1, val0, rounding);
+		}
 		multiply(sgn, val3, val2, factor, rounding);
 	}
 	//PRECONDITION: this and factor normalized, i.e. ival < Scale9f.SCALE_FACTOR
 	private void multiply(int sgn, long val3, long val2, UnsignedDecimal9x36f factor, DecimalRounding rounding) {
 		//split each factor into 9 digit parts
-		long rhs4 = ival;
-		long rhs3 = val3 / Scale9f.SCALE_FACTOR;
-		long rhs2 = val3 - rhs3 * Scale9f.SCALE_FACTOR;
-		long rhs1 = val2 / Scale9f.SCALE_FACTOR;
-		long rhs0 = val2 - rhs1 * Scale9f.SCALE_FACTOR;
-		long lhs4 = factor.ival;
-		long lhs3 = factor.val3 / Scale9f.SCALE_FACTOR;
-		long lhs2 = factor.val3 - lhs3 * Scale9f.SCALE_FACTOR;
-		long lhs1 = factor.val2 / Scale9f.SCALE_FACTOR;
-		long lhs0 = factor.val2 - lhs1 * Scale9f.SCALE_FACTOR;
-		//4: 00
-		//3: 09
-		//2: 18
-		//1: 27
-		//0: 36
+		if (this.norm != Norm.NORMALIZED_09) {
+			this.normalize09();
+		}
+		final long lhs4 = this.ival;
+		final long lhs3 = this.val3;
+		final long lhs2 = this.val2;
+		final long lhs1 = this.val1;
+		final long lhs0 = this.val0;
+		if (factor.norm != Norm.NORMALIZED_09) {
+			factor.normalize09();
+		}
+		final long rhs4 = factor.ival;
+		final long rhs3 = factor.val3;
+		final long rhs2 = factor.val2;
+		final long rhs1 = factor.val1;
+		final long rhs0 = factor.val0;
 		
 		//multiply now
-		long scale72 = rhs0 * lhs0;
-		long scale63 = rhs1 * lhs0 + lhs1 * rhs0;
-		long scale54 = rhs2 * lhs0 + lhs2 * rhs0 + rhs1 * lhs1;
-		long scale45 = rhs3 * lhs0 + lhs3 * rhs0 + rhs2 * lhs1 + lhs2 * rhs1;
-		long scale36 = rhs3 * lhs1 + lhs3 * rhs1 + rhs2 * lhs2 + rhs0 * lhs4 + lhs0 * rhs4;
-		long scale27 = rhs3 * lhs2 + lhs3 * rhs2 + rhs1 * lhs4 + lhs1 * rhs4;
-		long scale18 = rhs3 * lhs3 + rhs2 * lhs4 + lhs2 * rhs4;
-		long scale09 = rhs3 * lhs4 + lhs3 * rhs4;
-		long scale00 = rhs4 * lhs4;
+		long scale72 = lhs0 * rhs0;
+		long scale63 = lhs1 * rhs0 + rhs1 * lhs0;
+		long scale54 = lhs2 * rhs0 + rhs2 * lhs0 + lhs1 * rhs1;
+		long scale45 = lhs3 * rhs0 + rhs3 * lhs0 + lhs2 * rhs1 + rhs2 * lhs1;
+		long scale36 = lhs3 * rhs1 + rhs3 * lhs1 + lhs2 * rhs2 + lhs0 * rhs4 + rhs0 * lhs4;
+		long scale27 = lhs3 * rhs2 + rhs3 * lhs2 + lhs1 * rhs4 + rhs1 * lhs4;
+		long scale18 = lhs3 * rhs3 + lhs2 * rhs4 + rhs2 * lhs4;
+		long scale09 = lhs3 * rhs4 + rhs3 * lhs4;
+		long scale00 = lhs4 * rhs4;
 		
-		//propagate carries
-		long c;
-		c = scale72 / Scale9f.SCALE_FACTOR;
-		scale72 -= c * Scale9f.SCALE_FACTOR;
-		scale63 += c;
-		c = scale63 / Scale9f.SCALE_FACTOR;
-		scale63 -= c * Scale9f.SCALE_FACTOR;
-		scale54 += c;
-		c = scale54 / Scale9f.SCALE_FACTOR;
-		scale54 -= c * Scale9f.SCALE_FACTOR;
-		scale45 += c;
-		c = scale45 / Scale9f.SCALE_FACTOR;
-		scale45 -= c * Scale9f.SCALE_FACTOR;
-		scale36 += c;
-		c = scale36 / Scale9f.SCALE_FACTOR;
-		scale36 -= c * Scale9f.SCALE_FACTOR;
-		scale27 += c;
-		c = scale27 / Scale9f.SCALE_FACTOR;
-		scale27 -= c * Scale9f.SCALE_FACTOR;
-		scale18 += c;
-		c = scale18 / Scale9f.SCALE_FACTOR;
-		scale18 -= c * Scale9f.SCALE_FACTOR;
-		scale09 += c;
-		c = scale09 / Scale9f.SCALE_FACTOR;
-		scale09 -= c * Scale9f.SCALE_FACTOR;
-		scale00 += c;
+		//reduce 8 to 4 parts and propagate carries
+		long carry;
+
+		//NOTE: largest value is val36: sum of 5 products + sum of 4 products 
+		//      -- each product consists of 2 factors < Scale9f.SCALE_FACTOR
+		//		-- hence each product < Scale18f.SCALE_FACTOR
+		//		-- sum of 9 products each < Scale18f.SCALE_FACTOR 
+		//		=> sum < 9 * Scale18f.SCALE_FACTOR < Long.MAX_VALUE
+		//		=> no overflows
 		
-		//convert to 18 digit values from 9 digit values
+		carry = scale63 / Scale9f.SCALE_FACTOR;
+		scale63 -= carry * Scale9f.SCALE_FACTOR;
+		long val72 = scale63 * Scale9f.SCALE_FACTOR + scale72;
+		while (val72 >= Scale18f.SCALE_FACTOR) {
+			val72 -= Scale18f.SCALE_FACTOR;
+			carry++;
+		}
+		scale54 += carry;
+
+		carry = scale45 / Scale9f.SCALE_FACTOR;
+		scale45 -= carry * Scale9f.SCALE_FACTOR;
+		long val54 = scale45 * Scale9f.SCALE_FACTOR + scale54;
+		while (val54 >= Scale18f.SCALE_FACTOR) {
+			val54 -= Scale18f.SCALE_FACTOR;
+			carry++;
+		}
+		scale36 += carry;
+
+		carry = scale27 / Scale9f.SCALE_FACTOR;
+		scale27 -= carry * Scale9f.SCALE_FACTOR;
+		long val36 = scale27 * Scale9f.SCALE_FACTOR + scale36;
+		while (val36 >= Scale18f.SCALE_FACTOR) {
+			val36 -= Scale18f.SCALE_FACTOR;
+			carry++;
+		}
+		scale18 += carry;
+		
+		carry = scale09 / Scale9f.SCALE_FACTOR;
+		scale09 -= carry * Scale9f.SCALE_FACTOR;
+		long val18 = scale09 * Scale9f.SCALE_FACTOR + scale18;
+		while (val18 >= Scale18f.SCALE_FACTOR) {
+			val18 -= Scale18f.SCALE_FACTOR;
+			carry++;
+		}
+		scale00 += carry;
+
+		//assign values
+		this.norm = Norm.UNNORMALIZED;
 		this.pow10 += factor.pow10;
 		this.ival = scale00;
-		this.val3 = scale09 * Scale9f.SCALE_FACTOR + scale18;
-		this.val2 = scale27 * Scale9f.SCALE_FACTOR + scale36;
-		this.val1 = scale45 * Scale9f.SCALE_FACTOR + scale54;
-		this.val0 = scale63 * Scale9f.SCALE_FACTOR + scale72;
+		this.val3 = val18;
+		this.val2 = val36;
+		this.val1 = val54;
+		this.val0 = val72;
 	}
 	
 	private static int getRoundingIncrement(int sgn, long truncated, ScaleMetrics scaleMetrics, long remainder, boolean nonZeroAfterRemainder, DecimalRounding rounding) {

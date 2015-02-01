@@ -161,11 +161,11 @@ final class Pow {
 		final long absFra = Math.abs(fval);
 		final DecimalRounding powRounding = n >= 0 ? rounding : getOppositeRoundingMode(rounding);
 		
-		//36 digit left hand side, initialized with absBase
-		final UnsignedDecimal9x36f lhs = UnsignedDecimal9x36f.LHS.get().init(absInt, absFra, arith.getScaleMetrics());
+		//36 digit left hand side, initialized with base value
+		final UnsignedDecimal9x36f lhs = UnsignedDecimal9x36f.THREAD_LOCAL_1.get().init(absInt, absFra, arith.getScaleMetrics());
 		
-		//36 digit accumulator, initialized with one without leading 1 digit
-		final UnsignedDecimal9x36f acc = UnsignedDecimal9x36f.ACC.get().initOne();
+		//36 digit accumulator, initialized with one
+		final UnsignedDecimal9x36f acc = UnsignedDecimal9x36f.THREAD_LOCAL_2.get().initOne();
 		
 		// ready to carry out power calculation...
 		int mag = Math.abs(n);
