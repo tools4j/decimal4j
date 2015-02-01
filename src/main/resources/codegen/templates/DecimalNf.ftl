@@ -1,17 +1,17 @@
 <@pp.dropOutputFile />
 <#list 0..maxScale as scale>
-<@pp.changeOutputFile name=pp.home + "ch/javasoft/decimal/immutable/Decimal" + scale + "f.java" />
-package ch.javasoft.decimal.immutable;
+<@pp.changeOutputFile name=pp.home + "org/decimal4j/immutable/Decimal" + scale + "f.java" />
+package org.decimal4j.immutable;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.base.AbstractImmutableDecimal;
-import ch.javasoft.decimal.mutable.MutableDecimal${scale}f;
-import ch.javasoft.decimal.factory.Factory${scale}f;
-import ch.javasoft.decimal.scale.Scale${scale}f;
+import org.decimal4j.Decimal;
+import org.decimal4j.base.AbstractImmutableDecimal;
+import org.decimal4j.mutable.MutableDecimal${scale}f;
+import org.decimal4j.factory.Factory${scale}f;
+import org.decimal4j.scale.Scale${scale}f;
 
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed

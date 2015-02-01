@@ -1,11 +1,11 @@
 <@pp.dropOutputFile />
 <#list 0..maxScale as scale>
-<@pp.changeOutputFile name=pp.home + "ch/javasoft/decimal/factory/Factory" + scale + "f.java" />
-package ch.javasoft.decimal.factory;
+<@pp.changeOutputFile name=pp.home + "org/decimal4j/factory/Factory" + scale + "f.java" />
+package org.decimal4j.factory;
 
-import ch.javasoft.decimal.immutable.Decimal${scale}f;
-import ch.javasoft.decimal.mutable.MutableDecimal${scale}f;
-import ch.javasoft.decimal.scale.Scale${scale}f;
+import org.decimal4j.immutable.Decimal${scale}f;
+import org.decimal4j.mutable.MutableDecimal${scale}f;
+import org.decimal4j.scale.Scale${scale}f;
 
 /**
  * The factory for decimals with scale ${scale} creating {@link Decimal${scale}f} and

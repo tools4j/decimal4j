@@ -1,9 +1,9 @@
 <@pp.dropOutputFile />
 <#list 1..maxScale as scale>
-<@pp.changeOutputFile name=pp.home + "ch/javasoft/decimal/scale/Scale" + scale + "f.java" />
-package ch.javasoft.decimal.scale;
+<@pp.changeOutputFile name=pp.home + "org/decimal4j/scale/Scale" + scale + "f.java" />
+package org.decimal4j.scale;
 
-import ch.javasoft.decimal.arithmetic.Unsigned;
+import org.decimal4j.arithmetic.Unsigned;
 
 /**
  * Scale class for decimals with {@link #getScale() scale} ${scale} and

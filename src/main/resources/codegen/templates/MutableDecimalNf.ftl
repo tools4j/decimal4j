@@ -1,15 +1,15 @@
 <@pp.dropOutputFile />
 <#list 0..maxScale as scale>
-<@pp.changeOutputFile name=pp.home + "ch/javasoft/decimal/mutable/MutableDecimal" + scale + "f.java" />
-package ch.javasoft.decimal.mutable;
+<@pp.changeOutputFile name=pp.home + "org/decimal4j/mutable/MutableDecimal" + scale + "f.java" />
+package org.decimal4j.mutable;
 
 import java.math.RoundingMode;
 
-import ch.javasoft.decimal.Decimal;
-import ch.javasoft.decimal.base.AbstractMutableDecimal;
-import ch.javasoft.decimal.immutable.Decimal${scale}f;
-import ch.javasoft.decimal.factory.Factory${scale}f;
-import ch.javasoft.decimal.scale.Scale${scale}f;
+import org.decimal4j.Decimal;
+import org.decimal4j.base.AbstractMutableDecimal;
+import org.decimal4j.immutable.Decimal${scale}f;
+import org.decimal4j.factory.Factory${scale}f;
+import org.decimal4j.scale.Scale${scale}f;
 
 @SuppressWarnings("serial")
 public class MutableDecimal${scale}f extends
