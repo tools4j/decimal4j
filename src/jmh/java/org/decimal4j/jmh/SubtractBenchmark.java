@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.jmh;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -8,31 +8,31 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
- * Micro benchmarks for unchecked square.
+ * Micro benchmarks for unchecked subtraction.
  */
-public class SquareBenchmark extends AbstractUnaryOpIntLongValRoundingBenchmark {
+public class SubtractBenchmark extends AbstractBinaryOpLongValTruncatingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
-		return values.bigDecimal1.multiply(values.bigDecimal1, state.mcLong64);
+		return values.bigDecimal1.subtract(values.bigDecimal2, state.mcLong64);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values) {
-		return values.immutable1.square(state.roundingMode);
+		return values.immutable1.subtract(values.immutable2);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values) {
-		return values.mutable.set(values.immutable1).square(state.roundingMode);
+		return values.mutable.set(values.immutable1).subtract(values.immutable2);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
-		return state.arithmetics.square(values.unscaled1);
+		return state.arithmetics.subtract(values.unscaled1, values.unscaled2);
 	}
 
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
-		run(SquareBenchmark.class);
+		run(SubtractBenchmark.class);
 	}
 }

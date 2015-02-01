@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.jmh;
 
 import java.io.BufferedReader;
 import java.io.IOException;

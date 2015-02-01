@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.jmh;
 
 import java.math.BigDecimal;
 
@@ -12,17 +12,16 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 
-abstract public class AbstractBinaryOpLongValTruncatingBenchmark extends AbstractBenchmark {
+abstract public class AbstractUnaryOpPositiveLongValRoundingBenchmark extends AbstractBenchmark {
 	@State(Scope.Benchmark)
-	public static class BenchmarkState extends TruncatingBenchmarkState {
-		@Param("Long")
-		public ValueType valueType1;
-		@Param("Long")
-		public ValueType valueType2;
+	public static class BenchmarkState extends RoundingBenchmarkState {
+		@Param({ "Int", "Long" })
+		public ValueType valueType;
+
 		@Setup
 		public void initValues() {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
+				values[i] = Values.create(valueType.random(SignType.POSITIVE), 0, scale);
 			}
 		}
 	}

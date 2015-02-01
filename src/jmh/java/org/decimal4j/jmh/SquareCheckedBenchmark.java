@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.jmh;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -9,14 +9,14 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
- * Micro benchmarks for checked subtraction.
+ * Micro benchmarks for checked square.
  */
-public class SubtractCheckedBenchmark extends AbstractBinaryOpLongValTruncatingBenchmark {
+public class SquareCheckedBenchmark extends AbstractUnaryOpIntLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
 		try {
-			final BigDecimal result = values.bigDecimal1.subtract(values.bigDecimal2, state.mcLong64);
+			final BigDecimal result = values.bigDecimal1.multiply(values.bigDecimal1, state.mcLong64);
 			//check overflow
 			JDKSupport.bigIntegerToLongValueExact(result.unscaledValue());
 			return result;
@@ -28,7 +28,7 @@ public class SubtractCheckedBenchmark extends AbstractBinaryOpLongValTruncatingB
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values) {
 		try {
-			return values.immutable1.subtract(values.immutable2, state.checkedTruncationPolicy);
+			return values.immutable1.square(state.checkedTruncationPolicy);
 		} catch (ArithmeticException e) {
 			return null;
 		}
@@ -37,7 +37,7 @@ public class SubtractCheckedBenchmark extends AbstractBinaryOpLongValTruncatingB
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values) {
 		try {
-			return values.mutable.set(values.immutable1).subtract(values.immutable2, state.checkedTruncationPolicy);
+			return values.mutable.set(values.immutable1).square(state.checkedTruncationPolicy);
 		} catch (ArithmeticException e) {
 			return null;
 		}
@@ -46,13 +46,13 @@ public class SubtractCheckedBenchmark extends AbstractBinaryOpLongValTruncatingB
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
 		try {
-			return state.checkedArithmetics.subtract(values.unscaled1, values.unscaled2);
+			return state.checkedArithmetics.square(values.unscaled1);
 		} catch (ArithmeticException e) {
 			return 0;
 		}
 	}
 
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
-		run(SubtractCheckedBenchmark.class);
+		run(SquareCheckedBenchmark.class);
 	}
 }

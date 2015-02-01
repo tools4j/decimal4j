@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.jmh;
 
 import java.io.IOException;
 import java.math.BigDecimal;
