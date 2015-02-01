@@ -422,5 +422,9 @@ public class MutableDecimal${scale}f extends
 		return Decimal${scale}f.valueOf(this);
 	}
 
+	@Override
+	public MutableDecimal${scale}f toMutableDecimal() {
+		return this;
+	}
 }
 </#list>

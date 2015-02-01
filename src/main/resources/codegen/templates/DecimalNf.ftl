@@ -310,5 +310,9 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return new MutableDecimal${scale}f(this);
 	}
 
+	@Override
+	public Decimal${scale}f toImmutableDecimal() {
+		return this;
+	}
 }
 </#list> 

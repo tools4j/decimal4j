@@ -20,14 +20,6 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 		extends Decimal<S> {
 
 	/**
-	 * Creates a new immutable value representing the same decimal as
-	 * {@code this} mutable decimal and returns it.
-	 * 
-	 * @return {@code this} as new immutable decimal value
-	 */
-	ImmutableDecimal<S, ?> toImmutableDecimal();
-
-	/**
 	 * Sets {@code this} decimal to 0 and returns {@code this} now representing
 	 * zero.
 	 * 

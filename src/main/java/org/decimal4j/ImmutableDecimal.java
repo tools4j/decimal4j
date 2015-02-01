@@ -14,12 +14,5 @@ import org.decimal4j.scale.ScaleMetrics;
  *            the concrete class implementing this immutable decimal
  */
 public interface ImmutableDecimal<S extends ScaleMetrics, D extends ImmutableDecimal<S, D>> extends Decimal<S> {
-
-	/**
-	 * Creates a new mutable value representing the same decimal as {@code this}
-	 * immutable decimal and returns it.
-	 * 
-	 * @return {@code this} as new mutable decimal value
-	 */
-	MutableDecimal<S, ?> toMutableDecimal();
+	//nothing to add
 }
