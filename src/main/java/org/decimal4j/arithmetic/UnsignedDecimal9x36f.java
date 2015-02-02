@@ -10,6 +10,10 @@ import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.Scale8f;
 import org.decimal4j.scale.Scale9f;
 
+/**
+ * Helper class for an unsigned decimal value with 9 integral digits and 38 decimal
+ * fraction digits. Used internally by {@link Pow} to calculate decimal powers.
+ */
 final class UnsignedDecimal9x36f {
 	/** Thread local for factor 1*/
 	static final ThreadLocal<UnsignedDecimal9x36f> THREAD_LOCAL_1 = new ThreadLocal<UnsignedDecimal9x36f>() {
@@ -26,9 +30,15 @@ final class UnsignedDecimal9x36f {
 		}
 	};
 	
+	/**
+	 * Normalization mode.
+	 */
 	private static enum Norm {
+		/** Not normalized: ival and valX can be any positive longs */
 		UNNORMALIZED,
+		/** 18 digit normalization (standard): ival is 9 digits; val3/val2 are 18 digits, val1/val0 are zero*/
 		NORMALIZED_18,
+		/** 9 digit normalization (for multiplication): ival and valX are 9 digits values*/
 		NORMALIZED_09
 	}
 	private Norm norm;
@@ -468,19 +478,19 @@ final class UnsignedDecimal9x36f {
     }
 	@Override
 	public String toString() {
-		return toString(pow10, ival, val3, val2);
-	}
-	private static String toString(final int pow10, final long ival, final long l3, final long l2) {
 		int len;
-		final StringBuilder sb = new StringBuilder(50);//2*18 + 1 sign + 1 leading digit + some space for pow2 stuff
-		sb.append(l3 >= 0 ? ival : -ival);
+		final StringBuilder sb = new StringBuilder(64);//9-18 integral digits + 1 decimal point + 2*18 fractional digits + some extra for pow10 etc
+		sb.append(ival);
 		sb.append('.');
 		len = sb.length();
-		sb.append(l3);
+		sb.append(val3);
 		sb.insert(len, "000000000000000000", 0, len + 18 - sb.length());
 		len = sb.length(); 
-		sb.append(l2);
+		sb.append(val2);
 		sb.insert(len, "000000000000000000", 0, len + 18 - sb.length());
+		if (val1 != 0 | val0 != 0) {
+			sb.append("..");
+		}
 		sb.append("*10^").append(pow10);
 		return sb.toString();
 	}
