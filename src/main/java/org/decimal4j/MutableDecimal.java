@@ -13,11 +13,8 @@ import org.decimal4j.truncate.TruncationPolicy;
  * 
  * @param <S>
  *            the scale metrics type associated with this decimal
- * @param <D>
- *            the concrete class implementing this mutable decimal
  */
-public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal<S, D>>
-		extends Decimal<S> {
+public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} decimal to 0 and returns {@code this} now representing
@@ -25,7 +22,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @return {@code this} decimal after assigning {@code this = 0}
 	 */
-	D setZero();
+	MutableDecimal<S> setZero();
 
 	/**
 	 * Sets {@code this} decimal to 1 and returns {@code this} now representing
@@ -33,7 +30,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @return {@code this} decimal after assigning {@code this = 1}
 	 */
-	D setOne();
+	MutableDecimal<S> setOne();
 
 	/**
 	 * Sets {@code this} decimal to -1 and returns {@code this} now representing
@@ -41,7 +38,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @return {@code this} decimal after assigning {@code this = -1}
 	 */
-	D setMinusOne();
+	MutableDecimal<S> setMinusOne();
 
 	/**
 	 * Sets {@code this} decimal to the smallest positive value representable by
@@ -49,7 +46,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * 
 	 * @return {@code this} decimal after assigning {@code this = ULP}
 	 */
-	D setUlp();
+	MutableDecimal<S> setUlp();
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -59,7 +56,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            value to be set
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(Decimal<S> value);
+	MutableDecimal<S> set(Decimal<S> value);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -72,7 +69,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            truncated when converted to the appropriate scale
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(Decimal<?> value, RoundingMode roundingMode);
+	MutableDecimal<S> set(Decimal<?> value, RoundingMode roundingMode);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -85,7 +82,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            be truncated when converted to the appropriate scale
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(Decimal<?> value, TruncationPolicy truncationPolicy);
+	MutableDecimal<S> set(Decimal<?> value, TruncationPolicy truncationPolicy);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -95,7 +92,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            value to be set
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(long value);
+	MutableDecimal<S> set(long value);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -107,7 +104,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            the mode to apply if an overflow occurs
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(long value, OverflowMode overflowMode);
+	MutableDecimal<S> set(long value, OverflowMode overflowMode);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -117,7 +114,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            value to be set
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(double value);
+	MutableDecimal<S> set(double value);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -130,7 +127,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            truncated when converted into a decimal number
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(double value, RoundingMode roundingMode);
+	MutableDecimal<S> set(double value, RoundingMode roundingMode);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code value} and returns
@@ -143,7 +140,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 *            be truncated when converted into a decimal number
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
-	D set(double value, TruncationPolicy truncationPolicy);
+	MutableDecimal<S> set(double value, TruncationPolicy truncationPolicy);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
@@ -160,7 +157,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * @return {@code this} decimal after assigning
 	 *         <code>this = round(unscaledValue * 10<sup>-scale)</sup></code>.
 	 */
-	D setUnscaled(long unscaledValue, int scale);
+	MutableDecimal<S> setUnscaled(long unscaledValue, int scale);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
@@ -180,7 +177,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * @return {@code this} decimal after assigning
 	 *         <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>.
 	 */
-	D setUnscaled(long unscaledValue, int scale, RoundingMode roundingMode);
+	MutableDecimal<S> setUnscaled(long unscaledValue, int scale, RoundingMode roundingMode);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} with the
@@ -200,7 +197,7 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * @return {@code this} decimal after assigning
 	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
 	 */
-	D setUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy);
+	MutableDecimal<S> setUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy);
 
 	/**
 	 * Sets {@code this} decimal to the specified {@code unscaledValue} and
@@ -215,5 +212,5 @@ public interface MutableDecimal<S extends ScaleMetrics, D extends MutableDecimal
 	 * @see #getScaleMetrics()
 	 * @see ScaleMetrics#getScaleFactor()
 	 */
-	D setUnscaled(long unscaledValue);
+	MutableDecimal<S> setUnscaled(long unscaledValue);
 }

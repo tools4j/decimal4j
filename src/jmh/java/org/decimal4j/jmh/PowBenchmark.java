@@ -39,7 +39,7 @@ public class PowBenchmark extends AbstractBenchmark {
 		
 		public BigDecimal[] bigDecimals = new BigDecimal[OPERATIONS_PER_INVOCATION];
 		public Decimal<?>[] immutables = new Decimal<?>[OPERATIONS_PER_INVOCATION];
-		public MutableDecimal<?,?>[] mutables = new MutableDecimal<?,?>[OPERATIONS_PER_INVOCATION];
+		public MutableDecimal<?>[] mutables = new MutableDecimal<?>[OPERATIONS_PER_INVOCATION];
 		public long[] unscaled = new long[OPERATIONS_PER_INVOCATION];
 		public DecimalArithmetics arithmetics;
 

@@ -12,7 +12,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            the unscaled long value
 	 * @return an immutable value.
 	 */
-	ImmutableDecimal<S, ?> createImmutable(long unscaled);
+	ImmutableDecimal<S> createImmutable(long unscaled);
 
 	/**
 	 * Creates and returns a mutable value.
@@ -21,7 +21,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            the unscaled long value
 	 * @return an mutable value.
 	 */
-	MutableDecimal<S, ?> createMutable(long unscaled);
+	MutableDecimal<S> createMutable(long unscaled);
 
 	/**
 	 * Creates a one dimensional array of the specified {@code length} for
@@ -31,7 +31,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            the length of the returned array
 	 * @return a new array of the specified length
 	 */
-	ImmutableDecimal<S, ?>[] createImmutableArray(int length);
+	ImmutableDecimal<S>[] createImmutableArray(int length);
 
 	/**
 	 * Creates a one dimensional array of the specified {@code length} for
@@ -41,5 +41,5 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            the length of the returned array
 	 * @return a new array of the specified length
 	 */
-	MutableDecimal<S, ?>[] createMutableArray(int length);
+	MutableDecimal<S>[] createMutableArray(int length);
 }

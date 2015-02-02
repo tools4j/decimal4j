@@ -266,6 +266,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	BigDecimal toBigDecimal();
 
+	//mutable/immutable conversion methods
+
 	/**
 	 * If this {@code Decimal} value is already an {@link ImmutableDecimal} it
 	 * is simply returned. Otherwise a new immutable value representing the same
@@ -274,7 +276,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @return {@code this} if immutable and a new {@code ImmutableDecimal} with
 	 *         the same value as {@code this} decimal otherwise
 	 */
-	ImmutableDecimal<S, ?> toImmutableDecimal();
+	ImmutableDecimal<S> toImmutableDecimal();
 
 	/**
 	 * If this {@code Decimal} value is already an {@link MutableDecimal} it is
@@ -284,7 +286,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @return {@code this} if mutable and a new {@code MutableDecimal} with the
 	 *         same value as {@code this} decimal otherwise
 	 */
-	MutableDecimal<S, ?> toMutableDecimal();
+	MutableDecimal<S> toMutableDecimal();
 
 	//some conversion methods with rounding mode
 

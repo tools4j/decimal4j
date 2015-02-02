@@ -10,9 +10,7 @@ import org.decimal4j.scale.ScaleMetrics;
  * 
  * @param <S>
  *            the scale metrics type associated with this decimal
- * @param <D>
- *            the concrete class implementing this immutable decimal
  */
-public interface ImmutableDecimal<S extends ScaleMetrics, D extends ImmutableDecimal<S, D>> extends Decimal<S> {
+public interface ImmutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	//nothing to add
 }
