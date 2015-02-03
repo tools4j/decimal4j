@@ -42,8 +42,8 @@ public enum SpecialValueSet {
 	private SpecialValueSet(SpecialValueSet... sets) {
 		this(toSortedSet(sets));
 	}
-	@SafeVarargs //safe because private
-	private SpecialValueSet(SortedSet<Long>... sets) {
+	
+	private SpecialValueSet(@SuppressWarnings("unchecked") SortedSet<Long>... sets) {
 		this(toSortedSet(sets));
 	}
 	
