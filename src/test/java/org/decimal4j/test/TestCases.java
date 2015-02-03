@@ -9,6 +9,8 @@ public enum TestCases {
 	/** Run full set of test cases */
 	ALL(SpecialValueSet.ALL),
 	/** Run standard set of test cases */
+	LARGE(SpecialValueSet.LARGE),
+	/** Run standard set of test cases */
 	STANDARD(SpecialValueSet.STANDARD),
 	/** Run small set of test cases */
 	SMALL(SpecialValueSet.SMALL),

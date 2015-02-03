@@ -17,11 +17,14 @@ public enum TestTruncationPolicies {
 			DecimalRounding.DOWN.getCheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getCheckedTruncationPolicy())),
 	
 	SMALL(Arrays.asList(DecimalRounding.DOWN.getUncheckedTruncationPolicy(), DecimalRounding.HALF_UP.getUncheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy(), 
-			DecimalRounding.DOWN.getCheckedTruncationPolicy(), DecimalRounding.HALF_UP.getCheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getCheckedTruncationPolicy())),
+			DecimalRounding.DOWN.getCheckedTruncationPolicy(), DecimalRounding.HALF_UP.getCheckedTruncationPolicy())),
 	
-	STANDARD(Arrays.asList(DecimalRounding.UP.getUncheckedTruncationPolicy(), DecimalRounding.DOWN.getUncheckedTruncationPolicy(), DecimalRounding.HALF_UP.getUncheckedTruncationPolicy(), DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy(), 
+	STANDARD(Arrays.asList(DecimalRounding.DOWN.getUncheckedTruncationPolicy(), DecimalRounding.HALF_UP.getUncheckedTruncationPolicy(), DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy(), 
+			DecimalRounding.DOWN.getCheckedTruncationPolicy(), DecimalRounding.HALF_UP.getCheckedTruncationPolicy())),
+	
+	LARGE(Arrays.asList(DecimalRounding.UP.getUncheckedTruncationPolicy(), DecimalRounding.DOWN.getUncheckedTruncationPolicy(), DecimalRounding.HALF_UP.getUncheckedTruncationPolicy(), DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy(), 
 			DecimalRounding.UP.getCheckedTruncationPolicy(), DecimalRounding.DOWN.getCheckedTruncationPolicy(), DecimalRounding.HALF_UP.getCheckedTruncationPolicy(), DecimalRounding.HALF_EVEN.getCheckedTruncationPolicy(), DecimalRounding.UNNECESSARY.getCheckedTruncationPolicy())),
-	
+			
 	ALL(TruncationPolicy.VALUES);
 	
 	private final Collection<TruncationPolicy> policies;

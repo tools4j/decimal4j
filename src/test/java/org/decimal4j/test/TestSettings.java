@@ -31,8 +31,10 @@ public class TestSettings {
 		switch (TEST_CASES) {
 		case ALL:
 			return 10000;
-		case STANDARD:
+		case LARGE:
 			return 10000;
+		case STANDARD:
+			return 1000;
 		case SMALL:
 			return 1000;
 		case TINY:
@@ -54,7 +56,6 @@ public class TestSettings {
 
 	private static TestCases getTestCases() {
 		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_VARIANT, TestCases.STANDARD.name());
-//		final String testVariant = System.getProperty(SYSTEM_PROPERTY_TEST_EXTENT, TestCases.SMALL.name());
 		final String testCases = System.getProperty(SYSTEM_PROPERTY_TEST_CASES, testVariant);
 		try {
 			return TestCases.valueOf(testCases);
