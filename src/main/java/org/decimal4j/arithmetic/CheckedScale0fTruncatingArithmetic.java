@@ -5,16 +5,16 @@ import java.math.RoundingMode;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * Arithmetics implementation for the special case {@code scale=0}, that is, for
+ * Arithmetic implementation for the special case {@code scale=0}, that is, for
  * long values. The implementation throws an exception if an operation leads to an
  * overflow. Decimals after the last scale digit are truncated without rounding.
  */
-public class CheckedScale0fTruncatingArithmetics extends AbstractCheckedScale0fArithmetics {
+public class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fArithmetic {
 
 	/**
 	 * The singleton instance.
 	 */
-	public static final CheckedScale0fTruncatingArithmetics INSTANCE = new CheckedScale0fTruncatingArithmetics();
+	public static final CheckedScale0fTruncatingArithmetic INSTANCE = new CheckedScale0fTruncatingArithmetic();
 
 	@Override
 	public RoundingMode getRoundingMode() {

@@ -2,8 +2,8 @@ package org.decimal4j.base;
 
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.MutableDecimal;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
@@ -165,31 +165,31 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 
 	@Override
 	public D set(long value) {
-		unscaled = getDefaultArithmetics().fromLong(value);
+		unscaled = getDefaultArithmetic().fromLong(value);
 		return self();
 	}
 
 	@Override
 	public D set(long value, OverflowMode overflowMode) {
-		unscaled = getArithmeticsFor(overflowMode).fromLong(value);
+		unscaled = getArithmeticFor(overflowMode).fromLong(value);
 		return self();
 	}
 
 	@Override
 	public D set(double value) {
-		unscaled = getDefaultArithmetics().fromDouble(value);
+		unscaled = getDefaultArithmetic().fromDouble(value);
 		return self();
 	}
 
 	@Override
 	public D set(double value, RoundingMode roundingMode) {
-		unscaled = getArithmeticsFor(roundingMode).fromDouble(value);
+		unscaled = getArithmeticFor(roundingMode).fromDouble(value);
 		return self();
 	}
 
 	@Override
 	public D set(double value, TruncationPolicy truncationPolicy) {
-		unscaled = getArithmeticsFor(truncationPolicy).fromDouble(value);
+		unscaled = getArithmeticFor(truncationPolicy).fromDouble(value);
 		return self();
 	}
 
@@ -201,19 +201,19 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 
 	@Override
 	public D setUnscaled(long unscaledValue, int scale) {
-		unscaled = getDefaultArithmetics().fromUnscaled(unscaledValue, scale);
+		unscaled = getDefaultArithmetic().fromUnscaled(unscaledValue, scale);
 		return self();
 	}
 
 	@Override
 	public D setUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
-		unscaled = getArithmeticsFor(roundingMode).fromUnscaled(unscaledValue, scale);
+		unscaled = getArithmeticFor(roundingMode).fromUnscaled(unscaledValue, scale);
 		return self();
 	}
 
 	@Override
 	public D setUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
-		unscaled = getArithmeticsFor(truncationPolicy).fromUnscaled(unscaledValue, scale);
+		unscaled = getArithmeticFor(truncationPolicy).fromUnscaled(unscaledValue, scale);
 		return self();
 	}
 }

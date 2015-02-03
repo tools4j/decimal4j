@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -76,8 +76,8 @@ public class IsCompartedToTest extends Abstract2DecimalArgsToAnyResultTest<Boole
 	}
 	
 	private final Operation operation;
-	public IsCompartedToTest(ScaleMetrics scaleMetrics, Operation operation, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public IsCompartedToTest(ScaleMetrics scaleMetrics, Operation operation, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 		this.operation = operation;
 	}
 
@@ -86,7 +86,7 @@ public class IsCompartedToTest extends Abstract2DecimalArgsToAnyResultTest<Boole
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final Operation op : Operation.values()) {
-				data.add(new Object[] {s, op, s.getDefaultArithmetics()});
+				data.add(new Object[] {s, op, s.getDefaultArithmetic()});
 			}
 		}
 		return data;

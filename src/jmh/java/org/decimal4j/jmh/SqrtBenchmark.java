@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.runner.RunnerException;
 
@@ -53,7 +53,7 @@ public class SqrtBenchmark extends AbstractUnaryOpPositiveLongValRoundingBenchma
 
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
-		return state.arithmetics.sqrt(values.unscaled1);
+		return state.arithmetic.sqrt(values.unscaled1);
 	}
 	
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {

@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
@@ -9,7 +10,7 @@ import org.decimal4j.truncate.DecimalRounding;
  */
 class Round {
 
-	public static long round(DecimalArithmetics arith, long uDecimal, int precision) {
+	public static long round(DecimalArithmetic arith, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		final ScaleMetrics deltaMetrics;
@@ -29,7 +30,7 @@ class Round {
 		return uDecimal - deltaMetrics.moduloByScaleFactor(uDecimal);
 	}
 	
-	public static long round(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal, int precision) {
+	public static long round(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		final int deltaScale = scale - precision;

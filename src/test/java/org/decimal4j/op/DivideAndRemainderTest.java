@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -18,15 +18,15 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class DivideAndRemainderTest extends Abstract2DecimalArgsToAnyResultTest<Object[]> {
 	
-	public DivideAndRemainderTest(ScaleMetrics scaleMetrics, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public DivideAndRemainderTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	@Parameters(name = "{index}: scale={0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] {s, s.getDefaultArithmetics()});
+			data.add(new Object[] {s, s.getDefaultArithmetic()});
 		}
 		return data;
 	}
@@ -55,8 +55,8 @@ public class DivideAndRemainderTest extends Abstract2DecimalArgsToAnyResultTest<
 		ArithmeticResult<Long> expected1;
 		try {
 			final BigDecimal[] exp = expectedResult(bdOpA, bdOpB);
-			expected0 = ArithmeticResult.forResult(arithmetics, exp[0]);
-			expected1 = ArithmeticResult.forResult(arithmetics, exp[1]);
+			expected0 = ArithmeticResult.forResult(arithmetic, exp[0]);
+			expected1 = ArithmeticResult.forResult(arithmetic, exp[1]);
 		} catch (ArithmeticException e) {
 			expected0 = ArithmeticResult.forException(e);
 			expected1 = ArithmeticResult.forException(e);

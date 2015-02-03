@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.MutableDecimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
@@ -41,7 +41,7 @@ public class PowBenchmark extends AbstractBenchmark {
 		public Decimal<?>[] immutables = new Decimal<?>[OPERATIONS_PER_INVOCATION];
 		public MutableDecimal<?>[] mutables = new MutableDecimal<?>[OPERATIONS_PER_INVOCATION];
 		public long[] unscaled = new long[OPERATIONS_PER_INVOCATION];
-		public DecimalArithmetics arithmetics;
+		public DecimalArithmetic arithmetic;
 
 		public int[] exponents = new int[OPERATIONS_PER_INVOCATION];
 		
@@ -53,7 +53,7 @@ public class PowBenchmark extends AbstractBenchmark {
 			final double maxBase = Math.pow(scaleMetrics.getMaxIntegerValue(), 1.0/maxExponent);
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
 				final double doubleValue = maxBase * Math.random() * Math.signum(Math.random());
-				final long unscaledValue = scaleMetrics.getTruncatingArithmetics(OverflowMode.CHECKED).fromDouble(doubleValue);
+				final long unscaledValue = scaleMetrics.getTruncatingArithmetic(OverflowMode.CHECKED).fromDouble(doubleValue);
 				final Decimal<S> value = Factories.valueOf(scaleMetrics).createImmutable(unscaledValue);
 				bigDecimals[i] = value.toBigDecimal();
 				immutables[i] = value;
@@ -61,7 +61,7 @@ public class PowBenchmark extends AbstractBenchmark {
 				unscaled[i] = unscaledValue;
 				exponents[i] = maxExponent;
 			}
-			arithmetics = scaleMetrics.getArithmetics(roundingMode);
+			arithmetic = scaleMetrics.getArithmetic(roundingMode);
 		}
 	}
 
@@ -90,7 +90,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public void decimalDoubleDecimal(BenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.arithmetics.fromDouble(Math.pow(state.immutables[i].doubleValue(), state.exponents[i])));
+			blackhole.consume(state.arithmetic.fromDouble(Math.pow(state.immutables[i].doubleValue(), state.exponents[i])));
 		}
 	}
 
@@ -114,7 +114,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public void nativeDecimals(BenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.arithmetics.pow(state.unscaled[i], state.exponents[i]));
+			blackhole.consume(state.arithmetic.pow(state.unscaled[i], state.exponents[i]));
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.api;
 
 import java.math.RoundingMode;
 

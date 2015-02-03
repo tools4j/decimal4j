@@ -1,8 +1,10 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
+
 
 /**
- * Helper class for checked arithmetics with longs.
+ * Helper class for checked arithmetic with longs.
  */
 final class Checked {
 
@@ -13,7 +15,7 @@ final class Checked {
 		}
 		return result;
 	}
-	public static final long add(DecimalArithmetics arith, long uDecimal1, long uDecimal2) {
+	public static final long add(DecimalArithmetic arith, long uDecimal1, long uDecimal2) {
 		final long result = uDecimal1 + uDecimal2;
 		if ((uDecimal1 ^ uDecimal2) >= 0 & (uDecimal1 ^ result) < 0) {
 			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal1) + " + " + arith.toString(uDecimal2) + " = " + arith.toString(result));
@@ -21,7 +23,7 @@ final class Checked {
 		return result;
 	}
 
-	public static final long subtract(DecimalArithmetics arith, long uDecimalMinuend, long uDecimalSubtrahend) {
+	public static final long subtract(DecimalArithmetic arith, long uDecimalMinuend, long uDecimalSubtrahend) {
 		final long result = uDecimalMinuend - uDecimalSubtrahend;
 		if ((uDecimalMinuend ^ uDecimalSubtrahend) < 0 & (uDecimalMinuend ^ result) < 0) {
 			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalMinuend) + " - " + arith.toString(uDecimalSubtrahend) + " = " + arith.toString(result));
@@ -55,7 +57,7 @@ final class Checked {
 		return result;
 	}
 
-	public static final long multiplyByLong(DecimalArithmetics arith, long uDecimal, long lValue) {
+	public static final long multiplyByLong(DecimalArithmetic arith, long uDecimal, long lValue) {
 		// Hacker's Delight, Section 2-12
 		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal) + Long.numberOfLeadingZeros(~uDecimal) + Long.numberOfLeadingZeros(lValue) + Long.numberOfLeadingZeros(~lValue);
 		/*
@@ -81,7 +83,7 @@ final class Checked {
 		return result;
 	}
 
-	public static final long divideByLong(DecimalArithmetics arith, long uDecimalDividend, long lDivisor) {
+	public static final long divideByLong(DecimalArithmetic arith, long uDecimalDividend, long lDivisor) {
 		if (lDivisor == 0) {
 			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + lDivisor);
 		}
@@ -91,7 +93,7 @@ final class Checked {
 		return uDecimalDividend / lDivisor;
 	}
 
-	public static final long abs(DecimalArithmetics arith, long value) {
+	public static final long abs(DecimalArithmetic arith, long value) {
 		final long abs = Math.abs(value);
 		if (abs < 0) {
 			throw new ArithmeticException("Overflow: abs(" + arith.toString(value) + ") = " + abs);
@@ -99,7 +101,7 @@ final class Checked {
 		return abs;
 	}
 
-	public static final long negate(DecimalArithmetics arith, long value) {
+	public static final long negate(DecimalArithmetic arith, long value) {
 		final long neg = -value;
 		if (value != 0 & (value ^ neg) >= 0) {
 			throw new ArithmeticException("Overflow: -" + arith.toString(value) + " = " + neg);

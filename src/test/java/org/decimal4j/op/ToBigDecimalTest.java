@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -21,8 +21,8 @@ public class ToBigDecimalTest extends Abstract1DecimalArgToAnyResultTest<BigDeci
 
 	private final Integer newScale;
 	
-	public ToBigDecimalTest(ScaleMetrics scaleMetrics, Integer newScale, RoundingMode rounding, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public ToBigDecimalTest(ScaleMetrics scaleMetrics, Integer newScale, RoundingMode rounding, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 		this.newScale = newScale;
 	}
 
@@ -30,10 +30,10 @@ public class ToBigDecimalTest extends Abstract1DecimalArgToAnyResultTest<BigDeci
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] { s, null, RoundingMode.DOWN, s.getDefaultArithmetics() });
+			data.add(new Object[] { s, null, RoundingMode.DOWN, s.getDefaultArithmetic() });
 			for (int scale = -100; scale < 100; scale++) {
 				for (final RoundingMode rounding : TestSettings.UNCHECKED_ROUNDING_MODES) {
-					data.add(new Object[] { s, scale, rounding, s.getArithmetics(rounding) });
+					data.add(new Object[] { s, scale, rounding, s.getArithmetic(rounding) });
 				}
 			}
 		}

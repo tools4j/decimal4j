@@ -2,8 +2,8 @@ package org.decimal4j.op;
 
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
@@ -20,12 +20,12 @@ abstract public class Abstract1DecimalArgToAnyResultTest<R> extends AbstractOper
 	 * Constructor with arithemtics determining scale, rounding mode and
 	 * overflow policy.
 	 * 
-	 * @param arithmetics
-	 *            the arithmetics determining scale, rounding mode and overlfow
+	 * @param arithmetic
+	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArgToAnyResultTest(DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public Abstract1DecimalArgToAnyResultTest(DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	abstract protected R expectedResult(BigDecimal operand);

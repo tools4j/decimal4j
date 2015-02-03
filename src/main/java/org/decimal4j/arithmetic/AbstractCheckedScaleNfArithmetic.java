@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
@@ -9,22 +10,22 @@ import org.decimal4j.truncate.OverflowMode;
  * rounding is no issue. Overflow is checked, that is,
  * {@link #getOverflowMode()} returns {@link OverflowMode#CHECKED}.
  */
-abstract public class AbstractCheckedScaleNfArithmetics extends AbstractCheckedArithmetics {
+abstract public class AbstractCheckedScaleNfArithmetic extends AbstractCheckedArithmetic {
 
 	private final ScaleMetrics scaleMetrics;
 	
 	// FIXME why is it called unchecked?
 	// FIXME field should not be protected
-	protected final DecimalArithmetics unchecked;
+	protected final DecimalArithmetic unchecked;
 
-	public AbstractCheckedScaleNfArithmetics(ScaleMetrics scaleMetrics) {
+	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
-		this.unchecked = scaleMetrics.getArithmetics(getRoundingMode());
+		this.unchecked = scaleMetrics.getArithmetic(getRoundingMode());
 	}
 	
-	public AbstractCheckedScaleNfArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
+	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
 		this.scaleMetrics = scaleMetrics;
-		this.unchecked = scaleMetrics.getArithmetics(rounding.getRoundingMode());
+		this.unchecked = scaleMetrics.getArithmetic(rounding.getRoundingMode());
 	}
 
 	@Override

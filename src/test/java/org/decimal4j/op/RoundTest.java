@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -21,8 +21,8 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 	
 	private final int precision;
 	
-	public RoundTest(ScaleMetrics scaleMetrics, int precision, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public RoundTest(ScaleMetrics scaleMetrics, int precision, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 		this.precision = precision;
 	}
 
@@ -33,7 +33,7 @@ public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
 			final int scale = s.getScale();
 			for (int precision = (scale - 18) - 1; precision <= scale + 1; precision++) {
 				for (final TruncationPolicy tp : TestSettings.POLICIES) {
-					final DecimalArithmetics arith = s.getArithmetics(tp);
+					final DecimalArithmetic arith = s.getArithmetic(tp);
 					data.add(new Object[] {s, precision, tp, arith});
 				}
 			}

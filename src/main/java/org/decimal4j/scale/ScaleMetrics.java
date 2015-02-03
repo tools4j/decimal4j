@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
@@ -25,11 +25,11 @@ import org.decimal4j.truncate.TruncationPolicy;
  * translated into shifts and adds by the compiler instead of the more expensive
  * multiplication and division operations with non-constant long values.
  * <p>
- * {@code ScaleMetrics} also provides access to {@link DecimalArithmetics}
+ * {@code ScaleMetrics} also provides access to {@link DecimalArithmetic}
  * instances for different rounding modes and overflow policies.
- * {@code DecimalArithmetics} objects can be used to deal with decimal numbers
+ * {@code DecimalArithmetic} objects can be used to deal with decimal numbers
  * <i>natively</i> which means that {@code Decimal} numbers are passed to the
- * arithmetics class in their native form as unscaled {@code long} values.
+ * arithmetic class in their native form as unscaled {@code long} values.
  */
 public interface ScaleMetrics {
 	/**
@@ -156,41 +156,41 @@ public interface ScaleMetrics {
 	long moduloByScaleFactor(long dividend);
 
 	/**
-	 * Returns the default arithmetics for this scale performing unchecked
+	 * Returns the default arithmetic for this scale performing unchecked
 	 * operations with rounding mode {@link RoundingMode#HALF_UP HALF_UP}.
 	 * 
-	 * @return default arithmetics for this scale
+	 * @return default arithmetic for this scale
 	 */
-	DecimalArithmetics getDefaultArithmetics();
+	DecimalArithmetic getDefaultArithmetic();
 
 	/**
-	 * Returns the truncating arithmetics for this scale and with the specified
+	 * Returns the truncating arithmetic for this scale and with the specified
 	 * {@code overflowMode} that performs all operations without rounding.
 	 * 
 	 * @param overflowMode
-	 *            the overflow mode used by the returned arithmetics
-	 * @return truncating arithmetics for this scale
+	 *            the overflow mode used by the returned arithmetic
+	 * @return truncating arithmetic for this scale
 	 * @see RoundingMode#DOWN
 	 */
-	DecimalArithmetics getTruncatingArithmetics(OverflowMode overflowMode);
+	DecimalArithmetic getTruncatingArithmetic(OverflowMode overflowMode);
 
 	/**
-	 * Returns the arithmetics for this scale that performs all operations with
+	 * Returns the arithmetic for this scale that performs all operations with
 	 * the specified {@code roundingMode}.
 	 *
 	 * @param roundingMode
-	 *            the rounding mode used by the returned arithmetics
-	 * @return arithmetics for this scale with specified rounding mode
+	 *            the rounding mode used by the returned arithmetic
+	 * @return arithmetic for this scale with specified rounding mode
 	 */
-	DecimalArithmetics getArithmetics(RoundingMode roundingMode);
+	DecimalArithmetic getArithmetic(RoundingMode roundingMode);
 
 	/**
-	 * Returns the arithmetics for this scale that performs all operations with
+	 * Returns the arithmetic for this scale that performs all operations with
 	 * the specified {@code truncationPolicy}.
 	 *
 	 * @param truncationPolicy
-	 *            the truncation policy used by the returned arithmetics
-	 * @return arithmetics for this scale with specified truncation policy
+	 *            the truncation policy used by the returned arithmetic
+	 * @return arithmetic for this scale with specified truncation policy
 	 */
-	DecimalArithmetics getArithmetics(TruncationPolicy truncationPolicy);
+	DecimalArithmetic getArithmetic(TruncationPolicy truncationPolicy);
 }

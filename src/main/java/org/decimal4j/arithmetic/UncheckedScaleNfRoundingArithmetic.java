@@ -10,37 +10,37 @@ import org.decimal4j.truncate.OverflowMode;
 /**
  * Arithmetic implementation for rounding strategies. For
  * {@link RoundingMode#DOWN} the more efficient
- * {@link UncheckedScaleNfTruncatingArithmetics} is available. If an operation
+ * {@link UncheckedScaleNfTruncatingArithmetic} is available. If an operation
  * leads to an overflow the result is silently truncated.
  */
-public class UncheckedScaleNfRoundingArithmetics extends
-		AbstractUncheckedScaleNfArithmetics {
+public class UncheckedScaleNfRoundingArithmetic extends
+		AbstractUncheckedScaleNfArithmetic {
 
 	private final DecimalRounding rounding;
 
 	/**
-	 * Constructor for decimal arithmetics with given scale, rounding mode and
+	 * Constructor for decimal arithmetic with given scale, rounding mode and
 	 * {@link OverflowMode#UNCHECKED SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
-	 *            the scale metrics for this decimal arithmetics
+	 *            the scale metrics for this decimal arithmetic
 	 * @param roundingMode
-	 *            the rounding mode to use for all decimal arithmetics
+	 *            the rounding mode to use for all decimal arithmetic
 	 */
-	public UncheckedScaleNfRoundingArithmetics(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
+	public UncheckedScaleNfRoundingArithmetic(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
 		this(scaleMetrics, DecimalRounding.valueOf(roundingMode));
 	}
 
 	/**
-	 * Constructor for decimal arithmetics with given scale, rounding mode and
+	 * Constructor for decimal arithmetic with given scale, rounding mode and
 	 * {@link OverflowMode#UNCHECKED SILENT} overflow mode.
 	 * 
 	 * @param scaleMetrics
-	 *            the scale metrics for this decimal arithmetics
+	 *            the scale metrics for this decimal arithmetic
 	 * @param rounding
-	 *            the rounding mode to use for all decimal arithmetics
+	 *            the rounding mode to use for all decimal arithmetic
 	 */
-	public UncheckedScaleNfRoundingArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
+	public UncheckedScaleNfRoundingArithmetic(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
 		super(scaleMetrics);
 		this.rounding = rounding;
 	}

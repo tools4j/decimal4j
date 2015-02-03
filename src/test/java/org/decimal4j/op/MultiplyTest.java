@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -20,8 +20,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class MultiplyTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
-	public MultiplyTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public MultiplyTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	@Parameters(name = "{index}: {0}, {1}")
@@ -29,7 +29,7 @@ public class MultiplyTest extends Abstract2DecimalArgsToDecimalResultTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetics arith = s.getArithmetics(tp);
+				final DecimalArithmetic arith = s.getArithmetic(tp);
 				data.add(new Object[] {s, tp, arith});
 			}
 		}

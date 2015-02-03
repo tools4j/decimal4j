@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
@@ -51,11 +52,11 @@ final class Sqrt {
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
-	public static long sqrt(DecimalArithmetics arith, long uDecimal) {
+	public static long sqrt(DecimalArithmetic arith, long uDecimal) {
 		return sqrt(arith, DecimalRounding.DOWN, uDecimal);
 	}
 
-	public static long sqrt(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
+	public static long sqrt(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		if (uDecimal < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + arith.toString(uDecimal));
 		}

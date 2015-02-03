@@ -1,12 +1,14 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
+
 
 /**
  * Converts between different scales.
  */
 class Scale {
 
-	public static final long rescale(DecimalArithmetics arith, long unscaledValue, int scale, int targetScale) {
+	public static final long rescale(DecimalArithmetic arith, long unscaledValue, int scale, int targetScale) {
 		final long deltaScaleLong = (long)scale - targetScale;
 		final int deltaScale = (int)deltaScaleLong;
 		if (deltaScale == deltaScaleLong) {

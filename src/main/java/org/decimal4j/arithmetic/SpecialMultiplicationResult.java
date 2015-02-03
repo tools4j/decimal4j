@@ -1,5 +1,7 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
+
 /**
  * Helper class used by multiplication to handle some special cases.
  */
@@ -9,7 +11,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_IS_ZERO {
 		@Override
-		long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
+		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return 0;
 		}
 	},
@@ -18,7 +20,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_1_IS_ONE {
 		@Override
-		long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
+		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return uDecimal2;
 		}
 	},
@@ -27,7 +29,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_2_IS_ONE {
 		@Override
-		long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
+		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return uDecimal1;
 		}
 	},
@@ -36,8 +38,8 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_1_IS_MINUS_ONE {
 		@Override
-		long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
-			return arithmetics.negate(uDecimal2);//we must go through arithmetics because overflow is possible
+		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+			return arithmetic.negate(uDecimal2);//we must go through arithmetic because overflow is possible
 		}
 	},
 	/**
@@ -45,8 +47,8 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_2_IS_MINUS_ONE {
 		@Override
-		long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
-			return arithmetics.negate(uDecimal1);//we must go through arithmetics because overflow is possible
+		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+			return arithmetic.negate(uDecimal1);//we must go through arithmetic because overflow is possible
 		}
 	},
 	/**
@@ -54,28 +56,28 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTORS_ARE_EQUAL {
 		@Override
-		long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
-			return arithmetics.square(uDecimal1);
+		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+			return arithmetic.square(uDecimal1);
 		}
 	};
-	abstract long multiply(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2);
+	abstract long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2);
 
 	/**
 	 * Returns the special multiplication case if it is one and null otherwise.
 	 * 
-	 * @param arithmetics
-	 *            the arithmetics object
+	 * @param arithmetic
+	 *            the arithmetic object
 	 * @param uDecimal1
 	 *            the first factor
 	 * @param uDecimal2
 	 *            the second factor
 	 * @return special case if found one and null otherwise
 	 */
-	static SpecialMultiplicationResult getFor(DecimalArithmetics arithmetics, long uDecimal1, long uDecimal2) {
+	static SpecialMultiplicationResult getFor(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 		if (uDecimal1 == 0 | uDecimal2 == 0) {
 			return FACTOR_IS_ZERO;
 		}
-		final long one = arithmetics.one();
+		final long one = arithmetic.one();
 		if (uDecimal1 == one) {
 			return FACTOR_1_IS_ONE;
 		}

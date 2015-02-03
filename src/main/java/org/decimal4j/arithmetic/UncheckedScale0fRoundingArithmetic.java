@@ -9,15 +9,15 @@ import org.decimal4j.truncate.DecimalRounding;
 /**
  * The special case for longs with {@link Scale0f} and rounding.
  */
-public class UncheckedScale0fRoundingArithmetics extends AbstractUncheckedScale0fArithmetics {
+public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0fArithmetic {
 
 	private final DecimalRounding rounding;
 
-	public UncheckedScale0fRoundingArithmetics(RoundingMode roundingMode) {
+	public UncheckedScale0fRoundingArithmetic(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
 
-	public UncheckedScale0fRoundingArithmetics(DecimalRounding rounding) {
+	public UncheckedScale0fRoundingArithmetic(DecimalRounding rounding) {
 		this.rounding = rounding;
 	}
 

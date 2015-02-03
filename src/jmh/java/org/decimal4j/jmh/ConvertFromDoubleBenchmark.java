@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -83,7 +83,7 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, DecimalFactory<S> factory, double value) {
-		return factory.createImmutable(state.arithmetics.fromDouble(value));//rounding mode is in arithmetics
+		return factory.createImmutable(state.arithmetic.fromDouble(value));//rounding mode is in arithmetic
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values, double value) {
@@ -91,7 +91,7 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 	}
 
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, double value) {
-		return state.arithmetics.fromDouble(value);//rounding mode is in arithmetics
+		return state.arithmetic.fromDouble(value);//rounding mode is in arithmetic
 	}
 
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {

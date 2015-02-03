@@ -2,8 +2,8 @@ package org.decimal4j.base;
 
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.ImmutableDecimal;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
@@ -49,7 +49,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			return this;
 		}
 		final ScaleMetrics targetMetrics = Scales.valueOf(scale);
-		final long targetUnscaled = targetMetrics.getArithmetics(roundingMode).fromUnscaled(unscaled, myScale);
+		final long targetUnscaled = targetMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, myScale);
 		return Factories.valueOf(targetMetrics).createImmutable(targetUnscaled);
 	}
 
@@ -60,7 +60,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			return this;
 		}
 		final ScaleMetrics targetMetrics = Scales.valueOf(scale);
-		final long targetUnscaled = targetMetrics.getArithmetics(truncationPolicy).fromUnscaled(unscaled, myScale);
+		final long targetUnscaled = targetMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, myScale);
 		return Factories.valueOf(targetMetrics).createImmutable(targetUnscaled);
 	}
 
@@ -73,7 +73,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			final ImmutableDecimal<S> self = (ImmutableDecimal<S>) this;
 			return self;
 		}
-		final long targetUnscaled = scaleMetrics.getArithmetics(roundingMode).fromUnscaled(unscaled, getScale());
+		final long targetUnscaled = scaleMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, getScale());
 		return Factories.valueOf(scaleMetrics).createImmutable(targetUnscaled);
 	}
 
@@ -86,7 +86,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			final ImmutableDecimal<S> self = (ImmutableDecimal<S>) this;
 			return self;
 		}
-		final long targetUnscaled = scaleMetrics.getArithmetics(truncationPolicy).fromUnscaled(unscaled, getScale());
+		final long targetUnscaled = scaleMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, getScale());
 		return Factories.valueOf(scaleMetrics).createImmutable(targetUnscaled);
 	}
 
@@ -100,7 +100,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	public ImmutableDecimal<?> multiplyExact(Decimal<?> multiplicand, OverflowMode overflowMode) {
 		final int targetScale = getScale() + multiplicand.getScale();
 		try {
-			final long unscaledProduct = getArithmeticsFor(overflowMode).multiplyByLong(unscaled, multiplicand.unscaledValue());
+			final long unscaledProduct = getArithmeticFor(overflowMode).multiplyByLong(unscaled, multiplicand.unscaledValue());
 			return Factories.valueOf(targetScale).createImmutable(unscaledProduct);
 		} catch (ArithmeticException e) {
 			throw new ArithmeticException("Overflow: " + this + " * " + multiplicand);

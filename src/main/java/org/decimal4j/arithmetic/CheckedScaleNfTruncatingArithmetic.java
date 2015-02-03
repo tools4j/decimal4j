@@ -6,12 +6,12 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * Arithmetics implementation throwing an exception if an operation leads to on
+ * Arithmetic implementation throwing an exception if an operation leads to on
  * overflow. Decimals after the last scale digit are truncated without rounding.
  */
-public class CheckedScaleNfTruncatingArithmetics extends AbstractCheckedScaleNfArithmetics {
+public class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfArithmetic {
 
-	public CheckedScaleNfTruncatingArithmetics(ScaleMetrics scaleMetrics) {
+	public CheckedScaleNfTruncatingArithmetic(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 

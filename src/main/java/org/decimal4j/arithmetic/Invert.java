@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.DecimalRounding;
 
 final class Invert {
@@ -31,12 +32,12 @@ final class Invert {
 		return RoundingUtil.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
 	}
 	
-	public static long invert(DecimalArithmetics arith, long uDecimal) {
+	public static long invert(DecimalArithmetic arith, long uDecimal) {
 		//special cases are handled by divide
 		return arith.divide(arith.one(), uDecimal);
 	}
 
-	public static long invert(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
+	public static long invert(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		//special cases are handled by divide
 		return arith.divide(arith.one(), uDecimal);
 	}

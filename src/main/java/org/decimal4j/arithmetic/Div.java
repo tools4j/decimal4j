@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
@@ -23,7 +24,7 @@ final class Div {
 	 * without rounding.
 	 * 
 	 * @param arith
-	 *            the arithmetics with scale metrics and overflow mode
+	 *            the arithmetic with scale metrics and overflow mode
 	 * @param uDecimalDividend
 	 *            the unscaled decimal dividend
 	 * @param uDecimalDivisor
@@ -31,7 +32,7 @@ final class Div {
 	 * @return the division result without rounding but with support for
 	 *         overflow checks if desired
 	 */
-	public static long divide(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
+	public static long divide(DecimalArithmetic arith, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
 		if (special != null) {
@@ -68,7 +69,7 @@ final class Div {
 	 * with rounding.
 	 * 
 	 * @param arith
-	 *            the arithmetics with scale metrics and overflow mode
+	 *            the arithmetic with scale metrics and overflow mode
 	 * @param rounding
 	 *            the decimal rounding to apply if rounding is necessary
 	 * @param uDecimalDividend
@@ -78,7 +79,7 @@ final class Div {
 	 * @return the division result with rounding and support for overflow checks
 	 *         if desired
 	 */
-	public static long divide(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	public static long divide(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
 		if (special != null) {
@@ -123,7 +124,7 @@ final class Div {
 	 * with rounding.
 	 * 
 	 * @param arith
-	 *            the arithmetics with scale metrics and overflow mode
+	 *            the arithmetic with scale metrics and overflow mode
 	 * @param rounding
 	 *            the decimal rounding to apply if rounding is necessary
 	 * @param uDecimalDividend
@@ -134,7 +135,7 @@ final class Div {
 	 * @return the division result with rounding and overflow checking
 	 */
 	// FIXME reconcile this method with the other overloaded versions
-	public static long divideChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	public static long divideChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		if (uDecimalDivisor == 0) {
 			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
@@ -189,7 +190,7 @@ final class Div {
 	 * without rounding.
 	 * 
 	 * @param arith
-	 *            the arithmetics with scale metrics and overflow mode
+	 *            the arithmetic with scale metrics and overflow mode
 	 * @param uDecimalDividend
 	 *            the unscaled decimal dividend
 	 * @param uDecimalDivisor
@@ -197,7 +198,7 @@ final class Div {
 	 * @return the division result without rounding but with support for
 	 *         overflow checks if desired
 	 */
-	public static long divideChecked(DecimalArithmetics arith, long uDecimalDividend, long uDecimalDivisor) {
+	public static long divideChecked(DecimalArithmetic arith, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		if (uDecimalDivisor == 0) {
 			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));

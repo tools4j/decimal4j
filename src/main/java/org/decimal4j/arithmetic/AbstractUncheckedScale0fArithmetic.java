@@ -8,7 +8,7 @@ import org.decimal4j.scale.ScaleMetrics;
 /**
  * Base class for arithmetic special case for longs with {@link Scale0f}.
  */
-abstract public class AbstractUncheckedScale0fArithmetics extends AbstractUncheckedArithmetics {
+abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheckedArithmetic {
 	
 	@Override
 	public final ScaleMetrics getScaleMetrics() {

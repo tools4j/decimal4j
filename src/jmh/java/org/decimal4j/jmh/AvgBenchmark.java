@@ -3,7 +3,7 @@ package org.decimal4j.jmh;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.runner.RunnerException;
 
@@ -31,7 +31,7 @@ public class AvgBenchmark extends AbstractBinaryOpLongValRoundingBenchmark {
 
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
-		return state.arithmetics.avg(values.unscaled1, values.unscaled2);
+		return state.arithmetic.avg(values.unscaled1, values.unscaled2);
 	}
 	
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {

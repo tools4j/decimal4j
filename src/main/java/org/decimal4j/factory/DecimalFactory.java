@@ -1,7 +1,7 @@
 package org.decimal4j.factory;
 
-import org.decimal4j.ImmutableDecimal;
-import org.decimal4j.MutableDecimal;
+import org.decimal4j.api.ImmutableDecimal;
+import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
 
 public interface DecimalFactory<S extends ScaleMetrics> {

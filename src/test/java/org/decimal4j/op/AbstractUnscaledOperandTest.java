@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
@@ -21,8 +21,8 @@ abstract public class AbstractUnscaledOperandTest extends Abstract1DecimalArg1Lo
 	
 	protected final int scale;
 
-	public AbstractUnscaledOperandTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public AbstractUnscaledOperandTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 		this.scale = scale;
 	}
 
@@ -31,7 +31,7 @@ abstract public class AbstractUnscaledOperandTest extends Abstract1DecimalArg1Lo
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetics arith = s.getArithmetics(tp);
+				final DecimalArithmetic arith = s.getArithmetic(tp);
 				for (int scale : getScales(s.getScale())) {
 					data.add(new Object[] {s, tp, scale, arith});
 				}

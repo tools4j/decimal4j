@@ -1,4 +1,4 @@
-package org.decimal4j;
+package org.decimal4j.api;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -869,7 +869,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * squared value is rounded <i>before</i> the addition if necessary using
 	 * the rounding mode specified by the truncation policy.
 	 * <p>
-	 * Note that if {@link OverflowMode#CHECKED CHECKED} arithmetics is used
+	 * Note that if {@link OverflowMode#CHECKED CHECKED} arithmetic is used
 	 * according to the specified truncation policy, squaring and adding both
 	 * perform an overflow check. If this value is negative, an overflow
 	 * exception may be thrown even if the final result would actually still fit
@@ -1672,7 +1672,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param obj
 	 *            the object to compare with.
 	 * @return {@code true} if the argument is {@code Decimal} object that
-	 *         contains the same value and arithmetics as this object;
+	 *         contains the same value and arithmetic as this object;
 	 *         {@code false} otherwise.
 	 */
 	@Override

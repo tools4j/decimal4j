@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -21,8 +21,8 @@ public class ShortValueTest extends Abstract1DecimalArgToAnyResultTest<Short> {
 
 	private final boolean exact;
 
-	public ShortValueTest(ScaleMetrics scaleMetrics, boolean exact, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public ShortValueTest(ScaleMetrics scaleMetrics, boolean exact, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 		this.exact = exact;
 	}
 
@@ -30,8 +30,8 @@ public class ShortValueTest extends Abstract1DecimalArgToAnyResultTest<Short> {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] { s, true, s.getDefaultArithmetics() });
-			data.add(new Object[] { s, false, s.getDefaultArithmetics() });
+			data.add(new Object[] { s, true, s.getDefaultArithmetic() });
+			data.add(new Object[] { s, false, s.getDefaultArithmetic() });
 		}
 		return data;
 	}

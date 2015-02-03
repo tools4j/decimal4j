@@ -5,7 +5,7 @@ package org.decimal4j.mutable;
 
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.base.AbstractMutableDecimal;
 import org.decimal4j.immutable.Decimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
@@ -28,11 +28,11 @@ public class MutableDecimal${scale}f extends
 	}
 
 	public MutableDecimal${scale}f(String value) {
-		this(Decimal${scale}f.SCALE.getDefaultArithmetics().parse(value));
+		this(Decimal${scale}f.SCALE.getDefaultArithmetic().parse(value));
 	}
 
 	public MutableDecimal${scale}f(String value, RoundingMode roundingMode) {
-		this(Decimal${scale}f.SCALE.getArithmetics(roundingMode).parse(value));
+		this(Decimal${scale}f.SCALE.getArithmetic(roundingMode).parse(value));
 	}
 
 	public MutableDecimal${scale}f(long value) {

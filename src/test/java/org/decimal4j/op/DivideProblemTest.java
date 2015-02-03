@@ -4,23 +4,22 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.Scale0f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-
 import org.decimal4j.scale.Scale17f;
 import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.Scale6f;
 
 public class DivideProblemTest extends DivideTest {
 
-	public DivideProblemTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
-		super(scaleMetrics, truncationPolicy, arithmetics);
+	public DivideProblemTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
+		super(scaleMetrics, truncationPolicy, arithmetic);
 	}
 	
 	@Parameters(name = "{index}: scale={0}, rounding={1}")
@@ -32,23 +31,23 @@ public class DivideProblemTest extends DivideTest {
 		
 		s = Scale6f.INSTANCE;
 		tp = DecimalRounding.DOWN.getCheckedTruncationPolicy();
-		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 		
 		s = Scale0f.INSTANCE;
 		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
-		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 		
 		s = Scale6f.INSTANCE;
 		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
-		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 
 		s = Scale6f.INSTANCE;
 		tp = DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy();
-		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 
 		s = Scale17f.INSTANCE;
 		tp = DecimalRounding.DOWN.getUncheckedTruncationPolicy();
-		data.add(new Object[] {s, tp, s.getArithmetics(tp)});
+		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 
 		return data;
 	}

@@ -3,7 +3,7 @@ package org.decimal4j.jmh;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.runner.RunnerException;
@@ -46,7 +46,7 @@ public class AddCheckedBenchmark extends AbstractBinaryOpLongValTruncatingBenchm
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
 		try {
-			return state.checkedArithmetics.add(values.unscaled1, values.unscaled2);
+			return state.checkedArithmetic.add(values.unscaled1, values.unscaled2);
 		} catch (ArithmeticException e) {
 			return 0;
 		}

@@ -3,6 +3,7 @@ package org.decimal4j.arithmetic;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
@@ -18,7 +19,7 @@ final class Pow {
 	 */
 	private static final long FLOOR_SQRT_MAX_LONG = 3037000499L;
 
-	public static long powLong(DecimalArithmetics arith, DecimalRounding rounding, long lBase, int exponent) {
+	public static long powLong(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, lBase, exponent);
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
@@ -37,7 +38,7 @@ final class Pow {
 		}
 	}
 
-	public static long powLongChecked(DecimalArithmetics arith, DecimalRounding rounding, long lBase, int exponent) {
+	public static long powLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, lBase, exponent);
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
@@ -61,15 +62,15 @@ final class Pow {
 	}
 
 	/**
-	 * Power function for checked or unchecked arithmetics. The result is within 1 ULP.
+	 * Power function for checked or unchecked arithmetic. The result is within 1 ULP.
 	 * 
-	 * @param arith			the arithmetics
+	 * @param arith			the arithmetic
 	 * @param rounding		the rounding to apply
 	 * @param uDecimalBase	the unscaled base
 	 * @param exponent		the exponent
 	 * @return {@code uDecimalbase ^ exponent}
 	 */
-	public static long pow(DecimalArithmetics arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
+	public static long pow(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
 		if (exponent < -999999999 || exponent > 999999999) {
 			throw new ArithmeticException("Exponent must be in [-999999999,999999999] but was: " + exponent);
 		}
@@ -154,7 +155,7 @@ final class Pow {
 	 * @since 1.5
 	 */
 	//PRECONDITION: n != 0 and n in [-999999999,999999999]
-	private static long powWithPrecision18(DecimalArithmetics arith, DecimalRounding rounding, long ival, long fval, int n) {
+	private static long powWithPrecision18(DecimalArithmetic arith, DecimalRounding rounding, long ival, long fval, int n) {
 		//eliminate sign
 		final int sgn = ((n & 0x1) != 0) ? Long.signum(ival | fval) : 1;
 		final long absInt = Math.abs(ival);
@@ -162,10 +163,10 @@ final class Pow {
 		final DecimalRounding powRounding = n >= 0 ? rounding : getOppositeRoundingMode(rounding);
 		
 		//36 digit left hand side, initialized with base value
-		final UnsignedDecimal9x36f lhs = UnsignedDecimal9x36f.THREAD_LOCAL_1.get().init(absInt, absFra, arith.getScaleMetrics());
+		final UnsignedDecimal9i36f lhs = UnsignedDecimal9i36f.THREAD_LOCAL_1.get().init(absInt, absFra, arith.getScaleMetrics());
 		
 		//36 digit accumulator, initialized with one
-		final UnsignedDecimal9x36f acc = UnsignedDecimal9x36f.THREAD_LOCAL_2.get().initOne();
+		final UnsignedDecimal9i36f acc = UnsignedDecimal9i36f.THREAD_LOCAL_2.get().initOne();
 		
 		// ready to carry out power calculation...
 		int mag = Math.abs(n);

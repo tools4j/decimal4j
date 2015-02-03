@@ -5,8 +5,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Random;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
@@ -24,7 +24,7 @@ abstract public class AbstractOperandTest {
 
 	protected static final Random RND = new Random();
 
-	protected final DecimalArithmetics arithmetics;
+	protected final DecimalArithmetic arithmetic;
 	protected final MathContext mathContextLong64;
 	protected final MathContext mathContextLong128;
 
@@ -32,43 +32,43 @@ abstract public class AbstractOperandTest {
 	 * Constructor with arithemtics determining scale, rounding mode and
 	 * overflow policy.
 	 * 
-	 * @param arithmetics
-	 *            the arithmetics determining scale, rounding mode and overlfow
+	 * @param arithmetic
+	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractOperandTest(DecimalArithmetics arithmetics) {
-		this.arithmetics = arithmetics;
-		this.mathContextLong64 = new MathContext(19, arithmetics.getRoundingMode());
-		this.mathContextLong128 = new MathContext(39, arithmetics.getRoundingMode());
+	public AbstractOperandTest(DecimalArithmetic arithmetic) {
+		this.arithmetic = arithmetic;
+		this.mathContextLong64 = new MathContext(19, arithmetic.getRoundingMode());
+		this.mathContextLong128 = new MathContext(39, arithmetic.getRoundingMode());
 	}
 
 	protected int getScale() {
-		return arithmetics.getScale();
+		return arithmetic.getScale();
 	}
 	
 	protected ScaleMetrics getScaleMetrics() {
-		return arithmetics.getScaleMetrics();
+		return arithmetic.getScaleMetrics();
 	}
 
 	protected TruncationPolicy getTruncationPolicy() {
-		return arithmetics.getTruncationPolicy();
+		return arithmetic.getTruncationPolicy();
 	}
 	protected RoundingMode getRoundingMode() {
-		return arithmetics.getRoundingMode();
+		return arithmetic.getRoundingMode();
 	}
 	protected OverflowMode getOverflowMode() {
-		return arithmetics.getOverflowMode();
+		return arithmetic.getOverflowMode();
 	}
 
 	protected boolean isStandardTruncationPolicy() {
-		return arithmetics.getRoundingMode() == TruncationPolicy.DEFAULT.getRoundingMode() && arithmetics.getOverflowMode() == TruncationPolicy.DEFAULT.getOverflowMode();
+		return arithmetic.getRoundingMode() == TruncationPolicy.DEFAULT.getRoundingMode() && arithmetic.getOverflowMode() == TruncationPolicy.DEFAULT.getOverflowMode();
 	}
 
 	protected boolean isRoundingDown() {
-		return arithmetics.getRoundingMode() == RoundingMode.DOWN;
+		return arithmetic.getRoundingMode() == RoundingMode.DOWN;
 	}
 	protected boolean isUnchecked() {
-		return !arithmetics.getOverflowMode().isChecked();
+		return !arithmetic.getOverflowMode().isChecked();
 	}
 
 	protected int getRandomTestCount() {
@@ -78,7 +78,7 @@ abstract public class AbstractOperandTest {
 	@Test
 	public void runRandomTest() {
 		final int n = getRandomTestCount();
-		final ScaleMetrics scaleMetrics = arithmetics.getScaleMetrics();
+		final ScaleMetrics scaleMetrics = arithmetic.getScaleMetrics();
 		for (int i = 0; i < n; i++) {
 			runRandomTest(scaleMetrics, i);
 		}
@@ -86,7 +86,7 @@ abstract public class AbstractOperandTest {
 
 	@Test
 	public void runSpecialValueTest() {
-		final ScaleMetrics scaleMetrics = arithmetics.getScaleMetrics();
+		final ScaleMetrics scaleMetrics = arithmetic.getScaleMetrics();
 		runSpecialValueTest(scaleMetrics);
 	}
 

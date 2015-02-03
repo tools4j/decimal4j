@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -21,8 +21,8 @@ public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	
-	public AvgTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public AvgTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	@Parameters(name = "{index}: {0}, {1}")
@@ -30,7 +30,7 @@ public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				data.add(new Object[] {s, rm, s.getArithmetics(rm)});
+				data.add(new Object[] {s, rm, s.getArithmetic(rm)});
 			}
 		}
 		return data;

@@ -81,7 +81,7 @@ public class ConvertToDoubleBenchmark extends AbstractBenchmark {
 	}
 
 	protected <S extends ScaleMetrics> double nativeDecimals(BenchmarkState state, Values<S> values) {
-		return state.arithmetics.toDouble(values.unscaled1);//rounding mode is in arithmetics
+		return state.arithmetic.toDouble(values.unscaled1);//rounding mode is in arithmetic
 	}
 
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {

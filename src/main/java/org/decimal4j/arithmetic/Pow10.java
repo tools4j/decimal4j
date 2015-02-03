@@ -1,10 +1,10 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
-
 import org.decimal4j.scale.Scale18f;
 
 /**
@@ -74,7 +74,7 @@ final class Pow10 {
 		}
 	}
 	
-	public static long multiplyByPowerOf10Checked(final DecimalArithmetics arith, final long uDecimal, final int n) {
+	public static long multiplyByPowerOf10Checked(final DecimalArithmetic arith, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
@@ -96,7 +96,7 @@ final class Pow10 {
 		}
 	}
 
-	public static long multiplyByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
+	public static long multiplyByPowerOf10Checked(final DecimalArithmetic arith, final DecimalRounding rounding, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
@@ -197,7 +197,7 @@ final class Pow10 {
 		}
 	}
 	
-	public static long divideByPowerOf10Checked(final DecimalArithmetics arith, final long uDecimal, final int n) {
+	public static long divideByPowerOf10Checked(final DecimalArithmetic arith, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
@@ -218,7 +218,7 @@ final class Pow10 {
 		}
 	}
 
-	public static long divideByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal, final int n) {
+	public static long divideByPowerOf10Checked(final DecimalArithmetic arith, final DecimalRounding rounding, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
 			return uDecimal;
 		}
@@ -285,7 +285,7 @@ final class Pow10 {
 			return pow10divisorIsPositive ? quot : -quot;
 		}
 	}
-	static long divideByPowerOf10Checked(final DecimalArithmetics arith, final long uDecimalDividend, final ScaleMetrics dividendMetrics, final boolean pow10divisorIsPositive, final ScaleMetrics pow10divisorMetrics) {
+	static long divideByPowerOf10Checked(final DecimalArithmetic arith, final long uDecimalDividend, final ScaleMetrics dividendMetrics, final boolean pow10divisorIsPositive, final ScaleMetrics pow10divisorMetrics) {
 		final int scaleDiff = dividendMetrics.getScale() - pow10divisorMetrics.getScale();
 		final long quot;
 		if (scaleDiff <= 0) {
@@ -300,7 +300,7 @@ final class Pow10 {
 		return pow10divisorIsPositive ? quot : arith.negate(quot);
 	}
 	
-	static long divideByPowerOf10Checked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimalDividend, final ScaleMetrics dividendMetrics, final boolean pow10divisorIsPositive, final ScaleMetrics pow10divisorMetrics) {
+	static long divideByPowerOf10Checked(final DecimalArithmetic arith, final DecimalRounding rounding, final long uDecimalDividend, final ScaleMetrics dividendMetrics, final boolean pow10divisorIsPositive, final ScaleMetrics pow10divisorMetrics) {
 		final int scaleDiff = dividendMetrics.getScale() - pow10divisorMetrics.getScale();
 		final long quot;
 		if (scaleDiff <= 0) {

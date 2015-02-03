@@ -1,5 +1,7 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
+
 /**
  * Helper class used by pow to handle some special cases.
  */
@@ -9,8 +11,8 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_ZERO {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
-			return arithmetics.one();//yes 0^0 is also 1
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+			return arithmetic.one();//yes 0^0 is also 1
 		}
 	},
 	/**
@@ -18,7 +20,7 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_ONE {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return uDecimal;
 		}
 	},
@@ -28,12 +30,12 @@ enum SpecialPowResult {
 	 */
 	BASE_IS_ZERO {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			if (exponent >= 0) {
 				//uDecimal == 0 should never happen (0^0 is usually defined as 1)
 				return 0;
 			}
-			throw new ArithmeticException("Division by zero: " + arithmetics.toString(uDecimal) + "^" + exponent);
+			throw new ArithmeticException("Division by zero: " + arithmetic.toString(uDecimal) + "^" + exponent);
 		}
 	},
 	/**
@@ -41,7 +43,7 @@ enum SpecialPowResult {
 	 */
 	BASE_IS_ONE {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return uDecimal;//uDecimal is 1
 		}
 	},
@@ -51,7 +53,7 @@ enum SpecialPowResult {
 	 */
 	BASE_IS_MINUS_ONE {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return ((exponent & 0x1) == 0) ? -uDecimal : uDecimal;//uDecimal is one and it's negation cannot overflow
 		}
 	},
@@ -60,8 +62,8 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_MINUS_ONE {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
-			return arithmetics.invert(uDecimal);
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+			return arithmetic.invert(uDecimal);
 		}
 	},
 	/**
@@ -69,25 +71,25 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_TWO {
 		@Override
-		long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent) {
-			return arithmetics.square(uDecimal);
+		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+			return arithmetic.square(uDecimal);
 		}
 	};
 	
-	abstract long pow(DecimalArithmetics arithmetics, long uDecimal, int exponent);
+	abstract long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent);
 
 	/**
 	 * Returns the special power case if it is one and null otherwise.
 	 * 
-	 * @param arithmetics
-	 *            the arithmetics object
+	 * @param arithmetic
+	 *            the arithmetic object
 	 * @param uDecimal
 	 *            the base
 	 * @param n
 	 *            the exponent
 	 * @return the special case if it is one and null otherwise
 	 */
-	static SpecialPowResult getFor(DecimalArithmetics arithmetics, long uDecimal, long n) {
+	static SpecialPowResult getFor(DecimalArithmetic arithmetic, long uDecimal, long n) {
 		if (n == 0) {
 			return EXPONENT_IS_ZERO;
 		}
@@ -97,7 +99,7 @@ enum SpecialPowResult {
 		if (uDecimal == 0) {
 			return BASE_IS_ZERO;
 		}
-		final long one = arithmetics.one();
+		final long one = arithmetic.one();
 		if (uDecimal == one) {
 			return BASE_IS_ONE;
 		}

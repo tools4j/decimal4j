@@ -2,7 +2,7 @@ package org.decimal4j.jmh;
 
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.OperationsPerInvocation;

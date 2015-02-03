@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.arithmetic.JDKSupport;
 
 /**
@@ -34,9 +34,9 @@ class ArithmeticResult<T> {
 	public static <T> ArithmeticResult<T> forResult(String resultString, T comparableValue) {
 		return new ArithmeticResult<T>(resultString, comparableValue, (ArithmeticException)null);
 	}
-	public static ArithmeticResult<Long> forResult(DecimalArithmetics arithmetics, BigDecimal result) {
-		final BigDecimal rnd = result.setScale(arithmetics.getScale(), arithmetics.getRoundingMode());
-		final long resultUnscaled = arithmetics.getOverflowMode().isChecked() ? JDKSupport.bigIntegerToLongValueExact(rnd.unscaledValue()) : rnd.unscaledValue().longValue();
+	public static ArithmeticResult<Long> forResult(DecimalArithmetic arithmetic, BigDecimal result) {
+		final BigDecimal rnd = result.setScale(arithmetic.getScale(), arithmetic.getRoundingMode());
+		final long resultUnscaled = arithmetic.getOverflowMode().isChecked() ? JDKSupport.bigIntegerToLongValueExact(rnd.unscaledValue()) : rnd.unscaledValue().longValue();
 		return forResult(result.toPlainString(), resultUnscaled);
 	}
 	public static ArithmeticResult<Long> forResult(Decimal<?> result) {

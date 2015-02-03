@@ -6,8 +6,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -23,8 +23,8 @@ public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInte
 	
 	private final boolean exact;
 
-	public ToBigIntegerTest(ScaleMetrics scaleMetrics, RoundingMode rounding, boolean exact, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public ToBigIntegerTest(ScaleMetrics scaleMetrics, RoundingMode rounding, boolean exact, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 		this.exact = exact;
 	}
 
@@ -32,9 +32,9 @@ public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInte
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] {s, RoundingMode.DOWN, true, s.getDefaultArithmetics()});
+			data.add(new Object[] {s, RoundingMode.DOWN, true, s.getDefaultArithmetic()});
 			for (final RoundingMode rounding : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				data.add(new Object[] {s, rounding, false, s.getArithmetics(rounding)});
+				data.add(new Object[] {s, rounding, false, s.getArithmetic(rounding)});
 			}
 		}
 		return data;

@@ -1,9 +1,9 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
-
 import org.decimal4j.scale.Scale9f;
 
 /**
@@ -16,14 +16,14 @@ final class Mul {
 	 * without rounding.
 	 * 
 	 * @param arith
-	 *            the arithmetics with access to scale metrics etc.
+	 *            the arithmetic with access to scale metrics etc.
 	 * @param uDecimal1
 	 *            the first unscaled decimal factor
 	 * @param uDecimal2
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result without rounding
 	 */
-	public static long multiply(DecimalArithmetics arith, long uDecimal1, long uDecimal2) {
+	public static long multiply(DecimalArithmetic arith, long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
@@ -70,7 +70,7 @@ final class Mul {
 	 * applying the specified rounding for truncated decimals.
 	 * 
 	 * @param arith
-	 *            the arithmetics with access to scale metrics etc.
+	 *            the arithmetic with access to scale metrics etc.
 	 * @param rounding
 	 *            the rounding to apply for truncated decimals
 	 * @param uDecimal1
@@ -79,7 +79,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result with rounding
 	 */
-	public static long multiply(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
+	public static long multiply(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
@@ -141,7 +141,7 @@ final class Mul {
 	 * with rounding.
 	 * 
 	 * @param arith
-	 *            the arithmetics with access to scale metrics etc.
+	 *            the arithmetic with access to scale metrics etc.
 	 * @param rounding
 	 *            the rounding to apply for truncated decimals
 	 * @param uDecimal1
@@ -152,7 +152,7 @@ final class Mul {
 	 * @return the multiplication result with rounding and overflow checking
 	 */
 	// FIXME refactor/reconcile the rounding/overflow checking versions of these methods
-	public static long multiplyChecked(final DecimalArithmetics arith, final DecimalRounding rounding, final long uDecimal1, final long uDecimal2) {
+	public static long multiplyChecked(final DecimalArithmetic arith, final DecimalRounding rounding, final long uDecimal1, final long uDecimal2) {
 		try {
 			final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 			if (special != null) {
@@ -311,7 +311,7 @@ final class Mul {
 	}
 	
 	// FIXME merge with other versions
-	public static long squareChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal) {
+	public static long squareChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		try {
 			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 			final int scale = scaleMetrics.getScale();
@@ -372,7 +372,7 @@ final class Mul {
 		}
 	}
 
-	public static long multiplyChecked(DecimalArithmetics arith, long uDecimal1, long uDecimal2) {
+	public static long multiplyChecked(DecimalArithmetic arith, long uDecimal1, long uDecimal2) {
 		try {
 			final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 			if (special != null) {
@@ -429,7 +429,7 @@ final class Mul {
 		}
 	}
 
-	public static long squareChecked(DecimalArithmetics arith, long uDecimal) {
+	public static long squareChecked(DecimalArithmetic arith, long uDecimal) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		try {

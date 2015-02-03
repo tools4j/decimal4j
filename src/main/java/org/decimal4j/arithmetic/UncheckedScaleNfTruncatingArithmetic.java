@@ -3,6 +3,7 @@ package org.decimal4j.arithmetic;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
@@ -12,11 +13,11 @@ import org.decimal4j.truncate.OverflowMode;
  * digit without rounding. Operations are unchecked, that is, the result of an
  * operation that leads to an overflow is silently truncated.
  */
-public class UncheckedScaleNfTruncatingArithmetics extends
-		AbstractUncheckedScaleNfArithmetics implements DecimalArithmetics {
+public class UncheckedScaleNfTruncatingArithmetic extends
+		AbstractUncheckedScaleNfArithmetic implements DecimalArithmetic {
 
 	/**
-	 * Constructor for silent decimal arithmetics with given scale, truncating
+	 * Constructor for silent decimal arithmetic with given scale, truncating
 	 * {@link RoundingMode#DOWN DOWN} rounding mode and
 	 * {@link OverflowMode#UNCHECKED SILENT} overflow mode.
 	 * 
@@ -26,7 +27,7 @@ public class UncheckedScaleNfTruncatingArithmetics extends
 	 * @throws IllegalArgumentException
 	 *             if scale is negative or uneven
 	 */
-	public UncheckedScaleNfTruncatingArithmetics(ScaleMetrics scaleMetrics) {
+	public UncheckedScaleNfTruncatingArithmetic(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 

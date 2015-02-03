@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.base.AbstractImmutableDecimal;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
@@ -166,7 +166,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 
 	public Decimal${scale}f(String value) {
-		super(SCALE.getDefaultArithmetics().parse(value));
+		super(SCALE.getDefaultArithmetic().parse(value));
 	}
 	
 	@Override
@@ -198,27 +198,27 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
             return POS_CONST[(int) value];
         else if (value < 0 & value >= -MAX_CONSTANT)
             return NEG_CONST[(int) -value];
-		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromLong(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromLong(value));
 	}
 
 	public static Decimal${scale}f valueOf(double value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromDouble(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromDouble(value));
 	}
 
 	public static Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetics(roundingMode).fromDouble(value));
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromDouble(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigInteger value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromBigInteger(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigInteger(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigDecimal value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromBigDecimal(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigDecimal(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigDecimal value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetics(roundingMode).fromBigDecimal(value));
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromBigDecimal(value));
 	}
 
 
@@ -231,11 +231,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 
 	public static Decimal${scale}f valueOf(String value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetics().parse(value));
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().parse(value));
 	}
 
 	public static Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetics(roundingMode).parse(value));
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).parse(value));
 	}
 
 	/**
@@ -252,7 +252,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *         with the given scale
 	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetics().fromUnscaled(unscaledValue, scale));
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromUnscaled(unscaledValue, scale));
 	}
 
 	/**
@@ -271,7 +271,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *         with the given scale
 	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetics(roundingMode).fromUnscaled(unscaledValue, scale));
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
 	}
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {

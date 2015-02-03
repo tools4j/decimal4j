@@ -2,8 +2,8 @@ package org.decimal4j.op;
 
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
@@ -18,12 +18,12 @@ abstract public class Abstract1DecimalArg1LongArgToDecimalResultTest extends Abs
 	 * Constructor with arithemtics determining scale, rounding mode and
 	 * overflow policy.
 	 * 
-	 * @param arithmetics
-	 *            the arithmetics determining scale, rounding mode and overlfow
+	 * @param arithmetic
+	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArg1LongArgToDecimalResultTest(DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public Abstract1DecimalArg1LongArgToDecimalResultTest(DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	abstract protected BigDecimal expectedResult(BigDecimal a, long b);
@@ -56,7 +56,7 @@ abstract public class Abstract1DecimalArg1LongArgToDecimalResultTest extends Abs
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetics, expectedResult(bdOperandA, b));
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperandA, b));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {

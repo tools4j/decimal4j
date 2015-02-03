@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
@@ -39,7 +40,7 @@ final class Shift {
 		return positions > -Long.SIZE ? uDecimal << -positions : 0; 
 	}
 
-	public static long shiftLeftChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal, int positions) {
+	public static long shiftLeftChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int positions) {
 		if (positions >= 0) {
 			if (uDecimal == 0 | positions == 0) {
 				return uDecimal;
@@ -66,7 +67,7 @@ final class Shift {
 	}
 
 
-	public static long shiftRightChecked(DecimalArithmetics arith, DecimalRounding rounding, long uDecimal, int positions) {
+	public static long shiftRightChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0) {
 			return 0;
 		}

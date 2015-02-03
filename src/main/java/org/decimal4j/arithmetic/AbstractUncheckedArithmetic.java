@@ -6,10 +6,10 @@ import org.decimal4j.truncate.OverflowMode;
 
 /**
  * Base class for arithmetic implementations without overflow checking, that is,
- * for arithmetics whose {@link #getOverflowMode()} method returns
+ * for arithmetic whose {@link #getOverflowMode()} method returns
  * {@link OverflowMode#UNCHECKED}.
  */
-abstract public class AbstractUncheckedArithmetics extends AbstractArithmetics {
+abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
 
 	@Override
 	public OverflowMode getOverflowMode() {

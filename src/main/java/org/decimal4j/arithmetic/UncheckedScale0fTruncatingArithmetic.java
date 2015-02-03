@@ -9,12 +9,12 @@ import org.decimal4j.truncate.DecimalRounding;
 /**
  * The special case for longs with {@link Scale0f} and no rounding.
  */
-public final class UncheckedScale0fTruncatingArithmetics extends AbstractUncheckedScale0fArithmetics {
+public final class UncheckedScale0fTruncatingArithmetic extends AbstractUncheckedScale0fArithmetic {
 	
 	/**
 	 * The singleton instance.
 	 */
-	public static final UncheckedScale0fTruncatingArithmetics INSTANCE = new UncheckedScale0fTruncatingArithmetics();
+	public static final UncheckedScale0fTruncatingArithmetic INSTANCE = new UncheckedScale0fTruncatingArithmetic();
 	
 	@Override
 	public final RoundingMode getRoundingMode() {

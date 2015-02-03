@@ -8,14 +8,14 @@ import org.decimal4j.truncate.OverflowMode;
  * rounding is no issue. Overflow is not checked, that is,
  * {@link #getOverflowMode()} returns {@link OverflowMode#UNCHECKED}.
  */
-abstract public class AbstractUncheckedScaleNfArithmetics extends
-		AbstractUncheckedArithmetics {
+abstract public class AbstractUncheckedScaleNfArithmetic extends
+		AbstractUncheckedArithmetic {
 
 	private final ScaleMetrics scaleMetrics;
 	private final int scale;
 	private final long one;//10^scale
 
-	public AbstractUncheckedScaleNfArithmetics(ScaleMetrics scaleMetrics) {
+	public AbstractUncheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.scale = scaleMetrics.getScale();
 		this.one = scaleMetrics.getScaleFactor();

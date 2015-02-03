@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-import org.decimal4j.ImmutableDecimal;
-import org.decimal4j.MutableDecimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.api.ImmutableDecimal;
+import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
@@ -34,7 +34,7 @@ abstract public class AbstractBenchmark {
 		@Param({ "0", "6", "17" })
 		public int scale;
 
-		public DecimalArithmetics arithmetics;
+		public DecimalArithmetic arithmetic;
 		public DecimalFactory<?> factory;
 		public MathContext mcLong64;
 		public MathContext mcLong128;
@@ -43,13 +43,13 @@ abstract public class AbstractBenchmark {
 
 		//for checked benchmarks only
 		public TruncationPolicy checkedTruncationPolicy;
-		public DecimalArithmetics checkedArithmetics;
+		public DecimalArithmetic checkedArithmetic;
 
 		protected void initParams(RoundingMode roundingMode) {
-			arithmetics = Scales.valueOf(scale).getArithmetics(roundingMode);
+			arithmetic = Scales.valueOf(scale).getArithmetic(roundingMode);
 			factory = Factories.valueOf(scale);
 			checkedTruncationPolicy = OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode);
-			checkedArithmetics = Scales.valueOf(scale).getArithmetics(checkedTruncationPolicy);
+			checkedArithmetic = Scales.valueOf(scale).getArithmetic(checkedTruncationPolicy);
 			mcLong64 = new MathContext(19, roundingMode);
 			mcLong128 = new MathContext(39, roundingMode);
 		}

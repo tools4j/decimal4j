@@ -2,6 +2,8 @@ package org.decimal4j.arithmetic;
 
 import java.math.RoundingMode;
 
+import org.decimal4j.api.DecimalArithmetic;
+
 /**
  * Computes the average of two numbers, that is, {@code (a+b)/2}.
  */
@@ -12,7 +14,7 @@ final class Avg {
 		final long floor = (a & b) + (xor >> 1);
 		return floor + ((floor >>> 63) & xor);
 	}
-	public static long avg(DecimalArithmetics arith, long a, long b) {
+	public static long avg(DecimalArithmetic arith, long a, long b) {
 		final RoundingMode roundingMode = arith.getRoundingMode();
 		final long xor = a ^ b;
 		switch (roundingMode) {

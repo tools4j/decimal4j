@@ -5,12 +5,12 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.EnumMap;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.CheckedScaleNfRoundingArithmetics;
-import org.decimal4j.arithmetic.CheckedScaleNfTruncatingArithmetics;
-import org.decimal4j.arithmetic.DecimalArithmetics;
-import org.decimal4j.arithmetic.UncheckedScaleNfRoundingArithmetics;
-import org.decimal4j.arithmetic.UncheckedScaleNfTruncatingArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.arithmetic.CheckedScaleNfRoundingArithmetic;
+import org.decimal4j.arithmetic.CheckedScaleNfTruncatingArithmetic;
+import org.decimal4j.arithmetic.UncheckedScaleNfRoundingArithmetic;
+import org.decimal4j.arithmetic.UncheckedScaleNfTruncatingArithmetic;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -38,42 +38,42 @@ abstract public class AbstractScale implements ScaleMetrics {
 	private final BigInteger biScaleFactor = BigInteger.valueOf(getScaleFactor());
 	private final BigDecimal bdScaleFactor = new BigDecimal(biScaleFactor);
 
-	private final EnumMap<RoundingMode, DecimalArithmetics> roundingModeToArithmetics = initArithmetics();
-	private final EnumMap<RoundingMode, DecimalArithmetics> roundingModeToCheckedArithmetics = initCheckedArithmetics();
+	private final EnumMap<RoundingMode, DecimalArithmetic> roundingModeToArithmetic = initArithmetic();
+	private final EnumMap<RoundingMode, DecimalArithmetic> roundingModeToCheckedArithmetic = initCheckedArithmetic();
 
 	/**
-	 * Initialises the arithmetics map. {@link Scale0f} overrides this method.
+	 * Initialises the arithmetic map. {@link Scale0f} overrides this method.
 	 * 
-	 * @return the rounding mode to arithmetics map
+	 * @return the rounding mode to arithmetic map
 	 */
-	protected EnumMap<RoundingMode, DecimalArithmetics> initArithmetics() {
-		final EnumMap<RoundingMode, DecimalArithmetics> map = new EnumMap<RoundingMode, DecimalArithmetics>(RoundingMode.class);
+	protected EnumMap<RoundingMode, DecimalArithmetic> initArithmetic() {
+		final EnumMap<RoundingMode, DecimalArithmetic> map = new EnumMap<RoundingMode, DecimalArithmetic>(RoundingMode.class);
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, new UncheckedScaleNfTruncatingArithmetics(this));
+				map.put(roundingMode, new UncheckedScaleNfTruncatingArithmetic(this));
 			} else {
-				map.put(roundingMode, new UncheckedScaleNfRoundingArithmetics(this, dr));
+				map.put(roundingMode, new UncheckedScaleNfRoundingArithmetic(this, dr));
 			}
 		}
 		return map;
 	}
 
 	/**
-	 * Initialises the checked arithmetics map. {@link Scale0f} overrides this
+	 * Initialises the checked arithmetic map. {@link Scale0f} overrides this
 	 * method.
 	 * 
-	 * @return the rounding mode to checked arithmetics map
+	 * @return the rounding mode to checked arithmetic map
 	 * @see OverflowMode#CHECKED
 	 */
-	protected EnumMap<RoundingMode, DecimalArithmetics> initCheckedArithmetics() {
-		final EnumMap<RoundingMode, DecimalArithmetics> map = new EnumMap<RoundingMode, DecimalArithmetics>(RoundingMode.class);
+	protected EnumMap<RoundingMode, DecimalArithmetic> initCheckedArithmetic() {
+		final EnumMap<RoundingMode, DecimalArithmetic> map = new EnumMap<RoundingMode, DecimalArithmetic>(RoundingMode.class);
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = dr.getRoundingMode();
 			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, new CheckedScaleNfTruncatingArithmetics(this));
+				map.put(roundingMode, new CheckedScaleNfTruncatingArithmetic(this));
 			} else {
-				map.put(roundingMode, new CheckedScaleNfRoundingArithmetics(this, dr));
+				map.put(roundingMode, new CheckedScaleNfRoundingArithmetic(this, dr));
 			}
 		}
 		return map;
@@ -100,25 +100,25 @@ abstract public class AbstractScale implements ScaleMetrics {
 	}
 
 	@Override
-	public final DecimalArithmetics getDefaultArithmetics() {
-		return getArithmetics(TruncationPolicy.DEFAULT);
+	public final DecimalArithmetic getDefaultArithmetic() {
+		return getArithmetic(TruncationPolicy.DEFAULT);
 	}
 
 	@Override
-	public final DecimalArithmetics getTruncatingArithmetics(OverflowMode overflowMode) {
-		return overflowMode == OverflowMode.UNCHECKED ? roundingModeToArithmetics.get(RoundingMode.DOWN) : roundingModeToCheckedArithmetics.get(RoundingMode.DOWN);
+	public final DecimalArithmetic getTruncatingArithmetic(OverflowMode overflowMode) {
+		return overflowMode == OverflowMode.UNCHECKED ? roundingModeToArithmetic.get(RoundingMode.DOWN) : roundingModeToCheckedArithmetic.get(RoundingMode.DOWN);
 	}
 
 	@Override
-	public final DecimalArithmetics getArithmetics(RoundingMode roundingMode) {
-		return roundingModeToArithmetics.get(roundingMode);
+	public final DecimalArithmetic getArithmetic(RoundingMode roundingMode) {
+		return roundingModeToArithmetic.get(roundingMode);
 	}
 
 	@Override
-	public final DecimalArithmetics getArithmetics(TruncationPolicy truncationPolicy) {
+	public final DecimalArithmetic getArithmetic(TruncationPolicy truncationPolicy) {
 		final OverflowMode overflow = truncationPolicy.getOverflowMode();
 		final RoundingMode rounding = truncationPolicy.getRoundingMode();
-		return overflow == OverflowMode.UNCHECKED ? roundingModeToArithmetics.get(rounding) : roundingModeToCheckedArithmetics.get(rounding);
+		return overflow == OverflowMode.UNCHECKED ? roundingModeToArithmetic.get(rounding) : roundingModeToCheckedArithmetic.get(rounding);
 	}
 
 	@Override

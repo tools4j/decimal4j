@@ -1,5 +1,6 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
@@ -116,11 +117,11 @@ class DoubleConversion {
 		}
 	}
 
-	public static final long doubleToUnscaled(DecimalArithmetics arith, double value) {
+	public static final long doubleToUnscaled(DecimalArithmetic arith, double value) {
 		return doubleToUnscaled(arith, DecimalRounding.DOWN, value);
 	}
 
-	public static final long doubleToUnscaled(DecimalArithmetics arith, DecimalRounding rounding, double value) {
+	public static final long doubleToUnscaled(DecimalArithmetic arith, DecimalRounding rounding, double value) {
 		if (value == 0) {
 			return 0;
 		}
@@ -158,7 +159,7 @@ class DoubleConversion {
 		return doubleToUnscaledShift(arith, rounding, value, hScaled, lScaled, shift);
 	}
 	
-	private static final long doubleToUnscaledShift(DecimalArithmetics arith, DecimalRounding rounding, double value, long hScaled, long lScaled, int shift) {
+	private static final long doubleToUnscaledShift(DecimalArithmetic arith, DecimalRounding rounding, double value, long hScaled, long lScaled, int shift) {
 		if (shift > 0) {
 			//multiply: shift left
 			if (hScaled != 0) {
@@ -184,7 +185,7 @@ class DoubleConversion {
 		}
 	}
 
-	private static final long doubleToUnscaledShiftRight(DecimalArithmetics arith, double value, long hScaled, long lScaled, int shift) {
+	private static final long doubleToUnscaledShiftRight(DecimalArithmetic arith, double value, long hScaled, long lScaled, int shift) {
 		final long absResult;
 		if (shift < Long.SIZE) {
 			if ((hScaled >>> shift) != 0) {
@@ -202,7 +203,7 @@ class DoubleConversion {
 		return value >= 0 ? absResult : -absResult;
 	}
 
-	private static final long doubleToUnscaledShiftRight(DecimalArithmetics arith, DecimalRounding rounding, double value, long hScaled, long lScaled, int shift) {
+	private static final long doubleToUnscaledShiftRight(DecimalArithmetic arith, DecimalRounding rounding, double value, long hScaled, long lScaled, int shift) {
 		final long absResult;
 		final TruncatedPart truncatedPart;
 		if (shift < Long.SIZE) {
@@ -227,19 +228,19 @@ class DoubleConversion {
 		return (value >= 0 ? absResult : -absResult) + inc;
 	}
 
-	public static double longToDouble(DecimalArithmetics arith, long value) {
+	public static double longToDouble(DecimalArithmetic arith, long value) {
 		return unscaledToDouble(arith, DecimalRounding.DOWN, value);
 	}
-	public static double longToDouble(DecimalArithmetics arith, DecimalRounding rounding, long value) {
+	public static double longToDouble(DecimalArithmetic arith, DecimalRounding rounding, long value) {
 		if (rounding == DecimalRounding.HALF_EVEN) {
 			return value;
 		}
 		return unscaledToDouble(arith, rounding, value);
 	}
-	public static double unscaledToDouble(DecimalArithmetics arith, long unscaled) {
+	public static double unscaledToDouble(DecimalArithmetic arith, long unscaled) {
 		return unscaledToDouble(arith, DecimalRounding.DOWN, unscaled);
 	}
-	public static double unscaledToDouble(DecimalArithmetics arith, DecimalRounding rounding, long unscaled) {
+	public static double unscaledToDouble(DecimalArithmetic arith, DecimalRounding rounding, long unscaled) {
 		if (unscaled == 0) {
 			return 0;
 		}

@@ -3,6 +3,7 @@ package org.decimal4j.arithmetic;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -13,7 +14,7 @@ import org.decimal4j.truncate.TruncationPolicy;
  * {@link RoundingMode rounding mode} and {@link #getOverflowMode() overflow
  * mode}.
  */
-abstract public class AbstractArithmetics implements DecimalArithmetics {
+abstract public class AbstractArithmetic implements DecimalArithmetic {
 
 	@Override
 	public int getScale() {
@@ -56,7 +57,7 @@ abstract public class AbstractArithmetics implements DecimalArithmetics {
 			final int diff = thisScale - scale;
 			if (diff <= 18) {
 				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
-				final long rescaled = diffMetrics.getArithmetics(getRoundingMode()).divideByPowerOf10(uDecimal, diff);
+				final long rescaled = diffMetrics.getArithmetic(getRoundingMode()).divideByPowerOf10(uDecimal, diff);
 				return BigDecimal.valueOf(rescaled, scale);
 			}
 		} else {

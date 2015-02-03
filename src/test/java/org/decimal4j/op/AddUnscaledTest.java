@@ -2,8 +2,8 @@ package org.decimal4j.op;
 
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
@@ -15,8 +15,8 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class AddUnscaledTest extends AbstractUnscaledOperandTest {
 	
-	public AddUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetics arithmetics) {
-		super(sm, tp, scale, arithmetics);
+	public AddUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
+		super(sm, tp, scale, arithmetic);
 	}
 
 	@Override

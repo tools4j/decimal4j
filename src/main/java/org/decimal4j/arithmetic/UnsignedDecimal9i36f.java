@@ -1,11 +1,11 @@
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncatedPart;
-
 import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.Scale8f;
 import org.decimal4j.scale.Scale9f;
@@ -14,19 +14,19 @@ import org.decimal4j.scale.Scale9f;
  * Helper class for an unsigned decimal value with 9 integral digits and 38 decimal
  * fraction digits. Used internally by {@link Pow} to calculate decimal powers.
  */
-final class UnsignedDecimal9x36f {
+final class UnsignedDecimal9i36f {
 	/** Thread local for factor 1*/
-	static final ThreadLocal<UnsignedDecimal9x36f> THREAD_LOCAL_1 = new ThreadLocal<UnsignedDecimal9x36f>() {
+	static final ThreadLocal<UnsignedDecimal9i36f> THREAD_LOCAL_1 = new ThreadLocal<UnsignedDecimal9i36f>() {
 		@Override
-		protected UnsignedDecimal9x36f initialValue() {
-			return new UnsignedDecimal9x36f();
+		protected UnsignedDecimal9i36f initialValue() {
+			return new UnsignedDecimal9i36f();
 		}
 	};
 	/** Thread local for accumulator*/
-	static final ThreadLocal<UnsignedDecimal9x36f> THREAD_LOCAL_2 = new ThreadLocal<UnsignedDecimal9x36f>() {
+	static final ThreadLocal<UnsignedDecimal9i36f> THREAD_LOCAL_2 = new ThreadLocal<UnsignedDecimal9i36f>() {
 		@Override
-		protected UnsignedDecimal9x36f initialValue() {
-			return new UnsignedDecimal9x36f();
+		protected UnsignedDecimal9i36f initialValue() {
+			return new UnsignedDecimal9i36f();
 		}
 	};
 	
@@ -50,10 +50,10 @@ final class UnsignedDecimal9x36f {
 	private long val0;
 	
 	/** Constructor */
-	private UnsignedDecimal9x36f() {
+	private UnsignedDecimal9i36f() {
 		super();
 	}
-	public UnsignedDecimal9x36f initOne() {
+	public UnsignedDecimal9i36f initOne() {
 		this.norm = Norm.NORMALIZED_18;
 		this.pow10 = 0;
 		this.ival = 1;
@@ -63,7 +63,7 @@ final class UnsignedDecimal9x36f {
 		this.val0 = 0;
 		return this;
 	}
-	public UnsignedDecimal9x36f init(UnsignedDecimal9x36f copy) {
+	public UnsignedDecimal9i36f init(UnsignedDecimal9i36f copy) {
 		this.norm = copy.norm;
 		this.pow10 = copy.pow10;
 		this.ival = copy.ival;
@@ -73,7 +73,7 @@ final class UnsignedDecimal9x36f {
 		this.val0 = copy.val0;
 		return this;
 	}
-	public UnsignedDecimal9x36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
+	public UnsignedDecimal9i36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
 		final ScaleMetrics diffMetrics = Scales.valueOf(18 - scaleMetrics.getScale());
 		normalizeAndRound(1, 0, ival, diffMetrics.multiplyByScaleFactor(fval), 0, 0, 0, DecimalRounding.UNNECESSARY);
 		return this;
@@ -176,14 +176,14 @@ final class UnsignedDecimal9x36f {
 		this.val1 = v1;
 		this.val0 = v0;
 	}
-	public final void multiply(int sgn, UnsignedDecimal9x36f factor, DecimalRounding rounding) {
+	public final void multiply(int sgn, UnsignedDecimal9i36f factor, DecimalRounding rounding) {
 		if (norm != Norm.NORMALIZED_18) {
 			normalizeAndRound(sgn, pow10, ival, val3, val2, val1, val0, rounding);
 		}
 		multiply(sgn, val3, val2, factor, rounding);
 	}
 	//PRECONDITION: this and factor normalized, i.e. ival < Scale9f.SCALE_FACTOR
-	private void multiply(int sgn, long val3, long val2, UnsignedDecimal9x36f factor, DecimalRounding rounding) {
+	private void multiply(int sgn, long val3, long val2, UnsignedDecimal9i36f factor, DecimalRounding rounding) {
 		//split each factor into 9 digit parts
 		if (this.norm != Norm.NORMALIZED_09) {
 			this.normalize09();
@@ -291,16 +291,16 @@ final class UnsignedDecimal9x36f {
 		final int log10 = log10(ival);
 		return (ival >= Scales.valueOf(log10 - 1).getScaleFactor()*3) ? log10 : log10 - 1;//we want to normalize the ival part to be between 1 and 5
 	}
-	private final long getInvNorm(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
+	private final long getInvNorm(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		final int pow10 = -getInvNormPow10();
 		if (pow10 >= 0) {
 			return getDecimal(sgn, pow10, ival, val3, val2, val1, val0, 0, 0, 0, 0, arith, rounding);
 		}
 		return getDecimal(sgn, pow10 + 18, 0, ival, val3, val2, val1, val0, 0, 0, 0, arith, rounding);
 	}
-	public long getInverted(int sgn, DecimalArithmetics arith, DecimalRounding rounding, DecimalRounding powRounding, UnsignedDecimal9x36f acc) {
+	public long getInverted(int sgn, DecimalArithmetic arith, DecimalRounding rounding, DecimalRounding powRounding, UnsignedDecimal9i36f acc) {
 		//1) get scale18 value normalized to 0.3 <= x < 3 (i.e. make it invertible without overflow for uninverted and inverted value)
-		final DecimalArithmetics arith18 = Scale18f.INSTANCE.getArithmetics(rounding.getRoundingMode());//unchecked is fine, see comments below
+		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getArithmetic(rounding.getRoundingMode());//unchecked is fine, see comments below
 		final long divisor = acc.getInvNorm(sgn, arith18, powRounding);
 		//2) invert normalized scale18 value 
 		final long inverted = arith18.invert(divisor);//can't overflow as for x=abs(divisor): 0.9 <= x < 9 
@@ -308,7 +308,7 @@ final class UnsignedDecimal9x36f {
 		final int pow10 = acc.getPow10() + acc.getInvNormPow10() + (18 - arith.getScale());
 		return arith.multiplyByPowerOf10(inverted, -pow10);//overflow possible
 	}
-	public final long getDecimal(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
+	public final long getDecimal(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		if (pow10 >= 0) {
 			if (pow10 <= 18) {
 				return getDecimal(sgn, pow10, ival, val3, val2, val1, val0, 0, 0, 0, 0, arith, rounding);
@@ -321,7 +321,7 @@ final class UnsignedDecimal9x36f {
 			return divideByPowerOf10AndRound(sgn, arith, rounding);
 		}
 	}
-	private final long multiplyByPowerOf10AndRound(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
+	private final long multiplyByPowerOf10AndRound(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		long iv = ival * Scale18f.SCALE_FACTOR + val3;
 		if (pow10 <= 36) {
 			return getDecimal(sgn, pow10 - 18, iv, val2, val1, val0, 0, 0, 0, 0, 0, arith, rounding);
@@ -346,8 +346,8 @@ final class UnsignedDecimal9x36f {
 		}
 		return 0;//overflow, everything was shifted out to the left
 	}
-	private final long checkedMultiplyByPowerOf10AndRound(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
-		final DecimalArithmetics arith18 = Scale18f.INSTANCE.getTruncatingArithmetics(arith.getOverflowMode());
+	private final long checkedMultiplyByPowerOf10AndRound(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
+		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getTruncatingArithmetic(arith.getOverflowMode());
 		long iv = arith18.add(arith18.fromLong(ival), val3);//ival * 10^18 + val3
 		if (pow10 <= 36) {
 			return getDecimal(sgn, pow10 - 18, iv, val2, val1, val0, 0, 0, 0, 0, 0, arith, rounding);
@@ -373,7 +373,7 @@ final class UnsignedDecimal9x36f {
 		//should not get here, an overflow exception should have been thrown
 		return 0;//overflow, everything was shifted out to the left
 	}
-	private final long divideByPowerOf10AndRound(int sgn, DecimalArithmetics arith, DecimalRounding rounding) {
+	private final long divideByPowerOf10AndRound(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		if (pow10 >= -18) {
 			return getDecimal(sgn, pow10 + 18, 0, ival, val3, val2, val1, val0, 0, 0, 0, arith, rounding);
 		} else if (pow10 >= -36) {
@@ -387,7 +387,7 @@ final class UnsignedDecimal9x36f {
 		}
 	}
 	//PRECONDITION: 0 <= pow10 <= 18
-	private static long getDecimal(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, long rem1, long rem2, long rem3, long rem4, DecimalArithmetics arith, DecimalRounding rounding) {
+	private static long getDecimal(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, long rem1, long rem2, long rem3, long rem4, DecimalArithmetic arith, DecimalRounding rounding) {
 		final OverflowMode overflowMode = arith.getOverflowMode();
 		
 		//apply pow10 first and convert to intVal and fra18 (with scale 18, w/o rounding)

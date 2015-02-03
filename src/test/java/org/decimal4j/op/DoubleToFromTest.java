@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.Assert;
@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests {@link DecimalArithmetics#toDouble(long)} and {@link DecimalArithmetics#fromDouble(double)}
+ * Tests {@link DecimalArithmetic#toDouble(long)} and {@link DecimalArithmetic#fromDouble(double)}
  * and checks that the result is the same as the original input (if appropriate rounding modes
  * are used and some tolerance is allowed for 2 possible truncations).
  */
@@ -24,11 +24,11 @@ public class DoubleToFromTest {
 
 	private static final Random RND = new Random();
 
-	private final DecimalArithmetics arithmetics;
+	private final DecimalArithmetic arithmetic;
 	private final RoundingMode backRounding;
 
-	public DoubleToFromTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
-		this.arithmetics = arithmetics;
+	public DoubleToFromTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
+		this.arithmetic = arithmetic;
 		this.backRounding = Doubles.getOppositeRoundingMode(roundingMode);
 	}
 
@@ -38,7 +38,7 @@ public class DoubleToFromTest {
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final RoundingMode mode : TestSettings.UNCHECKED_ROUNDING_MODES) {
 				if (mode != RoundingMode.UNNECESSARY) {
-					final DecimalArithmetics arith = s.getArithmetics(mode);
+					final DecimalArithmetic arith = s.getArithmetic(mode);
 					data.add(new Object[] { s, mode, arith });
 				}
 			}
@@ -49,7 +49,7 @@ public class DoubleToFromTest {
 	@Test
 	public void testSpecialDoubles() {
 		int index = 0;
-		for (final double d : Doubles.specialDoubleOperands(arithmetics.getScaleMetrics())) {
+		for (final double d : Doubles.specialDoubleOperands(arithmetic.getScaleMetrics())) {
 			final long value = Double.doubleToRawLongBits(d);
 			runTest("special[" + index + "]", value);
 			index++;
@@ -68,9 +68,9 @@ public class DoubleToFromTest {
 
 	private void runTest(String name, long value) {
 		try {
-			final double dbl = arithmetics.toDouble(value);
-			final long result = arithmetics.getScaleMetrics().getArithmetics(backRounding).fromDouble(dbl);
-			final long tolerance = (long)(Math.ceil(Math.ulp(dbl) * arithmetics.getScaleMetrics().getScaleFactor()));
+			final double dbl = arithmetic.toDouble(value);
+			final long result = arithmetic.getScaleMetrics().getArithmetic(backRounding).fromDouble(dbl);
+			final long tolerance = (long)(Math.ceil(Math.ulp(dbl) * arithmetic.getScaleMetrics().getScaleFactor()));
 			Assert.assertTrue(name + ": result after 2 conversions should be same as input: input=<" + value + ">, output=<" + result + ">, tolerance=<" + tolerance + ">, delta=<" + Math.abs(value - result) + ">", Math.abs(value - result) <= tolerance);
 		} catch (NumberFormatException e) {
 			//ignore, must be out of range, tested elsewhere

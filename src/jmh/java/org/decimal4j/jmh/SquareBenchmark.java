@@ -3,7 +3,7 @@ package org.decimal4j.jmh;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import org.decimal4j.Decimal;
+import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.runner.RunnerException;
 
@@ -29,7 +29,7 @@ public class SquareBenchmark extends AbstractUnaryOpIntLongValRoundingBenchmark 
 
 	@Override
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
-		return state.arithmetics.square(values.unscaled1);
+		return state.arithmetic.square(values.unscaled1);
 	}
 
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {

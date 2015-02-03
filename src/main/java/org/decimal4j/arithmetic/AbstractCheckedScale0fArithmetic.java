@@ -5,12 +5,12 @@ import java.math.BigInteger;
 import org.decimal4j.scale.Scale0f;
 
 /**
- * Base class for arithmetics implementations for the special case
+ * Base class for arithmetic implementations for the special case
  * {@code scale=0}, that is, for long values. The implementation throws an
  * exception if an operation leads to on overflow.
  */
-abstract public class AbstractCheckedScale0fArithmetics extends
-		AbstractCheckedArithmetics {
+abstract public class AbstractCheckedScale0fArithmetic extends
+		AbstractCheckedArithmetic {
 
 	@Override
 	public final Scale0f getScaleMetrics() {

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -26,8 +26,8 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	
 	private static final int MAX_POW_EXPONENT = getMaxPowExponent();
 	
-	public PowTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public PowTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	private static int getMaxPowExponent() {
@@ -50,7 +50,7 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetics arith = s.getArithmetics(tp);
+				final DecimalArithmetic arith = s.getArithmetic(tp);
 				data.add(new Object[] {s, tp, arith});
 			}
 		}
@@ -200,7 +200,7 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetics, expectedResult(bdOperandA, b));
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperandA, b));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}

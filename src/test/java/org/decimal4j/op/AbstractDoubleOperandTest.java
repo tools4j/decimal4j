@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -19,8 +19,8 @@ abstract public class AbstractDoubleOperandTest extends Abstract1DecimalArg1Doub
 	
 	protected final MathContext MATH_CONTEXT_DOUBLE_TO_LONG_64 = new MathContext(19, RoundingMode.HALF_EVEN);
 
-	public AbstractDoubleOperandTest(ScaleMetrics s, TruncationPolicy tp, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public AbstractDoubleOperandTest(ScaleMetrics s, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	@Parameters(name = "{index}: {0}, {1}")
@@ -28,7 +28,7 @@ abstract public class AbstractDoubleOperandTest extends Abstract1DecimalArg1Doub
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetics arith = s.getArithmetics(tp);
+				final DecimalArithmetic arith = s.getArithmetic(tp);
 				data.add(new Object[] {s, tp, arith});
 			}
 		}

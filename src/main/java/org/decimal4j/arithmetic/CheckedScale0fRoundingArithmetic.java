@@ -4,16 +4,16 @@ import java.math.RoundingMode;
 
 import org.decimal4j.truncate.DecimalRounding;
 
-public class CheckedScale0fRoundingArithmetics extends
-		AbstractCheckedScale0fArithmetics {
+public class CheckedScale0fRoundingArithmetic extends
+		AbstractCheckedScale0fArithmetic {
 
 	private final DecimalRounding rounding;
 
-	public CheckedScale0fRoundingArithmetics(RoundingMode roundingMode) {
+	public CheckedScale0fRoundingArithmetic(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
 
-	public CheckedScale0fRoundingArithmetics(DecimalRounding rounding) {
+	public CheckedScale0fRoundingArithmetic(DecimalRounding rounding) {
 		this.rounding = rounding;
 	}
 

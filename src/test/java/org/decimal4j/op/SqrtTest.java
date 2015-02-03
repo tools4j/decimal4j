@@ -9,15 +9,14 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.arithmetic.DecimalArithmetics;
+import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 import org.decimal4j.scale.Scale18f;
 
 /**
@@ -30,8 +29,8 @@ public class SqrtTest extends AbstractOperandTest {
 	private static final BigDecimal TEN_POW_PRECISION = BigDecimal.TEN.pow(precision);
 	private static final BigDecimal TEN_POW_2xPRECISION = BigDecimal.TEN.pow(precision<<1);
 
-	public SqrtTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetics arithmetics) {
-		super(arithmetics);
+	public SqrtTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
+		super(arithmetic);
 	}
 
 	@Parameters(name = "{index}: scale={0}, rounding={1}")
@@ -39,7 +38,7 @@ public class SqrtTest extends AbstractOperandTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				data.add(new Object[] { s, rm, s.getArithmetics(rm) });
+				data.add(new Object[] { s, rm, s.getArithmetic(rm) });
 			}
 		}
 		return data;
@@ -146,7 +145,7 @@ public class SqrtTest extends AbstractOperandTest {
 			//expected
 			ArithmeticResult<Long> expected;
 			try {
-				expected = ArithmeticResult.forResult(arithmetics, expectedResult(toBigDecimal(operand)));
+				expected = ArithmeticResult.forResult(arithmetic, expectedResult(toBigDecimal(operand)));
 			} catch (ArithmeticException e) {
 				expected = ArithmeticResult.forException(e);
 			}

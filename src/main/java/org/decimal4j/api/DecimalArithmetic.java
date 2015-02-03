@@ -1,18 +1,15 @@
-package org.decimal4j.arithmetic;
+package org.decimal4j.api;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import org.decimal4j.Decimal;
-import org.decimal4j.ImmutableDecimal;
-import org.decimal4j.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * <tt>DecimalArithmetics</tt> defines the basic native operations for
+ * <tt>DecimalArithmetic</tt> defines the basic native operations for
  * {@link Decimal} numbers for one particular combination of {@link #getScale()
  * scale}, {@link #getRoundingMode() rounding mode} and
  * {@link #getOverflowMode() overflow mode}. Native here means that
@@ -21,18 +18,18 @@ import org.decimal4j.truncate.TruncationPolicy;
  * <tt>Decimal</tt> arguments and return longs for <tt>Decimal</tt> number
  * results.
  * <p>
- * Application code usually does not need to use <tt>DecimalArithmetics</tt>
+ * Application code usually does not need to use <tt>DecimalArithmetic</tt>
  * directly. However, certain highly performance critical and/or zero garbage
- * applications may prefer such native arithmetics operations over the two main
+ * applications may prefer such native arithmetic operations over the two main
  * alternatives {@link ImmutableDecimal} and {@link MutableDecimal}.
  * <p>
- * Operations of <tt>DecimalArithmetics</tt> produce no garbage unless indicated
+ * Operations of <tt>DecimalArithmetic</tt> produce no garbage unless indicated
  * differently.
  */
-public interface DecimalArithmetics {
+public interface DecimalArithmetic {
 	/**
 	 * Returns the scale {@code f} applied to all unscaled decimal values passed
-	 * to and returned by this {@code DecimalArithmetics}. Corresponds to the
+	 * to and returned by this {@code DecimalArithmetic}. Corresponds to the
 	 * number of digits to the right of the decimal point (cannot be negative).
 	 * <p>
 	 * A given {@link Decimal} value multiplied with <code>10<sup>f</sup></code>
@@ -41,13 +38,13 @@ public interface DecimalArithmetics {
 	 * <code>d = u*10<sup>-f</sup></code>.
 	 * 
 	 * @return the non-negative scale {@code f} applied to unscaled decimal
-	 *         values within this {@code DecimalArithmetics} object
+	 *         values within this {@code DecimalArithmetic} object
 	 * @see ScaleMetrics#getScale()
 	 */
 	int getScale();
 
 	/**
-	 * Returns the scale metrics associated with this decimal arithmetics
+	 * Returns the scale metrics associated with this decimal arithmetic
 	 * object.
 	 * 
 	 * @return the scale metrics
@@ -56,21 +53,21 @@ public interface DecimalArithmetics {
 
 	/**
 	 * Returns the <i>rounding mode</i> applied to operations of this
-	 * {@code DecimalArithmetics} object if rounding is necessary.
+	 * {@code DecimalArithmetic} object if rounding is necessary.
 	 * 
 	 * @return the rounding mode applied to operations of this
-	 *         {@code DecimalArithmetics} object if rounding is necessary
+	 *         {@code DecimalArithmetic} object if rounding is necessary
 	 */
 	RoundingMode getRoundingMode();
 
 	/**
 	 * Returns the <i>overflow mode</i> applied to operations of this
-	 * {@code DecimalArithmetics} object if an overflow occurs. The overflow
+	 * {@code DecimalArithmetic} object if an overflow occurs. The overflow
 	 * mode defines whether an operation should throw an exception if an
 	 * overflow occurs.
 	 * 
 	 * @return the overflow mode applied to operations of this
-	 *         {@code DecimalArithmetics} object if an overflow occurs
+	 *         {@code DecimalArithmetic} object if an overflow occurs
 	 */
 	OverflowMode getOverflowMode();
 
@@ -81,7 +78,7 @@ public interface DecimalArithmetics {
 	 * {@link #getRoundingMode() rounding mode}.
 	 * 
 	 * @return the truncation policy defining how this
-	 *         {@code DecimalArithmetics} handles truncation
+	 *         {@code DecimalArithmetic} handles truncation
 	 */
 	TruncationPolicy getTruncationPolicy();
 
@@ -409,7 +406,7 @@ public interface DecimalArithmetics {
 
 	/**
 	 * Returns an unscaled decimal whose value is rounded to the specified
-	 * {@code precision} using the rounding mode of this arithmetics.
+	 * {@code precision} using the rounding mode of this arithmetic.
 	 * <p>
 	 * Note that this method does not change the scale of the value --- extra
 	 * digits are simply zeroised.

@@ -6,33 +6,33 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 
-public class CheckedScaleNfRoundingArithmetics extends AbstractCheckedScaleNfArithmetics {
+public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArithmetic {
 
 	private final DecimalRounding rounding;
 
 	/**
-	 * Constructor for decimal arithmetics with given scale, rounding mode and
+	 * Constructor for decimal arithmetic with given scale, rounding mode and
 	 * {@link OverflowMode#CHECKED} overflow mode.
 	 * 
 	 * @param scaleMetrics
-	 *            the scale metrics for this decimal arithmetics
+	 *            the scale metrics for this decimal arithmetic
 	 * @param roundingMode
-	 *            the rounding mode to use for all decimal arithmetics
+	 *            the rounding mode to use for all decimal arithmetic
 	 */
-	public CheckedScaleNfRoundingArithmetics(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
+	public CheckedScaleNfRoundingArithmetic(ScaleMetrics scaleMetrics, RoundingMode roundingMode) {
 		this(scaleMetrics, DecimalRounding.valueOf(roundingMode));
 	}
 
 	/**
-	 * Constructor for decimal arithmetics with given scale, rounding mode and
+	 * Constructor for decimal arithmetic with given scale, rounding mode and
 	 * {@link OverflowMode#CHECKED} overflow mode.
 	 * 
 	 * @param scaleMetrics
-	 *            the scale metrics for this decimal arithmetics
+	 *            the scale metrics for this decimal arithmetic
 	 * @param rounding
-	 *            the rounding mode to use for all decimal arithmetics
+	 *            the rounding mode to use for all decimal arithmetic
 	 */
-	public CheckedScaleNfRoundingArithmetics(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
+	public CheckedScaleNfRoundingArithmetic(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
 		super(scaleMetrics, rounding);
 		this.rounding = rounding;
 	}
