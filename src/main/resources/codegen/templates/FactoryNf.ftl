@@ -11,6 +11,7 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.immutable.Decimal${scale}f;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
+import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
@@ -35,6 +36,11 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 
 	@Override
+	public Decimal${scale}f valueOf(long value, OverflowMode overflowMode) {
+		return Decimal${scale}f.valueOf(value, overflowMode);
+	}
+
+	@Override
 	public Decimal${scale}f valueOf(double value) {
 		return Decimal${scale}f.valueOf(value);
 	}
@@ -45,8 +51,18 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 
 	@Override
+	public Decimal${scale}f valueOf(double value, TruncationPolicy truncationPolicy) {
+		return Decimal${scale}f.valueOf(value, truncationPolicy);
+	}
+
+	@Override
 	public Decimal${scale}f valueOf(BigInteger value) {
 		return Decimal${scale}f.valueOf(value);
+	}
+
+	@Override
+	public Decimal${scale}f valueOf(BigInteger value, OverflowMode overflowMode) {
+		return Decimal${scale}f.valueOf(value, overflowMode);
 	}
 
 	@Override
@@ -60,6 +76,11 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 
 	@Override
+	public Decimal${scale}f valueOf(BigDecimal value, TruncationPolicy truncationPolicy) {
+		return Decimal${scale}f.valueOf(value, truncationPolicy);
+	}
+
+	@Override
 	public Decimal${scale}f valueOf(Decimal<?> value) {
 		return Decimal${scale}f.valueOf(value);
 	}
@@ -70,6 +91,11 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 
 	@Override
+	public Decimal${scale}f valueOf(Decimal<?> value, TruncationPolicy truncationPolicy) {
+		return Decimal${scale}f.valueOf(value, truncationPolicy);
+	}
+
+	@Override
 	public Decimal${scale}f valueOf(String value) {
 		return Decimal${scale}f.valueOf(value);
 	}
@@ -77,6 +103,16 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	@Override
 	public Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
+	}
+
+	@Override
+	public Decimal${scale}f valueOf(String value, TruncationPolicy truncationPolicy) {
+		return Decimal${scale}f.valueOf(value, truncationPolicy);
+	}
+
+	@Override
+	public Decimal${scale}f valueOfUnscaled(long unscaledValue) {
+		return Decimal${scale}f.valueOfUnscaled(unscaledValue);
 	}
 
 	@Override
@@ -92,11 +128,6 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	@Override
 	public Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
 		return Decimal${scale}f.valueOfUnscaled(unscaledValue, scale, truncationPolicy);
-	}
-
-	@Override
-	public Decimal${scale}f valueOfUnscaled(long unscaledValue) {
-		return Decimal${scale}f.valueOfUnscaled(unscaledValue);
 	}
 
 	@Override

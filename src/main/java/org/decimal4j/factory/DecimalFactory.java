@@ -8,6 +8,7 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
@@ -38,23 +39,44 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 */
 	ImmutableDecimal<S> valueOf(long value);
 
+	ImmutableDecimal<S> valueOf(long value, OverflowMode overflowMode);
+
 	ImmutableDecimal<S> valueOf(double value);
 
 	ImmutableDecimal<S> valueOf(double value, RoundingMode roundingMode);
 
+	ImmutableDecimal<S> valueOf(double value, TruncationPolicy truncationPolicy);
+
 	ImmutableDecimal<S> valueOf(BigInteger value);
+
+	ImmutableDecimal<S> valueOf(BigInteger value, OverflowMode overflowMode);
 
 	ImmutableDecimal<S> valueOf(BigDecimal value);
 
 	ImmutableDecimal<S> valueOf(BigDecimal value, RoundingMode roundingMode);
 
+	ImmutableDecimal<S> valueOf(BigDecimal value, TruncationPolicy truncationPolicy);
+
 	ImmutableDecimal<S> valueOf(Decimal<?> value);
 
 	ImmutableDecimal<S> valueOf(Decimal<?> value, RoundingMode roundingMode);
 
+	ImmutableDecimal<S> valueOf(Decimal<?> value, TruncationPolicy truncationPolicy);
+
 	ImmutableDecimal<S> valueOf(String value);
 
 	ImmutableDecimal<S> valueOf(String value, RoundingMode roundingMode);
+
+	ImmutableDecimal<S> valueOf(String value, TruncationPolicy truncationPolicy);
+
+	/**
+	 * Creates and returns an immutable value from an unscaled long value.
+	 *
+	 * @param unscaled
+	 *            the unscaled long value
+	 * @return an immutable value.
+	 */
+	ImmutableDecimal<S> valueOfUnscaled(long unscaled);
 
 	/**
 	 * Returns a new immutable decimal value from the specified unscaled value
@@ -104,15 +126,6 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *         unscaled value with the given scale
 	 */
 	ImmutableDecimal<S> valueOfUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy);
-
-	/**
-	 * Creates and returns an immutable value from an unscaled long value.
-	 *
-	 * @param unscaled
-	 *            the unscaled long value
-	 * @return an immutable value.
-	 */
-	ImmutableDecimal<S> valueOfUnscaled(long unscaled);
 
 	/**
 	 * Creates a one dimensional array of the specified {@code length} for

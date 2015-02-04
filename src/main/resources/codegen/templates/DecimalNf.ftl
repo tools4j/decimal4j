@@ -229,6 +229,10 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigInteger(value));
 	}
 
+	public static Decimal${scale}f valueOf(BigInteger value, OverflowMode overflowMode) {
+		return valueOfUnscaled(SCALE.getTruncatingArithmetic(overflowMode).fromBigInteger(value));
+	}
+
 	public static Decimal${scale}f valueOf(BigDecimal value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigDecimal(value));
 	}
@@ -265,18 +269,6 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).parse(value));
 	}
 
-	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromUnscaled(unscaledValue, scale));
-	}
-
-	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
-	}
-
-	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromUnscaled(unscaledValue, scale));
-	}
-
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {
 		if (unscaledValue == 0) {
 			return ZERO;
@@ -291,6 +283,18 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 			return MINUS_ONE;
 		}
 		return new Decimal${scale}f(unscaledValue);
+	}
+
+	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromUnscaled(unscaledValue, scale));
+	}
+
+	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
+	}
+
+	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromUnscaled(unscaledValue, scale));
 	}
 
 	@Override
