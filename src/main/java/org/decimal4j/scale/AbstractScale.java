@@ -5,7 +5,6 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.EnumMap;
 
-import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.arithmetic.CheckedScaleNfRoundingArithmetic;
 import org.decimal4j.arithmetic.CheckedScaleNfTruncatingArithmetic;
@@ -16,15 +15,7 @@ import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * <tt>ScaleMetrics</tt> is associated with {@link Decimal} numbers and
- * represents the factor applied to the {@code long} value underlying a
- * {@code Decimal}. Scale stands for the fixed number of fraction digits of a
- * {@code Decimal}.
- * <p>
- * The <tt>Scale</tt> class contains a number of subclasses used by different
- * decimal types. With <tt>Scale</tt> subclasses, it is possible to distinguish
- * different decimal types and we can ensure that only decimals of the same
- * scale can directly operate with each other.
+ * Abstract base class for {@link ScaleMetrics} implementations.
  */
 abstract public class AbstractScale implements ScaleMetrics {
 
@@ -42,9 +33,10 @@ abstract public class AbstractScale implements ScaleMetrics {
 	private final EnumMap<RoundingMode, DecimalArithmetic> roundingModeToCheckedArithmetic = initCheckedArithmetic();
 
 	/**
-	 * Initialises the arithmetic map. {@link Scale0f} overrides this method.
+	 * Initializes the arithmetic map. {@link Scale0f} overrides this method
+	 * hence protected.
 	 * 
-	 * @return the rounding mode to arithmetic map
+	 * @return the mapping from rounding mode to (unchecked) arithmetic
 	 */
 	protected EnumMap<RoundingMode, DecimalArithmetic> initArithmetic() {
 		final EnumMap<RoundingMode, DecimalArithmetic> map = new EnumMap<RoundingMode, DecimalArithmetic>(RoundingMode.class);
@@ -60,10 +52,10 @@ abstract public class AbstractScale implements ScaleMetrics {
 	}
 
 	/**
-	 * Initialises the checked arithmetic map. {@link Scale0f} overrides this
-	 * method.
+	 * Initializes the checked arithmetic map. {@link Scale0f} overrides this
+	 * method hence protected.
 	 * 
-	 * @return the rounding mode to checked arithmetic map
+	 * @return the mapping from rounding mode to checked arithmetic
 	 * @see OverflowMode#CHECKED
 	 */
 	protected EnumMap<RoundingMode, DecimalArithmetic> initCheckedArithmetic() {

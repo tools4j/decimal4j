@@ -88,9 +88,9 @@ abstract public class AbstractBenchmark {
 			this.unscaled2 = unscaled2;
 			this.bigDecimal1 = BigDecimal.valueOf(unscaled1, scale);
 			this.bigDecimal2 = BigDecimal.valueOf(unscaled2, scale);
-			this.immutable1 = (ImmutableDecimal<S>) decimalFactory.createImmutable(unscaled1);
-			this.immutable2 = (ImmutableDecimal<S>) decimalFactory.createImmutable(unscaled2);
-			this.mutable = (MutableDecimal<S>) decimalFactory.createMutable(0);
+			this.immutable1 = (ImmutableDecimal<S>) decimalFactory.valueOfUnscaled(unscaled1);
+			this.immutable2 = (ImmutableDecimal<S>) decimalFactory.valueOfUnscaled(unscaled2);
+			this.mutable = (MutableDecimal<S>) decimalFactory.newMutable();
 		}
 
 		public static Values<?> create(long unscaled1, long unscaled2, int scale) {

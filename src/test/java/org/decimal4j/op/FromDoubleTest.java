@@ -66,7 +66,7 @@ public class FromDoubleTest extends Abstract1DoubleArgToDecimalResultTest {
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, double operand) {
 		final long unscaled = scaleMetrics.getArithmetic(getRoundingMode()).fromDouble(operand);
-		return Factories.valueOf(scaleMetrics).createImmutable(unscaled);
+		return Factories.valueOf(scaleMetrics).valueOfUnscaled(unscaled);
 	}
 
 }

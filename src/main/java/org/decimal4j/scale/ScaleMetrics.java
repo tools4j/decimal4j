@@ -28,7 +28,7 @@ import org.decimal4j.truncate.TruncationPolicy;
  * {@code ScaleMetrics} also provides access to {@link DecimalArithmetic}
  * instances for different rounding modes and overflow policies.
  * {@code DecimalArithmetic} objects can be used to deal with decimal numbers
- * <i>natively</i> which means that {@code Decimal} numbers are passed to the
+ * <i>natively</i>; in native mode {@code Decimal} numbers are passed to the
  * arithmetic class in their native form as unscaled {@code long} values.
  */
 public interface ScaleMetrics {
@@ -63,10 +63,12 @@ public interface ScaleMetrics {
 	 * @return the scale factor as big decimal
 	 */
 	BigDecimal getScaleFactorAsBigDecimal();
-	
+
 	/**
 	 * Returns the number of leading zeros of the scale factor
-	 * @return {@link Long#numberOfLeadingZeros(long)} applied to the scale factor
+	 * 
+	 * @return {@link Long#numberOfLeadingZeros(long)} applied to the scale
+	 *         factor
 	 */
 	int getScaleFactorNumberOfLeadingZeros();
 
@@ -136,7 +138,7 @@ public interface ScaleMetrics {
 	 * @return {@code dividend/scaleFactor}
 	 */
 	long divideByScaleFactor(long dividend);
-	
+
 	/**
 	 * Returns {@code unsignedDividend/scaleFactor} using unsigned division.
 	 * 
@@ -159,7 +161,8 @@ public interface ScaleMetrics {
 	 * Returns the default arithmetic for this scale performing unchecked
 	 * operations with rounding mode {@link RoundingMode#HALF_UP HALF_UP}.
 	 * 
-	 * @return default arithmetic for this scale
+	 * @return default arithmetic for this scale rounding HALF_UP without
+	 *         overflow checks
 	 */
 	DecimalArithmetic getDefaultArithmetic();
 
@@ -176,11 +179,12 @@ public interface ScaleMetrics {
 
 	/**
 	 * Returns the arithmetic for this scale that performs all operations with
-	 * the specified {@code roundingMode}.
+	 * the specified {@code roundingMode} and without overflow checks.
 	 *
 	 * @param roundingMode
 	 *            the rounding mode used by the returned arithmetic
-	 * @return arithmetic for this scale with specified rounding mode
+	 * @return arithmetic for this scale with specified rounding mode and
+	 *         without overflow checks
 	 */
 	DecimalArithmetic getArithmetic(RoundingMode roundingMode);
 

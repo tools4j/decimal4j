@@ -28,27 +28,30 @@ import org.decimal4j.scale.Scale9f;
  */
 public final class Scales {
 
-	private static ScaleMetrics[] SCALES = {//
-	Scale0f.INSTANCE,//
-	Scale1f.INSTANCE, //
-	Scale2f.INSTANCE,//
-	Scale3f.INSTANCE,//
-	Scale4f.INSTANCE,//
-	Scale5f.INSTANCE,//
-	Scale6f.INSTANCE,//
-	Scale7f.INSTANCE,//
-	Scale8f.INSTANCE,//
-	Scale9f.INSTANCE,//
-	Scale10f.INSTANCE,//
-	Scale11f.INSTANCE,//
-	Scale12f.INSTANCE,//
-	Scale13f.INSTANCE,//
-	Scale14f.INSTANCE,//
-	Scale15f.INSTANCE,//
-	Scale16f.INSTANCE,//
-	Scale17f.INSTANCE,//
-	Scale18f.INSTANCE //
+	//@formatter:off
+	private static ScaleMetrics[] SCALES = {
+		Scale0f.INSTANCE,
+		Scale1f.INSTANCE,
+		Scale2f.INSTANCE,
+		Scale3f.INSTANCE,
+		Scale4f.INSTANCE,
+		Scale5f.INSTANCE,
+		Scale6f.INSTANCE,
+		Scale7f.INSTANCE,
+		Scale8f.INSTANCE,
+		Scale9f.INSTANCE,
+		Scale10f.INSTANCE,
+		Scale11f.INSTANCE,
+		Scale12f.INSTANCE,
+		Scale13f.INSTANCE,
+		Scale14f.INSTANCE,
+		Scale15f.INSTANCE,
+		Scale16f.INSTANCE,
+		Scale17f.INSTANCE,
+		Scale18f.INSTANCE
 	};
+	//@formatter:on
+
 	/**
 	 * All scale metric constants in an immutable ordered list:
 	 * <p>
@@ -56,7 +59,29 @@ public final class Scales {
 	 */
 	public static List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(SCALES));
 
-	private static final long[] SCALE_FACTORS = { 1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000, 10000000000L, 100000000000L, 1000000000000L, 10000000000000L, 100000000000000L, 1000000000000000L, 10000000000000000L, 100000000000000000L, 1000000000000000000L };
+	//@formatter:off
+	private static final long[] SCALE_FACTORS = {
+		1, 
+		10, 
+		100, 
+		1000, 
+		10000, 
+		100000, 
+		1000000, 
+		10000000, 
+		100000000, 
+		1000000000, 
+		10000000000L, 
+		100000000000L, 
+		1000000000000L, 
+		10000000000000L, 
+		100000000000000L, 
+		1000000000000000L, 
+		10000000000000000L, 
+		100000000000000000L, 
+		1000000000000000000L 
+	};
+	//@formatter:on
 
 	/**
 	 * Returns the {@code ScaleMetrics} constant based on a given scale

@@ -27,27 +27,29 @@ import org.decimal4j.factory.Factory9f;
  */
 public final class Factories {
 
-	private static final DecimalFactory<?>[] FACTORIES = {//
-	Factory0f.INSTANCE,//
-	Factory1f.INSTANCE,//
-	Factory2f.INSTANCE,//
-	Factory3f.INSTANCE,//
-	Factory4f.INSTANCE,//
-	Factory5f.INSTANCE,//
-	Factory6f.INSTANCE,//
-	Factory7f.INSTANCE,//
-	Factory8f.INSTANCE,//
-	Factory9f.INSTANCE,//
-	Factory10f.INSTANCE,//
-	Factory11f.INSTANCE,//
-	Factory12f.INSTANCE,//
-	Factory13f.INSTANCE,//
-	Factory14f.INSTANCE,//
-	Factory15f.INSTANCE,//
-	Factory16f.INSTANCE,//
-	Factory17f.INSTANCE,//
-	Factory18f.INSTANCE //
+	//@formatter:off
+	private static final DecimalFactory<?>[] FACTORIES = {
+		Factory0f.INSTANCE,
+		Factory1f.INSTANCE,
+		Factory2f.INSTANCE,
+		Factory3f.INSTANCE,
+		Factory4f.INSTANCE,
+		Factory5f.INSTANCE,
+		Factory6f.INSTANCE,
+		Factory7f.INSTANCE,
+		Factory8f.INSTANCE,
+		Factory9f.INSTANCE,
+		Factory10f.INSTANCE,
+		Factory11f.INSTANCE,
+		Factory12f.INSTANCE,
+		Factory13f.INSTANCE,
+		Factory14f.INSTANCE,
+		Factory15f.INSTANCE,
+		Factory16f.INSTANCE,
+		Factory17f.INSTANCE,
+		Factory18f.INSTANCE
 	};
+	//@formatter:on
 
 	/**
 	 * Returns the {@code DecimalFactory} constant based on a given scale.

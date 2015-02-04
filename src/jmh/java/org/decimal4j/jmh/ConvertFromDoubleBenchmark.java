@@ -58,7 +58,7 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
 	public void immutableDecimals(BenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(immitableDecimals(state, state.factory, state.doubles[i]));
+			blackhole.consume(immutableDecimals(state, state.factory, state.doubles[i]));
 		}
 	}
 
@@ -82,8 +82,8 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 		return BigDecimal.valueOf(value);//rounding mode not supported
 	}
 
-	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, DecimalFactory<S> factory, double value) {
-		return factory.createImmutable(state.arithmetic.fromDouble(value));//rounding mode is in arithmetic
+	protected <S extends ScaleMetrics> Decimal<S> immutableDecimals(BenchmarkState state, DecimalFactory<S> factory, double value) {
+		return factory.valueOf(value, state.roundingMode);//rounding mode is in arithmetic
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values, double value) {

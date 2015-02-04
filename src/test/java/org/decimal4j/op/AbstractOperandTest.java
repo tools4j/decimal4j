@@ -123,7 +123,7 @@ abstract public class AbstractOperandTest {
 	}
 
 	protected static <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
-		return Factories.valueOf(scaleMetrics).createImmutable(unscaled);
+		return Factories.valueOf(scaleMetrics).valueOfUnscaled(unscaled);
 	}
 
 	protected static BigDecimal toBigDecimal(Decimal<?> decimal) {

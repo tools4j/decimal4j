@@ -12,6 +12,8 @@ import org.decimal4j.base.AbstractImmutableDecimal;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
+import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.TruncationPolicy;
 
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
@@ -201,12 +203,26 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromLong(value));
 	}
 
+	public static Decimal${scale}f valueOf(long value, OverflowMode overflowMode) {
+        if (value == 0)
+            return ZERO;
+        if (value > 0 & value <= MAX_CONSTANT)
+            return POS_CONST[(int) value];
+        else if (value < 0 & value >= -MAX_CONSTANT)
+            return NEG_CONST[(int) -value];
+		return valueOfUnscaled(SCALE.getTruncatingArithmetic(overflowMode).fromLong(value));
+	}
+
 	public static Decimal${scale}f valueOf(double value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromDouble(value));
 	}
 
 	public static Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromDouble(value));
+	}
+
+	public static Decimal${scale}f valueOf(double value, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromDouble(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigInteger value) {
@@ -221,6 +237,9 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromBigDecimal(value));
 	}
 
+	public static Decimal${scale}f valueOf(BigDecimal value, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromBigDecimal(value));
+	}
 
 	public static Decimal${scale}f valueOf(Decimal<?> value) {
 		return valueOfUnscaled(value.unscaledValue(), value.getScale());
@@ -228,6 +247,10 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	public static Decimal${scale}f valueOf(Decimal<?> value, RoundingMode roundingMode) {
 		return valueOfUnscaled(value.unscaledValue(), value.getScale(), roundingMode);
+	}
+
+	public static Decimal${scale}f valueOf(Decimal<?> value, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(value.unscaledValue(), value.getScale(), truncationPolicy);
 	}
 
 	public static Decimal${scale}f valueOf(String value) {
@@ -238,40 +261,20 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).parse(value));
 	}
 
-	/**
-	 * Converts the specified unscaled decimal with the given scale to a
-	 * {@code Decimal${scale}f} value. If the given scale is more precise than the scale
-	 * for {@code Decimal${scale}f} and decimals need to be truncated,
-	 * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding mode is applied.
-	 * 
-	 * @param unscaledValue
-	 *            the unscaled decimal value to convert
-	 * @param scale
-	 *            the scale used for {@code unscaledValue}
-	 * @return the {@code Decimal${scale}f} for the specified unscaled decimal value
-	 *         with the given scale
-	 */
+	public static Decimal${scale}f valueOf(String value, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).parse(value));
+	}
+
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromUnscaled(unscaledValue, scale));
 	}
 
-	/**
-	 * Converts the specified unscaled decimal with the given scale to a
-	 * {@code Decimal${scale}f} value. If the given scale is more precise than the scale
-	 * for {@code Decimal${scale}f} and decimals need to be truncated, the specified
-	 * rounding mode is applied.
-	 * 
-	 * @param unscaledValue
-	 *            the unscaled decimal value to convert
-	 * @param scale
-	 *            the scale used for {@code unscaledValue}
-	 * @param roundingMode
-	 *            the rounding mode to apply if the value needs to be truncated
-	 * @return the {@code Decimal${scale}f} for the specified unscaled decimal value
-	 *         with the given scale
-	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
+	}
+
+	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromUnscaled(unscaledValue, scale));
 	}
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {

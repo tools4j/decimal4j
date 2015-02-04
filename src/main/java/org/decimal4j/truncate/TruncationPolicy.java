@@ -25,23 +25,23 @@ public interface TruncationPolicy {
 	 * {@link RoundingMode#HALF_UP}.
 	 */
 	TruncationPolicy DEFAULT = DecimalRounding.HALF_UP.getUncheckedTruncationPolicy();
-	
+
 	/**
 	 * Unmodifiable set with all possible truncation policies.
 	 */
 	Set<TruncationPolicy> VALUES = Collections.unmodifiableSet(DefaultTruncationPolicy.values());
 
 	/**
-	 * Specifies the overflow behavior for numerical operations causing an
-	 * overflow.
+	 * Returns the overflow mode which defines how to deal the situation when an
+	 * operation that causes an overflow.
 	 * 
 	 * @return the mode to apply if an arithmetic operation causes an overflow
 	 */
 	OverflowMode getOverflowMode();
 
 	/**
-	 * Specifies the rounding behavior for numerical operations capable of
-	 * discarding precision.
+	 * Returns the rounding mode which defines how to deal the situation when an
+	 * operation leads to truncation or rounding.
 	 * 
 	 * @return the rounding mode indicating how the least significant returned
 	 *         digit of a rounded result is to be calculated

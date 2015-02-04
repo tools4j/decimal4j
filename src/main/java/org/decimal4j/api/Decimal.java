@@ -6,22 +6,23 @@ import java.math.RoundingMode;
 
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * Mutable or immutable fixed-precision signed decimal numbers similar to
+ * Mutable or immutable fixed-precision signed decimal number similar to
  * {@link BigDecimal}. A {@code Decimal} consists of an <i>unscaled long
  * value</i> and a {@link #getScaleMetrics() scale}. The scale defines the
- * number of digits to the right of the decimal point. The value of the number
- * represented by the {@code Decimal} is
- * <code>(unscaledValue &times; 10<sup>-f</sup>)</code> with scale {@code f}.
+ * number of digits to the right of the decimal point. If the scale is {@code f}
+ * then the value represented by a {@code Decimal} instance is
+ * <code>(unscaledValue &times; 10<sup>-f</sup>)</code>.
  * <p>
  * Certain operations can only be performed with other {@code Decimal} numbers
  * of the same scale. Scale compatibility of such operations is enforced through
- * the generic {@link ScaleMetrics} parameter of the {@code Decimal}. The
- * {@link ScaleMetrics} class defines all supported scale metrics subclasses
- * each with a singleton constant.
+ * the generic {@link ScaleMetrics} parameter {@code <S>}. The {@link Scales}
+ * class defines all supported scale metrics subclasses each with a singleton
+ * constant.
  * <p>
  * Arithmetic operations that may lead to truncation usually provide the
  * possibility to specify a {@link RoundingMode} to apply when truncating. If no

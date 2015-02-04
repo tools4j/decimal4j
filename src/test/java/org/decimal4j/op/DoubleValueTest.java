@@ -45,7 +45,7 @@ public class DoubleValueTest extends Abstract1DecimalArgToAnyResultTest<Double> 
 	
 	@Test
 	public void scaleFactorPlusUlpTest() {
-		runTest(getScaleMetrics(), "scaleFactorPlusUlpTest", Factories.valueOf(getScaleMetrics()).createImmutable(1+getScaleMetrics().getScaleFactor()));
+		runTest(getScaleMetrics(), "scaleFactorPlusUlpTest", Factories.valueOf(getScaleMetrics()).valueOfUnscaled(1+getScaleMetrics().getScaleFactor()));
 	}
 
 	@Override
