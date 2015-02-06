@@ -43,7 +43,7 @@ public enum SpecialValueSet {
 		this(toSortedSet(sets));
 	}
 	
-	private SpecialValueSet(@SuppressWarnings("unchecked") SortedSet<Long>... sets) {
+	private SpecialValueSet(SortedSet<Long>... sets) {
 		this(toSortedSet(sets));
 	}
 	

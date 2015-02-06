@@ -19,7 +19,7 @@ class Round {
 		} else if (precision < scale) {
 			final int deltaScale = scale - precision;
 			if (deltaScale <= 18) {
-				deltaMetrics = Scales.valueOf(scale - precision);
+				deltaMetrics = Scales.getScaleMetrics(scale - precision);
 			} else {
 				throw new IllegalArgumentException("scale - precision must be <= 18 but was " + deltaScale + " for scale=" + scale + " and precision=" + precision);
 			}
@@ -39,7 +39,7 @@ class Round {
 			deltaMetrics = scaleMetrics;
 		} else if (precision < scale) {
 			if (deltaScale <= 18) {
-				deltaMetrics = Scales.valueOf(scale - precision);
+				deltaMetrics = Scales.getScaleMetrics(scale - precision);
 			} else {
 				throw new IllegalArgumentException("scale - precision must be <= 18 but was " + deltaScale + " for scale=" + scale + " and precision=" + precision);
 			}

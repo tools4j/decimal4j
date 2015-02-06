@@ -60,7 +60,7 @@ public final class Factories {
 	 * @throws IllegalArgumentException
 	 *             if scale is not in {@code [0, 18]}
 	 */
-	public static final DecimalFactory<?> valueOf(int scale) {
+	public static final DecimalFactory<?> getDecimalFactory(int scale) {
 		if (0 <= scale & scale <= 18) {
 			return FACTORIES[scale];
 		}
@@ -74,9 +74,9 @@ public final class Factories {
 	 *            the scale metrics
 	 * @return the factory constant corresponding to {@code scaleMetrics}
 	 */
-	public static <S extends ScaleMetrics> DecimalFactory<S> valueOf(S scaleMetrics) {
+	public static <S extends ScaleMetrics> DecimalFactory<S> getDecimalFactory(S scaleMetrics) {
 		@SuppressWarnings("unchecked")
-		final DecimalFactory<S> factory = (DecimalFactory<S>)valueOf(scaleMetrics.getScale());
+		final DecimalFactory<S> factory = (DecimalFactory<S>)getDecimalFactory(scaleMetrics.getScale());
 		return factory;
 	}
 

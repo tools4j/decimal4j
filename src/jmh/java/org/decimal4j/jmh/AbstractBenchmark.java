@@ -46,10 +46,10 @@ abstract public class AbstractBenchmark {
 		public DecimalArithmetic checkedArithmetic;
 
 		protected void initParams(RoundingMode roundingMode) {
-			arithmetic = Scales.valueOf(scale).getArithmetic(roundingMode);
-			factory = Factories.valueOf(scale);
+			arithmetic = Scales.getScaleMetrics(scale).getArithmetic(roundingMode);
+			factory = Factories.getDecimalFactory(scale);
 			checkedTruncationPolicy = OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode);
-			checkedArithmetic = Scales.valueOf(scale).getArithmetic(checkedTruncationPolicy);
+			checkedArithmetic = Scales.getScaleMetrics(scale).getArithmetic(checkedTruncationPolicy);
 			mcLong64 = new MathContext(19, roundingMode);
 			mcLong128 = new MathContext(39, roundingMode);
 		}
@@ -94,11 +94,11 @@ abstract public class AbstractBenchmark {
 		}
 
 		public static Values<?> create(long unscaled1, long unscaled2, int scale) {
-			return create(unscaled1, unscaled2, Scales.valueOf(scale));
+			return create(unscaled1, unscaled2, Scales.getScaleMetrics(scale));
 		}
 
 		public static <S extends ScaleMetrics> Values<S> create(long unscaled1, long unscaled2, S scaleMetrics) {
-			return new Values<S>(unscaled1, unscaled2, scaleMetrics.getScale(), Factories.valueOf(scaleMetrics));
+			return new Values<S>(unscaled1, unscaled2, scaleMetrics.getScale(), Factories.getDecimalFactory(scaleMetrics));
 		}
 	}
 	

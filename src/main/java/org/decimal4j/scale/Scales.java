@@ -92,7 +92,7 @@ public final class Scales {
 	 * @throws IllegalArgumentException
 	 *             if scale is not in {@code [0, 18]}
 	 */
-	public static ScaleMetrics valueOf(int scale) {
+	public static ScaleMetrics getScaleMetrics(int scale) {
 		if (0 <= scale & scale <= 18) {
 			return SCALES[scale];
 		}

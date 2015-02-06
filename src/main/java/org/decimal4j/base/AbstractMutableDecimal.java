@@ -71,7 +71,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		if (scale == getScale()) {
 			return this;
 		}
-		return Factories.valueOf(scale).newMutable().set(this, roundingMode);
+		return Factories.getDecimalFactory(scale).newMutable().set(this, roundingMode);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		if (scale == getScale()) {
 			return this;
 		}
-		return Factories.valueOf(scale).newMutable().set(this, truncationPolicy);
+		return Factories.getDecimalFactory(scale).newMutable().set(this, truncationPolicy);
 	}
 
 	@Override
@@ -91,7 +91,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 			final MutableDecimal<S> self = (MutableDecimal<S>) this;
 			return self;
 		} else {}
-		return Factories.valueOf(scaleMetrics).newMutable().set(this, roundingMode);
+		return Factories.getDecimalFactory(scaleMetrics).newMutable().set(this, roundingMode);
 	}
 
 	@Override
@@ -103,19 +103,19 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 			final MutableDecimal<S> self = (MutableDecimal<S>) this;
 			return self;
 		} else {}
-		return Factories.valueOf(scaleMetrics).newMutable().set(this, truncationPolicy);
+		return Factories.getDecimalFactory(scaleMetrics).newMutable().set(this, truncationPolicy);
 	}
 
 	@Override
 	public MutableDecimal<?> multiplyExact(Decimal<?> multiplicand) {
 		final int targetScale = getScale() + multiplicand.getScale();
-		return Factories.valueOf(targetScale).newMutable().setUnscaled(unscaled * multiplicand.unscaledValue());
+		return Factories.getDecimalFactory(targetScale).newMutable().setUnscaled(unscaled * multiplicand.unscaledValue());
 	}
 
 	@Override
 	public MutableDecimal<?> multiplyExact(Decimal<?> multiplicand, OverflowMode overflowMode) {
 		final int targetScale = getScale() + multiplicand.getScale();
-		final MutableDecimal<?> result = Factories.valueOf(targetScale).newMutable().setUnscaled(unscaled);
+		final MutableDecimal<?> result = Factories.getDecimalFactory(targetScale).newMutable().setUnscaled(unscaled);
 		try {
 			result.multiply(multiplicand.unscaledValue(), overflowMode);
 		} catch (ArithmeticException e) {

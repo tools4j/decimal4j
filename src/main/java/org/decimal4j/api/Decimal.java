@@ -24,9 +24,11 @@ import org.decimal4j.truncate.TruncationPolicy;
  * class defines all supported scale metrics subclasses each with a singleton
  * constant.
  * <p>
- * Arithmetic operations that may lead to truncation usually provide the
- * possibility to specify a {@link RoundingMode} to apply when truncating. If no
- * rounding mode is specified, {@link RoundingMode#HALF_UP} is used by default.
+ * Arithmetic operations that may lead to rounding usually provide the
+ * possibility to specify a {@link RoundingMode}. Operations that can lead to an
+ * overflow can optionally be called with an {@link OverflowMode} or
+ * {@link TruncationPolicy} argument to control the behavior in case of
+ * overflows.
  * 
  * @param <S>
  *            the scale metrics type associated with this decimal
@@ -109,7 +111,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> fractionalPart();
 
-	//some methods "inherited" from Number and BigDecimal
+	// some methods "inherited" from Number and BigDecimal
 
 	/**
 	 * Returns the value of this {@code Decimal} as a {@code byte} after a
@@ -267,7 +269,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	BigDecimal toBigDecimal();
 
-	//mutable/immutable conversion methods
+	// mutable/immutable conversion methods
 
 	/**
 	 * If this {@code Decimal} value is already an {@link ImmutableDecimal} it
@@ -289,7 +291,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	MutableDecimal<S> toMutableDecimal();
 
-	//some conversion methods with rounding mode
+	// some conversion methods with rounding mode
 
 	long longValue(RoundingMode roundingMode);
 
@@ -303,7 +305,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	BigDecimal toBigDecimal(int scale, RoundingMode roundingMode);
 
-	//methods to round and change the scale
+	// methods to round and change the scale
 	/**
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using {@link RoundingMode#HALF_UP HALF_UP} rounding.
@@ -468,7 +470,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
 	 */
 	@SuppressWarnings("hiding")
-	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
+	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics,
+			RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
@@ -509,9 +512,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             {@link OverflowMode#CHECKED}
 	 */
 	@SuppressWarnings("hiding")
-	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy);
+	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics,
+			TruncationPolicy truncationPolicy);
 
-	//add
+	// add
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
@@ -755,7 +759,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
 	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale, RoundingMode roundingMode);
+	Decimal<S> addUnscaled(long unscaledAugend, int scale,
+			RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} whose value is
@@ -791,7 +796,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if an overflow occurs and the policy declares
 	 *             {@link OverflowMode#CHECKED}
 	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy);
+	Decimal<S> addUnscaled(long unscaledAugend, int scale,
+			TruncationPolicy truncationPolicy);
 
 	/**
 	 * Returns a {@code Decimal} whose value is
@@ -894,7 +900,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> addSquared(Decimal<S> value, TruncationPolicy truncationPolicy);
 
-	//subtract
+	// subtract
 
 	Decimal<S> subtract(Decimal<S> subtrahend);
 
@@ -914,33 +920,39 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale);
 
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale,
+			RoundingMode roundingMode);
 
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, TruncationPolicy truncationPolicy);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend);
 
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend, OverflowMode overflowMode);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend,
+			OverflowMode overflowMode);
 
 	Decimal<S> subtractSquared(Decimal<S> value);
 
 	Decimal<S> subtractSquared(Decimal<S> value, RoundingMode roundingMode);
 
-	Decimal<S> subtractSquared(Decimal<S> value, TruncationPolicy truncationPolicy);
+	Decimal<S> subtractSquared(Decimal<S> value,
+			TruncationPolicy truncationPolicy);
 
-	//multiply
+	// multiply
 
 	Decimal<S> multiply(Decimal<S> multiplicand);
 
 	Decimal<S> multiply(Decimal<S> multiplicand, RoundingMode roundingMode);
 
-	Decimal<S> multiply(Decimal<S> multiplicand, TruncationPolicy truncationPolicy);
+	Decimal<S> multiply(Decimal<S> multiplicand,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyBy(Decimal<?> multiplicand);
 
 	Decimal<S> multiplyBy(Decimal<?> multiplicand, RoundingMode roundingMode);
 
-	Decimal<S> multiplyBy(Decimal<?> multiplicand, TruncationPolicy truncationPolicy);
+	Decimal<S> multiplyBy(Decimal<?> multiplicand,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<?> multiplyExact(Decimal<?> multiplicand);
 
@@ -958,15 +970,19 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, RoundingMode roundingMode);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand,
+			RoundingMode roundingMode);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, TruncationPolicy truncationPolicy);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale,
+			RoundingMode roundingMode);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, TruncationPolicy truncationPolicy);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyByPowerOfTen(int n);
 
@@ -974,7 +990,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> multiplyByPowerOfTen(int n, TruncationPolicy truncationPolicy);
 
-	//divide
+	// divide
 
 	Decimal<S> divide(Decimal<S> divisor);
 
@@ -1008,13 +1024,16 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, RoundingMode roundingMode);
 
-	Decimal<S> divideUnscaled(long unscaledDivisor, TruncationPolicy truncationPolicy);
+	Decimal<S> divideUnscaled(long unscaledDivisor,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale);
 
-	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode);
+	Decimal<S> divideUnscaled(long unscaledDivisor, int scale,
+			RoundingMode roundingMode);
 
-	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy);
+	Decimal<S> divideUnscaled(long unscaledDivisor, int scale,
+			TruncationPolicy truncationPolicy);
 
 	Decimal<S> divideByPowerOfTen(int n);
 
@@ -1047,7 +1066,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code divisor==0} or if {@code overflowMode==CHECKED} and
 	 *             an overflow occurs
 	 */
-	Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode);
+	Decimal<S> divideToIntegralValue(Decimal<S> divisor,
+			OverflowMode overflowMode);
 
 	/**
 	 * Returns a two-element {@code Decimal} array containing the result of
@@ -1091,7 +1111,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> remainder(Decimal<S> divisor);
 
-	//other arithmetic operations
+	// other arithmetic operations
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
@@ -1376,7 +1396,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> pow(int n, TruncationPolicy truncationPolicy);
 
-	//compare and related methods
+	// compare and related methods
 
 	/**
 	 * Compares two {@code Decimal} objects numerically.
@@ -1647,7 +1667,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	boolean isEqualToNumerically(Decimal<?> other);
 
-	//finally some basic object methods plus equals
+	// finally some basic object methods plus equals
 
 	/**
 	 * Returns a hash code for this {@code Decimal}. The result is the exclusive

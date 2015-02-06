@@ -48,8 +48,8 @@ final class Mul {
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final Scale9f scale9f = Scale9f.INSTANCE;
-			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 			final long h1 = scale9f.divideByScaleFactor(uDecimal1);
 			final long h2 = scale9f.divideByScaleFactor(uDecimal2);
 			final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
@@ -112,8 +112,8 @@ final class Mul {
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
-			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 			final long h1 = scale9f.divideByScaleFactor(uDecimal1);
 			final long h2 = scale9f.divideByScaleFactor(uDecimal2);
 			final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
@@ -196,8 +196,8 @@ final class Mul {
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
 				final ScaleMetrics scale9f = Scale9f.INSTANCE;
-				final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-				final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+				final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+				final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 				final long h1 = scale9f.divideByScaleFactor(uDecimal1);
 				final long h2 = scale9f.divideByScaleFactor(uDecimal2);
 				final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
@@ -252,8 +252,8 @@ final class Mul {
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
-			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 			final long h = scale9f.divideByScaleFactor(uDecimal);
 			final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 			final long hxl = h * l;
@@ -291,8 +291,8 @@ final class Mul {
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
-			final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-			final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+			final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 			final long h = scale9f.divideByScaleFactor(uDecimal);
 			final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 			final long hxl = h * l;
@@ -337,8 +337,8 @@ final class Mul {
 			else {
 				// use scale9 to split into 2 parts: h (high) and l (low)
 				final ScaleMetrics scale9f = Scale9f.INSTANCE;
-				final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-				final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+				final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+				final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 				final long h = scale9f.divideByScaleFactor(uDecimal);
 				final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 				
@@ -401,8 +401,8 @@ final class Mul {
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
 				final ScaleMetrics scale9f = Scale9f.INSTANCE;
-				final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-				final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+				final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+				final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 				final long h1 = scale9f.divideByScaleFactor(uDecimal1);
 				final long h2 = scale9f.divideByScaleFactor(uDecimal2);
 				final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
@@ -452,8 +452,8 @@ final class Mul {
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
 				final ScaleMetrics scale9f = Scale9f.INSTANCE;
-				final ScaleMetrics scaleDiff09 = Scales.valueOf(scale - 9);
-				final ScaleMetrics scaleDiff18 = Scales.valueOf(18 - scale);
+				final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
+				final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
 				final long h = scale9f.divideByScaleFactor(uDecimal);
 				final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 				

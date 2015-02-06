@@ -924,7 +924,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		}
 		if (scale < otherScale) {
 			final DecimalArithmetic arith = getDefaultArithmetic();
-			final ScaleMetrics diffMetrics = Scales.valueOf(otherScale - scale);
+			final ScaleMetrics diffMetrics = Scales.getScaleMetrics(otherScale - scale);
 			final long otherRescaled = diffMetrics.divideByScaleFactor(otherUnscaled);
 			final int cmp = arith.compare(unscaled, otherRescaled);
 			if (cmp != 0) {
@@ -935,7 +935,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 			return -arith.signum(otherRemainder);
 		} else {
 			final DecimalArithmetic arith = other.getScaleMetrics().getDefaultArithmetic();
-			final ScaleMetrics diffMetrics = Scales.valueOf(scale - otherScale);
+			final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scale - otherScale);
 			final long rescaled = diffMetrics.divideByScaleFactor(unscaled);
 			final int cmp = arith.compare(rescaled, otherUnscaled);
 			if (cmp != 0) {

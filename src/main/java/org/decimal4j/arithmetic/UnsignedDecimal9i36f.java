@@ -74,7 +74,7 @@ final class UnsignedDecimal9i36f {
 		return this;
 	}
 	public UnsignedDecimal9i36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
-		final ScaleMetrics diffMetrics = Scales.valueOf(18 - scaleMetrics.getScale());
+		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(18 - scaleMetrics.getScale());
 		normalizeAndRound(1, 0, ival, diffMetrics.multiplyByScaleFactor(fval), 0, 0, 0, DecimalRounding.UNNECESSARY);
 		return this;
 	}
@@ -95,8 +95,8 @@ final class UnsignedDecimal9i36f {
 
 			final int log10 = log10(ival);
 			final int div10 = log10 - 9;
-			final ScaleMetrics divScale = Scales.valueOf(div10);
-			final ScaleMetrics mulScale = Scales.valueOf(18 - div10);
+			final ScaleMetrics divScale = Scales.getScaleMetrics(div10);
+			final ScaleMetrics mulScale = Scales.getScaleMetrics(18 - div10);
 			
 			final long ivHi = divScale.divideByScaleFactor(ival);
 			final long ivLo = ival - divScale.multiplyByScaleFactor(ivHi);
@@ -289,7 +289,7 @@ final class UnsignedDecimal9i36f {
 	}
 	private int getInvNormPow10() {
 		final int log10 = log10(ival);
-		return (ival >= Scales.valueOf(log10 - 1).getScaleFactor()*3) ? log10 : log10 - 1;//we want to normalize the ival part to be between 1 and 5
+		return (ival >= Scales.getScaleMetrics(log10 - 1).getScaleFactor()*3) ? log10 : log10 - 1;//we want to normalize the ival part to be between 1 and 5
 	}
 	private final long getInvNorm(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		final int pow10 = -getInvNormPow10();
@@ -395,8 +395,8 @@ final class UnsignedDecimal9i36f {
 		final long fra18;
 		final long rem18;
 		if (pow10 > 0) {
-			final ScaleMetrics mul10Scale = Scales.valueOf(pow10);
-			final ScaleMetrics div10Scale = Scales.valueOf(18 - pow10);
+			final ScaleMetrics mul10Scale = Scales.getScaleMetrics(pow10);
+			final ScaleMetrics div10Scale = Scales.getScaleMetrics(18 - pow10);
 			final long hiVal3 = div10Scale.divideByScaleFactor(val3);
 			final long loVal3 = val3 - div10Scale.multiplyByScaleFactor(hiVal3);
 			final long hiVal2 = div10Scale.divideByScaleFactor(val2);
@@ -411,7 +411,7 @@ final class UnsignedDecimal9i36f {
 		}
 
 		//apply scale now this time with rounding
-		final ScaleMetrics diffMetrics = Scales.valueOf(18 - arith.getScale());
+		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(18 - arith.getScale());
 		final long fraVal = diffMetrics.divideByScaleFactor(fra18);
 		final long fraRem = fra18 - diffMetrics.multiplyByScaleFactor(fraVal);
 		final int inc = getRoundingIncrement(sgn, fraVal, diffMetrics, fraRem, rem18 != 0 | val1 != 0 | val0 != 0 | rem1 != 0 | rem2 != 0 | rem3 != 0 | rem4 != 0, rounding);

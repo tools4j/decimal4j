@@ -47,17 +47,17 @@ public class PowBenchmark extends AbstractBenchmark {
 		
 		@Setup
 		public void initValues() {
-			initValues(Scales.valueOf(scale));
+			initValues(Scales.getScaleMetrics(scale));
 		}
 		private <S extends ScaleMetrics> void initValues(S scaleMetrics) {
 			final double maxBase = Math.pow(scaleMetrics.getMaxIntegerValue(), 1.0/maxExponent);
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
 				final double doubleValue = maxBase * Math.random() * Math.signum(Math.random());
 				final long unscaledValue = scaleMetrics.getTruncatingArithmetic(OverflowMode.CHECKED).fromDouble(doubleValue);
-				final Decimal<S> value = Factories.valueOf(scaleMetrics).valueOfUnscaled(unscaledValue);
+				final Decimal<S> value = Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(unscaledValue);
 				bigDecimals[i] = value.toBigDecimal();
 				immutables[i] = value;
-				mutables[i] = Factories.valueOf(scaleMetrics).newMutable().setUnscaled(unscaledValue);
+				mutables[i] = Factories.getDecimalFactory(scaleMetrics).newMutable().setUnscaled(unscaledValue);
 				unscaled[i] = unscaledValue;
 				exponents[i] = maxExponent;
 			}

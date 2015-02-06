@@ -56,7 +56,7 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 		if (scale < thisScale) {
 			final int diff = thisScale - scale;
 			if (diff <= 18) {
-				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
+				final ScaleMetrics diffMetrics = Scales.getScaleMetrics(diff);
 				final long rescaled = diffMetrics.getArithmetic(getRoundingMode()).divideByPowerOf10(uDecimal, diff);
 				return BigDecimal.valueOf(rescaled, scale);
 			}
@@ -64,7 +64,7 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 			//does it fit in a long?
 			final int diff = scale - thisScale;
 			if (diff <= 18) {
-				final ScaleMetrics diffMetrics = Scales.valueOf(diff);
+				final ScaleMetrics diffMetrics = Scales.getScaleMetrics(diff);
 				if (uDecimal >= diffMetrics.getMinIntegerValue() && uDecimal <= diffMetrics.getMaxIntegerValue()) {
 					final long rescaled = diffMetrics.multiplyByScaleFactor(uDecimal);
 					return BigDecimal.valueOf(rescaled, scale);
