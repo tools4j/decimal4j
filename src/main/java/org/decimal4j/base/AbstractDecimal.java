@@ -211,7 +211,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	/* ----------------------------- rounding ------------------------------ */
 	@Override
 	public D round(int precision) {
-		if (precision <= getScale()) {
+		if (precision < getScale()) {
 			return createOrAssign(getDefaultArithmetic().round(unscaledValue(), precision));
 		}
 		return self();
@@ -219,7 +219,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	
 	@Override
 	public D round(int precision, RoundingMode roundingMode) {
-		if (precision <= getScale()) {
+		if (precision < getScale()) {
 			return createOrAssign(getArithmeticFor(roundingMode).round(unscaledValue(), precision));
 		}
 		return self();
@@ -227,7 +227,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	
 	@Override
 	public Decimal<S> round(int precision, TruncationPolicy truncationPolicy) {
-		if (precision <= getScale()) {
+		if (precision < getScale()) {
 			return createOrAssign(getArithmeticFor(truncationPolicy).round(unscaledValue(), precision));
 		}
 		return self();
