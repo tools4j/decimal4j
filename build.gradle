@@ -78,8 +78,8 @@ sourceSets.main.java {
 }
 
 jmh {
-//   include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
-   include = '.*AddBenchmark.*' // include pattern (regular expression) for benchmarks to be executed
+   include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
+//   include = '.*AddBenchmark.*' // include pattern (regular expression) for benchmarks to be executed
 //   exclude = '.*CheckedBenchmark.*,.*PowBenchmark.*' // exclude pattern (regular expression) for benchmarks to be executed
 //   exclude = '.*PowBenchmark.*' // exclude pattern (regular expression) for benchmarks to be executed
    benchmarkMode = 'thrpt' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
