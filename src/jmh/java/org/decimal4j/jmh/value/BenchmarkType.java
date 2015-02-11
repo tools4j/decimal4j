@@ -15,7 +15,7 @@ public enum BenchmarkType {
 		public long randomSecond(ValueType valueType, int scale, long first) {
 			//avoid overflows
 			long second = valueType.random(SignType.ALL);
-			while ((first ^ second) >= 0 & (first ^ second) < 0) {
+			while ((first ^ second) >= 0 & (first ^ (first + second)) < 0) {
 				//overflow, try again
 				second = valueType.random(SignType.ALL);
 			}
