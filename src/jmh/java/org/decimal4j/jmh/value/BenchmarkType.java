@@ -2,7 +2,11 @@ package org.decimal4j.jmh.value;
 
 import java.util.Random;
 
+import org.decimal4j.jmh.state.AbstractValueBenchmarkState;
+import org.decimal4j.jmh.state.PowBenchmarkState;
+import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
+import org.decimal4j.truncate.OverflowMode;
 
 /**
  * Describes the type of benchmark. This information is used when the benchmark
@@ -12,7 +16,7 @@ import org.decimal4j.scale.Scales;
 public enum BenchmarkType {
 	Add {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//avoid overflows
 			long second = valueType.random(SignType.ALL);
 			while ((first ^ second) >= 0 & (first ^ (first + second)) < 0) {
@@ -24,7 +28,7 @@ public enum BenchmarkType {
 	},
 	Subtract {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//avoid overflows
 			long second = valueType.random(SignType.ALL);
 			while ((first ^ second) < 0 & (first ^ (first - second)) < 0) {
@@ -36,9 +40,9 @@ public enum BenchmarkType {
 	},
 	Square {
 		@Override
-		public long randomFirst(ValueType valueType, int scale) {
+		public long randomFirst(AbstractValueBenchmarkState benchmarkState, ValueType valueType) {
 			//avoid overflows
-			final long one = Scales.getScaleMetrics(scale).getScaleFactor();
+			final long one = Scales.getScaleMetrics(benchmarkState.scale).getScaleFactor();
 			final long max = (long)Math.ceil(Math.sqrt(Long.MAX_VALUE * (double)one));//no long overflow because of sqrt
 			final long value = randomLong(Math.min(max, valueType.maxValue));
 			
@@ -46,25 +50,25 @@ public enum BenchmarkType {
 			return RND.nextBoolean() ? -value : value;
 		}
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			throw new RuntimeException("internal error: square has no second decimal argument");
 		}
 	},
 	Sqrt {
 		@Override
-		public long randomFirst(ValueType valueType, int scale) {
+		public long randomFirst(AbstractValueBenchmarkState benchmarkState, ValueType valueType) {
 			return valueType.random(SignType.POSITIVE);
 		}
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			throw new RuntimeException("internal error: sqrt has no second decimal argument");
 		}
 	},
 	Multiply {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//avoid overflows
-			final long one = Scales.getScaleMetrics(scale).getScaleFactor();
+			final long one = Scales.getScaleMetrics(benchmarkState.scale).getScaleFactor();
 			if (-one <= first & first <= one) {
 				//no overflow possible
 				long value = valueType.random(SignType.ALL);
@@ -83,9 +87,9 @@ public enum BenchmarkType {
 	},
 	Divide {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//avoid overflows
-			final long one = Scales.getScaleMetrics(scale).getScaleFactor();
+			final long one = Scales.getScaleMetrics(benchmarkState.scale).getScaleFactor();
 			final long min = (long)Math.ceil(one * Math.abs((double)first) / Long.MAX_VALUE);
 			final long value = min + randomLong(Math.max(0, valueType.maxValue - min));
 			//NOTE: value may be larger than valueType.maxValue, but no overflow seems more important here
@@ -96,30 +100,45 @@ public enum BenchmarkType {
 	},
 	Avg {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//no overflow possible
 			return valueType.random(SignType.ALL);
 		}
 	},
+	Pow {
+		@Override
+		public long randomFirst(AbstractValueBenchmarkState benchmarkState, ValueType valueType) {
+			//create a base that does not overflow with the given exponent
+			final PowBenchmarkState powState = (PowBenchmarkState)benchmarkState;
+			final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(benchmarkState.scale);
+			final double maxBase = Math.pow(scaleMetrics.getMaxIntegerValue(), 1.0/powState.exponent);
+			final double doubleValue = maxBase * Math.random() * Math.signum(Math.random());
+			return scaleMetrics.getTruncatingArithmetic(OverflowMode.CHECKED).fromDouble(doubleValue);
+		}
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			throw new RuntimeException("internal error: pow has no second decimal argument");
+		}
+	},
 	ConvertToDouble {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			throw new RuntimeException("internal error: conversion to double has no second decimal argument");
 		}
 	},
 	Double {
 		@Override
-		public long randomSecond(ValueType valueType, int scale, long first) {
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//double arith does not cause exceptions for overflow or div by zero
 			return valueType.random(SignType.ALL);
 		}
 	};
 	
 	private static final Random RND = new Random();
-	public long randomFirst(ValueType valueType, int scale) {
+	public long randomFirst(AbstractValueBenchmarkState benchmarkState, ValueType valueType) {
 		return valueType.random(SignType.ALL);
 	}
-	abstract public long randomSecond(ValueType valueType, int scale, long first);
+	abstract public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first);
 
 	private static long randomLong(long n) {
         if (n <= 0)

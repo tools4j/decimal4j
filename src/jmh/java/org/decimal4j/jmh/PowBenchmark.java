@@ -21,11 +21,11 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public final void bigDecimals(PowBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			final int exp = state.exponents[i];
+			final int exp = state.exponent;
 			if (exp >= 0) {
-				blackhole.consume(state.bigDecimals[i].pow(exp).setScale(state.scale, state.roundingMode));
+				blackhole.consume(state.values[i].bigDecimal1.pow(exp).setScale(state.scale, state.roundingMode));
 			} else {
-				blackhole.consume(BigDecimal.ONE.divide(state.bigDecimals[i].pow(-exp), state.scale, state.roundingMode));
+				blackhole.consume(BigDecimal.ONE.divide(state.values[i].bigDecimal1.pow(-exp), state.scale, state.roundingMode));
 			}
 		}
 	}
@@ -34,7 +34,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public final void bigDecimals_ANSI_X3_274(PowBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.bigDecimals[i].pow(state.exponents[i], MC_ANSI_X3_274).setScale(state.scale, state.roundingMode));
+			blackhole.consume(state.values[i].bigDecimal1.pow(state.exponent, MC_ANSI_X3_274).setScale(state.scale, state.roundingMode));
 		}
 	}
 
@@ -42,7 +42,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public final void decimalDoubleDecimal(PowBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.arithmetic.fromDouble(Math.pow(state.immutables[i].doubleValue(), state.exponents[i])));
+			blackhole.consume(state.arithmetic.fromDouble(Math.pow(state.values[i].immutable1.doubleValue(), state.exponent)));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public final void immutableDecimals(PowBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.immutables[i].pow(state.exponents[i]));
+			blackhole.consume(state.values[i].immutable1.pow(state.exponent));
 		}
 	}
 
@@ -58,7 +58,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public final void mutableDecimals(PowBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.mutables[i].setUnscaled(state.unscaled[i], state.scale).pow(state.exponents[i]));
+			blackhole.consume(state.values[i].mutable.setUnscaled(state.values[i].unscaled1, state.scale).pow(state.exponent));
 		}
 	}
 
@@ -66,7 +66,7 @@ public class PowBenchmark extends AbstractBenchmark {
 	@Benchmark
 	public final void nativeDecimals(PowBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(state.arithmetic.pow(state.unscaled[i], state.exponents[i]));
+			blackhole.consume(state.arithmetic.pow(state.values[i].unscaled1, state.exponent));
 		}
 	}
 	

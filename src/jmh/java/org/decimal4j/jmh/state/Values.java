@@ -30,10 +30,10 @@ public final class Values<S extends ScaleMetrics> {
 		this.mutable = (MutableDecimal<S>) decimalFactory.newMutable();
 	}
 
-	static Values<?> create(BenchmarkType benchmarkType, int scale, ValueType valueType1, ValueType valueType2) {
-		final long value1 = benchmarkType.randomFirst(valueType1, scale);
-		final long value2 = valueType2 == null ? 0 : benchmarkType.randomSecond(valueType2, scale, value1);
-		return create(value1, value2, Scales.getScaleMetrics(scale));
+	static Values<?> create(BenchmarkType benchmarkType, AbstractValueBenchmarkState benchmarkState, ValueType valueType1, ValueType valueType2) {
+		final long value1 = benchmarkType.randomFirst(benchmarkState, valueType1);
+		final long value2 = valueType2 == null ? 0 : benchmarkType.randomSecond(benchmarkState, valueType2, value1);
+		return create(value1, value2, Scales.getScaleMetrics(benchmarkState.scale));
 	}
 	private static <S extends ScaleMetrics> Values<S> create(long unscaled1, long unscaled2, S scaleMetrics) {
 		return new Values<S>(unscaled1, unscaled2, scaleMetrics.getScale(), Factories.getDecimalFactory(scaleMetrics));
