@@ -5,12 +5,22 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
  * Micro benchmarks for unchecked multiplication.
  */
 public class MultiplyBenchmark extends AbstractBinaryOpIntLongValRoundingBenchmark {
+
+	@State(Scope.Benchmark)
+	public static class MultiplyType extends BenchmarkTypeHolder {
+		@Override
+		public BenchmarkType getBenchmarkType() {
+			return BenchmarkType.Multiply;
+		}
+	}
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

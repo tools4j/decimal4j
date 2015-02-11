@@ -31,7 +31,7 @@ public class ConvertToDoubleBenchmark extends AbstractBenchmark {
 		@Setup
 		public void initValues() {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType.random(SignType.ALL), 0, scale);
+				values[i] = Values.create(BenchmarkType.ConvertToDouble, scale, valueType);
 			}
 		}
 	}

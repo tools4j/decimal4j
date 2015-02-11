@@ -28,6 +28,10 @@ abstract public class AbstractBenchmark {
 	public static final int OPERATIONS_PER_INVOCATION = 100;
 
 	@State(Scope.Benchmark)
+	abstract public static class BenchmarkTypeHolder {
+		abstract public BenchmarkType getBenchmarkType();
+	}
+	@State(Scope.Benchmark)
 	abstract public static class AbstractBenchmarkState {
 		//		@Param({ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18" })
 		//		@Param({ "0", "6", "9", "17", "18" })
@@ -83,7 +87,7 @@ abstract public class AbstractBenchmark {
 		public final ImmutableDecimal<S> immutable2;
 		public final MutableDecimal<S> mutable;
 
-		public Values(long unscaled1, long unscaled2, int scale, DecimalFactory<S> decimalFactory) {
+		private Values(long unscaled1, long unscaled2, int scale, DecimalFactory<S> decimalFactory) {
 			this.unscaled1 = unscaled1;
 			this.unscaled2 = unscaled2;
 			this.bigDecimal1 = BigDecimal.valueOf(unscaled1, scale);
@@ -93,11 +97,15 @@ abstract public class AbstractBenchmark {
 			this.mutable = (MutableDecimal<S>) decimalFactory.newMutable();
 		}
 
-		public static Values<?> create(long unscaled1, long unscaled2, int scale) {
-			return create(unscaled1, unscaled2, Scales.getScaleMetrics(scale));
+		public static Values<?> create(BenchmarkType benchmarkType, int scale, ValueType valueType) {
+			return create(benchmarkType, scale, valueType, null);
 		}
-
-		public static <S extends ScaleMetrics> Values<S> create(long unscaled1, long unscaled2, S scaleMetrics) {
+		public static Values<?> create(BenchmarkType benchmarkType, int scale, ValueType valueType1, ValueType valueType2) {
+			final long value1 = benchmarkType.randomFirst(valueType1, scale);
+			final long value2 = valueType2 == null ? 0 : benchmarkType.randomSecond(valueType2, scale, value1);
+			return create(value1, value2, Scales.getScaleMetrics(scale));
+		}
+		private static <S extends ScaleMetrics> Values<S> create(long unscaled1, long unscaled2, S scaleMetrics) {
 			return new Values<S>(unscaled1, unscaled2, scaleMetrics.getScale(), Factories.getDecimalFactory(scaleMetrics));
 		}
 	}

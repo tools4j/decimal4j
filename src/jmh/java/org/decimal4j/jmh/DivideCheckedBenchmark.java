@@ -6,12 +6,22 @@ import java.math.BigDecimal;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
  * Micro benchmarks for checked division.
  */
 public class DivideCheckedBenchmark extends AbstractBinaryOpIntLongValRoundingBenchmark {
+
+	@State(Scope.Benchmark)
+	public static class DivideType extends BenchmarkTypeHolder {
+		@Override
+		public BenchmarkType getBenchmarkType() {
+			return BenchmarkType.Divide;
+		}
+	}
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

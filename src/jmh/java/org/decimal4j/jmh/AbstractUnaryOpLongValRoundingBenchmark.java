@@ -12,16 +12,16 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 
-abstract public class AbstractUnaryOpPositiveLongValRoundingBenchmark extends AbstractBenchmark {
+abstract public class AbstractUnaryOpLongValRoundingBenchmark extends AbstractBenchmark {
 	@State(Scope.Benchmark)
 	public static class BenchmarkState extends RoundingBenchmarkState {
 		@Param({ "Int", "Long" })
 		public ValueType valueType;
 
 		@Setup
-		public void initValues() {
+		public void initValues(BenchmarkTypeHolder type) {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType.random(SignType.POSITIVE), 0, scale);
+				values[i] = Values.create(type.getBenchmarkType(), scale, valueType);
 			}
 		}
 	}

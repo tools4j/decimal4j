@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
+import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
+import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.OperationsPerInvocation;
@@ -33,6 +35,8 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 //		public DoubleType doubleType;
 		
 		public double[] doubles = new double[OPERATIONS_PER_INVOCATION];
+		public MutableDecimal<?> mutable;
+
 		@Setup
 		public void initParams() {
 			super.initParams(roundingMode);
@@ -41,7 +45,7 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 		public void initValues() {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
 				doubles[i] = doubleType.random(SignType.ALL, scale);
-				values[i] = Values.create(0, 0, scale);
+				mutable = Factories.getDecimalFactory(scale).newMutable();
 			}
 		}
 	}
@@ -66,7 +70,7 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
 	public void mutableDecimals(BenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(mutableDecimals(state, state.values[i], state.doubles[i]));
+			blackhole.consume(mutableDecimals(state, state.mutable, state.doubles[i]));
 		}
 	}
 
@@ -86,8 +90,8 @@ public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
 		return factory.valueOf(value, state.roundingMode);//rounding mode is in arithmetic
 	}
 
-	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values, double value) {
-		return values.mutable.set(value, state.roundingMode);
+	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, MutableDecimal<S> mutable, double value) {
+		return mutable.set(value, state.roundingMode);
 	}
 
 	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, double value) {

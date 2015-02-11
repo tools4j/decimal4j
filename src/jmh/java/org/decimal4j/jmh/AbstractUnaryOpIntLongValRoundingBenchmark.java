@@ -18,9 +18,9 @@ abstract public class AbstractUnaryOpIntLongValRoundingBenchmark extends Abstrac
 		@Param({"Int", "Long"})
 		public ValueType valueType;
 		@Setup
-		public void initValues() {
+		public void initValues(BenchmarkTypeHolder type) {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType.random(SignType.ALL), 0, scale);
+				values[i] = Values.create(type.getBenchmarkType(), scale, valueType);
 			}
 		}
 	}

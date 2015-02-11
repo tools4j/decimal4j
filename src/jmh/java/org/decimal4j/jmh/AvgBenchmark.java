@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
@@ -13,6 +15,14 @@ import org.openjdk.jmh.runner.RunnerException;
 public class AvgBenchmark extends AbstractBinaryOpLongValRoundingBenchmark {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
+
+	@State(Scope.Benchmark)
+	public static class AvgType extends BenchmarkTypeHolder {
+		@Override
+		public BenchmarkType getBenchmarkType() {
+			return BenchmarkType.Avg;
+		}
+	}
 
 	@Override
 	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {

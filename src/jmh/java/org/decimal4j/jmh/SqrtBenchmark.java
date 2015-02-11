@@ -6,12 +6,22 @@ import java.math.BigInteger;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.scale.ScaleMetrics;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
  * Micro benchmarks for square root.
  */
-public class SqrtBenchmark extends AbstractUnaryOpPositiveLongValRoundingBenchmark {
+public class SqrtBenchmark extends AbstractUnaryOpLongValRoundingBenchmark {
+
+	@State(Scope.Benchmark)
+	public static class SqrtType extends BenchmarkTypeHolder {
+		@Override
+		public BenchmarkType getBenchmarkType() {
+			return BenchmarkType.Sqrt;
+		}
+	}
 
 	private static BigDecimal sqrt(BigDecimal bigDecimal) {
 		if (bigDecimal.signum() < 0) {

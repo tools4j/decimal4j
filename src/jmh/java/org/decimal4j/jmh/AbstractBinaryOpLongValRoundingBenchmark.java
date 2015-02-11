@@ -20,9 +20,9 @@ abstract public class AbstractBinaryOpLongValRoundingBenchmark extends AbstractB
 		@Param("Long")
 		public ValueType valueType2;
 		@Setup
-		public void initValues() {
+		public void initValues(BenchmarkTypeHolder type) {
 			for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-				values[i] = Values.create(valueType1.random(SignType.ALL), valueType2.random(SignType.NON_ZERO), scale);
+				values[i] = Values.create(type.getBenchmarkType(), scale, valueType1, valueType2);
 			}
 		}
 	}
