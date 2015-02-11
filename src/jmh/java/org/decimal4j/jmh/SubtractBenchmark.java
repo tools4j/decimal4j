@@ -4,41 +4,64 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
+import org.decimal4j.jmh.state.SubtractBenchmarkState;
+import org.decimal4j.jmh.state.Values;
 import org.decimal4j.scale.ScaleMetrics;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.OperationsPerInvocation;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
  * Micro benchmarks for unchecked subtraction.
  */
-public class SubtractBenchmark extends AbstractBinaryOpLongValTruncatingBenchmark {
+public class SubtractBenchmark extends AbstractBenchmark {
 
-	@State(Scope.Benchmark)
-	public static class SubtractType extends BenchmarkTypeHolder {
-		@Override
-		public BenchmarkType getBenchmarkType() {
-			return BenchmarkType.Subtract;
+	@Benchmark
+	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
+	public final void bigDecimals(SubtractBenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(bigDecimals(state, state.values[i]));
 		}
 	}
 
-	@Override
-	protected <S extends ScaleMetrics> BigDecimal bigDecimals(BenchmarkState state, Values<S> values) {
+	@Benchmark
+	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
+	public final void immutableDecimals(SubtractBenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(immutableDecimals(state, state.values[i]));
+		}
+	}
+
+	@Benchmark
+	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
+	public final void mutableDecimals(SubtractBenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(mutableDecimals(state, state.values[i]));
+		}
+	}
+
+	@Benchmark
+	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
+	public final void nativeDecimals(SubtractBenchmarkState state, Blackhole blackhole) {
+		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
+			blackhole.consume(nativeDecimals(state, state.values[i]));
+		}
+	}
+
+	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(SubtractBenchmarkState state, Values<S> values) {
 		return values.bigDecimal1.subtract(values.bigDecimal2, state.mcLong64);
 	}
 
-	@Override
-	protected <S extends ScaleMetrics> Decimal<S> immitableDecimals(BenchmarkState state, Values<S> values) {
+	private static final <S extends ScaleMetrics> Decimal<S> immutableDecimals(SubtractBenchmarkState state, Values<S> values) {
 		return values.immutable1.subtract(values.immutable2);
 	}
 
-	@Override
-	protected <S extends ScaleMetrics> Decimal<S> mutableDecimals(BenchmarkState state, Values<S> values) {
+	private static final <S extends ScaleMetrics> Decimal<S> mutableDecimals(SubtractBenchmarkState state, Values<S> values) {
 		return values.mutable.set(values.immutable1).subtract(values.immutable2);
 	}
 
-	@Override
-	protected <S extends ScaleMetrics> long nativeDecimals(BenchmarkState state, Values<S> values) {
+	private static final <S extends ScaleMetrics> long nativeDecimals(SubtractBenchmarkState state, Values<S> values) {
 		return state.arithmetic.subtract(values.unscaled1, values.unscaled2);
 	}
 

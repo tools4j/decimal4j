@@ -2,6 +2,8 @@ package org.decimal4j.jmh;
 
 import java.io.IOException;
 
+import org.decimal4j.jmh.value.SignType;
+import org.decimal4j.jmh.value.ValueType;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
@@ -28,32 +30,32 @@ public class DoubleBenchmark {
 	}
 
 	@Benchmark
-	public double add(BenchmarkState state) {
+	public final double add(BenchmarkState state) {
 		return state.double1 + state.double2;
 	}
 	
 	@Benchmark
-	public double subtract(BenchmarkState state) {
+	public final double subtract(BenchmarkState state) {
 		return state.double1 - state.double2;
 	}
 
 	@Benchmark
-	public double multiply(BenchmarkState state) {
+	public final double multiply(BenchmarkState state) {
 		return state.double1 * state.double2;
 	}
 
 	@Benchmark
-	public double divide(BenchmarkState state) {
+	public final double divide(BenchmarkState state) {
 		return state.double1 / state.double2;
 	}
 
 	@Benchmark
-	public double avg(BenchmarkState state) {
+	public final double avg(BenchmarkState state) {
 		return (state.double1 + state.double2) / 2;
 	}
 
 	@Benchmark
-	public double sqrt(BenchmarkState state) {
+	public final double sqrt(BenchmarkState state) {
 		return Math.sqrt(state.positive);
 	}
 

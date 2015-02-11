@@ -1,4 +1,4 @@
-package org.decimal4j.jmh;
+package org.decimal4j.jmh.value;
 
 /**
  * Sign type for random value generation.
