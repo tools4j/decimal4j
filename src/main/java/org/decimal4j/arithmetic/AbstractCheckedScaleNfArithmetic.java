@@ -14,8 +14,7 @@ abstract public class AbstractCheckedScaleNfArithmetic extends AbstractCheckedAr
 
 	private final ScaleMetrics scaleMetrics;
 	
-	// FIXME why is it called unchecked?
-	// FIXME field should not be protected
+	/* The unchecked version of arithmetic with the same rounding mode*/
 	protected final DecimalArithmetic unchecked;
 
 	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {

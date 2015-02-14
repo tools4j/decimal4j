@@ -151,7 +151,7 @@ final class Mul {
 	 *            
 	 * @return the multiplication result with rounding and overflow checking
 	 */
-	// FIXME refactor/reconcile the rounding/overflow checking versions of these methods
+	// TODO refactor/reconcile the rounding/overflow checking versions of these methods
 	public static long multiplyChecked(final DecimalArithmetic arith, final DecimalRounding rounding, final long uDecimal1, final long uDecimal2) {
 		try {
 			final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
@@ -310,7 +310,7 @@ final class Mul {
 		}
 	}
 	
-	// FIXME merge with other versions
+	// TODO merge with other versions
 	public static long squareChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		try {
 			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();

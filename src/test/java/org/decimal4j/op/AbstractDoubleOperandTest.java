@@ -36,7 +36,7 @@ abstract public class AbstractDoubleOperandTest extends Abstract1DecimalArg1Doub
 	}
 	
 	protected BigDecimal toBigDecimal(double operand) {
-		return Doubles.doubleToBigDecimal(operand, getScale(), getRoundingMode()).setScale(getScale(), getRoundingMode());
+		return FloatAndDoubleUtil.doubleToBigDecimal(operand, getScale(), getRoundingMode()).setScale(getScale(), getRoundingMode());
 	}
 	
 }

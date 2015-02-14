@@ -213,6 +213,18 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(SCALE.getTruncatingArithmetic(overflowMode).fromLong(value));
 	}
 
+	public static Decimal${scale}f valueOf(float value) {
+		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromFloat(value));
+	}
+
+	public static Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromFloat(value));
+	}
+
+	public static Decimal${scale}f valueOf(float value, TruncationPolicy truncationPolicy) {
+		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromFloat(value));
+	}
+
 	public static Decimal${scale}f valueOf(double value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromDouble(value));
 	}

@@ -114,6 +114,42 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 *            value to be set
 	 * @return {@code this} decimal after assigning it the given {@code value}
 	 */
+	MutableDecimal<S> set(float value);
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted into a decimal number
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	MutableDecimal<S> set(float value, RoundingMode roundingMode);
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param truncationPolicy
+	 *            the truncation policy to apply if the value argument needs to
+	 *            be truncated when converted into a decimal number
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
+	MutableDecimal<S> set(float value, TruncationPolicy truncationPolicy);
+
+	/**
+	 * Sets {@code this} decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} decimal after assigning it the given {@code value}
+	 */
 	MutableDecimal<S> set(double value);
 
 	/**

@@ -82,6 +82,11 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
+	public final long fromFloat(float value) {
+		return FloatConversion.floatToLong(value);
+	}
+
+	@Override
 	public final long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(value);
 	}

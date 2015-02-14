@@ -41,6 +41,12 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	ImmutableDecimal<S> valueOf(long value, OverflowMode overflowMode);
 
+	ImmutableDecimal<S> valueOf(float value);
+
+	ImmutableDecimal<S> valueOf(float value, RoundingMode roundingMode);
+
+	ImmutableDecimal<S> valueOf(float value, TruncationPolicy truncationPolicy);
+
 	ImmutableDecimal<S> valueOf(double value);
 
 	ImmutableDecimal<S> valueOf(double value, RoundingMode roundingMode);

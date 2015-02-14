@@ -134,7 +134,7 @@ final class Div {
 	 * 
 	 * @return the division result with rounding and overflow checking
 	 */
-	// FIXME reconcile this method with the other overloaded versions
+	// TODO reconcile this method with the other overloaded versions
 	public static long divideChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		//special cases first
 		if (uDecimalDivisor == 0) {

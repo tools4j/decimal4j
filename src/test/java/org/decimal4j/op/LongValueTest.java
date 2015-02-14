@@ -9,7 +9,6 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -23,7 +22,7 @@ public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 	
 	private final boolean exact;
 
-	public LongValueTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, boolean exact, DecimalArithmetic arithmetic) {
+	public LongValueTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, boolean exact, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 		this.exact = exact;
 	}
@@ -32,9 +31,9 @@ public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] {s, TruncationPolicy.DEFAULT, true, s.getDefaultArithmetic()});
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				data.add(new Object[] {s, tp, false, s.getArithmetic(tp)});
+			data.add(new Object[] {s, RoundingMode.DOWN, true, s.getDefaultArithmetic()});
+			for (final RoundingMode mode : TestSettings.UNCHECKED_ROUNDING_MODES) {
+				data.add(new Object[] {s, mode, false, s.getArithmetic(mode)});
 			}
 		}
 		return data;
@@ -61,14 +60,10 @@ public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
 		if (exact) {
 			return operand.longValueExact();
 		}
-		if (isUnchecked() && isRoundingDown() && RND.nextBoolean()) {
+		if (isRoundingDown() && RND.nextBoolean()) {
 			return operand.longValue();
 		} else {
-			if (isUnchecked() && RND.nextBoolean()) {
-				return operand.longValue(getRoundingMode());
-			} else {
-				return operand.longValue(getTruncationPolicy());
-			}
+			return operand.longValue(getRoundingMode());
 		}
 	}
 }

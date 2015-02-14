@@ -107,6 +107,11 @@ public class UncheckedScaleNfTruncatingArithmetic extends
 	}
 	
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToUnscaled(this, value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, value);
 	}

@@ -67,7 +67,7 @@ abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
 
 	@Override
 	public long parse(String value) {
-		//TODO not very efficient
+		//FIXME not very efficient and not garbage free
 		return fromBigDecimal(new BigDecimal(value));
 	}
 }

@@ -98,8 +98,12 @@ public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArit
 	}
 
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToUnscaled(this, rounding, value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, rounding, value);
 	}
-
 }

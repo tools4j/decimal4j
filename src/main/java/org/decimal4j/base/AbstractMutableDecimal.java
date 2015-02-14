@@ -176,6 +176,24 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
+	public D set(float value) {
+		unscaled = getDefaultArithmetic().fromFloat(value);
+		return self();
+	}
+
+	@Override
+	public D set(float value, RoundingMode roundingMode) {
+		unscaled = getArithmeticFor(roundingMode).fromFloat(value);
+		return self();
+	}
+
+	@Override
+	public D set(float value, TruncationPolicy truncationPolicy) {
+		unscaled = getArithmeticFor(truncationPolicy).fromFloat(value);
+		return self();
+	}
+
+	@Override
 	public D set(double value) {
 		unscaled = getDefaultArithmetic().fromDouble(value);
 		return self();

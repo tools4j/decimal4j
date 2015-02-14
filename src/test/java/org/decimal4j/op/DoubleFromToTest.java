@@ -29,7 +29,7 @@ public class DoubleFromToTest {
 
 	public DoubleFromToTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
 		this.arithmetic = arithmetic;
-		this.backRounding = Doubles.getOppositeRoundingMode(roundingMode);
+		this.backRounding = FloatAndDoubleUtil.getOppositeRoundingMode(roundingMode);
 	}
 
 	@Parameters(name = "{index}: {0}, {1}")
@@ -49,7 +49,7 @@ public class DoubleFromToTest {
 	@Test
 	public void testSpecialDoubles() {
 		int index = 0;
-		for (final double d : Doubles.specialDoubleOperands(arithmetic.getScaleMetrics())) {
+		for (final double d : FloatAndDoubleUtil.specialDoubleOperands(arithmetic.getScaleMetrics())) {
 			runTest("special[" + index + "]", d);
 			index++;
 		}
@@ -59,7 +59,7 @@ public class DoubleFromToTest {
 	public void testRandomDoubles() {
 		final int n = TestSettings.getRandomTestCount();
 		for (int i = 0; i < n; i++) {
-			runTest("random[" + i + "]", Doubles.randomDoubleOperand(RND));
+			runTest("random[" + i + "]", FloatAndDoubleUtil.randomDoubleOperand(RND));
 		}
 	}
 

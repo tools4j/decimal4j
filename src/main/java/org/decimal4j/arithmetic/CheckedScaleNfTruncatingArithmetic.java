@@ -81,6 +81,11 @@ public class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfAr
 	}
 
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToUnscaled(this, DecimalRounding.DOWN, value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, DecimalRounding.DOWN, value);
 	}

@@ -1,0 +1,452 @@
+package org.decimal4j.arithmetic;
+
+import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.TruncatedPart;
+
+/**
+ * Converts from and to float.
+ */
+class FloatConversion {
+
+	private static final long LONG_MASK = 0xffffffffL;
+
+	// The mask for the significand, according to the {@link
+	// Float#floatToRawIntBits(float)} spec.
+	private static final int SIGNIFICAND_MASK = 0x007fffff;
+
+	// The mask for the exponent, according to the {@link
+	// Float#floatToRawIntBits(float)} spec.
+	@SuppressWarnings("unused")
+	private static final int EXPONENT_MASK = 0x7f800000;
+
+	// The mask for the sign, according to the {@link
+	// Float#floatToRawIntBits(float)} spec.
+	private static final int SIGN_MASK = 0x80000000;
+
+	private static final int SIGNIFICAND_BITS = 23;
+
+	private static final int EXPONENT_BIAS = 127;
+
+	/**
+	 * The implicit 1 bit that is omitted in significands of normal floats.
+	 */
+	private static final int IMPLICIT_BIT = SIGNIFICAND_MASK + 1;
+
+	private static final float MIN_LONG_AS_FLOAT = -0x1p63f;
+	/*
+	 * We cannot store Long.MAX_VALUE as a float without losing precision.
+	 * Instead, we store Long.MAX_VALUE + 1 == -Long.MIN_VALUE, and then offset
+	 * all comparisons by 1.
+	 */
+	private static final float MAX_LONG_AS_FLOAT_PLUS_ONE = 0x1p63f;
+
+	public static long floatToLong(float value) {
+		if (Float.isNaN(value)) {
+			throw new NumberFormatException("Cannot convert float to decimal: " + value);
+		}
+		if (isInLongRange(value)) {
+			return (long) value;
+		}
+		throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+	}
+
+	public static long floatToLong(DecimalRounding rounding, float value) {
+		if (Float.isNaN(value)) {
+			throw new NumberFormatException("Cannot convert float to decimal: " + value);
+		}
+		if (isInLongRange(value)) {
+			return (long) roundIntermediate(value, rounding);
+		}
+		throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+	}
+
+	/*
+	 * Copied from guava. This method returns a value y such that rounding y
+	 * DOWN (towards zero) gives the same result as rounding x according to the
+	 * specified mode. PRECONDITION: isFinite(x)
+	 */
+	private static float roundIntermediate(float x, DecimalRounding mode) {
+		switch (mode) {
+		case UNNECESSARY:
+			if (!isMathematicalInteger(x)) {
+				throw new ArithmeticException("Rounding necessary to convert to an integer value: " + x);
+			}
+			return x;
+		case FLOOR:
+			if (x >= 0.0f || isMathematicalInteger(x)) {
+				return x;
+			} else {
+				return x - 1.0f;
+			}
+		case CEILING:
+			if (x <= 0.0f || isMathematicalInteger(x)) {
+				return x;
+			} else {
+				return x + 1.0f;
+			}
+		case DOWN:
+			return x;
+		case UP:
+			if (isMathematicalInteger(x)) {
+				return x;
+			} else {
+				return x + Math.copySign(1.0f, x);
+			}
+		case HALF_EVEN:
+			return rint(x);
+		case HALF_UP: {
+			final float z = rint(x);
+			if (Math.abs(x - z) == 0.5f) {
+				return x + Math.copySign(0.5f, x);
+			} else {
+				return z;
+			}
+		}
+		case HALF_DOWN: {
+			final float z = rint(x);
+			if (Math.abs(x - z) == 0.5f) {
+				return x;
+			} else {
+				return z;
+			}
+		}
+		default:
+			throw new IllegalArgumentException("Unsupported rounding mode: " + mode);
+		}
+	}
+
+	public static final long floatToUnscaled(DecimalArithmetic arith, float value) {
+		return floatToUnscaled(arith, DecimalRounding.DOWN, value);
+	}
+
+	public static final long floatToUnscaled(DecimalArithmetic arith, DecimalRounding rounding, float value) {
+		if (value == 0) {
+			return 0;
+		}
+		final int exp = Math.getExponent(value);
+		if (exp >= Long.SIZE) {
+			throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+		}
+
+		//multiply significand by scale factor into a 128bit integer
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final long significand = getSignificand(value);
+
+		//HD + Knuth's Algorithm M from [Knu2] section 4.3.1.
+		final int lFactor = (int) (significand & LONG_MASK);
+		final int hFactor = (int) (significand >>> 32);
+		final long w1, w2, w3;
+		long k, t;
+
+		t = scaleMetrics.mulloByScaleFactor(lFactor);
+		w3 = t & LONG_MASK;
+		k = t >>> 32;
+
+		t = scaleMetrics.mulloByScaleFactor(hFactor) + k;
+		w2 = t & LONG_MASK;
+		w1 = t >>> 32;
+
+		t = scaleMetrics.mulhiByScaleFactor(lFactor) + w2;
+		k = t >>> 32;
+
+		final long hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + w1 + k;
+		final long lScaled = (t << 32) + w3;
+
+		//now multiply or divide by powers of two as instructed by the float exponent
+		final int shift = exp - SIGNIFICAND_BITS;
+		return floatToUnscaledShift(arith, rounding, value, hScaled, lScaled, shift);
+	}
+	
+	private static final long floatToUnscaledShift(DecimalArithmetic arith, DecimalRounding rounding, float value, long hScaled, long lScaled, int shift) {
+		if (shift > 0) {
+			//multiply: shift left
+			if (hScaled != 0) {
+				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			}
+			final int zeros = Long.numberOfLeadingZeros(lScaled);
+			if (shift >= zeros) {
+				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			}
+			final long absResult = lScaled << shift;
+			return value >= 0 ? absResult : -absResult;
+		} else if (shift == 0) {
+			if (hScaled != 0 | lScaled < 0) {
+				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			}
+			return value >= 0 ? lScaled : -lScaled;
+		} else {//shift < 0
+			//divide: shift right
+			if (rounding == DecimalRounding.DOWN) {
+				return floatToUnscaledShiftRight(arith, value, hScaled, lScaled, -shift);
+			}
+			return floatToUnscaledShiftRight(arith, rounding, value, hScaled, lScaled, -shift);
+		}
+	}
+
+	private static final long floatToUnscaledShiftRight(DecimalArithmetic arith, float value, long hScaled, long lScaled, int shift) {
+		final long absResult;
+		if (shift < Long.SIZE) {
+			if ((hScaled >>> shift) != 0) {
+				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			}
+			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
+		} else if (shift < 2 * Long.SIZE) {
+			absResult = (hScaled >>> (shift - Long.SIZE));
+		} else {
+			return 0;//rounded down
+		}
+		if (absResult < 0) {
+			throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+		}
+		return value >= 0 ? absResult : -absResult;
+	}
+
+	private static final long floatToUnscaledShiftRight(DecimalArithmetic arith, DecimalRounding rounding, float value, long hScaled, long lScaled, int shift) {
+		final long absResult;
+		final TruncatedPart truncatedPart;
+		if (shift < Long.SIZE) {
+			if ((hScaled >>> shift) != 0) {
+				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			}
+			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
+			final long rem = modPow2(lScaled, shift);
+			truncatedPart = RoundingUtil.truncatedPartFor2powN(rem, shift);
+		} else if (shift < 2 * Long.SIZE) {
+			absResult = (hScaled >>> (shift - Long.SIZE));
+			final long rem = modPow2(hScaled, shift - Long.SIZE);
+			truncatedPart = RoundingUtil.truncatedPartFor2powN(rem, lScaled, shift);
+		} else {
+			absResult = 0;//rounded down
+			truncatedPart = RoundingUtil.truncatedPartFor2powN(hScaled, lScaled, shift);
+		}
+		final int inc = rounding.calculateRoundingIncrement(value >= 0 ? 1 : -1, absResult, truncatedPart);
+		if (absResult < 0 | (absResult == Long.MAX_VALUE & inc == 1)) {
+			throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+		}
+		return (value >= 0 ? absResult : -absResult) + inc;
+	}
+
+	public static float longToFloat(DecimalArithmetic arith, long value) {
+		return unscaledToFloat(arith, DecimalRounding.DOWN, value);
+	}
+	public static float longToFloat(DecimalArithmetic arith, DecimalRounding rounding, long value) {
+		if (rounding == DecimalRounding.HALF_EVEN) {
+			return value;
+		}
+		return unscaledToFloat(arith, rounding, value);
+	}
+	public static float unscaledToFloat(DecimalArithmetic arith, long unscaled) {
+		return unscaledToFloat(arith, DecimalRounding.DOWN, unscaled);
+	}
+	public static float unscaledToFloat(DecimalArithmetic arith, DecimalRounding rounding, long unscaled) {
+		if (unscaled == 0) {
+			return 0;
+		}
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final int scale = arith.getScale();
+		//eliminate sign and trailing power-of-2 zero bits
+		final long absUnscaled = Math.abs(unscaled);
+		final int pow2 = Long.numberOfTrailingZeros(absUnscaled);
+		final long absVal = absUnscaled >>> pow2;
+		final int nlzAbsVal = Long.numberOfLeadingZeros(absVal);
+		
+		/*
+		 * NOTE: a) If absVal has no more than 24 bits it can be represented as a float 
+		 *          value without loss of precision (23 mantissa bits plus the implicit 
+		 *          leading 1 bit)
+		 *       b) The scale factor 10 has 30 leading zero bits, leaves 34 bits, shifted right
+		 *          by the trailing power-of-2 zero bits is exactly 24 bits
+		 *      ==> For HALF_EVEN rounding mode we can therefore apply the scale factor 
+		 *          via float division without losing information 
+		 */
+		if (Long.SIZE - nlzAbsVal <= SIGNIFICAND_BITS + 1 & rounding == DecimalRounding.HALF_EVEN & scale <= 10) {
+			return unscaledToFloatWithFloatDivisionRoundHalfEven(scaleMetrics, unscaled, pow2, absVal);
+		}
+
+		/*
+		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor
+		 *    then the division absVal/factor == 1.xxxxx, i.e. it is normalized
+		 * 2) because we omit the 1 in the mantissa, we calculate 
+		 *    valModFactor = absVal - floor(absVal/factor)*factor = absVal - 1*factor
+		 * 3) we shift valModFactor such that the 1 from the division would be on bit 24
+		 * 4) we perform the division
+		 */
+		
+		//(1) + (2)
+		final int exp;
+		final int mantissaShift;
+		final long valModFactor;
+		final int alignShift = nlzAbsVal - scaleMetrics.getScaleFactorNumberOfLeadingZeros();  
+		if (alignShift >= 0) {
+			final long scaledAbsVal = absVal << alignShift;
+			final long diff = scaledAbsVal - scaleMetrics.getScaleFactor();
+			exp = -alignShift + (int)(diff >> 63);
+			valModFactor = diff + ((diff >> 63) & scaledAbsVal);//if scaledAbsVal < factor we shift left by 1, i.e. we add the absVal
+			mantissaShift = SIGNIFICAND_BITS;
+		} else {
+			final long scaledFactor = scaleMetrics.getScaleFactor() << -alignShift;
+			if (Unsigned.isLess(absVal, scaledFactor)) {
+				exp = -alignShift - 1;
+				valModFactor = absVal - (scaledFactor >>> 1);//if absVal < scaledFactor we shift by 1 (right shift of scaledFactor to avoid overflow)
+				mantissaShift = SIGNIFICAND_BITS + alignShift + 1;
+			} else {
+				exp = -alignShift;
+				valModFactor = absVal - scaledFactor;
+				mantissaShift = SIGNIFICAND_BITS + alignShift;
+			}
+		}
+		if (rounding == DecimalRounding.DOWN) {
+			 return unscaledToFloatShiftAndDivideByScaleFactor(scaleMetrics, unscaled, exp + pow2, mantissaShift, valModFactor);
+		}
+		//(3) + (4)
+		return unscaledToFloatShiftAndDivideByScaleFactor(scaleMetrics, rounding, unscaled, exp + pow2, mantissaShift, valModFactor);
+	}
+		
+	private static float unscaledToFloatWithFloatDivisionRoundHalfEven(ScaleMetrics scaleMetrics, long unscaled, int pow2, long absVal) {
+		final int scale = scaleMetrics.getScale();
+		final float dividend = absVal;
+		final float divisor = scaleMetrics.getScaleFactor() >> scale;
+		final float quotient = dividend / divisor;
+		final int exponent = Math.getExponent(quotient) + pow2 - scale;
+		final int significand = Float.floatToRawIntBits(quotient) & SIGNIFICAND_MASK;
+		final int signBit = (int)((unscaled >>> 32) & SIGN_MASK);
+		final int raw = signBit | ((exponent + EXPONENT_BIAS) << SIGNIFICAND_BITS) | significand;
+		return Float.intBitsToFloat(raw);
+	}
+
+	private static float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, long unscaled, int exp, int mantissaShift, long valModFactor) {
+		final long quot;
+		if (mantissaShift >= 0) {
+			final long hValModFactor = (valModFactor >>> (Long.SIZE - mantissaShift)) & (-mantissaShift >> 63);
+			final long lValModFactor = valModFactor << mantissaShift;
+			if (hValModFactor == 0) {
+				quot = scaleMetrics.divideUnsignedByScaleFactor(lValModFactor);
+			} else {
+				quot = Math.abs(Div.div128by64(DecimalRounding.DOWN, unscaled < 0, hValModFactor, lValModFactor, scaleMetrics.getScaleFactor()));
+			}
+		} else {
+			quot = scaleMetrics.divideByScaleFactor(valModFactor >>> -mantissaShift);
+		}
+		final int signBit = (int)((unscaled >>> 32) & SIGN_MASK);
+		final int raw = signBit | ((exp + EXPONENT_BIAS) << SIGNIFICAND_BITS) | (int)(quot & SIGNIFICAND_MASK);
+		return Float.intBitsToFloat(raw);
+	}
+
+	private static float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, DecimalRounding rounding, long unscaled, int exp, int mantissaShift, long valModFactor) {
+		final long quotient;
+		final long scaleFactor = scaleMetrics.getScaleFactor();
+		if (mantissaShift >= 0) {
+			final long hValModFactor = (valModFactor >>> (Long.SIZE - mantissaShift)) & (-mantissaShift >> 63);
+			final long lValModFactor = valModFactor << mantissaShift;
+			if (hValModFactor == 0) {
+				final long truncated = scaleMetrics.divideUnsignedByScaleFactor(lValModFactor);
+				final long remainder = lValModFactor - scaleMetrics.multiplyByScaleFactor(truncated);
+				quotient = truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor);
+			} else {
+				quotient = Math.abs(Div.div128by64(rounding, unscaled < 0, hValModFactor, lValModFactor, scaleFactor));
+				//rounding already done by div128by64
+			}
+		} else {
+			final long scaledVal = valModFactor >>> -mantissaShift;
+			final long truncated = scaleMetrics.divideByScaleFactor(scaledVal);
+			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift) | (valModFactor & (-1L >>> (Long.SIZE + mantissaShift)));
+			final long shiftedScaleFactor = scaleFactor << -mantissaShift;//this cannot overflow as min(mantissaShift)=-9 for scale=1, -8 for scale=10, ..., -1 for scale=10^8
+			quotient = truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, remainder, shiftedScaleFactor);
+		}
+		final int raw;
+		final int signBit = (int)((unscaled >>> 32) & SIGN_MASK);
+		if (quotient <= SIGNIFICAND_MASK) {
+			raw = signBit | ((exp + EXPONENT_BIAS) << SIGNIFICAND_BITS) | (int)(quotient & SIGNIFICAND_MASK);
+		} else {
+			//rounding made our value to be 1 instead of smaller than one. 1 + 1 == 2 i.e. our mantissa is zero due to the implicit 1 and our exponent increments by 1
+			raw = signBit | ((exp + 1 + EXPONENT_BIAS) << SIGNIFICAND_BITS);
+		}
+		return Float.intBitsToFloat(raw);
+	}
+
+	//@return value % (2^n)
+	private static final long modPow2(long value, int n) {
+		//		return value & ((1L << n) - 1);
+		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);//last bracket is for case n=0
+	}
+
+	private static boolean isInLongRange(float value) {
+		return MIN_LONG_AS_FLOAT - value < 1.0f & value < MAX_LONG_AS_FLOAT_PLUS_ONE;
+	}
+
+	private static boolean isMathematicalInteger(float x) {
+		return isFinite(x) && (x == 0.0f || SIGNIFICAND_BITS - Long.numberOfTrailingZeros(getSignificand(x)) <= Math.getExponent(x));
+	}
+
+	private static boolean isFinite(float d) {
+		return Math.getExponent(d) <= Float.MAX_EXPONENT;
+	}
+
+	//PRECONDITION: isFinite(d)
+	private static int getSignificand(float f) {
+		final int exponent = Math.getExponent(f);
+		int bits = Float.floatToRawIntBits(f);
+		bits &= SIGNIFICAND_MASK;
+		return (exponent == Float.MIN_EXPONENT - 1) ? bits << 1 : bits | IMPLICIT_BIT;
+	}
+
+    /**
+     * Returns the {@code float} value that is closest in value
+     * to the argument and is equal to a mathematical integer. If two
+     * {@code float} values that are mathematical integers are
+     * equally close to the value of the argument, the result is the
+     * integer value that is even. Special cases:
+     * <ul><li>If the argument value is already equal to a mathematical
+     * integer, then the result is the same as the argument.
+     * <li>If the argument is NaN or an infinity or positive zero or negative
+     * zero, then the result is the same as the argument.</ul>
+     *
+     * @param   a   a value.
+     * @return  the closest floating-point value to {@code a} that is
+     *          equal to a mathematical integer.
+     * @author Joseph D. Darcy
+     */
+    private static float rint(float a) {
+        /*
+         * If the absolute value of a is not less than 2^23, it
+         * is either a finite integer (the float format does not have
+         * enough significand bits for a number that large to have any
+         * fractional portion), an infinity, or a NaN.  In any of
+         * these cases, rint of the argument is the argument.
+         *
+         * Otherwise, the sum (twoToThe23 + a ) will properly round
+         * away any fractional portion of a since ulp(twoToThe23) ==
+         * 1.0; subtracting out twoToThe23 from this sum will then be
+         * exact and leave the rounded integer portion of a.
+         *
+         * This method does *not* need to be declared strictfp to get
+         * fully reproducible results.  Whether or not a method is
+         * declared strictfp can only make a difference in the
+         * returned result if some operation would overflow or
+         * underflow with strictfp semantics.  The operation
+         * (twoToThe23 + a ) cannot overflow since large values of a
+         * are screened out; the add cannot underflow since twoToThe23
+         * is too large.  The subtraction ((twoToThe23 + a ) -
+         * twoToThe23) will be exact as discussed above and thus
+         * cannot overflow or meaningfully underflow.  Finally, the
+         * last multiply in the return statement is by plus or minus
+         * 1.0, which is exact too.
+         */
+        float twoToThe23 = (float)(1L << 23); // 2^23
+        float sign = Math.copySign(1.0f, a); // preserve sign info
+        a = Math.abs(a);
+
+        if (a < twoToThe23) { // E_min <= ilogb(a) <= 51
+            a = ((twoToThe23 + a ) - twoToThe23);
+        }
+
+        return sign * a; // restore original sign
+    }
+
+    //no instances
+	private FloatConversion() {
+		super();
+	}
+}

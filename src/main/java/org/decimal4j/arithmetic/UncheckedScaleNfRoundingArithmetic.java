@@ -120,6 +120,11 @@ public class UncheckedScaleNfRoundingArithmetic extends
 	}
 
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToUnscaled(this, rounding, value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, rounding, value);
 	}
@@ -173,8 +178,7 @@ public class UncheckedScaleNfRoundingArithmetic extends
 	
 	@Override
 	public float toFloat(long uDecimal) {
-		//FIXME apply proper rounding mode if float's mantissa can't take all bits
-		return (float)toDouble(uDecimal);
+		return FloatConversion.unscaledToFloat(this, rounding, uDecimal);
 	}
 
 	@Override

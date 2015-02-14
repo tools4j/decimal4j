@@ -453,6 +453,22 @@ public interface DecimalArithmetic {
 	long fromLong(long value);
 
 	/**
+	 * Converts the specified float value to an unscaled decimal.
+	 * 
+	 * @param value
+	 *            the value to convert
+	 * @return the unscaled decimal representing the same value as the given
+	 *         float value
+	 * @throws ArithmeticException
+	 *             if value is {@link Float#NaN} or {@link Float#isInfinite()
+	 *             infinite}, if {@link #getRoundingMode() rounding mode} is
+	 *             UNNECESSARY and rounding is necessary or if an overflow
+	 *             occurs and the {@link #getOverflowMode() overflow mode} is
+	 *             set to throw an exception
+	 */
+	long fromFloat(float value);
+
+	/**
 	 * Converts the specified double value to an unscaled decimal.
 	 * 
 	 * @param value

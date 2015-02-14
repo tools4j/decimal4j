@@ -15,19 +15,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests {@link DecimalArithmetic#toDouble(long)} and {@link DecimalArithmetic#fromDouble(double)}
+ * Tests {@link DecimalArithmetic#toFloat(long)} and {@link DecimalArithmetic#fromFloat(float)}
  * and checks that the result is the same as the original input (if appropriate rounding modes
  * are used and some tolerance is allowed for 2 possible truncations).
  */
 @RunWith(Parameterized.class)
-public class DoubleToFromTest {
+public class FloatToFromTest {
 
 	private static final Random RND = new Random();
 
 	private final DecimalArithmetic arithmetic;
 	private final RoundingMode backRounding;
 
-	public DoubleToFromTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
+	public FloatToFromTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
 		this.arithmetic = arithmetic;
 		this.backRounding = FloatAndDoubleUtil.getOppositeRoundingMode(roundingMode);
 	}
@@ -47,7 +47,7 @@ public class DoubleToFromTest {
 	}
 
 	@Test
-	public void testSpecialDoubles() {
+	public void testSpecialFloats() {
 		int index = 0;
 		for (final long value : TestSettings.TEST_CASES.getSpecialValuesFor(arithmetic.getScaleMetrics())) {
 			runTest("special[" + index + "]", value);
@@ -56,7 +56,7 @@ public class DoubleToFromTest {
 	}
 
 	@Test
-	public void testRandomDoubles() {
+	public void testRandomFloats() {
 		final int n = TestSettings.getRandomTestCount();
 		for (int i = 0; i < n; i++) {
 			final long value = RND.nextLong();
@@ -66,9 +66,9 @@ public class DoubleToFromTest {
 
 	private void runTest(String name, long value) {
 		try {
-			final double dbl = arithmetic.toDouble(value);
-			final long result = arithmetic.getScaleMetrics().getArithmetic(backRounding).fromDouble(dbl);
-			final long tolerance = (long)(Math.ceil(Math.ulp(dbl) * arithmetic.getScaleMetrics().getScaleFactor()));
+			final float flt = arithmetic.toFloat(value);
+			final long result = arithmetic.getScaleMetrics().getArithmetic(backRounding).fromFloat(flt);
+			final long tolerance = (long)(Math.ceil(((double)Math.ulp(flt)) * arithmetic.getScaleMetrics().getScaleFactor()));
 			Assert.assertTrue(name + ": result after 2 conversions should be same as input: input=<" + value + ">, output=<" + result + ">, tolerance=<" + tolerance + ">, delta=<" + Math.abs(value - result) + ">", Math.abs(value - result) <= tolerance);
 		} catch (NumberFormatException e) {
 			//ignore, must be out of range, tested elsewhere

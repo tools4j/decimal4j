@@ -6,37 +6,49 @@ import java.math.RoundingMode;
 
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * Mutable or immutable fixed-precision signed decimal number similar to
- * {@link BigDecimal}. A {@code Decimal} consists of an <i>unscaled long
- * value</i> and a {@link #getScaleMetrics() scale}. The scale defines the
- * number of digits to the right of the decimal point. If the scale is {@code f}
- * then the value represented by a {@code Decimal} instance is
+ * Signed fixed-precision decimal number similar to {@link BigDecimal}. A Decimal
+ * number can be immutable or mutable and it is based on an underlying <i>unscaled</i>
+ * long value and a {@link #getScaleMetrics() scale}. The scale defines the number
+ * of digits to the right of the decimal point. If the scale is {@code f} then the 
+ * value represented by a {@code Decimal} instance is 
  * <code>(unscaledValue &times; 10<sup>-f</sup>)</code>.
  * <p>
- * Certain operations can only be performed with other {@code Decimal} numbers
- * of the same scale. Scale compatibility of such operations is enforced through
- * the generic {@link ScaleMetrics} parameter {@code <S>}. The {@link Scales}
- * class defines all supported scale metrics subclasses each with a singleton
- * constant.
+ * The result of an arithmetic operation is generally of the same scale as this 
+ * Decimal unless otherwise indicated. Decimal operands of arithmetic operations are
+ * typically also of the same scale as this Decimal. Scale compatibility of Decimal
+ * operands is enforced through the generic {@link ScaleMetrics} parameter {@code <S>}.
  * <p>
- * Arithmetic operations that may lead to rounding usually provide the
- * possibility to specify a {@link RoundingMode}. Operations that can lead to an
- * overflow can optionally be called with an {@link OverflowMode} or
- * {@link TruncationPolicy} argument to control the behavior in case of
- * overflows.
+ * For convenience, arithmetic operations with other data types are sometimes also 
+ * provided. Such operations usually perform a value conversion into a Decimal of
+ * the current scale before performing the actual operation.
+ * <p>
+ * If the result of an arithmetic operation exceeds the precision of the current
+ * scale, {@link RoundingMode#HALF_UP HALF_UP} rounding is applied to the least 
+ * significant digit of the result if no other rounding mode is explicitly specified. 
+ * Note that in a few exceptional cases {@link RoundingMode#HALF_EVEN HALF_EVEN} 
+ * rounding is used by default to comply with inherited specification constraints 
+ * (e.g. see {@link #doubleValue()}, {@link #floatValue()} etc.).
+ * <p>
+ * Operations with Decimal values can lead to overflows in marked contrast to the
+ * {@link BigDecimal}. This is a direct consequence of the construction of a Decimal 
+ * value on the basis of a long value. By default overflows are silently truncated 
+ * as known from  Java operations with primitive integer types. The default behavior 
+ * can be changed and an exception is thrown in overflow situations if this is 
+ * requested through a {@link OverflowMode#CHECKED CHECKED} overflow mode argument. 
+ * The {@link OverflowMode} is usually combined with the rounding mode and passed 
+ * to operations as {@link TruncationPolicy} parameter.
  * 
  * @param <S>
- *            the scale metrics type associated with this decimal
+ *            the scale metrics type associated with this Decimal
  */
 public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> {
 
 	/**
-	 * Returns the metrics associated with the scale of this decimal. Scale
+	 * Returns the metrics associated with the scale of this Decimal. Scale
 	 * defines the number of fraction digits and the scale factor applied to the
 	 * {@code long} value underlying this {@code Decimal}.
 	 * 
@@ -47,13 +59,16 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	S getScaleMetrics();
 
 	/**
-	 * Returns the scale associated with this decimal. The scale defines the
-	 * number of fraction digits applied to the {@code long} value underlying
-	 * this {@code Decimal}.
+	 * Returns the scale associated with this Decimal. The scale defines the
+	 * number of fraction digits and the scale factor applied to the {@code long} 
+	 * value underlying this {@code Decimal}. 
 	 * <p>
-	 * This is a shortcut for {@link ScaleMetrics#getScale()}.
+	 * If the scale is {@code f} then the value represented by a {@code Decimal} 
+	 * instance is <code>(unscaledValue &times; 10<sup>-f</sup>)</code>.
+	 * <p>
+	 * This method is a shortcut for {@code getScaleMetrics().getScale()}.
 	 * 
-	 * @return the scale object
+	 * @return the scale
 	 * @see #getScaleMetrics()
 	 * @see ScaleMetrics#getScale()
 	 */
@@ -61,29 +76,36 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns the unscaled value underlying this {@code Decimal}. This
-	 * {@code Decimal} is <code>(unscaledValue &times; 10<sup>-n</sup>)</code>
-	 * with {@code n} representing the {@link #getScale() scale}, hence the
-	 * returned value equals <code>(this &times; 10<sup>n</sup>)</code>.
+	 * {@code Decimal} is <code>(unscaledValue &times; 10<sup>-f</sup>)</code>
+	 * with {@code f} representing the {@link #getScale() scale}, hence the
+	 * returned value equals <code>(10<sup>f</sup> &times; this)</code>.
 	 * 
-	 * @return the unscaled numeric value, same as this decimal without applying
-	 *         the scale factor
+	 * @return 	the unscaled numeric value, the same as this Decimal without 
+	 * 			applying the scale factor
 	 * @see #getScale()
 	 * @see ScaleMetrics#getScaleFactor()
 	 */
 	long unscaledValue();
 
+	/**
+	 * Returns the factory that can be used to create other Decimal values of 
+	 * the same scale as {@code this} Decimal.
+	 * 
+	 * @return 	the factory to create other Decimal values of the same scale as 
+	 * 			this Decimal
+	 */
 	DecimalFactory<S> getFactory();
 
 	/**
 	 * Returns a {@code Decimal} whose value represents the integral part of
 	 * {@code (this)} value. The integral part corresponds to digits at the left
-	 * of decimal point. The result is {@code this} decimal rounded at scale
-	 * zero with {@link RoundingMode#DOWN}.
+	 * of the decimal point. The result is {@code this} Decimal rounded to
+	 * precision zero with {@link RoundingMode#DOWN}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
+	 * representing the outcome of the operation.
 	 * 
 	 * @return <code>&lfloor;this&rfloor;</code> for non-negative and
 	 *         &lceil;this&rceil;</code> for negative values
@@ -97,12 +119,12 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} whose value represents the fractional part of
 	 * {@code (this)} value. The fractional part corresponds to digits at the
 	 * right of the decimal point. The result is {@code this} minus the integral
-	 * part of this decimal.
+	 * part of this Decimal.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
+	 * representing the outcome of the operation.
 	 * 
 	 * @return {@code this-integralPart()}
 	 * @see #integralPart()
@@ -262,10 +284,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Converts this {@code Decimal} to a {@code BigDecimal} using the same
-	 * {@link #getScale() scale} as this decimal value.
+	 * {@link #getScale() scale} as this Decimal value.
 	 *
 	 * @return this {@code Decimal} converted to a {@code BigDecimal} with the
-	 *         same scale as this decimal value.
+	 *         same scale as this Decimal value.
 	 */
 	BigDecimal toBigDecimal();
 
@@ -273,39 +295,98 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * If this {@code Decimal} value is already an {@link ImmutableDecimal} it
-	 * is simply returned. Otherwise a new immutable value representing the same
-	 * numerical value as {@code this} value is created and returned.
+	 * is simply returned. Otherwise a new immutable value with the same scale 
+	 * and numerical value as {@code this} Decimal is created and returned.
 	 * 
-	 * @return {@code this} if immutable and a new {@code ImmutableDecimal} with
-	 *         the same value as {@code this} decimal otherwise
+	 * @return {@code this} if immutable and a new {@link ImmutableDecimal} with
+	 *         the same scale and value as {@code this} Decimal otherwise
 	 */
 	ImmutableDecimal<S> toImmutableDecimal();
 
 	/**
 	 * If this {@code Decimal} value is already an {@link MutableDecimal} it is
-	 * simply returned. Otherwise a new mutable value representing the same
-	 * numerical value as {@code this} value is created and returned.
+	 * simply returned. Otherwise a new mutable value with the same scale and
+	 * numerical value as {@code this} Decimal is created and returned.
 	 * 
-	 * @return {@code this} if mutable and a new {@code MutableDecimal} with the
-	 *         same value as {@code this} decimal otherwise
+	 * @return {@code this} if mutable and a new {@link MutableDecimal} with the
+	 *         same scale and value as {@code this} Decimal otherwise
 	 */
 	MutableDecimal<S> toMutableDecimal();
 
 	// some conversion methods with rounding mode
 
+	/**
+	 * Converts this {@code Decimal} to a {@code long} using the specified 
+	 * rounding mode if necessary. Rounding is applied if the Decimal value can 
+	 * not be represented as a long value, that is, if it has a nonzero fractional 
+	 * part. Note that this conversion can lose information about the precision 
+	 * of the {@code Decimal} value.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode to apply when rounding is necessary to convert
+	 *            this Decimal into a long
+	 * @return this {@code Decimal} converted to a {@code long}.
+	 */
 	long longValue(RoundingMode roundingMode);
 
-	long longValue(TruncationPolicy truncationPolicy);
-
+	/**
+	 * Converts this {@code Decimal} to a {@code float} using the specified 
+	 * rounding mode if the Decimal value can not be exactly represented as a 
+	 * float value. Note that this conversion can lose information about the 
+	 * precision of the {@code Decimal} value.
+	 *
+	 * @param roundingMode
+	 *            the rounding mode to apply when rounding is necessary to convert
+	 *            this Decimal into a float value
+	 * @return this {@code Decimal} converted to a {@code float}.
+	 */
 	float floatValue(RoundingMode roundingMode);
 
+	/**
+	 * Converts this {@code Decimal} to a {@code double} using the specified 
+	 * rounding mode if the Decimal value can not be exactly represented as a 
+	 * double value. Note that this conversion can lose information about the 
+	 * precision of the {@code Decimal} value.
+	 *
+	 * @param roundingMode
+	 *            the rounding mode to apply when rounding is necessary to convert
+	 *            this Decimal into a double value
+	 * @return this {@code Decimal} converted to a {@code double}.
+	 */
 	double doubleValue(RoundingMode roundingMode);
 
+	/**
+	 * Converts this {@code Decimal} to a {@link BigInteger} value using the 
+	 * specified rounding mode if necessary. Rounding is applied if the Decimal 
+	 * value can not be represented as a {@code BigInteger}, that is, if it has 
+	 * a nonzero fractional part. Note that this conversion can lose information 
+	 * about the precision of the {@code Decimal} value.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode to apply when rounding is necessary to convert
+	 *            this Decimal into a {@code BigInteger}
+	 * @return this {@code Decimal} converted to a {@code BigInteger}.
+	 */
 	BigInteger toBigInteger(RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code BigDecimal} value of the given scale using the specified
+	 * rounding mode if necessary.
+	 * 
+	 * @param scale
+	 *            the scale used for the returned {@code BigDecimal}
+	 * @param roundingMode
+	 *            the rounding mode to apply when rounding is necessary to convert
+	 *            from the this Decimal's {@link #getScale() scale} to the target
+	 *            scale
+	 * @return a {@code BigDecimal} instance of the specified scale
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
+	 */
 	BigDecimal toBigDecimal(int scale, RoundingMode roundingMode);
 
 	// methods to round and change the scale
+
 	/**
 	 * Returns a {@code Decimal} value rounded to the specified
 	 * {@code precision} using {@link RoundingMode#HALF_UP HALF_UP} rounding.
@@ -331,7 +412,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the precision to use for the rounding, for instance 2 to round
 	 *            to the second digit after the decimal point; must be at least
 	 *            {@code (scale - 18)}
-	 * @return a decimal instance rounded to the given precision
+	 * @return a Decimal instance rounded to the given precision
 	 * @throws IllegalArgumentException
 	 *             if {@code precision < scale - 18}
 	 */
@@ -365,7 +446,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param roundingMode
 	 *            the rounding mode to apply when rounding to the desired
 	 *            precision
-	 * @return a decimal instance rounded to the given precision
+	 * @return a Decimal instance rounded to the given precision
 	 * @throws IllegalArgumentException
 	 *             if {@code precision < scale - 18}
 	 * @throws ArithmeticException
@@ -401,7 +482,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param truncationPolicy
 	 *            the truncation policy to apply when rounding to the desired
 	 *            precision
-	 * @return a decimal instance rounded to the given precision
+	 * @return a Decimal instance rounded to the given precision
 	 * @throws IllegalArgumentException
 	 *             if {@code precision < scale - 18}
 	 * @throws ArithmeticException
@@ -419,7 +500,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * 
 	 * @param scale
 	 *            the scale to use for the result, must be in {@code [0,18]}
-	 * @return a decimal instance with the given new scale
+	 * @return a Decimal instance with the given new scale
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
 	 */
@@ -432,7 +513,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
-	 * @return a decimal instance with the given new scale metrics
+	 * @return a Decimal instance with the given new scale metrics
 	 */
 	@SuppressWarnings("hiding")
 	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics);
@@ -447,7 +528,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param roundingMode
 	 *            the rounding mode to apply if the scale change involves
 	 *            rounding
-	 * @return a decimal instance with the given new scale
+	 * @return a Decimal instance with the given new scale
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
 	 * @throws ArithmeticException
@@ -465,7 +546,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param roundingMode
 	 *            the rounding mode to apply if the scale change involves
 	 *            rounding
-	 * @return a decimal instance with the given new scale metrics
+	 * @return a Decimal instance with the given new scale metrics
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
 	 */
@@ -483,7 +564,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the scale change involves
 	 *            rounding or overflow
-	 * @return a decimal instance with the given new scale
+	 * @return a Decimal instance with the given new scale
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
 	 * @throws ArithmeticException
@@ -504,7 +585,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the scale change involves
 	 *            rounding or overflow
-	 * @return a decimal instance with the given new scale metrics
+	 * @return a Decimal instance with the given new scale metrics
 	 * @throws ArithmeticException
 	 *             if {@code truncationPolicy} specifies
 	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
@@ -520,7 +601,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -534,21 +615,21 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves rounding, the specified {@code roundingMode} is used.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @param roundingMode
 	 *            the rounding mode to apply if the augend argument needs to be
-	 *            truncated when converted into a decimal number of the same
-	 *            scale as {@code this} decimal
+	 *            truncated when converted into a Decimal number of the same
+	 *            scale as {@code this} Decimal
 	 * @return {@code this + augend}
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
@@ -558,13 +639,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves truncation, the specified {@code truncationPolicy} is
 	 * used.
 	 * 
@@ -572,7 +653,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            value to be added to this {@code Decimal}
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the augend argument needs to
-	 *            be truncated when converted into a decimal number of the same
+	 *            be truncated when converted into a Decimal number of the same
 	 *            scale as {@code this} decimal
 	 * @return {@code this + augend}
 	 * @throws ArithmeticException
@@ -586,7 +667,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -600,7 +681,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -618,16 +699,16 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves rounding, {@link RoundingMode#HALF_UP HALF_UP}
 	 * rounding is used. If the augend argument is NaN, infinite or has a
-	 * magnitude that is too large to be represented as a decimal, an exception
+	 * magnitude that is too large to be represented as a Decimal, an exception
 	 * is thrown.
 	 * 
 	 * @param augend
@@ -643,23 +724,23 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves rounding, the specified {@code roundingMode} is used.
 	 * If the augend argument is NaN, infinite or has a magnitude that is too
-	 * large to be represented as a decimal, an exception is thrown.
+	 * large to be represented as a Decimal, an exception is thrown.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @param roundingMode
 	 *            the rounding mode to apply if the augend argument needs to be
-	 *            truncated when converted into a decimal number of the same
-	 *            scale as {@code this} decimal
+	 *            truncated when converted into a Decimal number of the same
+	 *            scale as {@code this} Decimal
 	 * @return {@code this + augend}
 	 * @throws NumberFormatException
 	 *             if {@code augend} is NaN or infinite or if the magnitude is
@@ -673,23 +754,23 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves rounding, the specified {@code truncationPolicy} is
 	 * used. If the augend argument is NaN, infinite or has a magnitude that is
-	 * too large to be represented as a decimal, an exception is thrown.
+	 * too large to be represented as a Decimal, an exception is thrown.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the augend argument needs to
-	 *            be truncated when converted into a decimal number of the same
-	 *            scale as {@code this} decimal
+	 *            be truncated when converted into a Decimal number of the same
+	 *            scale as {@code this} Decimal
 	 * @return {@code this + augend}
 	 * @throws NumberFormatException
 	 *             if {@code augend} is NaN or infinite or if the magnitude is
@@ -707,13 +788,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves rounding, {@link RoundingMode#HALF_UP HALF_UP}
 	 * rounding is used.
 	 * 
@@ -732,13 +813,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves rounding, the specified {@code roundingMode} is
 	 * applied.
 	 * 
@@ -747,12 +828,12 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param scale
 	 *            the scale to apply to {@code unscaledAugend}, positive to
 	 *            indicate the number of fraction digits to the right of the
-	 *            decimal point and negative to indicate up-scaling with a power
+	 *            Decimal point and negative to indicate up-scaling with a power
 	 *            of ten
 	 * @param roundingMode
 	 *            the rounding mode to apply if the augend argument needs to be
-	 *            truncated when converted into a decimal number of the same
-	 *            scale as {@code this} decimal
+	 *            truncated when converted into a Decimal number of the same
+	 *            scale as {@code this} Decimal
 	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
@@ -766,13 +847,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
 	 * <p>
-	 * The augend argument is converted into a decimal number of the same scale
-	 * as {@code this} decimal before performing the operation. If the
+	 * The augend argument is converted into a Decimal number of the same scale
+	 * as {@code this} Decimal before performing the operation. If the
 	 * conversion involves truncation, the specified {@code truncationPolicy} is
 	 * applied.
 	 * 
@@ -781,12 +862,12 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param scale
 	 *            the scale to apply to {@code unscaledAugend}, positive to
 	 *            indicate the number of fraction digits to the right of the
-	 *            decimal point and negative to indicate up-scaling with a power
+	 *            Decimal point and negative to indicate up-scaling with a power
 	 *            of ten
 	 * @param truncationPolicy
 	 *            the truncation policy to apply if the augend argument needs to
-	 *            be truncated when converted into a decimal number of the same
-	 *            scale as {@code this} decimal
+	 *            be truncated when converted into a Decimal number of the same
+	 *            scale as {@code this} Decimal
 	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
@@ -802,9 +883,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code> with the
-	 * {@link #getScale() scale} of this decimal.
+	 * {@link #getScale() scale} of this Decimal.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -818,9 +899,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code> with the
-	 * {@link #getScale() scale} of this decimal.
+	 * {@link #getScale() scale} of this Decimal.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -840,7 +921,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * squared value is rounded <i>before</i> the addition if necessary using
 	 * default {@link RoundingMode#HALF_UP HALF_UP} rounding.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -856,7 +937,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * squared value is rounded <i>before</i> the addition if necessary using
 	 * the specified rounding mode.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -882,7 +963,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * exception may be thrown even if the final result would actually still fit
 	 * in a {@code Decimal} value of the present scale.
 	 * <p>
-	 * The returned value is a new instance if this decimal is an
+	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
@@ -1115,8 +1196,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
-	 * the implementation, a new decimal instance may be created and returned
-	 * for the result, or this decimal may be modified and returned.
+	 * the implementation, a new Decimal instance may be created and returned
+	 * for the result, or this Decimal may be modified and returned.
 	 * 
 	 * @return {@code -this}
 	 */
@@ -1124,8 +1205,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
-	 * the implementation, a new decimal instance may be created and returned
-	 * for the result, or this decimal may be modified and returned.
+	 * the implementation, a new Decimal instance may be created and returned
+	 * for the result, or this Decimal may be modified and returned.
 	 * 
 	 * @param overflowMode
 	 *            the overflow mode to apply
@@ -1139,8 +1220,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the absolute value of this
-	 * {@code Decimal}. Depending on the implementation, a new decimal instance
-	 * may be created and returned for the result, or this decimal may be
+	 * {@code Decimal}. Depending on the implementation, a new Decimal instance
+	 * may be created and returned for the result, or this Decimal may be
 	 * modified and returned.
 	 * 
 	 * @return {@code abs(this)}
@@ -1149,8 +1230,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the absolute value of this
-	 * {@code Decimal}. Depending on the implementation, a new decimal instance
-	 * may be created and returned for the result, or this decimal may be
+	 * {@code Decimal}. Depending on the implementation, a new Decimal instance
+	 * may be created and returned for the result, or this Decimal may be
 	 * modified and returned.
 	 * 
 	 * @param overflowMode
@@ -1165,8 +1246,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (1/this)}. Depending on
-	 * the implementation, a new decimal instance may be created and returned
-	 * for the result, or this decimal may be modified and returned.
+	 * the implementation, a new Decimal instance may be created and returned
+	 * for the result, or this Decimal may be modified and returned.
 	 * 
 	 * @return {@code 1/this}
 	 */
@@ -1174,8 +1255,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (1/this)} applying the
-	 * specified rounding mode. Depending on the implementation, a new decimal
-	 * instance may be created and returned for the result, or this decimal may
+	 * specified rounding mode. Depending on the implementation, a new Decimal
+	 * instance may be created and returned for the result, or this Decimal may
 	 * be modified and returned.
 	 * 
 	 * @param roundingMode
@@ -1186,8 +1267,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (1/this)} applying the
-	 * specified rounding mode. Depending on the implementation, a new decimal
-	 * instance may be created and returned for the result, or this decimal may
+	 * specified rounding mode. Depending on the implementation, a new Decimal
+	 * instance may be created and returned for the result, or this Decimal may
 	 * be modified and returned.
 	 * 
 	 * @param truncationPolicy
@@ -1198,8 +1279,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this^2)}. Depending on
-	 * the implementation, a new decimal instance may be created and returned
-	 * for the result, or this decimal may be modified and returned.
+	 * the implementation, a new Decimal instance may be created and returned
+	 * for the result, or this Decimal may be modified and returned.
 	 * 
 	 * @return {@code this*this}
 	 */
@@ -1207,8 +1288,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this^2)} applying the
-	 * specified rounding mode. Depending on the implementation, a new decimal
-	 * instance may be created and returned for the result, or this decimal may
+	 * specified rounding mode. Depending on the implementation, a new Decimal
+	 * instance may be created and returned for the result, or this Decimal may
 	 * be modified and returned.
 	 * 
 	 * @param roundingMode
@@ -1219,8 +1300,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this^2)} applying the
-	 * specified rounding mode. Depending on the implementation, a new decimal
-	 * instance may be created and returned for the result, or this decimal may
+	 * specified rounding mode. Depending on the implementation, a new Decimal
+	 * instance may be created and returned for the result, or this Decimal may
 	 * be modified and returned.
 	 * 
 	 * @param truncationPolicy
@@ -1231,8 +1312,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the square root of {@code this}
-	 * decimal value. Depending on the implementation, a new decimal instance
-	 * may be created and returned for the result, or this decimal may be
+	 * Decimal value. Depending on the implementation, a new Decimal instance
+	 * may be created and returned for the result, or this Decimal may be
 	 * modified and returned.
 	 * 
 	 * @return {@code sqrt(this)}
@@ -1241,9 +1322,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the square root of {@code this}
-	 * decimal value applying the specified rounding mode. Depending on the
-	 * implementation, a new decimal instance may be created and returned for
-	 * the result, or this decimal may be modified and returned.
+	 * Decimal value applying the specified rounding mode. Depending on the
+	 * implementation, a new Decimal instance may be created and returned for
+	 * the result, or this Decimal may be modified and returned.
 	 * 
 	 * @param roundingMode
 	 *            the rounding mode to apply for this operation
@@ -1430,7 +1511,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Compares this {@code Decimal} with the specified {@code Decimal} and
-	 * returns true if this decimal is numerically greater than {@code other}.
+	 * returns true if this Decimal is numerically greater than {@code other}.
 	 * <p>
 	 * Returns true iff {@link #compareTo(Decimal)} returns a value greater than
 	 * 0.
@@ -1444,7 +1525,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Compares this {@code Decimal} with the specified {@code Decimal} and
-	 * returns true if this decimal is numerically greater than or equal to
+	 * returns true if this Decimal is numerically greater than or equal to
 	 * {@code other}.
 	 * <p>
 	 * Returns true iff {@link #compareTo(Decimal)} returns a non-negative
@@ -1459,7 +1540,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Compares this {@code Decimal} with the specified {@code Decimal} and
-	 * returns true if this decimal is numerically less than {@code other}.
+	 * returns true if this Decimal is numerically less than {@code other}.
 	 * <p>
 	 * Returns true iff {@link #compareTo(Decimal)} returns a negative value.
 	 * 
@@ -1472,7 +1553,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Compares this {@code Decimal} with the specified {@code Decimal} and
-	 * returns true if this decimal is numerically less than or equal to
+	 * returns true if this Decimal is numerically less than or equal to
 	 * {@code other}.
 	 * <p>
 	 * Returns true iff {@link #compareTo(Decimal)} returns a non-positive
@@ -1560,7 +1641,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns true if this {@code Decimal} is equal to the smallest positive
-	 * number representable by a decimal with the current {@link #getScale()
+	 * number representable by a Decimal with the current {@link #getScale()
 	 * scale}.
 	 * 
 	 * @return true if {@code unscaledValue() == 1}
@@ -1688,7 +1769,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Compares this object to the specified object. The result is {@code true}
 	 * if and only if the argument is not {@code null} and is a {@code Decimal}
 	 * object that contains the same value as this object and if the two
-	 * decimals have the same {@link #getScaleMetrics() scale}.
+	 * Decimals have the same {@link #getScaleMetrics() scale}.
 	 * 
 	 * @param obj
 	 *            the object to compare with.
@@ -1701,10 +1782,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a string representation of this {@code Decimal} object as fixed
-	 * precision decimal always showing all decimal places (also trailing zeros)
+	 * precision Decimal always showing all Decimal places (also trailing zeros)
 	 * and a leading sign character if negative.
 	 * 
-	 * @return a {@code String} decimal representation of this {@code Decimal}
+	 * @return a {@code String} Decimal representation of this {@code Decimal}
 	 *         object with all the fraction digits (including trailing zeros)
 	 */
 	@Override

@@ -41,6 +41,21 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 
 	@Override
+	public Decimal${scale}f valueOf(float value) {
+		return Decimal${scale}f.valueOf(value);
+	}
+
+	@Override
+	public Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
+		return Decimal${scale}f.valueOf(value, roundingMode);
+	}
+
+	@Override
+	public Decimal${scale}f valueOf(float value, TruncationPolicy truncationPolicy) {
+		return Decimal${scale}f.valueOf(value, truncationPolicy);
+	}
+
+	@Override
 	public Decimal${scale}f valueOf(double value) {
 		return Decimal${scale}f.valueOf(value);
 	}

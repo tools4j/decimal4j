@@ -15,19 +15,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests {@link DecimalArithmetic#toDouble(long)} and {@link DecimalArithmetic#fromDouble(double)}
+ * Tests {@link DecimalArithmetic#fromFloat(float)} and {@link DecimalArithmetic#toFloat(long)}
  * and checks that the result is the same as the original input (if appropriate rounding modes
  * are used and some tolerance is allowed for 2 possible truncations).
  */
 @RunWith(Parameterized.class)
-public class DoubleToFromTest {
+public class FloatFromToTest {
 
 	private static final Random RND = new Random();
 
 	private final DecimalArithmetic arithmetic;
 	private final RoundingMode backRounding;
 
-	public DoubleToFromTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
+	public FloatFromToTest(ScaleMetrics s, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
 		this.arithmetic = arithmetic;
 		this.backRounding = FloatAndDoubleUtil.getOppositeRoundingMode(roundingMode);
 	}
@@ -47,32 +47,35 @@ public class DoubleToFromTest {
 	}
 
 	@Test
-	public void testSpecialDoubles() {
+	public void testSpecialFloats() {
 		int index = 0;
-		for (final long value : TestSettings.TEST_CASES.getSpecialValuesFor(arithmetic.getScaleMetrics())) {
-			runTest("special[" + index + "]", value);
+		for (final float f : FloatAndDoubleUtil.specialFloatOperands(arithmetic.getScaleMetrics())) {
+			runTest("special[" + index + "]", f);
 			index++;
 		}
 	}
 
 	@Test
-	public void testRandomDoubles() {
+	public void testRandomFloats() {
 		final int n = TestSettings.getRandomTestCount();
 		for (int i = 0; i < n; i++) {
-			final long value = RND.nextLong();
-			runTest("random[" + i + "]", value);
+			runTest("random[" + i + "]", FloatAndDoubleUtil.randomFloatOperand(RND));
 		}
 	}
 
-	private void runTest(String name, long value) {
+	private void runTest(String name, float f) {
 		try {
-			final double dbl = arithmetic.toDouble(value);
-			final long result = arithmetic.getScaleMetrics().getArithmetic(backRounding).fromDouble(dbl);
-			final long tolerance = (long)(Math.ceil(Math.ulp(dbl) * arithmetic.getScaleMetrics().getScaleFactor()));
-			Assert.assertTrue(name + ": result after 2 conversions should be same as input: input=<" + value + ">, output=<" + result + ">, tolerance=<" + tolerance + ">, delta=<" + Math.abs(value - result) + ">", Math.abs(value - result) <= tolerance);
+			final long uDecimal = arithmetic.fromFloat(f);
+			final float result = arithmetic.getScaleMetrics().getArithmetic(backRounding).toFloat(uDecimal);
+			final float tolerance = 2.0f*max(Math.ulp(result), Math.ulp(f), 1.0f/arithmetic.getScaleMetrics().getScaleFactor());
+			Assert.assertEquals(name + ": result after 2 conversions should be same as input with tolerance=<" + tolerance + ">, delta=<" + Math.abs(f-result) + ">",  f, result, tolerance);
 		} catch (NumberFormatException e) {
 			//ignore, must be out of range, tested elsewhere
 		}
 	}
 	
+	private static float max(float val1, float val2, float val3) {
+		return Math.max(Math.max(val1, val2), val3);
+	}
+
 }

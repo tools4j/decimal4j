@@ -82,6 +82,11 @@ public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0f
 	}
 
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToLong(rounding, value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(rounding, value);
 	}
@@ -91,6 +96,10 @@ public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0f
 		return value.setScale(0, getRoundingMode()).longValue();//FIXME make garbage free
 	}
 
+	@Override
+	public float toFloat(long uDecimal) {
+		return FloatConversion.longToFloat(this, rounding, uDecimal);
+	}
 	@Override
 	public double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, rounding, uDecimal);

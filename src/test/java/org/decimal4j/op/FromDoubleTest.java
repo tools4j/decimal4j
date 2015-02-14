@@ -60,7 +60,7 @@ public class FromDoubleTest extends Abstract1DoubleArgToDecimalResultTest {
 
 	@Override
 	protected BigDecimal expectedResult(double operand) {
-		return Doubles.doubleToBigDecimal(operand, getScale(), getRoundingMode());
+		return FloatAndDoubleUtil.doubleToBigDecimal(operand, getScale(), getRoundingMode());
 	}
 
 	@Override

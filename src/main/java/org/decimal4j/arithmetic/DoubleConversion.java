@@ -348,7 +348,7 @@ class DoubleConversion {
 		} else {
 			final long scaledVal = valModFactor >>> -mantissaShift;
 			final long truncated = scaleMetrics.divideByScaleFactor(scaledVal);
-			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift) | (valModFactor & (-1 >>> (Long.SIZE + mantissaShift)));
+			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift) | (valModFactor & (-1L >>> (Long.SIZE + mantissaShift)));
 			final long shiftedScaleFactor = scaleFactor << -mantissaShift;//this cannot overflow as min(mantissaShift)=-9 for scale=1, -8 for scale=10, ..., -1 for scale=10^8
 			quotient = truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, remainder, shiftedScaleFactor);
 		}

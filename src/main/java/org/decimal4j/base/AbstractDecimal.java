@@ -86,7 +86,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	protected DecimalArithmetic getArithmeticFor(OverflowMode overflowMode) {
-		return getScaleMetrics().getArithmetic(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));//FIXME HALF_UP
+		return getScaleMetrics().getArithmetic(overflowMode.getTruncationPolicyFor(RoundingMode.HALF_UP));
 	}
 
 	/* -------------------- Number and simular conversion ------------------- */
@@ -138,11 +138,6 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return getArithmeticFor(roundingMode).toLong(unscaledValue());
 	}
 	
-	@Override
-	public long longValue(TruncationPolicy truncationPolicy) {
-		return getArithmeticFor(truncationPolicy).toLong(unscaledValue());
-	}
-
 	@Override
 	public float floatValue() {
 		//NOTE: Must be HALF_EVEN rounding mode according to The Java Language Specification
@@ -673,7 +668,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	
 	@Override
 	public Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode) {
-		final DecimalArithmetic arith = getArithmeticFor(overflowMode);
+		final DecimalArithmetic arith = getArithmeticFor(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
 		try {
 			final long longValue = arith.divideByLong(unscaledValue(), divisor.unscaledValue());
 			return createOrAssign(getArithmeticFor(overflowMode).fromLong(longValue));

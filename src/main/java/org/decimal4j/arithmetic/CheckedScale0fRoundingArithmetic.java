@@ -58,6 +58,11 @@ public class CheckedScale0fRoundingArithmetic extends
 	}
 
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToLong(rounding, value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(rounding, value);
 	}
@@ -77,4 +82,13 @@ public class CheckedScale0fRoundingArithmetic extends
 		return Scale.rescale(this, unscaledValue, scale, getScale());
 	}
 
+	@Override
+	public float toFloat(long uDecimal) {
+		return FloatConversion.longToFloat(this, rounding, uDecimal);
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		return DoubleConversion.longToDouble(this, rounding, uDecimal);
+	}
 }

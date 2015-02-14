@@ -67,8 +67,18 @@ public class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fAr
 	}
 
 	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToLong(value);
+	}
+
+	@Override
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(value);
+	}
+
+	@Override
+	public float toFloat(long uDecimal) {
+		return FloatConversion.longToFloat(this, uDecimal);
 	}
 
 	@Override

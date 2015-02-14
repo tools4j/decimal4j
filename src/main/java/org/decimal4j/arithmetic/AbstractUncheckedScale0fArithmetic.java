@@ -56,11 +56,6 @@ abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheck
 	}
 
 	@Override
-	public float toFloat(long uDecimal) {
-		return (float)uDecimal;//TODO impl proper rounding if mantissa cannot take all the bits
-	}
-
-	@Override
 	public final String toString(long uDecimal) {
 		return Long.toString(uDecimal);
 	}
