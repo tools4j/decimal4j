@@ -106,4 +106,9 @@ public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArit
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, rounding, value);
 	}
+	
+	@Override
+	public long parse(String value) {
+		return Parse.parseUnscaledDecimal(this, rounding, value);
+	}
 }

@@ -115,60 +115,6 @@ public class UncheckedScaleNfRoundingArithmetic extends
 	}
 
 	@Override
-	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode()).longValue();
-	}
-
-	@Override
-	public long fromFloat(float value) {
-		return FloatConversion.floatToUnscaled(this, rounding, value);
-	}
-
-	@Override
-	public long fromDouble(double value) {
-		return DoubleConversion.doubleToUnscaled(this, rounding, value);
-	}
-
-	@Override
-	public long parse(String value) {
-		final int indexOfDot = value.indexOf('.');
-		if (indexOfDot < 0) {
-			return fromLong(Long.parseLong(value));
-		}
-		final long iValue;
-		if (indexOfDot > 0) {
-			//NOTE: here we handle the special case "-.xxx" e.g. "-.25"
-			iValue = (indexOfDot == 1 && value.charAt(0) == '-') ? 0 : Long.parseLong(value.substring(0, indexOfDot));
-		} else {
-			iValue = 0;
-		}
-		final String fractionalPart = value.substring(indexOfDot + 1);
-		final long fValue;
-		final int fractionalLength = fractionalPart.length();
-		if (fractionalLength > 0) {
-			long fractionDigits = Long.parseLong(fractionalPart);
-			final int scale = getScale();
-			for (int i = fractionalLength; i < scale; i++) {
-				fractionDigits *= 10;
-			}
-			int lastDigit = 0;
-			boolean zeroAfterLastDigit = true;
-			for (int i = scale; i < fractionalLength; i++) {
-				zeroAfterLastDigit &= (lastDigit == 0);
-				lastDigit = (int) Math.abs(fractionDigits % 10);
-				fractionDigits /= 10;
-			}
-			//rounding
-			fractionDigits += RoundingUtil.calculateRoundingIncrement(rounding, 1, fractionDigits, lastDigit, zeroAfterLastDigit);
-			fValue = fractionDigits;
-		} else {
-			fValue = 0;
-		}
-		final boolean negative = iValue < 0 || value.startsWith("-");
-		return iValue * one() + (negative ? -fValue : fValue);
-	}
-
-	@Override
 	public long toLong(long uDecimal) {
 		final ScaleMetrics scaleMetrics = getScaleMetrics();
 		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
@@ -184,5 +130,25 @@ public class UncheckedScaleNfRoundingArithmetic extends
 	@Override
 	public double toDouble(long uDecimal) {
 		return DoubleConversion.unscaledToDouble(this, rounding, uDecimal);
+	}
+
+	@Override
+	public long fromBigDecimal(BigDecimal value) {
+		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode()).longValue();//FIXME make garbage free
+	}
+
+	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToUnscaled(this, rounding, value);
+	}
+
+	@Override
+	public long fromDouble(double value) {
+		return DoubleConversion.doubleToUnscaled(this, rounding, value);
+	}
+
+	@Override
+	public long parse(String value) {
+		return Parse.parseUnscaledDecimal(this, rounding, value);
 	}
 }

@@ -58,16 +58,6 @@ public class CheckedScale0fRoundingArithmetic extends
 	}
 
 	@Override
-	public long fromFloat(float value) {
-		return FloatConversion.floatToLong(rounding, value);
-	}
-
-	@Override
-	public long fromDouble(double value) {
-		return DoubleConversion.doubleToLong(rounding, value);
-	}
-
-	@Override
 	public long shiftLeft(long uDecimal, int n) {
 		return Shift.shiftLeftChecked(this, rounding, uDecimal, n);
 	}
@@ -75,11 +65,6 @@ public class CheckedScale0fRoundingArithmetic extends
 	@Override
 	public long shiftRight(long uDecimal, int n) {
 		return Shift.shiftRightChecked(this, rounding, uDecimal, n);
-	}
-
-	@Override
-	public long fromUnscaled(long unscaledValue, int scale) {
-		return Scale.rescale(this, unscaledValue, scale, getScale());
 	}
 
 	@Override
@@ -91,4 +76,25 @@ public class CheckedScale0fRoundingArithmetic extends
 	public double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, rounding, uDecimal);
 	}
+
+	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToLong(rounding, value);
+	}
+
+	@Override
+	public long fromDouble(double value) {
+		return DoubleConversion.doubleToLong(rounding, value);
+	}
+
+	@Override
+	public long fromUnscaled(long unscaledValue, int scale) {
+		return Scale.rescale(this, unscaledValue, scale, getScale());
+	}
+	
+	@Override
+	public long parse(String value) {
+		return Parse.parseLong(this, rounding, value);
+	}
+
 }

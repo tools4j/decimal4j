@@ -46,11 +46,6 @@ abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheck
 	}
 
 	@Override
-	public final long parse(String value) {
-		return Long.parseLong(value);
-	}
-
-	@Override
 	public final long toLong(long uDecimal) {
 		return uDecimal;
 	}

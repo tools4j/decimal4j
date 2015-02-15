@@ -48,6 +48,7 @@ abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
+		//FIXME make garbage free
 		return value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()).longValue();
 	}
 }

@@ -1,7 +1,5 @@
 package org.decimal4j.arithmetic;
 
-import java.math.BigInteger;
-
 import org.decimal4j.scale.Scale0f;
 
 /**
@@ -50,14 +48,6 @@ abstract public class AbstractCheckedScale0fArithmetic extends
 	@Override
 	public final long fromLong(long value) {
 		return value;
-	}
-
-	@Override
-	public long parse(String value) {
-		if (value.length() < 18) {
-			return Long.parseLong(value);
-		}
-		return JDKSupport.bigIntegerToLongValueExact(new BigInteger(value));
 	}
 
 	@Override

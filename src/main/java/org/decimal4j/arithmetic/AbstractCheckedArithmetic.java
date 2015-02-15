@@ -55,19 +55,14 @@ abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
+		//FIXME make garbage free
 		return JDKSupport.bigIntegerToLongValueExact(value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()));
 	}
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
+		//FIXME make garbage free
 		final BigDecimal scaled = value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode());
 		return JDKSupport.bigIntegerToLongValueExact(scaled.toBigInteger());
-	}
-
-
-	@Override
-	public long parse(String value) {
-		//FIXME not very efficient and not garbage free
-		return fromBigDecimal(new BigDecimal(value));
 	}
 }

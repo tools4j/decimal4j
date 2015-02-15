@@ -77,6 +77,16 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
+	public final double toDouble(long uDecimal) {
+		return DoubleConversion.longToDouble(this, uDecimal);
+	}
+	
+	@Override
+	public final float toFloat(long uDecimal) {
+		return (float)uDecimal;
+	}
+
+	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
 		return Pow10.divideByPowerOf10(unscaledValue, scale);
 	}
@@ -95,14 +105,10 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	public final long fromBigDecimal(BigDecimal value) {
 		return value.longValue();
 	}
-
-	@Override
-	public final double toDouble(long uDecimal) {
-		return DoubleConversion.longToDouble(this, uDecimal);
-	}
 	
 	@Override
-	public final float toFloat(long uDecimal) {
-		return (float)uDecimal;
+	public long parse(String value) {
+		return Parse.parseLong(this, DecimalRounding.DOWN, value);
 	}
+
 }

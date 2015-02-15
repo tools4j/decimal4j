@@ -102,21 +102,6 @@ public class UncheckedScaleNfTruncatingArithmetic extends
 	}
 
 	@Override
-	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).longValue();
-	}
-	
-	@Override
-	public long fromFloat(float value) {
-		return FloatConversion.floatToUnscaled(this, value);
-	}
-
-	@Override
-	public long fromDouble(double value) {
-		return DoubleConversion.doubleToUnscaled(this, value);
-	}
-
-	@Override
 	public long toLong(long uDecimal) {
 		return getScaleMetrics().divideByScaleFactor(uDecimal);
 	}
@@ -132,36 +117,22 @@ public class UncheckedScaleNfTruncatingArithmetic extends
 	}
 
 	@Override
-	public long parse(String value) {
-		final int indexOfDot = value.indexOf('.');
-		if (indexOfDot < 0) {
-			return fromLong(Long.parseLong(value));
-		}
-		final long iValue;
-		if (indexOfDot > 0) {
-			//NOTE: here we handle the special case "-.xxx" e.g. "-.25"
-			iValue = (indexOfDot == 1 && value.charAt(0) == '-') ? 0 : Long.parseLong(value.substring(0, indexOfDot));
-		} else {
-			iValue = 0;
-		}
-		final String fractionalPart = value.substring(indexOfDot + 1);
-		final long fValue;
-		final int fractionalLength = fractionalPart.length();
-		if (fractionalLength > 0) {
-			long fractionDigits = Long.parseLong(fractionalPart);
-			final int scale = getScale();
-			for (int i = fractionalLength; i < scale; i++) {
-				fractionDigits *= 10;
-			}
-			for (int i = scale; i < fractionalLength; i++) {
-				fractionDigits /= 10;
-			}
-			fValue = fractionDigits;
-		} else {
-			fValue = 0;
-		}
-		final boolean negative = iValue < 0 || value.startsWith("-");
-		return iValue * one() + (negative ? -fValue : fValue);
+	public long fromBigDecimal(BigDecimal value) {
+		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).longValue();//FIXME make garbage free
+	}
+	
+	@Override
+	public long fromFloat(float value) {
+		return FloatConversion.floatToUnscaled(this, value);
 	}
 
+	@Override
+	public long fromDouble(double value) {
+		return DoubleConversion.doubleToUnscaled(this, value);
+	}
+
+	@Override
+	public long parse(String value) {
+		return Parse.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
+	}
 }

@@ -89,5 +89,10 @@ public class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfAr
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, DecimalRounding.DOWN, value);
 	}
+	
+	@Override
+	public long parse(String value) {
+		return Parse.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
+	}
 
 }

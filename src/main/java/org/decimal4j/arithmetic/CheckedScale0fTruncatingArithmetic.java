@@ -62,6 +62,16 @@ public class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fAr
 	}
 
 	@Override
+	public float toFloat(long uDecimal) {
+		return FloatConversion.longToFloat(this, uDecimal);
+	}
+
+	@Override
+	public double toDouble(long uDecimal) {
+		return DoubleConversion.longToDouble(this, uDecimal);
+	}
+
+	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
 		return Pow10.divideByPowerOf10Checked(this, unscaledValue, scale);
 	}
@@ -77,13 +87,7 @@ public class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fAr
 	}
 
 	@Override
-	public float toFloat(long uDecimal) {
-		return FloatConversion.longToFloat(this, uDecimal);
+	public long parse(String value) {
+		return Parse.parseLong(this, DecimalRounding.DOWN, value);
 	}
-
-	@Override
-	public double toDouble(long uDecimal) {
-		return DoubleConversion.longToDouble(this, uDecimal);
-	}
-
 }
