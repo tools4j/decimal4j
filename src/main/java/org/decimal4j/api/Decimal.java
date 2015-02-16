@@ -35,12 +35,12 @@ import org.decimal4j.truncate.TruncationPolicy;
  * <p>
  * Operations with Decimal values can lead to overflows in marked contrast to the
  * {@link BigDecimal}. This is a direct consequence of the construction of a Decimal 
- * value on the basis of a long value. By default overflows are silently truncated 
- * as known from  Java operations with primitive integer types. The default behavior 
- * can be changed and an exception is thrown in overflow situations if this is 
- * requested through a {@link OverflowMode#CHECKED CHECKED} overflow mode argument. 
- * The {@link OverflowMode} is usually combined with the rounding mode and passed 
- * to operations as {@link TruncationPolicy} parameter.
+ * value on the basis of a long value. Unless otherwise indicated operations silently 
+ * truncate overflows by default. This choice has been made for performance reasons
+ * and because Java programmers are already familiar with this behavior from operations
+ * with primitive integer types. If this behavior is inappropriate the user can
+ * request exceptions in overflow situations through an optional {@link OverflowMode} or 
+ * {@link TruncationPolicy} argument.
  * 
  * @param <S>
  *            the scale metrics type associated with this Decimal
@@ -497,12 +497,17 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. {@link RoundingMode#HALF_UP HALF_UP} rounding
 	 * is used if the scale change involves rounding.
+	 * <p>
+	 * An exception is thrown if the scale conversion leads to an overflow.
 	 * 
 	 * @param scale
 	 *            the scale to use for the result, must be in {@code [0,18]}
 	 * @return a Decimal instance with the given new scale
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
+	 * @throws NumberFormatException
+	 *             if {@code this} Decimal cannot be converted to the new scale
+	 *             because it would overflow
 	 */
 	Decimal<?> scale(int scale);
 
@@ -510,10 +515,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. {@link RoundingMode#HALF_UP HALF_UP} rounding
 	 * is used if the scale change involves rounding.
+	 * <p>
+	 * An exception is thrown if the scale conversion leads to an overflow.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
 	 * @return a Decimal instance with the given new scale metrics
+	 * @throws NumberFormatException
+	 *             if {@code this} Decimal cannot be converted to the new scale
+	 *             because it would overflow
 	 */
 	@SuppressWarnings("hiding")
 	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics);
@@ -522,6 +532,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. The specified {@code roundingMode} is used if
 	 * the scale change involves rounding.
+	 * <p>
+	 * An exception is thrown if the scale conversion leads to an overflow.
 	 * 
 	 * @param scale
 	 *            the scale to use for the result, must be in {@code [0,18]}
@@ -532,7 +544,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
+	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
+	 *             UNNESSESSARY} and rounding is necessary
+	 * @throws NumberFormatException
+	 *             if {@code this} Decimal cannot be converted to the new scale
+	 *             because it would overflow
 	 */
 	Decimal<?> scale(int scale, RoundingMode roundingMode);
 
@@ -540,6 +556,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. The specified {@code roundingMode} is used if
 	 * the scale change involves rounding.
+	 * <p>
+	 * An exception is thrown if the scale conversion leads to an overflow.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
@@ -548,53 +566,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            rounding
 	 * @return a Decimal instance with the given new scale metrics
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
+	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
+	 *             UNNESSESSARY} and rounding is necessary
+	 * @throws NumberFormatException
+	 *             if {@code this} Decimal cannot be converted to the new scale
+	 *             because it would overflow
 	 */
 	@SuppressWarnings("hiding")
 	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics,
 			RoundingMode roundingMode);
-
-	/**
-	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
-	 * changed to the give value. The specified {@code truncationPolicy} is used
-	 * if the scale change involves rounding or overflow.
-	 * 
-	 * @param scale
-	 *            the scale to use for the result, must be in {@code [0,18]}
-	 * @param truncationPolicy
-	 *            the truncation policy to apply if the scale change involves
-	 *            rounding or overflow
-	 * @return a Decimal instance with the given new scale
-	 * @throws IllegalArgumentException
-	 *             if {@code scale < 0} or {@code scale > 18}
-	 * @throws ArithmeticException
-	 *             if {@code truncationPolicy} specifies
-	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
-	 *             if an overflow occurs and the policy declares
-	 *             {@link OverflowMode#CHECKED}
-	 */
-	Decimal<?> scale(int scale, TruncationPolicy truncationPolicy);
-
-	/**
-	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
-	 * changed to the give value. The specified {@code truncationPolicy} is used
-	 * if the scale change involves rounding or overflow.
-	 * 
-	 * @param scaleMetrics
-	 *            the scale metrics to use for the result
-	 * @param truncationPolicy
-	 *            the truncation policy to apply if the scale change involves
-	 *            rounding or overflow
-	 * @return a Decimal instance with the given new scale metrics
-	 * @throws ArithmeticException
-	 *             if {@code truncationPolicy} specifies
-	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
-	 *             if an overflow occurs and the policy declares
-	 *             {@link OverflowMode#CHECKED}
-	 */
-	@SuppressWarnings("hiding")
-	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics,
-			TruncationPolicy truncationPolicy);
 
 	// add
 

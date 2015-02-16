@@ -77,11 +77,6 @@ public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0f
 	}
 
 	@Override
-	public final long fromUnscaled(long unscaledValue, int scale) {
-		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
-	}
-
-	@Override
 	public float toFloat(long uDecimal) {
 		return FloatConversion.longToFloat(this, rounding, uDecimal);
 	}
@@ -90,6 +85,11 @@ public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0f
 		return DoubleConversion.longToDouble(this, rounding, uDecimal);
 	}
 	
+	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
+	}
+
 	@Override
 	public long fromFloat(float value) {
 		return FloatConversion.floatToLong(rounding, value);
@@ -102,7 +102,7 @@ public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0f
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.setScale(0, getRoundingMode()).longValue();//FIXME make garbage free
+		return value.setScale(0, getRoundingMode()).longValueExact();//FIXME make garbage free
 	}
 
 	@Override

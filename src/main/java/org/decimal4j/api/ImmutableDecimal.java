@@ -4,9 +4,13 @@ import org.decimal4j.scale.ScaleMetrics;
 
 /**
  * Interface implemented by immutable {@link Decimal} classes of different
- * scales. Arithmetic operations of immutable decimals return a new decimal
- * instance as result value hence {@link MutableDecimal mutable} decimals may be
- * a better choice for chained operations.
+ * scales. Immutable Decimals allocate a new Decimals instance for results of
+ * arithmetic operations.
+ * <p>
+ * Consider also {@link MutableDecimal} descendants especially for chained
+ * operations.
+ * <p>
+ * Immutable Decimals are thread safe.
  * 
  * @param <S>
  *            the scale metrics type associated with this decimal

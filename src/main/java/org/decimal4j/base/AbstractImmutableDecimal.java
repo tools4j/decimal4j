@@ -8,7 +8,6 @@ import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.OverflowMode;
-import org.decimal4j.truncate.TruncationPolicy;
 
 /**
  * Base class for immutable {@link Decimal} classes of different scales.
@@ -54,17 +53,6 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	}
 
 	@Override
-	public ImmutableDecimal<?> scale(int scale, TruncationPolicy truncationPolicy) {
-		final int myScale = getScale();
-		if (scale == myScale) {
-			return this;
-		}
-		final ScaleMetrics targetMetrics = Scales.getScaleMetrics(scale);
-		final long targetUnscaled = targetMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, myScale);
-		return Factories.getDecimalFactory(targetMetrics).valueOfUnscaled(targetUnscaled);
-	}
-
-	@Override
 	@SuppressWarnings("hiding")
 	public <S extends ScaleMetrics> ImmutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode) {
 		if (scaleMetrics == getScaleMetrics()) {
@@ -74,19 +62,6 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			return self;
 		}
 		final long targetUnscaled = scaleMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, getScale());
-		return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(targetUnscaled);
-	}
-
-	@Override
-	@SuppressWarnings("hiding")
-	public <S extends ScaleMetrics> ImmutableDecimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy) {
-		if (scaleMetrics == getScaleMetrics()) {
-			@SuppressWarnings("unchecked")
-			//safe: we know it is the same scale metrics
-			final ImmutableDecimal<S> self = (ImmutableDecimal<S>) this;
-			return self;
-		}
-		final long targetUnscaled = scaleMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, getScale());
 		return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(targetUnscaled);
 	}
 

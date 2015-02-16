@@ -18,13 +18,11 @@ import org.decimal4j.truncate.TruncationPolicy;
  * <tt>Decimal</tt> arguments and return longs for <tt>Decimal</tt> number
  * results.
  * <p>
- * Application code usually does not need to use <tt>DecimalArithmetic</tt>
- * directly. However, certain highly performance critical and/or zero garbage
- * applications may prefer such native arithmetic operations over the two main
- * alternatives {@link ImmutableDecimal} and {@link MutableDecimal}.
- * <p>
- * Operations of <tt>DecimalArithmetic</tt> produce no garbage unless indicated
- * differently.
+ * Application code does not usually need to use <tt>DecimalArithmetic</tt>
+ * directly. It may be appropriate however for very specialized applications
+ * with low latency, high frequency or zero garbage requirements. All operations 
+ * of <tt>DecimalArithmetic</tt> do not allocate any objects (zero garbage) unless
+ * otherwise indicated.
  */
 public interface DecimalArithmetic {
 	/**
@@ -44,8 +42,7 @@ public interface DecimalArithmetic {
 	int getScale();
 
 	/**
-	 * Returns the scale metrics associated with this decimal arithmetic
-	 * object.
+	 * Returns the scale metrics associated with this decimal arithmetic object.
 	 * 
 	 * @return the scale metrics
 	 */
@@ -62,9 +59,9 @@ public interface DecimalArithmetic {
 
 	/**
 	 * Returns the <i>overflow mode</i> applied to operations of this
-	 * {@code DecimalArithmetic} object if an overflow occurs. The overflow
-	 * mode defines whether an operation should throw an exception if an
-	 * overflow occurs.
+	 * {@code DecimalArithmetic} object if an overflow occurs. The overflow mode
+	 * defines whether an operation should throw an exception if an overflow
+	 * occurs.
 	 * 
 	 * @return the overflow mode applied to operations of this
 	 *         {@code DecimalArithmetic} object if an overflow occurs
@@ -77,8 +74,8 @@ public interface DecimalArithmetic {
 	 * the {@link #getOverflowMode() overflow mode} and the
 	 * {@link #getRoundingMode() rounding mode}.
 	 * 
-	 * @return the truncation policy defining how this
-	 *         {@code DecimalArithmetic} handles truncation
+	 * @return the truncation policy defining how this {@code DecimalArithmetic}
+	 *         handles truncation
 	 */
 	TruncationPolicy getTruncationPolicy();
 

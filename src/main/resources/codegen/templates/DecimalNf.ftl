@@ -13,7 +13,6 @@ import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
 import org.decimal4j.truncate.OverflowMode;
-import org.decimal4j.truncate.TruncationPolicy;
 
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
@@ -221,10 +220,6 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromFloat(value));
 	}
 
-	public static Decimal${scale}f valueOf(float value, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromFloat(value));
-	}
-
 	public static Decimal${scale}f valueOf(double value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromDouble(value));
 	}
@@ -233,16 +228,8 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromDouble(value));
 	}
 
-	public static Decimal${scale}f valueOf(double value, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromDouble(value));
-	}
-
 	public static Decimal${scale}f valueOf(BigInteger value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigInteger(value));
-	}
-
-	public static Decimal${scale}f valueOf(BigInteger value, OverflowMode overflowMode) {
-		return valueOfUnscaled(SCALE.getTruncatingArithmetic(overflowMode).fromBigInteger(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigDecimal value) {
@@ -253,10 +240,6 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromBigDecimal(value));
 	}
 
-	public static Decimal${scale}f valueOf(BigDecimal value, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromBigDecimal(value));
-	}
-
 	public static Decimal${scale}f valueOf(Decimal<?> value) {
 		return valueOfUnscaled(value.unscaledValue(), value.getScale());
 	}
@@ -265,20 +248,12 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(value.unscaledValue(), value.getScale(), roundingMode);
 	}
 
-	public static Decimal${scale}f valueOf(Decimal<?> value, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(value.unscaledValue(), value.getScale(), truncationPolicy);
-	}
-
 	public static Decimal${scale}f valueOf(String value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().parse(value));
 	}
 
 	public static Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).parse(value));
-	}
-
-	public static Decimal${scale}f valueOf(String value, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).parse(value));
 	}
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {
@@ -303,10 +278,6 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
 		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
-	}
-
-	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, TruncationPolicy truncationPolicy) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(truncationPolicy).fromUnscaled(unscaledValue, scale));
 	}
 
 	@Override
