@@ -13,22 +13,20 @@ import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test {@link DecimalArithmetic#fromDouble(double)} via
- * {@link DecimalFactory#valueOf(double)}, {@link MutableDecimal#set(double)}
- * and the static {@code valueOf(double)} methods of the Immutable Decimal
- * implementations. The same conversion method is also used in other operations
- * that are involving doubles.
+ * Test {@link DecimalArithmetic#fromFloat(float)} via
+ * {@link DecimalFactory#valueOf(float)}, {@link MutableDecimal#set(float)} and
+ * the static {@code valueOf(float)} methods of the Immutable Decimal
+ * implementations.
  */
 @RunWith(Parameterized.class)
-public class FromDoubleTest extends Abstract1DoubleArgToDecimalResultTest {
+public class FromFloatTest extends Abstract1FloatArgToDecimalResultTest {
 
-	public FromDoubleTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
+	public FromFloatTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
@@ -46,30 +44,16 @@ public class FromDoubleTest extends Abstract1DoubleArgToDecimalResultTest {
 
 	@Override
 	protected String operation() {
-		return "fromDouble";
-	}
-
-	@Test
-	public void testProblem1() {
-		if (getScale() == 4 && getRoundingMode() == RoundingMode.HALF_DOWN) {
-			runTest(getScaleMetrics(), "testProblem1", 3.354719257560035e-4);
-		}
-	}
-
-	@Test
-	public void testProblem2() {
-		if (getScale() == 4 && getRoundingMode() == RoundingMode.HALF_DOWN) {
-			runTest(getScaleMetrics(), "testProblem2", 3.9541250940045014e-4);
-		}
+		return "fromFloat";
 	}
 
 	@Override
-	protected BigDecimal expectedResult(double operand) {
-		return FloatAndDoubleUtil.doubleToBigDecimal(operand, getScale(), getRoundingMode());
+	protected BigDecimal expectedResult(float operand) {
+		return FloatAndDoubleUtil.floatToBigDecimal(operand, getScale(), getRoundingMode());
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, double operand) {
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, float operand) {
 		if (RND.nextBoolean()) {
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
@@ -91,17 +75,17 @@ public class FromDoubleTest extends Abstract1DoubleArgToDecimalResultTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, double operand) {
+	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, float operand) {
 		try {
 			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
 			if (isRoundingDefault() && RND.nextBoolean()) {
-				return (Decimal<S>) clazz.getMethod("valueOf", double.class).invoke(null, operand);
+				return (Decimal<S>) clazz.getMethod("valueOf", float.class).invoke(null, operand);
 			} else {
-				return (Decimal<S>) clazz.getMethod("valueOf", double.class, RoundingMode.class).invoke(null, operand, getRoundingMode());
+				return (Decimal<S>) clazz.getMethod("valueOf", float.class, RoundingMode.class).invoke(null, operand, getRoundingMode());
 			}
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
-				throw (RuntimeException)e.getTargetException();
+				throw (RuntimeException) e.getTargetException();
 			}
 			throw new RuntimeException("could not invoke valueOf method, e=" + e, e);
 		} catch (Exception e) {

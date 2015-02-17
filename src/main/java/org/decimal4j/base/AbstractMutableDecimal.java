@@ -184,4 +184,17 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		unscaled = getArithmeticFor(roundingMode).fromUnscaled(unscaledValue, scale);
 		return self();
 	}
+
+	@Override
+	public D set(String value) {
+		unscaled = getDefaultArithmetic().parse(value);
+		return self();
+	}
+
+	@Override
+	public D set(String value, RoundingMode roundingMode) {
+		unscaled = getArithmeticFor(roundingMode).parse(value);
+		return self();
+	}
+
 }

@@ -67,6 +67,9 @@ abstract public class AbstractOperandTest {
 	protected boolean isRoundingDown() {
 		return arithmetic.getRoundingMode() == RoundingMode.DOWN;
 	}
+	protected boolean isRoundingDefault() {
+		return arithmetic.getRoundingMode() == TruncationPolicy.DEFAULT.getRoundingMode();
+	}
 	protected boolean isUnchecked() {
 		return !arithmetic.getOverflowMode().isChecked();
 	}

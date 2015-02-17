@@ -26,31 +26,38 @@ class Parse {
             throw new NumberFormatException("null");
         }
 		final int len = s.length();
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final int scale = scaleMetrics.getScale();
 		final int indexOfDecimalPoint = indexOfDecimalPoint(s);
-		if (indexOfDecimalPoint < 0) {
-	        return parseIntegralPart(arith, s, 0, s.length(), ParseMode.Long);
+		if (indexOfDecimalPoint == len & scale > 0) {
+			throw newNumberFormatExceptionFor(arith, s);
 		}
 
 		//parse a decimal number
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final int scale = scaleMetrics.getScale();
-		final int fractionalEnd = Math.min(len, 1 + scale);
 		final long integralPart;//unscaled
 		final long fractionalPart;//scaled
 		final TruncatedPart truncatedPart;
 		final boolean negative;
-		if (indexOfDecimalPoint == 0) {
-			//allowed format .45
-			integralPart = 0;
-			fractionalPart = parseFractionalPart(arith, s, 1, fractionalEnd);
-			truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
-			negative = true;
+		if (indexOfDecimalPoint < 0) {
+	        integralPart = parseIntegralPart(arith, s, 0, s.length(), ParseMode.Long);
+	        fractionalPart = 0;
+	        truncatedPart = TruncatedPart.ZERO;
+	        negative = integralPart < 0;
 		} else {
-			//allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45", "-.45"
-			integralPart = parseIntegralPart(arith, s, 0, indexOfDecimalPoint, ParseMode.IntegralPart);
-			fractionalPart = parseFractionalPart(arith, s, indexOfDecimalPoint + 1, fractionalEnd);
-			truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
-			negative = integralPart < 0 | (integralPart == 0 && s.charAt(0) == '-');
+			final int fractionalEnd = Math.min(len, indexOfDecimalPoint + 1 + scale);
+			if (indexOfDecimalPoint == 0) {
+				//allowed format .45
+				integralPart = 0;
+				fractionalPart = parseFractionalPart(arith, s, 1, fractionalEnd);
+				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
+				negative = false;
+			} else {
+				//allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45", "-.45"
+				integralPart = parseIntegralPart(arith, s, 0, indexOfDecimalPoint, ParseMode.IntegralPart);
+				fractionalPart = parseFractionalPart(arith, s, indexOfDecimalPoint + 1, fractionalEnd);
+				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
+				negative = integralPart < 0 | (integralPart == 0 && s.charAt(0) == '-');
+			}
 		}
 		final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
 		final long unscaledFractional = negative ? -fractionalPart : fractionalPart;//negation cannot overflow because it is < Scale18.SCALE_FACTOR
@@ -69,10 +76,10 @@ class Parse {
 			int i = start;
 			long value = 0;
 			while (i < end) {
-				final char ch = s.charAt(i);
+				final char ch = s.charAt(i++);
 				final int digit;
             	if (ch >= '0' & ch <= '9') {
-                    digit = (int)(s.charAt(i++) - '0');
+                    digit = (int)(ch - '0');
             	} else {
             		throw newNumberFormatExceptionFor(arith, s);
             	}
@@ -85,7 +92,7 @@ class Parse {
 			}
 			return value;
 		}
-		throw newNumberFormatExceptionFor(arith, s);
+		return 0;
 	}
 	private static TruncatedPart parseTruncatedPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
 		if (start < end) {
@@ -97,14 +104,14 @@ class Parse {
 				truncatedPart = TruncatedPart.EQUAL_TO_HALF;
 			} else if (firstChar > '0' & firstChar < '5') {
 				truncatedPart = TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
-			} else if (firstChar > '5' & firstChar < '9') {
+			} else if (firstChar > '5' & firstChar <= '9') {
 				truncatedPart = TruncatedPart.GREATER_THAN_HALF;
 			} else {
 				throw newNumberFormatExceptionFor(arith, s);
 			}
 			int i = start + 1;
 			while (i < end) {
-				final char ch = s.charAt(i);
+				final char ch = s.charAt(i++);
 	        	if (ch > '0' & ch <= '9') {
 	        		if (truncatedPart == TruncatedPart.ZERO) {
 	        			truncatedPart = TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
@@ -165,7 +172,7 @@ class Parse {
             	final char ch = s.charAt(i++);
             	final int digit;
             	if (ch >= '0' & ch <= '9') {
-                    digit = (int)(s.charAt(i++) - '0');
+                    digit = (int)(ch - '0');
             	} else {
                 	throw newNumberFormatExceptionFor(arith, s);
                 }
