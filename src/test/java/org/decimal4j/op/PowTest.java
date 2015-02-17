@@ -233,10 +233,10 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 	//By definition pow precision is
 	//n >= 0: rounding = HALF_UP, HALF_DOWN, HALF_EVEN: 1 ULP
 	//n >= 0: other rounding modes: 0
-	//n < 0: 15 ULP ??? 
+	//n < 0: 16 ULP ??? 
 	private boolean isWithinAllowedTolerance(ArithmeticResult<Long> expected, ArithmeticResult<Long> actual, int exponent) {
-		final int maxTolerance = exponent >= 0 ? 0 : 15;
-		final int maxRoundingHalfTolerance = exponent >= 0 ? 1 : 15;
+		final int maxTolerance = exponent >= 0 ? 0 : 16;
+		final int maxRoundingHalfTolerance = exponent >= 0 ? 1 : 16;
 		final Long exp = expected.getCompareValue();
 		final Long act = actual.getCompareValue();
 		if (exp == null || act == null) {
