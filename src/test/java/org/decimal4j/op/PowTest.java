@@ -146,6 +146,13 @@ public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
 			runTest(m, "0.9979046^914", newDecimal(m, 9979046), 914);
 		}
 	}
+	@Test
+	public void testMinus0_943powMinus625() {
+		if (getScale() == 3) {
+			final ScaleMetrics m = getScaleMetrics();
+			runTest(m, "-0.943^-625", newDecimal(m, -943), -625);
+		}
+	}
 	
 	@Override
 	@Test
