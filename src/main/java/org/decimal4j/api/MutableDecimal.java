@@ -231,15 +231,11 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	MutableDecimal<S> setUnscaled(long unscaledValue, int scale, RoundingMode roundingMode);
 
 	/**
-	 * Parses the given string value and sets {@code this} Decimal to the 
-	 * parsed {@code value}. An exception is thrown if
-	 * the value cannot be parsed.
+	 * Parses the given string value and sets {@code this} Decimal to the parsed
+	 * {@code value}. An exception is thrown if the value cannot be parsed.
 	 * 
 	 * @param value
 	 *            the string value to parse and set
-	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a decimal number
 	 * @return {@code this} Decimal after assigning the parsed value
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
@@ -250,9 +246,8 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	MutableDecimal<S> set(String value);
 
 	/**
-	 * Parses the given string value and sets {@code this} Decimal to the 
-	 * parsed {@code value}. An exception is thrown if
-	 * the value cannot be parsed.
+	 * Parses the given string value and sets {@code this} Decimal to the parsed
+	 * {@code value}. An exception is thrown if the value cannot be parsed.
 	 * 
 	 * @param value
 	 *            the string value to parse and set

@@ -69,12 +69,58 @@ public class FromStringTest extends AbstractOperandTest {
 		for (final long value : TestSettings.TEST_CASES.getSpecialValuesFor(getScaleMetrics())) {
 			final String s = Long.toString(value);
 			for (int i = 0; i <= s.length(); i++) {
-				values.add(toDecimalString(s, i));
+				final String decimalString = toDecimalString(s, i);
+				values.add(decimalString);
 				if (value > 0) {
-					values.add("+" + toDecimalString(s, i));
+					values.add("+" + decimalString);
 				}
+				if (decimalString.indexOf('.') >= 0) {
+					values.add(decimalString + "0");
+					values.add(decimalString + "5");
+					values.add(decimalString + "9");
+					values.add(decimalString + "0000000000000000000000000000000");
+					values.add(decimalString + "0000000000000000000000000000001");
+					values.add(decimalString + "4999999999999999999999999999999");
+					values.add(decimalString + "5000000000000000000000000000000");
+					values.add(decimalString + "5000000000000000000000000000001");
+					values.add(decimalString + "9999999999999999999999999999999");
+				}
+				//some invalid
+				values.add(decimalString + "A");
+				values.add(decimalString + "000000000000000000000000000000Z");
 			}
 		}
+		//some potential overflow values
+		values.add("9223372036854775808");//Long.MAX_VALUE + 1
+		values.add("-9223372036854775809");//Long.MIN_VALUE - 1
+		values.add("9223372036854775808".substring(0, 19-getScale()) + "." + "9223372036854775808".substring(19-getScale()));//Long.MAX_VALUE + 1, with decimal point
+		values.add("-9223372036854775809".substring(0, 20-getScale()) + "." + "-9223372036854775809".substring(20-getScale()));//Long.MAX_VALUE + 1, with decimal point
+		values.add(Long.MAX_VALUE + "0");
+		values.add(Long.MAX_VALUE + "0.0");
+		values.add(Long.MAX_VALUE + ".1");
+		values.add(Long.MAX_VALUE + ".5");
+		values.add(Long.MAX_VALUE + ".9");
+		values.add(Long.MIN_VALUE + "0");
+		values.add(Long.MIN_VALUE + "0.0");
+		values.add(Long.MIN_VALUE + ".1");
+		values.add(Long.MIN_VALUE + ".5");
+		values.add(Long.MIN_VALUE + ".9");
+		//some invalid values
+		values.add("");
+		values.add(" 1");
+		values.add("1 ");
+		values.add(" 1.0");
+		values.add("1.0 ");
+		values.add("A");
+		values.add("+-1.0");
+		values.add("--1.0");
+		values.add("++1.0");
+		values.add("1.");
+		values.add("+1.");
+		values.add("-1.");
+		values.add("+1.A");
+		values.add("-1.A");
+		values.add(null);//test null input
 		return values.toArray(new String[values.size()]);
 	}
 
@@ -101,6 +147,8 @@ public class FromStringTest extends AbstractOperandTest {
 			expected = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
 			expected = ArithmeticResult.forException(e);
+		} catch (NullPointerException e) {
+			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
@@ -110,6 +158,8 @@ public class FromStringTest extends AbstractOperandTest {
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
+			actual = ArithmeticResult.forException(e);
+		} catch (NullPointerException e) {
 			actual = ArithmeticResult.forException(e);
 		}
 

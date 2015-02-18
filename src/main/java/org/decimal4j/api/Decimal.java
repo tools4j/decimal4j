@@ -10,36 +10,39 @@ import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * Signed fixed-precision decimal number similar to {@link BigDecimal}. A Decimal
- * number can be immutable or mutable and it is based on an underlying <i>unscaled</i>
- * long value and a {@link #getScaleMetrics() scale}. The scale defines the number
- * of digits to the right of the decimal point. If the scale is {@code f} then the 
- * value represented by a {@code Decimal} instance is 
+ * Signed fixed-precision decimal number similar to {@link BigDecimal}. A
+ * Decimal number can be immutable or mutable and it is based on an underlying
+ * <i>unscaled</i> long value and a {@link #getScaleMetrics() scale}. The scale
+ * defines the number of digits to the right of the decimal point. If the scale
+ * is {@code f} then the value represented by a {@code Decimal} instance is
  * <code>(unscaledValue &times; 10<sup>-f</sup>)</code>.
  * <p>
- * The result of an arithmetic operation is generally of the same scale as this 
- * Decimal unless otherwise indicated. Decimal operands of arithmetic operations are
- * typically also of the same scale as this Decimal. Scale compatibility of Decimal
- * operands is enforced through the generic {@link ScaleMetrics} parameter {@code <S>}.
+ * The result of an arithmetic operation is generally of the same scale as this
+ * Decimal unless otherwise indicated. Decimal operands of arithmetic operations
+ * are typically also of the same scale as this Decimal. Scale compatibility of
+ * Decimal operands is enforced through the generic {@link ScaleMetrics}
+ * parameter {@code <S>}.
  * <p>
- * For convenience, arithmetic operations with other data types are sometimes also 
- * provided. Such operations usually perform a value conversion into a Decimal of
- * the current scale before performing the actual operation.
+ * For convenience, arithmetic operations with other data types are sometimes
+ * also provided. Such operations usually perform a value conversion into a
+ * Decimal of the current scale before performing the actual operation.
  * <p>
  * If the result of an arithmetic operation exceeds the precision of the current
- * scale, {@link RoundingMode#HALF_UP HALF_UP} rounding is applied to the least 
- * significant digit of the result if no other rounding mode is explicitly specified. 
- * Note that in a few exceptional cases {@link RoundingMode#HALF_EVEN HALF_EVEN} 
- * rounding is used by default to comply with inherited specification constraints 
- * (e.g. see {@link #doubleValue()}, {@link #floatValue()} etc.).
+ * scale, {@link RoundingMode#HALF_UP HALF_UP} rounding is applied to the least
+ * significant digit of the result if no other rounding mode is explicitly
+ * specified. Note that in a few exceptional cases
+ * {@link RoundingMode#HALF_EVEN HALF_EVEN} rounding is used by default to
+ * comply with inherited specification constraints (e.g. see
+ * {@link #doubleValue()}, {@link #floatValue()} etc.).
  * <p>
- * Operations with Decimal values can lead to overflows in marked contrast to the
- * {@link BigDecimal}. This is a direct consequence of the construction of a Decimal 
- * value on the basis of a long value. Unless otherwise indicated operations silently 
- * truncate overflows by default. This choice has been made for performance reasons
- * and because Java programmers are already familiar with this behavior from operations
- * with primitive integer types. If this behavior is inappropriate the user can
- * request exceptions in overflow situations through an optional {@link OverflowMode} or 
+ * Operations with Decimal values can lead to overflows in marked contrast to
+ * the {@link BigDecimal}. This is a direct consequence of the construction of a
+ * Decimal value on the basis of a long value. Unless otherwise indicated
+ * operations silently truncate overflows by default. This choice has been made
+ * for performance reasons and because Java programmers are already familiar
+ * with this behavior from operations with primitive integer types. If this
+ * behavior is inappropriate the user can request exceptions in overflow
+ * situations through an optional {@link OverflowMode} or
  * {@link TruncationPolicy} argument.
  * 
  * @param <S>
@@ -60,10 +63,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns the scale associated with this Decimal. The scale defines the
-	 * number of fraction digits and the scale factor applied to the {@code long} 
-	 * value underlying this {@code Decimal}. 
+	 * number of fraction digits and the scale factor applied to the
+	 * {@code long} value underlying this {@code Decimal}.
 	 * <p>
-	 * If the scale is {@code f} then the value represented by a {@code Decimal} 
+	 * If the scale is {@code f} then the value represented by a {@code Decimal}
 	 * instance is <code>(unscaledValue &times; 10<sup>-f</sup>)</code>.
 	 * <p>
 	 * This method is a shortcut for {@code getScaleMetrics().getScale()}.
@@ -80,19 +83,19 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * with {@code f} representing the {@link #getScale() scale}, hence the
 	 * returned value equals <code>(10<sup>f</sup> &times; this)</code>.
 	 * 
-	 * @return 	the unscaled numeric value, the same as this Decimal without 
-	 * 			applying the scale factor
+	 * @return the unscaled numeric value, the same as this Decimal without
+	 *         applying the scale factor
 	 * @see #getScale()
 	 * @see ScaleMetrics#getScaleFactor()
 	 */
 	long unscaledValue();
 
 	/**
-	 * Returns the factory that can be used to create other Decimal values of 
+	 * Returns the factory that can be used to create other Decimal values of
 	 * the same scale as {@code this} Decimal.
 	 * 
-	 * @return 	the factory to create other Decimal values of the same scale as 
-	 * 			this Decimal
+	 * @return the factory to create other Decimal values of the same scale as
+	 *         this Decimal
 	 */
 	DecimalFactory<S> getFactory();
 
@@ -295,7 +298,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * If this {@code Decimal} value is already an {@link ImmutableDecimal} it
-	 * is simply returned. Otherwise a new immutable value with the same scale 
+	 * is simply returned. Otherwise a new immutable value with the same scale
 	 * and numerical value as {@code this} Decimal is created and returned.
 	 * 
 	 * @return {@code this} if immutable and a new {@link ImmutableDecimal} with
@@ -316,55 +319,55 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	// some conversion methods with rounding mode
 
 	/**
-	 * Converts this {@code Decimal} to a {@code long} using the specified 
-	 * rounding mode if necessary. Rounding is applied if the Decimal value can 
-	 * not be represented as a long value, that is, if it has a nonzero fractional 
-	 * part. Note that this conversion can lose information about the precision 
-	 * of the {@code Decimal} value.
+	 * Converts this {@code Decimal} to a {@code long} using the specified
+	 * rounding mode if necessary. Rounding is applied if the Decimal value can
+	 * not be represented as a long value, that is, if it has a nonzero
+	 * fractional part. Note that this conversion can lose information about the
+	 * precision of the {@code Decimal} value.
 	 * 
 	 * @param roundingMode
-	 *            the rounding mode to apply when rounding is necessary to convert
-	 *            this Decimal into a long
+	 *            the rounding mode to apply when rounding is necessary to
+	 *            convert this Decimal into a long
 	 * @return this {@code Decimal} converted to a {@code long}.
 	 */
 	long longValue(RoundingMode roundingMode);
 
 	/**
-	 * Converts this {@code Decimal} to a {@code float} using the specified 
-	 * rounding mode if the Decimal value can not be exactly represented as a 
-	 * float value. Note that this conversion can lose information about the 
+	 * Converts this {@code Decimal} to a {@code float} using the specified
+	 * rounding mode if the Decimal value can not be exactly represented as a
+	 * float value. Note that this conversion can lose information about the
 	 * precision of the {@code Decimal} value.
 	 *
 	 * @param roundingMode
-	 *            the rounding mode to apply when rounding is necessary to convert
-	 *            this Decimal into a float value
+	 *            the rounding mode to apply when rounding is necessary to
+	 *            convert this Decimal into a float value
 	 * @return this {@code Decimal} converted to a {@code float}.
 	 */
 	float floatValue(RoundingMode roundingMode);
 
 	/**
-	 * Converts this {@code Decimal} to a {@code double} using the specified 
-	 * rounding mode if the Decimal value can not be exactly represented as a 
-	 * double value. Note that this conversion can lose information about the 
+	 * Converts this {@code Decimal} to a {@code double} using the specified
+	 * rounding mode if the Decimal value can not be exactly represented as a
+	 * double value. Note that this conversion can lose information about the
 	 * precision of the {@code Decimal} value.
 	 *
 	 * @param roundingMode
-	 *            the rounding mode to apply when rounding is necessary to convert
-	 *            this Decimal into a double value
+	 *            the rounding mode to apply when rounding is necessary to
+	 *            convert this Decimal into a double value
 	 * @return this {@code Decimal} converted to a {@code double}.
 	 */
 	double doubleValue(RoundingMode roundingMode);
 
 	/**
-	 * Converts this {@code Decimal} to a {@link BigInteger} value using the 
-	 * specified rounding mode if necessary. Rounding is applied if the Decimal 
-	 * value can not be represented as a {@code BigInteger}, that is, if it has 
-	 * a nonzero fractional part. Note that this conversion can lose information 
+	 * Converts this {@code Decimal} to a {@link BigInteger} value using the
+	 * specified rounding mode if necessary. Rounding is applied if the Decimal
+	 * value can not be represented as a {@code BigInteger}, that is, if it has
+	 * a nonzero fractional part. Note that this conversion can lose information
 	 * about the precision of the {@code Decimal} value.
 	 * 
 	 * @param roundingMode
-	 *            the rounding mode to apply when rounding is necessary to convert
-	 *            this Decimal into a {@code BigInteger}
+	 *            the rounding mode to apply when rounding is necessary to
+	 *            convert this Decimal into a {@code BigInteger}
 	 * @return this {@code Decimal} converted to a {@code BigInteger}.
 	 */
 	BigInteger toBigInteger(RoundingMode roundingMode);
@@ -376,9 +379,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param scale
 	 *            the scale used for the returned {@code BigDecimal}
 	 * @param roundingMode
-	 *            the rounding mode to apply when rounding is necessary to convert
-	 *            from the this Decimal's {@link #getScale() scale} to the target
-	 *            scale
+	 *            the rounding mode to apply when rounding is necessary to
+	 *            convert from the this Decimal's {@link #getScale() scale} to
+	 *            the target scale
 	 * @return a {@code BigDecimal} instance of the specified scale
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
@@ -573,8 +576,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             because it would overflow
 	 */
 	@SuppressWarnings("hiding")
-	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics,
-			RoundingMode roundingMode);
+	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
 
 	// add
 
@@ -820,8 +822,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
 	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale,
-			RoundingMode roundingMode);
+	Decimal<S> addUnscaled(long unscaledAugend, int scale, RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} whose value is
@@ -857,8 +858,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if an overflow occurs and the policy declares
 	 *             {@link OverflowMode#CHECKED}
 	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy);
 
 	/**
 	 * Returns a {@code Decimal} whose value is
@@ -981,23 +981,19 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale);
 
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale,
-			RoundingMode roundingMode);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode);
 
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, TruncationPolicy truncationPolicy);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend);
 
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend,
-			OverflowMode overflowMode);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend, OverflowMode overflowMode);
 
 	Decimal<S> subtractSquared(Decimal<S> value);
 
 	Decimal<S> subtractSquared(Decimal<S> value, RoundingMode roundingMode);
 
-	Decimal<S> subtractSquared(Decimal<S> value,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> subtractSquared(Decimal<S> value, TruncationPolicy truncationPolicy);
 
 	// multiply
 
@@ -1005,15 +1001,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> multiply(Decimal<S> multiplicand, RoundingMode roundingMode);
 
-	Decimal<S> multiply(Decimal<S> multiplicand,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> multiply(Decimal<S> multiplicand, TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyBy(Decimal<?> multiplicand);
 
 	Decimal<S> multiplyBy(Decimal<?> multiplicand, RoundingMode roundingMode);
 
-	Decimal<S> multiplyBy(Decimal<?> multiplicand,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> multiplyBy(Decimal<?> multiplicand, TruncationPolicy truncationPolicy);
 
 	Decimal<?> multiplyExact(Decimal<?> multiplicand);
 
@@ -1031,19 +1025,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand,
-			RoundingMode roundingMode);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, RoundingMode roundingMode);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale,
-			RoundingMode roundingMode);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode);
 
-	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyByPowerOfTen(int n);
 
@@ -1085,16 +1075,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, RoundingMode roundingMode);
 
-	Decimal<S> divideUnscaled(long unscaledDivisor,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> divideUnscaled(long unscaledDivisor, TruncationPolicy truncationPolicy);
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale);
 
-	Decimal<S> divideUnscaled(long unscaledDivisor, int scale,
-			RoundingMode roundingMode);
+	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode);
 
-	Decimal<S> divideUnscaled(long unscaledDivisor, int scale,
-			TruncationPolicy truncationPolicy);
+	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy);
 
 	Decimal<S> divideByPowerOfTen(int n);
 
@@ -1127,8 +1114,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code divisor==0} or if {@code overflowMode==CHECKED} and
 	 *             an overflow occurs
 	 */
-	Decimal<S> divideToIntegralValue(Decimal<S> divisor,
-			OverflowMode overflowMode);
+	Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode);
 
 	/**
 	 * Returns a two-element {@code Decimal} array containing the result of
@@ -1446,9 +1432,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>
 	 * applying the specified rounding mode. For {@code n >= 0} the result is
-         * exact up to 1 ULP; the result is actually exact for all rounding modes
-         * other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed
-         * for {@code n < 0} but the result is usually exact up to 10-20 ULP.
+	 * exact up to 1 ULP; the result is actually exact for all rounding modes
+	 * other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed
+	 * for {@code n < 0} but the result is usually exact up to 10-20 ULP.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to.
@@ -1717,7 +1703,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Compares this {@code Decimal} with the specified {@code Decimal} and
 	 * returns true if the two are numerically equal. Two {@code Decimal}
 	 * objects that are equal in value but have a different scale (like 2.0 and
-	 * 2.00) are considered equal by this method.
+	 * 2.00) are considered equal by this method as opposed to the
+	 * {@link #equals(Object) equals} method which requires identical scales of
+	 * the compared values.
 	 * <p>
 	 * Returns true iff {@link #compareToNumerically(Decimal)} returns 0.
 	 *
@@ -1750,15 +1738,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Compares this object to the specified object. The result is {@code true}
-	 * if and only if the argument is not {@code null} and is a {@code Decimal}
-	 * object that contains the same value as this object and if the two
-	 * Decimals have the same {@link #getScaleMetrics() scale}.
+	 * if and only if the argument is a {@code Decimal} value with the same
+	 * {@link #getScaleMetrics() scale} and {@link #unscaledValue() unscaled
+	 * value} as this Decimal.
 	 * 
 	 * @param obj
 	 *            the object to compare with.
-	 * @return {@code true} if the argument is {@code Decimal} object that
-	 *         contains the same value and arithmetic as this object;
-	 *         {@code false} otherwise.
+	 * @return {@code true} if the argument is a {@code Decimal} object that
+	 *         contains the same value and scale as this object; {@code false}
+	 *         otherwise.
 	 */
 	@Override
 	boolean equals(Object obj);

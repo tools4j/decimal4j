@@ -77,6 +77,13 @@ sourceSets.main.java {
 	srcDirs generatedSources, 'src/main/java'
 }
 
+javadoc {
+	options.showFromPackage()
+	options.linkSource()
+	options.links("http://docs.oracle.com/javase/8/docs/api/");
+	options.overview = "src/main/java/overview.html";
+}
+
 jmh {
    include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
 //   include = '.*AddBenchmark.*' // include pattern (regular expression) for benchmarks to be executed

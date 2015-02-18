@@ -30,6 +30,11 @@ class ArithmeticResult<T> {
 		this.compareValue = compareValue;
 		this.exception = exception;
 	}
+	private ArithmeticResult(String resultString, T compareValue, NullPointerException exception) {
+		this.resultString = resultString;
+		this.compareValue = compareValue;
+		this.exception = exception;
+	}
 
 	public static <T> ArithmeticResult<T> forResult(String resultString, T comparableValue) {
 		return new ArithmeticResult<T>(resultString, comparableValue, (ArithmeticException)null);
@@ -46,6 +51,9 @@ class ArithmeticResult<T> {
 		return new ArithmeticResult<T>(null, null, e);
 	}
 	public static <T> ArithmeticResult<T> forException(IllegalArgumentException e) {
+		return new ArithmeticResult<T>(null, null, e);
+	}
+	public static <T> ArithmeticResult<T> forException(NullPointerException e) {
 		return new ArithmeticResult<T>(null, null, e);
 	}
 

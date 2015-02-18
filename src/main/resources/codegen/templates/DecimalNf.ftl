@@ -41,7 +41,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
     /**
      * Initialize static constant array when class is loaded.
      */
+<#if (scale <= 17)>
+    private static final int MAX_CONSTANT = 10;
+<#else>
     private static final int MAX_CONSTANT = 9;
+</#if>
     private static Decimal${scale}f POS_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
     private static Decimal${scale}f NEG_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
 
