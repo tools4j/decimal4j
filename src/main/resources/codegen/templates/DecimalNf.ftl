@@ -202,16 +202,6 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromLong(value));
 	}
 
-	public static Decimal${scale}f valueOf(long value, OverflowMode overflowMode) {
-        if (value == 0)
-            return ZERO;
-        if (value > 0 & value <= MAX_CONSTANT)
-            return POS_CONST[(int) value];
-        else if (value < 0 & value >= -MAX_CONSTANT)
-            return NEG_CONST[(int) -value];
-		return valueOfUnscaled(SCALE.getTruncatingArithmetic(overflowMode).fromLong(value));
-	}
-
 	public static Decimal${scale}f valueOf(float value) {
 		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromFloat(value));
 	}
