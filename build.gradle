@@ -9,7 +9,7 @@ jacoco {
 }
 
 sourceCompatibility = 1.6
-version = '1.0'
+version = '0.9.7'
 
 jar {
     manifest {
@@ -81,6 +81,7 @@ javadoc {
 	options.showFromPackage()
 	options.linkSource()
 	options.links("http://docs.oracle.com/javase/8/docs/api/");
+	options.windowTitle = "decimal4j API ${version}"
 	options.overview = "src/main/java/overview.html";
 }
 
