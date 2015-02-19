@@ -3,6 +3,9 @@ package org.decimal4j.arithmetic;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.DecimalRounding;
 
+/**
+ * Provides static methods to invert a Decimal number, that is, to calculate {@code 1/x}.
+ */
 final class Invert {
 
 	public static long invertLong(long uDecimal) {

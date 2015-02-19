@@ -5,9 +5,8 @@ import java.math.BigInteger;
 import org.decimal4j.truncate.OverflowMode;
 
 /**
- * Base class for arithmetic implementations without overflow checking, that is,
- * for arithmetic whose {@link #getOverflowMode()} method returns
- * {@link OverflowMode#UNCHECKED}.
+ * Base class for arithmetic implementations with {@link OverflowMode#UNCHECKED
+ * UNCHECKED} overflow mode.
  */
 abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
 

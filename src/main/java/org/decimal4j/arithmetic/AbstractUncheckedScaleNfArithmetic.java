@@ -1,12 +1,9 @@
 package org.decimal4j.arithmetic;
 
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.truncate.OverflowMode;
 
 /**
- * Base class for arithmetic implementations implementing those functions where
- * rounding is no issue. Overflow is not checked, that is,
- * {@link #getOverflowMode()} returns {@link OverflowMode#UNCHECKED}.
+ * Base class for arithmetic implementations without overflow check for scales other than zero
  */
 abstract public class AbstractUncheckedScaleNfArithmetic extends
 		AbstractUncheckedArithmetic {

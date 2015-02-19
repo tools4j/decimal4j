@@ -7,9 +7,12 @@ import org.decimal4j.scale.Scale0f;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * The special case for longs with {@link Scale0f} and rounding.
+ * Arithmetic implementation with rounding for the special case with
+ * {@link Scale0f}, that is, for longs. If an operation leads to an overflow the
+ * result is silently truncated.
  */
-public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0fArithmetic {
+public class UncheckedScale0fRoundingArithmetic extends
+		AbstractUncheckedScale0fArithmetic {
 
 	private final DecimalRounding rounding;
 
@@ -80,11 +83,12 @@ public class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0f
 	public float toFloat(long uDecimal) {
 		return FloatConversion.longToFloat(this, rounding, uDecimal);
 	}
+
 	@Override
 	public double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, rounding, uDecimal);
 	}
-	
+
 	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
 		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);

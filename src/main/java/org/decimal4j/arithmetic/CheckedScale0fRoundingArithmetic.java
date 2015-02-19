@@ -2,8 +2,14 @@ package org.decimal4j.arithmetic;
 
 import java.math.RoundingMode;
 
+import org.decimal4j.scale.Scale0f;
 import org.decimal4j.truncate.DecimalRounding;
 
+/**
+ * Arithmetic implementation with rounding and overflow check for the special
+ * case with {@link Scale0f}, that is, for longs. An exception is thrown if an
+ * operation leads to an overflow.
+ */
 public class CheckedScale0fRoundingArithmetic extends
 		AbstractCheckedScale0fArithmetic {
 
@@ -31,7 +37,7 @@ public class CheckedScale0fRoundingArithmetic extends
 	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideChecked(this, rounding, uDecimalDividend, uDecimalDivisor);
 	}
-	
+
 	@Override
 	public long multiplyByPowerOf10(long uDecimal, int n) {
 		return Pow10.multiplyByPowerOf10Checked(this, rounding, uDecimal, n);
@@ -91,7 +97,7 @@ public class CheckedScale0fRoundingArithmetic extends
 	public long fromUnscaled(long unscaledValue, int scale) {
 		return Scale.rescale(this, unscaledValue, scale, getScale());
 	}
-	
+
 	@Override
 	public long parse(String value) {
 		return Parse.parseLong(this, rounding, value);

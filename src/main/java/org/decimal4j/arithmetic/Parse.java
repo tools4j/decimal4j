@@ -9,7 +9,7 @@ import org.decimal4j.truncate.TruncatedPart;
 
 
 /**
- * Parses decimal strings.
+ * Contains methods to parse strings.
  */
 class Parse {
 	private static enum ParseMode {

@@ -6,22 +6,22 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 
 /**
- * Base class for arithmetic implementations implementing those functions where
- * rounding is no issue. Overflow is checked, that is,
- * {@link #getOverflowMode()} returns {@link OverflowMode#CHECKED}.
+ * Base class for arithmetic implementations with overflow check for scales
+ * other than zero.
  */
-abstract public class AbstractCheckedScaleNfArithmetic extends AbstractCheckedArithmetic {
+abstract public class AbstractCheckedScaleNfArithmetic extends
+		AbstractCheckedArithmetic {
 
 	private final ScaleMetrics scaleMetrics;
-	
-	/* The unchecked version of arithmetic with the same rounding mode*/
+
+	/* The unchecked version of arithmetic with the same rounding mode */
 	protected final DecimalArithmetic unchecked;
 
 	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 		this.unchecked = scaleMetrics.getArithmetic(getRoundingMode());
 	}
-	
+
 	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics, DecimalRounding rounding) {
 		this.scaleMetrics = scaleMetrics;
 		this.unchecked = scaleMetrics.getArithmetic(rounding.getRoundingMode());

@@ -7,15 +7,18 @@ import org.decimal4j.scale.Scale0f;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * The special case for longs with {@link Scale0f} and no rounding.
+ * Arithmetic implementation without rounding for the special case with
+ * {@link Scale0f}, that is, for longs. If an operation leads to an overflow the
+ * result is silently truncated.
  */
-public final class UncheckedScale0fTruncatingArithmetic extends AbstractUncheckedScale0fArithmetic {
-	
+public final class UncheckedScale0fTruncatingArithmetic extends
+		AbstractUncheckedScale0fArithmetic {
+
 	/**
 	 * The singleton instance.
 	 */
 	public static final UncheckedScale0fTruncatingArithmetic INSTANCE = new UncheckedScale0fTruncatingArithmetic();
-	
+
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
@@ -45,12 +48,12 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	public final long divideByPowerOf10(long uDecimal, int positions) {
 		return Pow10.divideByPowerOf10(uDecimal, positions);
 	}
-	
+
 	@Override
 	public long invert(long uDecimal) {
 		return Invert.invertLong(uDecimal);
 	}
-	
+
 	@Override
 	public final long pow(long uDecimal, int exponent) {
 		return Pow.powLong(this, DecimalRounding.DOWN, uDecimal, exponent);
@@ -80,10 +83,10 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	public final double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, uDecimal);
 	}
-	
+
 	@Override
 	public final float toFloat(long uDecimal) {
-		return (float)uDecimal;
+		return (float) uDecimal;
 	}
 
 	@Override
@@ -105,7 +108,7 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	public final long fromBigDecimal(BigDecimal value) {
 		return value.longValue();
 	}
-	
+
 	@Override
 	public long parse(String value) {
 		return Parse.parseLong(this, DecimalRounding.DOWN, value);

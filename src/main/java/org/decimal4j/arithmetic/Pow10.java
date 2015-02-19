@@ -8,7 +8,7 @@ import org.decimal4j.truncate.TruncatedPart;
 import org.decimal4j.scale.Scale18f;
 
 /**
- * Calculates multiplications and divisions with powers of 10.
+ * Contains methods for multiplications and divisions with powers of ten.
  */
 final class Pow10 {
 	

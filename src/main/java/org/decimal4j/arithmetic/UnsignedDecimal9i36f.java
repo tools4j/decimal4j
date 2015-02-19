@@ -12,7 +12,7 @@ import org.decimal4j.scale.Scale9f;
 
 /**
  * Helper class for an unsigned decimal value with 9 integral digits and 38 decimal
- * fraction digits. Used internally by {@link Pow} to calculate decimal powers.
+ * fraction digits used internally by {@link Pow} to calculate decimal powers.
  */
 final class UnsignedDecimal9i36f {
 	/** Thread local for factor 1*/

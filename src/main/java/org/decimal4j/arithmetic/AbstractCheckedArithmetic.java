@@ -6,10 +6,8 @@ import java.math.BigInteger;
 import org.decimal4j.truncate.OverflowMode;
 
 /**
- * Base class for checked arithmetic implementations throwing an exception if
- * an operation leads to on overflow. The {@link #getOverflowMode()} method
- * returns {@link OverflowMode#CHECKED EXCEPTION}. Only operations common to all
- * checked arithmetic implementations are implemented here.
+ * Base class for arithmetic implementations with {@link OverflowMode#CHECKED
+ * CHECKED} overflow mode.
  */
 abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
 

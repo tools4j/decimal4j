@@ -9,9 +9,8 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 
 /**
- * An arithmetic implementation which truncates decimals after the last scale
- * digit without rounding. Operations are unchecked, that is, the result of an
- * operation that leads to an overflow is silently truncated.
+ * Arithmetic implementation without rounding for scales other than zero. If an
+ * operation leads to an overflow the result is silently truncated.
  */
 public class UncheckedScaleNfTruncatingArithmetic extends
 		AbstractUncheckedScaleNfArithmetic implements DecimalArithmetic {

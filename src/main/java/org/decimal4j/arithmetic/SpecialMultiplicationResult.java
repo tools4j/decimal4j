@@ -3,7 +3,7 @@ package org.decimal4j.arithmetic;
 import org.decimal4j.api.DecimalArithmetic;
 
 /**
- * Helper class used by multiplication to handle some special cases.
+ * Helper class used by multiplication methods to handle special cases.
  */
 enum SpecialMultiplicationResult {
 	/**

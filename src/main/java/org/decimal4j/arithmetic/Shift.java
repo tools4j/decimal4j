@@ -6,7 +6,7 @@ import org.decimal4j.truncate.TruncatedPart;
 
 
 /**
- * Calculates left and right shifts.
+ * Provides methods for left and right shifts.
  */
 final class Shift {
 

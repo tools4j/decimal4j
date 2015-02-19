@@ -6,7 +6,12 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 
-public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArithmetic {
+/**
+ * Arithmetic implementation with rounding and overflow check for scales other
+ * than zero. An exception is thrown if an operation leads to an overflow.
+ */
+public class CheckedScaleNfRoundingArithmetic extends
+		AbstractCheckedScaleNfArithmetic {
 
 	private final DecimalRounding rounding;
 
@@ -36,7 +41,7 @@ public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArit
 		super(scaleMetrics, rounding);
 		this.rounding = rounding;
 	}
-	
+
 	@Override
 	public RoundingMode getRoundingMode() {
 		return rounding.getRoundingMode();
@@ -46,7 +51,7 @@ public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArit
 	public long invert(long uDecimal) {
 		return Invert.invert(this, rounding, uDecimal);
 	}
-	
+
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
 		return Mul.multiplyChecked(this, rounding, uDecimal1, uDecimal2);
@@ -106,7 +111,7 @@ public class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScaleNfArit
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, rounding, value);
 	}
-	
+
 	@Override
 	public long parse(String value) {
 		return Parse.parseUnscaledDecimal(this, rounding, value);

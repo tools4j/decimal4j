@@ -5,6 +5,9 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
+/**
+ * Provides static methods to calculate square roots of Decimal numbers.
+ */
 final class Sqrt {
 	/**
 	 * This mask is used to obtain the value of an int as if it were unsigned.

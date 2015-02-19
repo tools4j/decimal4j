@@ -7,7 +7,7 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.scale.Scale9f;
 
 /**
- * Computes different variants of multiplications.
+ * Provides methods to calculate multiplication results.
  */
 final class Mul {
 

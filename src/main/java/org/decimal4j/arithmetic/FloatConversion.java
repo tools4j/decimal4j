@@ -6,7 +6,7 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
 /**
- * Converts from and to float.
+ * Contains methods to convert from and to float.
  */
 class FloatConversion {
 

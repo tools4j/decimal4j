@@ -3,9 +3,8 @@ package org.decimal4j.arithmetic;
 import org.decimal4j.scale.Scale0f;
 
 /**
- * Base class for arithmetic implementations for the special case
- * {@code scale=0}, that is, for long values. The implementation throws an
- * exception if an operation leads to on overflow.
+ * Base class for arithmetic implementations with overflow check for the special
+ * case with {@link Scale0f}, that is, for longs.
  */
 abstract public class AbstractCheckedScale0fArithmetic extends
 		AbstractCheckedArithmetic {

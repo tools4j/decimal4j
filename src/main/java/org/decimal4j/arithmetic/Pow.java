@@ -10,7 +10,7 @@ import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncatedPart;
 
 /**
- * Calculates powers of a decimal.
+ * Contains static methods to calculate powers of a Decimal number.
  */
 final class Pow {
 

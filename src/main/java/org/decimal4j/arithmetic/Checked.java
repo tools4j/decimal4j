@@ -4,7 +4,7 @@ import org.decimal4j.api.DecimalArithmetic;
 
 
 /**
- * Helper class for checked arithmetic with longs.
+ * Helper class for arithmetic operations with overflow checks.
  */
 final class Checked {
 

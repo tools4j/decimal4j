@@ -2,14 +2,16 @@ package org.decimal4j.arithmetic;
 
 import java.math.RoundingMode;
 
+import org.decimal4j.scale.Scale0f;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * Arithmetic implementation for the special case {@code scale=0}, that is, for
- * long values. The implementation throws an exception if an operation leads to an
- * overflow. Decimals after the last scale digit are truncated without rounding.
+ * Arithmetic implementation without rounding but with overflow check for the
+ * special case with {@link Scale0f}, that is, for longs. An exception is thrown
+ * if an operation leads to an overflow.
  */
-public class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fArithmetic {
+public class CheckedScale0fTruncatingArithmetic extends
+		AbstractCheckedScale0fArithmetic {
 
 	/**
 	 * The singleton instance.
@@ -25,7 +27,7 @@ public class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fAr
 	public long invert(long uDecimal) {
 		return Invert.invertLong(uDecimal);
 	}
-	
+
 	@Override
 	public long pow(long uDecimalBase, int exponent) {
 		return Pow.powLongChecked(this, DecimalRounding.DOWN, uDecimalBase, exponent);

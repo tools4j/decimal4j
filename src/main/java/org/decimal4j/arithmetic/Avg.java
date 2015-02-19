@@ -5,7 +5,7 @@ import java.math.RoundingMode;
 import org.decimal4j.api.DecimalArithmetic;
 
 /**
- * Computes the average of two numbers, that is, {@code (a+b)/2}.
+ * Provides static methods to calculate average of two numbers, that is, {@code (a+b)/2}.
  */
 final class Avg {
 

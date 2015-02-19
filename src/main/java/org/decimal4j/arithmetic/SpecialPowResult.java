@@ -3,7 +3,7 @@ package org.decimal4j.arithmetic;
 import org.decimal4j.api.DecimalArithmetic;
 
 /**
- * Helper class used by pow to handle some special cases.
+ * Helper class used by pow methods to handle special cases.
  */
 enum SpecialPowResult {
 	/**

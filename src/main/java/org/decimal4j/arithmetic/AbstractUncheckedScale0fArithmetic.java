@@ -6,7 +6,8 @@ import org.decimal4j.scale.Scale0f;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
- * Base class for arithmetic special case for longs with {@link Scale0f}.
+ * Base class for arithmetic implementations without overflow check for the special
+ * case with {@link Scale0f}, that is, for longs.
  */
 abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheckedArithmetic {
 	

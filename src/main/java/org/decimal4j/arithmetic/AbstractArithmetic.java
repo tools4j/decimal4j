@@ -9,10 +9,9 @@ import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * Base class for all arithmetic implementations. Only operations are
- * implemented that are common irrespective of {@link #getScale() scale},
- * {@link RoundingMode rounding mode} and {@link #getOverflowMode() overflow
- * mode}.
+ * Base class for all arithmetic implementations providing operations which are
+ * common irrespective of {@link #getScale() scale}, {@link RoundingMode
+ * rounding mode} and {@link #getOverflowMode() overflow mode}.
  */
 abstract public class AbstractArithmetic implements DecimalArithmetic {
 
@@ -20,12 +19,12 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 	public int getScale() {
 		return getScaleMetrics().getScale();
 	}
-	
+
 	@Override
 	public long one() {
 		return getScaleMetrics().getScaleFactor();
 	}
-	
+
 	@Override
 	public TruncationPolicy getTruncationPolicy() {
 		return getOverflowMode().getTruncationPolicyFor(getRoundingMode());
@@ -74,7 +73,7 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 		//let the big decimal deal with such large numbers then
 		return BigDecimal.valueOf(uDecimal, thisScale).setScale(scale, getRoundingMode());
 	}
-	
+
 	@Override
 	public long avg(long a, long b) {
 		return Avg.avg(this, a, b);

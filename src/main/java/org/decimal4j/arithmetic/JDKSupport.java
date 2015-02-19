@@ -3,7 +3,7 @@ package org.decimal4j.arithmetic;
 import java.math.BigInteger;
 
 /**
- * Some methods available in JDK 1.8 or JDK 1.7 ported to make code run in earlier JDK's.
+ * Provides ports of methods that are available in JDK 1.8 or JDK 1.7 to make code run in earlier JDK's.
  */
 public final class JDKSupport {
 

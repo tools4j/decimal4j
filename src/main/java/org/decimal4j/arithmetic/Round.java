@@ -6,7 +6,7 @@ import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * Performs rounding of decimal values.
+ * Contains static helper methods to round Decimal values.
  */
 class Round {
 

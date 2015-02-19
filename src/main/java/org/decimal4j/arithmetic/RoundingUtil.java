@@ -4,7 +4,8 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
 /**
- * Calculates rounding results utilizing {@link DecimalRounding} and
+ * Utility class to calculate rounding increments in different situations; 
+ * utilizes functionality provided by {@link DecimalRounding} and
  * {@link TruncatedPart}.
  */
 final class RoundingUtil {

@@ -8,10 +8,8 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 
 /**
- * Arithmetic implementation for rounding strategies. For
- * {@link RoundingMode#DOWN} the more efficient
- * {@link UncheckedScaleNfTruncatingArithmetic} is available. If an operation
- * leads to an overflow the result is silently truncated.
+ * Arithmetic implementation with rounding for scales other than zero. If an
+ * operation leads to an overflow the result is silently truncated.
  */
 public class UncheckedScaleNfRoundingArithmetic extends
 		AbstractUncheckedScaleNfArithmetic {
@@ -56,7 +54,7 @@ public class UncheckedScaleNfRoundingArithmetic extends
 
 	@Override
 	public long multiply(long uDecimal1, long uDecimal2) {
-		return Mul.multiply(this, rounding, uDecimal1, uDecimal2); 
+		return Mul.multiply(this, rounding, uDecimal1, uDecimal2);
 	}
 
 	@Override
@@ -78,7 +76,7 @@ public class UncheckedScaleNfRoundingArithmetic extends
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divide(this, rounding, uDecimalDividend, uDecimalDivisor);
 	}
-	
+
 	@Override
 	public long invert(long uDecimal) {
 		return Invert.invert(this, rounding, uDecimal);
@@ -121,7 +119,7 @@ public class UncheckedScaleNfRoundingArithmetic extends
 		final long reminder = scaleMetrics.moduloByScaleFactor(uDecimal);
 		return truncated + RoundingUtil.calculateRoundingIncrement(rounding, truncated, reminder, one());
 	}
-	
+
 	@Override
 	public float toFloat(long uDecimal) {
 		return FloatConversion.unscaledToFloat(this, rounding, uDecimal);

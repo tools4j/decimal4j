@@ -7,7 +7,7 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
 /**
- * Calculates division results.
+ * Provides static methods to calculate division results.
  */
 final class Div {
 

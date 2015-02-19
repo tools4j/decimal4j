@@ -1,7 +1,7 @@
 package org.decimal4j.arithmetic;
 
 /**
- * Helper class for division.
+ * Helper class to emulate unsigned 64bit operations.
  */
 public final class Unsigned {
 

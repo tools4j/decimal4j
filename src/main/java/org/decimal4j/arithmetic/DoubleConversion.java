@@ -6,7 +6,7 @@ import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
 /**
- * Converts from and to double.
+ * Contains methods to convert from and to double.
  */
 class DoubleConversion {
 

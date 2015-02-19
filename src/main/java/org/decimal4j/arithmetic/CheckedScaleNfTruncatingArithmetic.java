@@ -6,10 +6,11 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * Arithmetic implementation throwing an exception if an operation leads to on
- * overflow. Decimals after the last scale digit are truncated without rounding.
+ * Arithmetic implementation without rounding but with overflow check for scales
+ * other than zero. An exception is thrown if an operation leads to an overflow.
  */
-public class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfArithmetic {
+public class CheckedScaleNfTruncatingArithmetic extends
+		AbstractCheckedScaleNfArithmetic {
 
 	public CheckedScaleNfTruncatingArithmetic(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
@@ -54,7 +55,7 @@ public class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfAr
 	public long divideByPowerOf10(long uDecimal, int positions) {
 		return Pow10.divideByPowerOf10Checked(this, uDecimal, positions);
 	}
-	
+
 	@Override
 	public long invert(long uDecimal) {
 		return Invert.invert(this, uDecimal);
@@ -89,7 +90,7 @@ public class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfAr
 	public long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, DecimalRounding.DOWN, value);
 	}
-	
+
 	@Override
 	public long parse(String value) {
 		return Parse.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);

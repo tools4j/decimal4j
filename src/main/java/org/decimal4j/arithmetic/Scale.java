@@ -4,7 +4,7 @@ import org.decimal4j.api.DecimalArithmetic;
 
 
 /**
- * Converts between different scales.
+ * Contains static methods to convert between different scales.
  */
 class Scale {
 
