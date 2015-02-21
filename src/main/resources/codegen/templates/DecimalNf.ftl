@@ -12,7 +12,6 @@ import org.decimal4j.base.AbstractImmutableDecimal;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
-import org.decimal4j.truncate.OverflowMode;
 
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
