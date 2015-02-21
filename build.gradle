@@ -2,6 +2,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
+apply plugin: 'license'
 
 //temporary jacoco fix for java8
 jacoco {
@@ -25,7 +26,6 @@ dependencies {
     compile 'org.openjdk.jmh:jmh-core:1.1.1'
     testCompile 'junit:junit:4.11'
     jmh 'org.openjdk.jmh:jmh-core:1.1.1'
-    jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.1.1'
     jmh 'org.openjdk.jmh:jmh-generator-annprocess:1.1.1'
 }
 
@@ -55,6 +55,7 @@ buildscript {
 	dependencies {
 		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
 		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.1.3'
+		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
 	}
 	
 	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
@@ -71,11 +72,19 @@ task generateSources() << {
 	)
 }
 	
-compileJava.dependsOn generateSources
-
 sourceSets.main.java {
 	srcDirs generatedSources, 'src/main/java'
 }
+
+license {
+    header rootProject.file('src/main/resources/LICENSE.template')
+    strictCheck true
+	include "**/*.java"
+	ext.year = Calendar.getInstance().get(Calendar.YEAR)
+}
+licenseFormat.dependsOn generateSources
+
+compileJava.dependsOn generateSources,licenseFormat
 
 javadoc {
 	options.showFromPackage()
