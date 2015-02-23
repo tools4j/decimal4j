@@ -63,17 +63,6 @@ abstract public class AbstractUncheckedScaleNfArithmetic extends
 
 	@Override
 	public String toString(long uDecimal) {
-		final int scale = getScale();
-		final int negativeOffset = uDecimal < 0 ? 1 : 0;
-		final StringBuilder sb = new StringBuilder(scale + 2 + negativeOffset);
-		sb.append(uDecimal);
-		final int len = sb.length();
-		if (len <= scale + negativeOffset) {
-			//Long.MAX_VALUE = 9,223,372,036,854,775,807
-			sb.insert(negativeOffset, "0.00000000000000000000", 0, 2 + scale - len + negativeOffset);
-		} else {
-			sb.insert(len - scale, '.');
-		}
-		return sb.toString();
+		return StringConversion.unscaledToString(this, uDecimal);
 	}
 }

@@ -79,7 +79,7 @@ abstract public class AbstractCheckedScale0fArithmetic extends
 
 	@Override
 	public final String toString(long uDecimal) {
-		return Long.toString(uDecimal);
+		return StringConversion.longToString(uDecimal);
 	}
 
 }

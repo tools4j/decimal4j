@@ -123,7 +123,7 @@ public class CheckedScale0fRoundingArithmetic extends
 
 	@Override
 	public long parse(String value) {
-		return Parse.parseLong(this, rounding, value);
+		return StringConversion.parseLong(this, rounding, value);
 	}
 
 }

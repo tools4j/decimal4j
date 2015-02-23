@@ -116,7 +116,7 @@ public class CheckedScaleNfTruncatingArithmetic extends
 
 	@Override
 	public long parse(String value) {
-		return Parse.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
+		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
 	}
 
 }

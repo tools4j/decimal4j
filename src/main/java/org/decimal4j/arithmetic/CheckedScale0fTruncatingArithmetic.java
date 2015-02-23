@@ -113,6 +113,6 @@ public class CheckedScale0fTruncatingArithmetic extends
 
 	@Override
 	public long parse(String value) {
-		return Parse.parseLong(this, DecimalRounding.DOWN, value);
+		return StringConversion.parseLong(this, DecimalRounding.DOWN, value);
 	}
 }

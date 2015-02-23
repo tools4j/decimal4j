@@ -85,7 +85,7 @@ final class Pow {
 	}
 
 	/**
-	 * Power function for checked or unchecked arithmetic. The result is within 1 ULP.
+	 * Power function for checked or unchecked arithmetic. The result is within 1 ULP for positive exponents.
 	 * 
 	 * @param arith			the arithmetic
 	 * @param rounding		the rounding to apply

@@ -43,9 +43,9 @@ import org.decimal4j.truncate.TruncationPolicy;
  * <p>
  * Application code does not usually need to use <tt>DecimalArithmetic</tt>
  * directly. It may be appropriate however for very specialized applications
- * with low latency, high frequency or zero garbage requirements. All operations 
- * of <tt>DecimalArithmetic</tt> do not allocate any objects (zero garbage) unless
- * otherwise indicated.
+ * with low latency, high frequency or zero garbage requirements. All operations
+ * of <tt>DecimalArithmetic</tt> do not allocate any objects (zero garbage)
+ * unless otherwise indicated.
  */
 public interface DecimalArithmetic {
 	/**
@@ -578,14 +578,84 @@ public interface DecimalArithmetic {
 	 */
 	long toLong(long uDecimal);
 
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into a
+	 * float value and returns it. The arithmetic's {@link #getRoundingMode()
+	 * rounding mode} is applied if rounding is necessary.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value convert into a float value
+	 * @return the {@code uDecimal} value converted into a float value, possibly
+	 *         rounded or truncated
+	 */
 	float toFloat(long uDecimal);
 
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into a
+	 * double value and returns it. The arithmetic's {@link #getRoundingMode()
+	 * rounding mode} is applied if rounding is necessary.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value convert into a double value
+	 * @return the {@code uDecimal} value converted into a double value,
+	 *         possibly rounded or truncated
+	 */
 	double toDouble(long uDecimal);
 
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into a
+	 * {@link BigDecimal} value using this arithmetic's {@link #getScale()
+	 * scale} for the result value.
+	 * <p>
+	 * Note: this operation is <b>not</b> strictly garbage free since the result
+	 * value is usually allocated; however no temporary objects other than the
+	 * result are allocated during the conversion.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value convert into a {@code BigDecimal}
+	 *            value
+	 * @return the {@code uDecimal} value converted into a {@code BigDecimal}
+	 *         value
+	 */
 	BigDecimal toBigDecimal(long uDecimal);
 
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into a
+	 * {@link BigDecimal} value using the specified {@code scale} for the result
+	 * value. The arithmetic's {@link #getRoundingMode() rounding mode} is
+	 * applied if rounding is necessary.
+	 * <p>
+	 * Note: this operation is <b>not</b> garbage free since the result value is
+	 * usually allocated and also temporary objects may be allocated during the
+	 * conversion.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value convert into a {@code BigDecimal}
+	 *            value
+	 * @param scale
+	 *            the scale to use for the resulting {@code BigDecimal} value
+	 * @return the {@code uDecimal} value converted into a {@code BigDecimal}
+	 *         value, possibly rounded or truncated
+	 */
 	BigDecimal toBigDecimal(long uDecimal, int scale);
 
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into a
+	 * {@link String} and returns it. If the {@link #getScale() scale} is zero,
+	 * the conversion is identical to {@link Long#toString(long)}. For all other
+	 * scales a value with exactly {@code scale} fraction digits is returned
+	 * even if some trailing fraction digits are zero.
+	 * <p>
+	 * Note: this operation is <b>not</b> strictly garbage free since the result
+	 * value is allocated; however no temporary objects other than the result
+	 * are allocated during the conversion (internally a {@link ThreadLocal}
+	 * {@link StringBuilder} object is used to construct the string value, which
+	 * may become garbage if the thread becomes garbage).
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value convert into a {@code String}
+	 * @return the {@code uDecimal} value as into a {@code String}
+	 */
 	String toString(long uDecimal);
 
 }

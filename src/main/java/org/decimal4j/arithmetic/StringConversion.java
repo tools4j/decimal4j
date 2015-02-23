@@ -32,19 +32,27 @@ import org.decimal4j.truncate.TruncatedPart;
 
 
 /**
- * Contains methods to parse strings.
+ * Contains methods to convert from and to String.
  */
-class Parse {
+final class StringConversion {
+	
+	private static final ThreadLocal<StringBuilder> STRING_BUILDER_THREAD_LOCAL = new ThreadLocal<StringBuilder>() {
+		@Override
+		protected StringBuilder initialValue() {
+			return new StringBuilder(19 + 1 + 2);//unsigned long: 19 digits, sign: 1, decimal point and leading 0: 2
+		}
+	};
+	
 	private static enum ParseMode {
 		Long,
 		IntegralPart;
 	}
 
-	public static long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
+	final static long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
         return parseUnscaledDecimal(arith, rounding, s);
 	}
 
-	public static long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
+	final static long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
         if (s == null) {
             throw new NumberFormatException("null");
         }
@@ -214,12 +222,51 @@ class Parse {
         return negative ? result : -result;
 	}
 	
-	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {
+    /**
+     * Returns a {@code String} object representing the specified
+     * {@code long}.  The argument is converted to signed decimal
+     * representation and returned as a string, exactly as if passed to
+     * {@link Long#toString(long)}.
+     *
+     * @param   value   a {@code long} to be converted.
+     * @return  a string representation of the argument in base&nbsp;10.
+     */
+    final static String longToString(long value) {
+    	return Long.toString(value);
+    }
+    /**
+     * Returns a {@code String} object representing the specified unscaled 
+     * Decimal value {@code uDecimal}.  The argument is converted to signed 
+     * decimal representation and returned as a string with {@code scale}
+     * decimal places event if trailing fraction digits are zero.
+     *
+     * @param   uDecimal a unscaled Decimal to be converted
+     * @param arith the decimal arithmetics providing the scale to apply
+     * @return  a string representation of the argument
+     */
+    final static String unscaledToString(DecimalArithmetic arith, long uDecimal) {
+		final int scale = arith.getScale();
+		final StringBuilder sb = STRING_BUILDER_THREAD_LOCAL.get();
+		sb.setLength(0);
+		sb.append(uDecimal);
+		final int len = sb.length();
+		final int negativeOffset = uDecimal < 0 ? 1 : 0;
+		if (len <= scale + negativeOffset) {
+			//Long.MAX_VALUE = 9,223,372,036,854,775,807
+			sb.insert(negativeOffset, "0.00000000000000000000", 0, 2 + scale - len + negativeOffset);
+		} else {
+			sb.insert(len - scale, '.');
+		}
+		return sb.toString();
+    }
+    
+
+    private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {
         return new NumberFormatException("Cannot parse Decimal value with scale " + arith.getScale() + " for input string: \"" + s + "\"");
 	}
 
 	// no instances
-	private Parse() {
+	private StringConversion() {
 		super();
 	}
 }

@@ -76,7 +76,7 @@ abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheck
 
 	@Override
 	public final String toString(long uDecimal) {
-		return Long.toString(uDecimal);
+		return StringConversion.longToString(uDecimal);
 	}
 
 }

@@ -170,6 +170,6 @@ public class UncheckedScaleNfRoundingArithmetic extends
 
 	@Override
 	public long parse(String value) {
-		return Parse.parseUnscaledDecimal(this, rounding, value);
+		return StringConversion.parseUnscaledDecimal(this, rounding, value);
 	}
 }
