@@ -54,11 +54,9 @@ public class SubtractDoubleTest extends AbstractDoubleOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, double b) {
-		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+		if (isRoundingDefault() && RND.nextBoolean()) {
 			return a.subtract(b);
-		} else if (isUnchecked() && RND.nextBoolean()) {
-			return a.subtract(b, getRoundingMode());
 		}
-		return a.subtract(b, getTruncationPolicy());
+		return a.subtract(b, getRoundingMode());
 	}
 }

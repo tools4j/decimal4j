@@ -50,7 +50,7 @@ abstract public class AbstractDoubleOperandTest extends Abstract1DecimalArg1Doub
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
+			for (final TruncationPolicy tp : TestSettings.CHECKED_POLICIES) {
 				final DecimalArithmetic arith = s.getArithmetic(tp);
 				data.add(new Object[] {s, tp, arith});
 			}

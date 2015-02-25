@@ -48,6 +48,7 @@ public class TestSettings {
 
 	public static final List<ScaleMetrics> SCALES = TestSettings.TEST_SCALES.getScales();
 	public static final Collection<TruncationPolicy> POLICIES = TestSettings.TEST_POLICIES.getPolicies();
+	public static final Collection<TruncationPolicy> CHECKED_POLICIES = TestSettings.TEST_POLICIES.getCheckedPolicies();
 	public static final Set<RoundingMode> UNCHECKED_ROUNDING_MODES = TestSettings.TEST_POLICIES.getUncheckedRoundingModes();
 
 	public static int getRandomTestCount() {

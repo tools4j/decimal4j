@@ -54,11 +54,9 @@ public class DivideDoubleTest extends AbstractDoubleOperandTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, double b) {
-		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+		if (isRoundingDefault() && RND.nextBoolean()) {
 			return a.divide(b);
-		} else if (isUnchecked() && RND.nextBoolean()) {
-			return a.divide(b, getRoundingMode());
 		}
-		return a.divide(b, getTruncationPolicy());
+		return a.divide(b, getRoundingMode());
 	}
 }

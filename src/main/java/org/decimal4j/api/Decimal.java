@@ -415,7 +415,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} value rounded to the specified
-	 * {@code precision} using {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * {@code precision} using {@link RoundingMode#HALF_UP HALF_UP} rounding. If
+	 * an overflow occurs due to the rounding operation, the result is silently
+	 * truncated.
 	 * <p>
 	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
@@ -429,7 +431,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <dt>precision = -3</dt>
 	 * <dd>value is rounded to the thousands</dd>
 	 * <dt>precision >= scale</dt>
-	 * <dd>values is left unchanged</dd>
+	 * <dd>values is returned unchanged</dd>
 	 * <dt>precision < scale - 18</dt>
 	 * <dd>{@code IllegalArgumentException} is thrown</dd>
 	 * </dl>
@@ -446,7 +448,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} value rounded to the specified
-	 * {@code precision} using the given rounding mode.
+	 * {@code precision} using the given rounding mode. If an overflow occurs
+	 * due to the rounding operation, the result is silently truncated.
 	 * <p>
 	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
@@ -460,7 +463,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <dt>precision = -3</dt>
 	 * <dd>value is rounded to the thousands</dd>
 	 * <dt>precision >= scale</dt>
-	 * <dd>values is left unchanged</dd>
+	 * <dd>values is returned unchanged</dd>
 	 * <dt>precision < scale - 18</dt>
 	 * <dd>{@code IllegalArgumentException} is thrown</dd>
 	 * </dl>
@@ -496,7 +499,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <dt>precision = -3</dt>
 	 * <dd>value is rounded to the thousands</dd>
 	 * <dt>precision >= scale</dt>
-	 * <dd>values is left unchanged</dd>
+	 * <dd>values is returned unchanged</dd>
 	 * <dt>precision < scale - 18</dt>
 	 * <dd>{@code IllegalArgumentException} is thrown</dd>
 	 * </dl>
@@ -506,8 +509,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            to the second digit after the decimal point; must be at least
 	 *            {@code (scale - 18)}
 	 * @param truncationPolicy
-	 *            the truncation policy to apply when rounding to the desired
-	 *            precision
+	 *            the truncation policy defining {@link RoundingMode} and
+	 *            {@link OverflowMode} for the rounding operation
 	 * @return a Decimal instance rounded to the given precision
 	 * @throws IllegalArgumentException
 	 *             if {@code precision < scale - 18}
@@ -531,25 +534,18 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @return a Decimal instance with the given new scale
 	 * @throws IllegalArgumentException
 	 *             if {@code scale < 0} or {@code scale > 18}
-	 * @throws NumberFormatException
-	 *             if {@code this} Decimal cannot be converted to the new scale
-	 *             because it would overflow
 	 */
 	Decimal<?> scale(int scale);
 
 	/**
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. {@link RoundingMode#HALF_UP HALF_UP} rounding
-	 * is used if the scale change involves rounding.
-	 * <p>
-	 * An exception is thrown if the scale conversion leads to an overflow.
+	 * is used if the scale change involves rounding. If an overflow occurs due
+	 * to the scale conversion, the result is silently truncated.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
 	 * @return a Decimal instance with the given new scale metrics
-	 * @throws NumberFormatException
-	 *             if {@code this} Decimal cannot be converted to the new scale
-	 *             because it would overflow
 	 */
 	@SuppressWarnings("hiding")
 	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics);
@@ -557,9 +553,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. The specified {@code roundingMode} is used if
-	 * the scale change involves rounding.
-	 * <p>
-	 * An exception is thrown if the scale conversion leads to an overflow.
+	 * the scale change involves rounding. If an overflow occurs due to the
+	 * scale conversion, the result is silently truncated.
 	 * 
 	 * @param scale
 	 *            the scale to use for the result, must be in {@code [0,18]}
@@ -572,18 +567,14 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
-	 * @throws NumberFormatException
-	 *             if {@code this} Decimal cannot be converted to the new scale
-	 *             because it would overflow
 	 */
 	Decimal<?> scale(int scale, RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
 	 * changed to the give value. The specified {@code roundingMode} is used if
-	 * the scale change involves rounding.
-	 * <p>
-	 * An exception is thrown if the scale conversion leads to an overflow.
+	 * the scale change involves rounding. If an overflow occurs due to the
+	 * scale conversion, the result is silently truncated.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
@@ -594,17 +585,58 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
-	 * @throws NumberFormatException
-	 *             if {@code this} Decimal cannot be converted to the new scale
-	 *             because it would overflow
 	 */
 	@SuppressWarnings("hiding")
 	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
+	 * changed to the give value. The specified {@code truncationPolicy} defines 
+	 * {@link RoundingMode} and {@link OverflowMode} to apply if the scale
+	 * conversion leads to rounding or causes an overflow.
+	 * 
+	 * @param scale
+	 *            the scale to use for the result, must be in {@code [0,18]}
+	 * @param truncationPolicy
+	 *            the truncation policy defining {@link RoundingMode} and
+	 *            {@link OverflowMode} for the scale conversion
+	 * @return a Decimal instance with the given new scale
+	 * @throws IllegalArgumentException
+	 *             if {@code scale < 0} or {@code scale > 18}
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
+	Decimal<?> scale(int scale, TruncationPolicy truncationPolicy);
+
+	/**
+	 * Returns a {@code Decimal} value whose {@link #getScaleMetrics() scale} is
+	 * changed to the give value. The specified {@code truncationPolicy} defines 
+	 * {@link RoundingMode} and {@link OverflowMode} to apply if the scale
+	 * conversion leads to rounding or causes an overflow.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics to use for the result
+	 * @param truncationPolicy
+	 *            the truncation policy defining {@link RoundingMode} and
+	 *            {@link OverflowMode} for the scale conversion
+	 * @return a Decimal instance with the given new scale metrics
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
+	@SuppressWarnings("hiding")
+	<S extends ScaleMetrics> Decimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy);
+
 	// add
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)}. If the
+	 * addition causes an overflow, the result is silently truncated.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -618,16 +650,38 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> add(Decimal<S> augend);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)}. The
+	 * specified {@code overflowMode} determines whether to truncate the result
+	 * silently or to throw an exception if an overflow occurs.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves rounding, the specified {@code roundingMode} is used.
+	 * 
+	 * @param augend
+	 *            value to be added to this {@code Decimal}
+	 * @param overflowMode
+	 *            the overflow mode to apply if the addition leads to an
+	 *            overflow
+	 * @return {@code this + augend}
+	 * @throws ArithmeticException
+	 *             if {@code overflowMode==CHECKED} and an overflow occurs
+	 */
+	Decimal<S> add(Decimal<S> augend, OverflowMode overflowMode);
+
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)} after
+	 * converting the given {@code augend} argument to the scale of {@code this}
+	 * Decimal. Rounding, if necessary, uses the specified {@code roundingMode} 
+	 * and is applied during the conversion step <i>before</i> the addition 
+	 * operation. Overflows during scale conversion or addition are silently 
+	 * truncated.
+ 	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
@@ -642,24 +696,26 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> add(Decimal<?> augend, RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)} after
+	 * converting the given {@code augend} argument to the scale of {@code this}
+	 * Decimal. Rounding, if necessary, uses defined by the specified 
+	 * {@code truncationPolicy} argument and is applied during the conversion 
+	 * step <i>before</i> the addition operation. The {@code truncationPolicy} 
+	 * also defines the {@link OverflowMode} to apply if an overflow occurs
+	 * during scale conversion or addition.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves truncation, the specified {@code truncationPolicy} is
-	 * used.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @param truncationPolicy
-	 *            the truncation policy to apply if the augend argument needs to
-	 *            be truncated when converted into a Decimal number of the same
-	 *            scale as {@code this} decimal
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary during
+	 *            the scale conversion or if an overflow occurs during 
+	 *            conversion or addition operation
 	 * @return {@code this + augend}
 	 * @throws ArithmeticException
 	 *             if {@code truncationPolicy} specifies
@@ -670,7 +726,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> add(Decimal<?> augend, TruncationPolicy truncationPolicy);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)}. If the
+	 * addition causes an overflow, the result is silently truncated.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -684,7 +741,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> add(long augend);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)}. The
+	 * specified {@code overflowMode} determines whether to truncate the result
+	 * silently or to throw an exception if an overflow occurs.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -694,7 +753,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @param overflowMode
-	 *            the mode to apply if the operation leads to an overflow
+	 *            the overflow mode to apply if the addition leads to an
+	 *            overflow
 	 * @return {@code this + augend}
 	 * @throws ArithmeticException
 	 *             if {@code overflowMode==CHECKED} and an overflow occurs
@@ -702,19 +762,20 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> add(long augend, OverflowMode overflowMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)} after
+	 * converting the given {@code double} argument into a Decimal value of the
+	 * same scale as {@code this} Decimal. If rounding is necessary, 
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding mode is used and applied
+	 * during the conversion step <i>before</i> the addition operation. Overflows
+	 * due to conversion or addition result in an exception.
 	 * <p>
-	 * The returned value is a new instance if this Decimal is an
-	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
-	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves rounding, {@link RoundingMode#HALF_UP HALF_UP}
-	 * rounding is used. If the augend argument is NaN, infinite or has a
-	 * magnitude that is too large to be represented as a Decimal, an exception
-	 * is thrown.
+	 * The {@code double} argument is converted into a Decimal number of the
+	 * same scale as {@code this} Decimal before performing the add operation.
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding is used if rounding is
+	 * necessary during the conversion. If the augend argument is NaN, infinite
+	 * or has a magnitude that is too large to be represented as a Decimal, an
+	 * exception is thrown. An exception is also thrown if the addition
+	 * operation leads to an overflow.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
@@ -723,28 +784,29 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code augend} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
 	 *             {@code Decimal}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs during the addition operation
 	 */
 	Decimal<S> add(double augend);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
+	 * Returns a {@code Decimal} whose value is {@code (this + augend)} after
+	 * converting the given {@code double} argument into a Decimal value of the
+	 * same scale as {@code this} Decimal. If rounding is necessary, the specifed 
+	 * {@code roundingMode} is used and applied during the conversion step 
+	 * <i>before</i> the addition operation. Overflows due to conversion or 
+	 * addition result in an exception. 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves rounding, the specified {@code roundingMode} is used.
-	 * If the augend argument is NaN, infinite or has a magnitude that is too
-	 * large to be represented as a Decimal, an exception is thrown.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @param roundingMode
 	 *            the rounding mode to apply if the augend argument needs to be
-	 *            truncated when converted into a Decimal number of the same
+	 *            rounded when converted into a Decimal number of the same
 	 *            scale as {@code this} Decimal
 	 * @return {@code this + augend}
 	 * @throws NumberFormatException
@@ -753,140 +815,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             {@code Decimal}
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
+	 *             or if an overflow occurs during the addition operation
 	 */
 	Decimal<S> add(double augend, RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + augend)}.
-	 * <p>
-	 * The returned value is a new instance if this Decimal is an
-	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
-	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves rounding, the specified {@code truncationPolicy} is
-	 * used. If the augend argument is NaN, infinite or has a magnitude that is
-	 * too large to be represented as a Decimal, an exception is thrown.
-	 * 
-	 * @param augend
-	 *            value to be added to this {@code Decimal}
-	 * @param truncationPolicy
-	 *            the truncation policy to apply if the augend argument needs to
-	 *            be truncated when converted into a Decimal number of the same
-	 *            scale as {@code this} Decimal
-	 * @return {@code this + augend}
-	 * @throws NumberFormatException
-	 *             if {@code augend} is NaN or infinite or if the magnitude is
-	 *             too large for the double to be represented as a
-	 *             {@code Decimal}
-	 * @throws ArithmeticException
-	 *             if {@code truncationPolicy} specifies
-	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
-	 *             if the operation (not the conversion) causes an overflow and
-	 *             the policy declares {@link OverflowMode#CHECKED}
-	 */
-	Decimal<S> add(double augend, TruncationPolicy truncationPolicy);
-
-	/**
-	 * Returns a {@code Decimal} whose value is
-	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
-	 * <p>
-	 * The returned value is a new instance if this Decimal is an
-	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
-	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves rounding, {@link RoundingMode#HALF_UP HALF_UP}
-	 * rounding is used.
-	 * 
-	 * @param unscaledAugend
-	 *            value to be added to this {@code Decimal}
-	 * @param scale
-	 *            the scale to apply to {@code unscaledAugend}, must be in
-	 *            {@code [0,18]}
-	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
-	 * @throws IllegalArgumentException
-	 *             if {@code scale < 0} or {@code scale > 18}
-	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale);
-
-	/**
-	 * Returns a {@code Decimal} whose value is
-	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
-	 * <p>
-	 * The returned value is a new instance if this Decimal is an
-	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
-	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves rounding, the specified {@code roundingMode} is
-	 * applied.
-	 * 
-	 * @param unscaledAugend
-	 *            value to be added to this {@code Decimal}
-	 * @param scale
-	 *            the scale to apply to {@code unscaledAugend}, positive to
-	 *            indicate the number of fraction digits to the right of the
-	 *            Decimal point and negative to indicate up-scaling with a power
-	 *            of ten
-	 * @param roundingMode
-	 *            the rounding mode to apply if the augend argument needs to be
-	 *            truncated when converted into a Decimal number of the same
-	 *            scale as {@code this} Decimal
-	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
-	 * @throws IllegalArgumentException
-	 *             if {@code scale < 0} or {@code scale > 18}
-	 * @throws ArithmeticException
-	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
-	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale, RoundingMode roundingMode);
-
-	/**
-	 * Returns a {@code Decimal} whose value is
-	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code>.
-	 * <p>
-	 * The returned value is a new instance if this Decimal is an
-	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
-	 * internal state is altered and {@code this} is returned as result now
-	 * representing the outcome of the addition.
-	 * <p>
-	 * The augend argument is converted into a Decimal number of the same scale
-	 * as {@code this} Decimal before performing the operation. If the
-	 * conversion involves truncation, the specified {@code truncationPolicy} is
-	 * applied.
-	 * 
-	 * @param unscaledAugend
-	 *            value to be added to this {@code Decimal}
-	 * @param scale
-	 *            the scale to apply to {@code unscaledAugend}, positive to
-	 *            indicate the number of fraction digits to the right of the
-	 *            Decimal point and negative to indicate up-scaling with a power
-	 *            of ten
-	 * @param truncationPolicy
-	 *            the truncation policy to apply if the augend argument needs to
-	 *            be truncated when converted into a Decimal number of the same
-	 *            scale as {@code this} Decimal
-	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
-	 * @throws IllegalArgumentException
-	 *             if {@code scale < 0} or {@code scale > 18}
-	 * @throws ArithmeticException
-	 *             if {@code truncationPolicy} specifies
-	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
-	 *             if an overflow occurs and the policy declares
-	 *             {@link OverflowMode#CHECKED}
-	 */
-	Decimal<S> addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy);
-
-	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code> with the
-	 * {@link #getScale() scale} of this Decimal.
+	 * {@link #getScale() scale} of this Decimal. If the addition causes an 
+	 * overflow, the result is silently truncated.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -902,7 +839,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + unscaledAugend &times; 10<sup>-scale</sup>)</code> with the
-	 * {@link #getScale() scale} of this Decimal.
+	 * {@link #getScale() scale} of this Decimal. The specified 
+	 * {@code overflowMode} determines whether to truncate the result silently 
+	 * or to throw an exception if an overflow occurs.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -912,7 +851,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param unscaledAugend
 	 *            value to be added to this {@code Decimal}
 	 * @param overflowMode
-	 *            the mode to apply if the operation leads to an overflow
+	 *            the overflow mode to apply if the addition leads to an
+	 *            overflow
 	 * @return <code>this + unscaledAugend &times; 10<sup>-scale</sup></code>
 	 * @throws ArithmeticException
 	 *             if {@code overflowMode==CHECKED} and an overflow occurs
@@ -920,9 +860,103 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> addUnscaled(long unscaledAugend, OverflowMode overflowMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
-	 * squared value is rounded <i>before</i> the addition if necessary using
-	 * default {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * Returns a {@code Decimal} whose value is
+	 * <code>(this + round(unscaledAugend &times; 10<sup>-scale</sup>))</code>. The
+	 * {@code unscaledAugend} argument is converted to the same scale as 
+	 * {@code this} Decimal. If rounding is necessary, 
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding mode is used and applied
+	 * during the conversion step <i>before</i> the addition operation. Overflows 
+	 * during scale conversion or addition are silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @param unscaledAugend
+	 *            value to be added to this {@code Decimal}
+	 * @param scale
+	 *            the scale to apply to {@code unscaledAugend}, positive to
+	 *            indicate the number of fraction digits to the right of the
+	 *            Decimal point and negative to indicate up-scaling with a power
+	 *            of ten
+	 * @return <code>this + round<sub>HALF_UP</sub>(unscaledAugend &times; 10<sup>-scale</sup>)</code>
+	 */
+	Decimal<S> addUnscaled(long unscaledAugend, int scale);
+
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <code>(this + round(unscaledAugend &times; 10<sup>-scale</sup>))</code>.
+	 * The {@code unscaledAugend} argument is converted to the same scale as 
+	 * {@code this} Decimal. If rounding is necessary, the specified
+	 * {@code roundingMode} is used and applied during the conversion step 
+	 * <i>before</i> the addition operation. Overflows during scale conversion 
+	 * or addition are silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @param unscaledAugend
+	 *            value to be added to this {@code Decimal}
+	 * @param scale
+	 *            the scale to apply to {@code unscaledAugend}, positive to
+	 *            indicate the number of fraction digits to the right of the
+	 *            Decimal point and negative to indicate up-scaling with a power
+	 *            of ten
+	 * @param roundingMode
+	 *            the rounding mode to apply if the augend argument needs to be
+	 *            rounded when converted into a Decimal number of the same
+	 *            scale as {@code this} Decimal
+	 * @return <code>this + round(unscaledAugend &times; 10<sup>-scale</sup>)</code>
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
+	 */
+	Decimal<S> addUnscaled(long unscaledAugend, int scale, RoundingMode roundingMode);
+
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <code>(this + round(unscaledAugend &times; 10<sup>-scale</sup>))</code>.
+	 * The {@code unscaledAugend} argument is converted to the same scale as 
+	 * {@code this} Decimal. Rounding, if necessary, uses defined by the specified 
+	 * {@code truncationPolicy} argument and is applied during the conversion 
+	 * step <i>before</i> the addition operation. The {@code truncationPolicy} 
+	 * also defines the {@link OverflowMode} to apply if an overflow occurs
+	 * during scale conversion or addition. 
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
+	 * 
+	 * @param unscaledAugend
+	 *            value to be added to this {@code Decimal}
+	 * @param scale
+	 *            the scale to apply to {@code unscaledAugend}, positive to
+	 *            indicate the number of fraction digits to the right of the
+	 *            Decimal point and negative to indicate up-scaling with a power
+	 *            of ten
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary during
+	 *            the scale conversion or if an overflow occurs during 
+	 *            conversion or addition operation
+	 * @return <code>this + round(unscaledAugend &times; 10<sup>-scale</sup>)</code>
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
+	Decimal<S> addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy);
+
+	/**
+	 * Returns a {@code Decimal} whose value is 
+	 * <code>(this + value<sup>2</sup>)</code>. The squared value is rounded 
+	 * <i>before</i> the addition if necessary using default 
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. Overflows during squaring 
+	 * or addition are silently truncated.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -930,15 +964,17 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * representing the outcome of the addition.
 	 * 
 	 * @param value
-	 *            value to be added to this {@code Decimal}
+	 *            value to be squared and added to this {@code Decimal}
 	 * @return {@code this + value*value}
 	 */
 	Decimal<S> addSquared(Decimal<S> value);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
-	 * squared value is rounded <i>before</i> the addition if necessary using
-	 * the specified rounding mode.
+	 * Returns a {@code Decimal} whose value is
+	 * <code>(this + value<sup>2</sup>)</code>. The squared value is rounded 
+	 * <i>before</i> the addition if necessary using the specified 
+	 * {@code roundingMode}. Overflows during squaring or addition are silently 
+	 * truncated.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -946,9 +982,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * representing the outcome of the addition.
 	 * 
 	 * @param value
-	 *            value to be added to this {@code Decimal}
+	 *            value to be squared and added to this {@code Decimal}
 	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
+	 *            the rounding mode to apply if necessary when squaring the
+	 *            value
 	 * @return {@code this + value*value}
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode=UNNECESSARY} and rounding is necessary
@@ -956,15 +993,12 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> addSquared(Decimal<S> value, RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this + value^2)}. The
-	 * squared value is rounded <i>before</i> the addition if necessary using
-	 * the rounding mode specified by the truncation policy.
-	 * <p>
-	 * Note that if {@link OverflowMode#CHECKED CHECKED} arithmetic is used
-	 * according to the specified truncation policy, squaring and adding both
-	 * perform an overflow check. If this value is negative, an overflow
-	 * exception may be thrown even if the final result would actually still fit
-	 * in a {@code Decimal} value of the present scale.
+	 * Returns a {@code Decimal} whose value is
+	 * <code>(this + value<sup>2</sup>)</code>. The squared value is rounded 
+	 * <i>before</i> the addition if necessary using the {@link RoundingMode}
+	 * specified by the {@code truncationPolicy} argument. The 
+	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply 
+	 * if an overflow occurs during square or add operation. 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -972,12 +1006,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * representing the outcome of the addition.
 	 * 
 	 * @param value
-	 *            value to be added to this {@code Decimal}
+	 *            value to be squared and added to this {@code Decimal}
 	 * @param truncationPolicy
-	 *            the truncation policy to apply for this operation
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary when
+	 *            squaring the value or if an overflow occurs during the square 
+	 *            or add operation
 	 * @return {@code this + value*value}
 	 * @throws ArithmeticException
-	 *             if {@code truncationPolicy} specifies
+	 *             if {@code truncationPolicy} defines
 	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
 	 *             if an overflow occurs and the policy declares
 	 *             {@link OverflowMode#CHECKED}
@@ -987,6 +1024,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	// subtract
 
 	Decimal<S> subtract(Decimal<S> subtrahend);
+
+	Decimal<S> subtract(Decimal<S> subtrahend, OverflowMode overflowMode);
 
 	Decimal<S> subtract(Decimal<?> subtrahend, RoundingMode roundingMode);
 
@@ -1000,17 +1039,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> subtract(double subtrahend, RoundingMode roundingMode);
 
-	Decimal<S> subtract(double subtrahend, TruncationPolicy truncationPolicy);
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend);
+
+	Decimal<S> subtractUnscaled(long unscaledSubtrahend, OverflowMode overflowMode);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode);
 
 	Decimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, TruncationPolicy truncationPolicy);
-
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend);
-
-	Decimal<S> subtractUnscaled(long unscaledSubtrahend, OverflowMode overflowMode);
 
 	Decimal<S> subtractSquared(Decimal<S> value);
 
@@ -1034,8 +1071,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<?> multiplyExact(Decimal<?> multiplicand);
 
-	Decimal<?> multiplyExact(Decimal<?> multiplicand, OverflowMode overflowMode);
-
 	Decimal<S> multiply(long multiplicand);
 
 	Decimal<S> multiply(long multiplicand, OverflowMode overflowMode);
@@ -1043,8 +1078,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> multiply(double multiplicand);
 
 	Decimal<S> multiply(double multiplicand, RoundingMode roundingMode);
-
-	Decimal<S> multiply(double multiplicand, TruncationPolicy truncationPolicy);
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand);
 
@@ -1091,8 +1124,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> divide(double divisor);
 
 	Decimal<S> divide(double divisor, RoundingMode roundingMode);
-
-	Decimal<S> divide(double divisor, TruncationPolicy truncationPolicy);
 
 	Decimal<S> divideUnscaled(long unscaledDivisor);
 

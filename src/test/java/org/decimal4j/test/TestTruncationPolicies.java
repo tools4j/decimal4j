@@ -24,14 +24,15 @@
 package org.decimal4j.test;
 
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import org.decimal4j.truncate.DecimalRounding;
-import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 public enum TestTruncationPolicies {
@@ -60,14 +61,19 @@ public enum TestTruncationPolicies {
 		return policies;
 	}
 	
-	public Set<RoundingMode> getUncheckedRoundingModes() {
-		return getRoundingModesFor(OverflowMode.UNCHECKED);
+	public Collection<TruncationPolicy> getCheckedPolicies() {
+		final List<TruncationPolicy> policies = new ArrayList<TruncationPolicy>();
+		for (final TruncationPolicy policy : getPolicies()) {
+			if (policy.getOverflowMode().isChecked()) {
+				policies.add(policy);
+			}
+		}
+		return Collections.unmodifiableCollection(policies);
 	}
-	
-	public Set<RoundingMode> getRoundingModesFor(OverflowMode overflowMode) {
+	public Set<RoundingMode> getUncheckedRoundingModes() {
 		final Set<RoundingMode> rounding = EnumSet.noneOf(RoundingMode.class);
 		for (final TruncationPolicy policy : getPolicies()) {
-			if (overflowMode.equals(policy.getOverflowMode())) {
+			if (!policy.getOverflowMode().isChecked()) {
 				rounding.add(policy.getRoundingMode());
 			}
 		}
