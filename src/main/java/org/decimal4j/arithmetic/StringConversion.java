@@ -36,7 +36,7 @@ import org.decimal4j.truncate.TruncatedPart;
  */
 final class StringConversion {
 	
-	private static final ThreadLocal<StringBuilder> STRING_BUILDER_THREAD_LOCAL = new ThreadLocal<StringBuilder>() {
+	static final ThreadLocal<StringBuilder> STRING_BUILDER_THREAD_LOCAL = new ThreadLocal<StringBuilder>() {
 		@Override
 		protected StringBuilder initialValue() {
 			return new StringBuilder(19 + 1 + 2);//unsigned long: 19 digits, sign: 1, decimal point and leading 0: 2
