@@ -708,7 +708,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this + augend)} after
 	 * converting the given {@code augend} argument to the scale of {@code this}
-	 * Decimal. Rounding, if necessary, uses defined by the specified
+	 * Decimal. Rounding, if necessary, is defined by the specified
 	 * {@code truncationPolicy} argument and is applied during the conversion
 	 * step <i>before</i> the addition operation. The {@code truncationPolicy}
 	 * also defines the {@link OverflowMode} to apply if an overflow occurs
@@ -779,13 +779,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * during the conversion step <i>before</i> the addition operation.
 	 * Overflows due to conversion or addition result in an exception.
 	 * <p>
-	 * The {@code double} argument is converted into a Decimal number of the
-	 * same scale as {@code this} Decimal before performing the add operation.
-	 * {@link RoundingMode#HALF_UP HALF_UP} rounding is used if rounding is
-	 * necessary during the conversion. If the augend argument is NaN, infinite
-	 * or has a magnitude that is too large to be represented as a Decimal, an
-	 * exception is thrown. An exception is also thrown if the addition
-	 * operation leads to an overflow.
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the addition.
 	 * 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
@@ -931,11 +928,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this + round(unscaledAugend &times; 10<sup>-scale</sup>))</code>.
 	 * The {@code unscaledAugend} argument is converted to the same scale as
-	 * {@code this} Decimal. Rounding, if necessary, uses defined by the
-	 * specified {@code truncationPolicy} argument and is applied during the
-	 * conversion step <i>before</i> the addition operation. The
-	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
-	 * if an overflow occurs during scale conversion or addition.
+	 * {@code this} Decimal. Rounding, if necessary, is defined by the specified
+	 * {@code truncationPolicy} argument and is applied during the conversion
+	 * step <i>before</i> the addition operation. The {@code truncationPolicy}
+	 * also defines the {@link OverflowMode} to apply if an overflow occurs
+	 * during scale conversion or addition.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -1101,9 +1098,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this - subtrahend)}
 	 * after converting the given {@code subtrahend} argument to the scale of
-	 * {@code this} Decimal. Rounding, if necessary, uses defined by the
-	 * specified {@code truncationPolicy} argument and is applied during the
-	 * conversion step <i>before</i> the subtraction operation. The
+	 * {@code this} Decimal. Rounding, if necessary, is defined by the specified
+	 * {@code truncationPolicy} argument and is applied during the conversion
+	 * step <i>before</i> the subtraction operation. The
 	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
 	 * if an overflow occurs during scale conversion or subtraction.
 	 * <p>
@@ -1172,13 +1169,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * during the conversion step <i>before</i> the subtraction operation.
 	 * Overflows due to conversion or subtraction result in an exception.
 	 * <p>
-	 * The {@code double} argument is converted into a Decimal number of the
-	 * same scale as {@code this} Decimal before performing the subtract
-	 * operation. {@link RoundingMode#HALF_UP HALF_UP} rounding is used if
-	 * rounding is necessary during the conversion. If the subtrahend argument
-	 * is NaN, infinite or has a magnitude that is too large to be represented
-	 * as a Decimal, an exception is thrown. An exception is also thrown if the
-	 * subtraction operation leads to an overflow.
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the subtraction.
 	 * 
 	 * @param subtrahend
 	 *            value to be subtracted from this {@code Decimal}
@@ -1324,7 +1318,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Returns a {@code Decimal} whose value is
 	 * <code>(this - round(unscaledSubtrahend &times; 10<sup>-scale</sup>))</code>
 	 * . The {@code unscaledSubtrahend} argument is converted to the same scale
-	 * as {@code this} Decimal. Rounding, if necessary, uses defined by the
+	 * as {@code this} Decimal. Rounding, if necessary, is defined by the
 	 * specified {@code truncationPolicy} argument and is applied during the
 	 * conversion step <i>before</i> the subtraction operation. The
 	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
@@ -1434,7 +1428,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * {@code round(this * multiplicand)}. The result is rounded to the
-	 * {@link #getScale() scale} of this Decimal using default default
+	 * {@link #getScale() scale} of this Decimal using default
 	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. If the multiplication
 	 * causes an overflow, the result is silently truncated.
 	 * <p>
@@ -1478,7 +1472,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * {@link #getScale() scale} of this Decimal using the {@link RoundingMode}
 	 * specified by the {@code truncationPolicy} argument. The
 	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
-	 * if an overflow occurs during the multiplication operation.
+	 * if an overflow occurs during the multiply operation.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -1489,7 +1483,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            factor to multiply with this {@code Decimal}
 	 * @param truncationPolicy
 	 *            the truncation policy specifying {@link RoundingMode} and
-	 *            {@link OverflowMode} to apply if rounding is necessary or if 
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
 	 *            an overflow occurs
 	 * @return <code>round(this * multiplicand)</code>
 	 * @throws ArithmeticException
@@ -1500,20 +1494,202 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> multiply(Decimal<S> multiplicand, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * {@code round(this * multiplicand)} after converting the given
+	 * {@code multiplicand} argument to the scale of {@code this} Decimal.
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding mode is used if necessary
+	 * and applied twice during the conversion step <i>before</i> the
+	 * multiplication and again when rounding the product to the
+	 * {@link #getScale() scale} of this Decimal. If the multiplication causes
+	 * an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @return <code>round<sub>HALF_UP</sub>(this * multiplicand)</code>
+	 */
 	Decimal<S> multiplyBy(Decimal<?> multiplicand);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * {@code round(this * multiplicand)} after converting the given
+	 * {@code multiplicand} argument to the scale of {@code this} Decimal.
+	 * Rounding, if necessary, uses the specified {@code roundingMode} and is
+	 * applied during the conversion step <i>before</i> the multiplication and
+	 * again when rounding the product to the {@link #getScale() scale} of this
+	 * Decimal. If the multiplication causes an overflow, the result is silently
+	 * truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @param roundingMode
+	 *            the rounding mode to apply if the converted multiplicand or
+	 *            the resulting product needs to be rounded
+	 * @return <code>round(this * multiplicand)</code>
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	Decimal<S> multiplyBy(Decimal<?> multiplicand, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * {@code round(this * multiplicand)} after converting the given
+	 * {@code multiplicand} argument to the scale of {@code this} Decimal.
+	 * Rounding, if necessary, is defined by the specified
+	 * {@code truncationPolicy} argument and is applied during the conversion
+	 * step <i>before</i> the multiplication and again when rounding the product
+	 * to the {@link #getScale() scale} of this Decimal. The
+	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
+	 * if an overflow occurs during the multiply operation.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return <code>round(this * multiplicand)</code>
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
 	Decimal<S> multiplyBy(Decimal<?> multiplicand, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this * multiplicand)}.
+	 * The scale of the returned value is the sum of the scales of {@code this}
+	 * Decimal and the {@code multiplicand} argument. If the result scale
+	 * exceeds 18, an {@link IllegalArgumentException} is thrown. If the product
+	 * is out of the possible range for a Decimal with the result scale then an
+	 * {@code ArithmeticException} is thrown.
+	 * <p>
+	 * Note that the result is <i>always</i> a new instance --- immutable if
+	 * this Decimal is an {@link ImmutableDecimal} and mutable if it is a
+	 * {@link MutableDecimal}.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @return {@code (this * multiplicand)} with scale equal to the sum of
+	 *         scales of {@code this} and {@code multiplicand}
+	 * @throws IllegalArgumentException
+	 *             if the sum of the scales of {@code this} Decimal and the
+	 *             {@code multiplicand} argument exceeds 18
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and product is out of the possible
+	 *             range for a Decimal with the result scale
+	 */
 	Decimal<?> multiplyExact(Decimal<?> multiplicand);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this * multiplicand)}.
+	 * If the multiplication causes an overflow, the result is silently
+	 * truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @return {@code (this * multiplicand)}
+	 */
 	Decimal<S> multiply(long multiplicand);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this * multiplicand)}.
+	 * The specified {@code overflowMode} determines whether to truncate the
+	 * result silently or to throw an exception if an overflow occurs.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @param overflowMode
+	 *            the overflow mode to apply if the multiplication leads to an
+	 *            overflow
+	 * @return {@code (this * multiplicand)}
+	 * @throws ArithmeticException
+	 *             if {@code overflowMode==CHECKED} and an overflow occurs
+	 */
 	Decimal<S> multiply(long multiplicand, OverflowMode overflowMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * {@code round(this * multiplicand)} after converting the given
+	 * {@code double} argument into a Decimal value of the same scale as
+	 * {@code this} Decimal. {@link RoundingMode#HALF_UP HALF_UP} rounding mode
+	 * is used if necessary and applied twice during the conversion step
+	 * <i>before</i> the multiplication and again when rounding the product to
+	 * the {@link #getScale() scale} of this Decimal. Overflows due to
+	 * conversion or multiplication result in an exception.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @return <code>round<sub>HALF_UP</sub>(this * multiplicand)</code>
+	 * @throws NumberFormatException
+	 *             if {@code multiplicand} is NaN or infinite or if the
+	 *             magnitude is too large for the double to be represented as a
+	 *             {@code Decimal}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs during the multiply operation
+	 */
 	Decimal<S> multiply(double multiplicand);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * {@code round(this * multiplicand)} after converting the given
+	 * {@code double} argument into a Decimal value of the same scale as
+	 * {@code this} Decimal. Rounding, if necessary, uses the specified
+	 * {@code roundingMode} and is applied during the conversion step
+	 * <i>before</i> the multiplication and again when rounding the product to
+	 * the {@link #getScale() scale} of this Decimal. Overflows due to
+	 * conversion or multiplication result in an exception.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the multiplication.
+	 * 
+	 * @param multiplicand
+	 *            factor to multiply with this {@code Decimal}
+	 * @param roundingMode
+	 *            the rounding mode to apply if the converted multiplicand or
+	 *            the resulting product needs to be rounded
+	 * @return {@code round(this * multiplicand)}
+	 * @throws NumberFormatException
+	 *             if {@code multiplicand} is NaN or infinite or if the
+	 *             magnitude is too large for the double to be represented as a
+	 *             {@code Decimal}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs during the multiply operation
+	 */
 	Decimal<S> multiply(double multiplicand, RoundingMode roundingMode);
 
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand);
@@ -1891,49 +2067,122 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> shiftRight(int n, TruncationPolicy truncationPolicy);
 
 	/**
-	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>.
-	 * For {@code n >= 0} the result is exact. No precision is guaranteed for
+	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>
+	 * using default {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * <p>
+	 * The current implementation uses the core algorithm defined in ANSI
+	 * standard X3.274-1996. For {@code n >= 0}, the returned numerical value is
+	 * within 1 ULP of the exact numerical value. No precision is guaranteed for
 	 * {@code n < 0} but the result is usually exact up to 10-20 ULP.
+	 * <p>
+	 * Properties of the X3.274-1996 algorithm are:
+	 * <ul>
+	 * <li>An {@code ArithmeticException} exception is thrown if
+	 * {@code abs(n) > 999999999}</li>
+	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
+	 * otherwise</li>
+	 * <ul>
+	 * <li>if {@code n} is positive, the result is calculated via the repeated
+	 * squaring technique into a single accumulator</li>
+	 * <li>if {@code n} is negative, the result is calculated as if {@code n}
+	 * were positive; this value is then divided into one</li>
+	 * <li>The final value from either the positive or negative case is then
+	 * rounded using {@link RoundingMode#HALF_UP HALF_UP} rounding</li>
+	 * </ul>
 	 * 
 	 * @param n
-	 *            power to raise this {@code Decimal} to.
-	 * @return <code>this<sup>n</sup></code>
+	 *            power to raise this {@code Decimal} to
+	 * @return <code>this<sup>n</sup></code> using the ANSI standard X3.274-1996
+	 *         algorithm
 	 * @throws ArithmeticException
-	 *             if {@code n} is negative and {@code this} equals zero
+	 *             if {@code abs(n) > 999999999} or if {@code n} is negative and
+	 *             {@code this} equals zero
 	 */
 	Decimal<S> pow(int n);
 
 	/**
 	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>
-	 * applying the specified rounding mode. For {@code n >= 0} the result is
-	 * exact up to 1 ULP; the result is actually exact for all rounding modes
-	 * other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed
-	 * for {@code n < 0} but the result is usually exact up to 10-20 ULP.
+	 * applying the specified {@code roundingMode}.
+	 * <p>
+	 * The current implementation uses the core algorithm defined in ANSI
+	 * standard X3.274-1996. For {@code n >= 0}, the returned numerical value is
+	 * within 1 ULP of the exact numerical value; the result is actually exact
+	 * for all rounding modes other than HALF_UP, HALF_EVEN and HALF_DOWN. No
+	 * precision is guaranteed for {@code n < 0} but the result is usually exact
+	 * up to 10-20 ULP.
+	 * <p>
+	 * Properties of the X3.274-1996 algorithm are:
+	 * <ul>
+	 * <li>An {@code ArithmeticException} exception is thrown if
+	 * {@code abs(n) > 999999999}</li>
+	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
+	 * otherwise</li>
+	 * <ul>
+	 * <li>if {@code n} is positive, the result is calculated via the repeated
+	 * squaring technique into a single accumulator</li>
+	 * <li>if {@code n} is negative, the result is calculated as if {@code n}
+	 * were positive; this value is then divided into one</li>
+	 * <li>The final value from either the positive or negative case is then
+	 * rounded using the specified {@code roundingMode}</li>
+	 * </ul>
 	 * 
 	 * @param n
-	 *            power to raise this {@code Decimal} to.
+	 *            power to raise this {@code Decimal} to
 	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
-	 * @return <code>this<sup>n</sup></code>
+	 *            the rounding mode to apply if rounding is necessary
+	 * @return <code>this<sup>n</sup></code> using the ANSI standard X3.274-1996
+	 *         algorithm
 	 * @throws ArithmeticException
-	 *             if {@code n} is negative and {@code this} equals zero
+	 *             if {@code abs(n) > 999999999}; if {@code n} is negative and
+	 *             {@code this} equals zero or if {@code roundingMode} equals
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary
 	 */
 	Decimal<S> pow(int n, RoundingMode roundingMode);
 
 	/**
 	 * Returns a {@code Decimal} whose value is <code>(this<sup>n</sup>)</code>
-	 * applying the specified rounding mode. For {@code n >= 0} the result is
-	 * exact up to 1 ULP; the result is actually exact for all rounding modes
-	 * other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed
-	 * for {@code n < 0} but the result is usually exact up to 10-20 ULP.
+	 * applying the {@link RoundingMode} specified by {@code truncationPolicy}.
+	 * The {@code truncationPolicy} argument also defines the
+	 * {@link OverflowMode} to apply if an overflow occurs during the power
+	 * operation.
+	 * <p>
+	 * The current implementation uses the core algorithm defined in ANSI
+	 * standard X3.274-1996. For {@code n >= 0}, the returned numerical value is
+	 * within 1 ULP of the exact numerical value; the result is actually exact
+	 * for all rounding modes other than HALF_UP, HALF_EVEN and HALF_DOWN. No
+	 * precision is guaranteed for {@code n < 0} but the result is usually exact
+	 * up to 10-20 ULP.
+	 * <p>
+	 * Properties of the X3.274-1996 algorithm are:
+	 * <ul>
+	 * <li>An {@code ArithmeticException} exception is thrown if
+	 * {@code abs(n) > 999999999}</li>
+	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
+	 * otherwise</li>
+	 * <ul>
+	 * <li>if {@code n} is positive, the result is calculated via the repeated
+	 * squaring technique into a single accumulator</li>
+	 * <li>if {@code n} is negative, the result is calculated as if {@code n}
+	 * were positive; this value is then divided into one</li>
+	 * <li>The final value from either the positive or negative case is then
+	 * rounded using the {@link RoundingMode} specified by
+	 * {@code truncationPolicy}</li>
+	 * </ul>
 	 * 
 	 * @param n
-	 *            power to raise this {@code Decimal} to.
+	 *            power to raise this {@code Decimal} to
 	 * @param truncationPolicy
-	 *            the truncation policy to apply for this operation
-	 * @return <code>this<sup>n</sup></code>
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return <code>this<sup>n</sup></code> using the ANSI standard X3.274-1996
+	 *         algorithm
 	 * @throws ArithmeticException
-	 *             if {@code n} is negative and {@code this} equals zero
+	 *             if {@code abs(n) > 999999999}; if {@code n} is negative and
+	 *             {@code this} equals zero; if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
 	 */
 	Decimal<S> pow(int n, TruncationPolicy truncationPolicy);
 
