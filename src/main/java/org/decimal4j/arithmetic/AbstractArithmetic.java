@@ -60,7 +60,7 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 
 	@Override
 	public final int compare(long uDecimal1, long uDecimal2) {
-		return (uDecimal1 < uDecimal2) ? -1 : ((uDecimal1 == uDecimal2) ? 0 : 1);
+		return Long.compare(uDecimal1, uDecimal2);
 	}
 
 	@Override
