@@ -26,6 +26,8 @@ package org.decimal4j.api;
 import java.math.RoundingMode;
 
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.TruncationPolicy;
 
 /**
  * Interface implemented by mutable {@link Decimal} classes of different scales.
@@ -285,4 +287,345 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 *             if the value cannot be parsed
 	 */
 	MutableDecimal<S> set(String value, RoundingMode roundingMode);
+
+	//override some methods with specialized return type
+
+	@Override
+	MutableDecimal<S> integralPart();
+
+	@Override
+	MutableDecimal<S> fractionalPart();
+
+	@Override
+	MutableDecimal<S> round(int precision);
+
+	@Override
+	MutableDecimal<S> round(int precision, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> round(int precision, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<?> scale(int scale);
+
+	@SuppressWarnings("hiding")
+	@Override
+	<S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics);
+
+	@Override
+	MutableDecimal<?> scale(int scale, RoundingMode roundingMode);
+
+	@SuppressWarnings("hiding")
+	@Override
+	<S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<?> scale(int scale, TruncationPolicy truncationPolicy);
+
+	@SuppressWarnings("hiding")
+	@Override
+	<S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> add(Decimal<S> augend);
+
+	@Override
+	MutableDecimal<S> add(Decimal<S> augend, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> add(Decimal<?> augend, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> add(Decimal<?> augend, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> add(long augend);
+
+	@Override
+	MutableDecimal<S> add(long augend, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> add(double augend);
+
+	@Override
+	MutableDecimal<S> add(double augend, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> addUnscaled(long unscaledAugend);
+
+	@Override
+	MutableDecimal<S> addUnscaled(long unscaledAugend, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> addUnscaled(long unscaledAugend, int scale);
+
+	@Override
+	MutableDecimal<S> addUnscaled(long unscaledAugend, int scale, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> addSquared(Decimal<S> value);
+
+	@Override
+	MutableDecimal<S> addSquared(Decimal<S> value, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> addSquared(Decimal<S> value, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> subtract(Decimal<S> subtrahend);
+
+	@Override
+	MutableDecimal<S> subtract(Decimal<S> subtrahend, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> subtract(Decimal<?> subtrahend, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> subtract(Decimal<?> subtrahend, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> subtract(long subtrahend);
+
+	@Override
+	MutableDecimal<S> subtract(long subtrahend, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> subtract(double subtrahend);
+
+	@Override
+	MutableDecimal<S> subtract(double subtrahend, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> subtractUnscaled(long unscaledSubtrahend);
+
+	@Override
+	MutableDecimal<S> subtractUnscaled(long unscaledSubtrahend, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> subtractUnscaled(long unscaledSubtrahend, int scale);
+
+	@Override
+	MutableDecimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> subtractUnscaled(long unscaledSubtrahend, int scale, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> subtractSquared(Decimal<S> value);
+
+	@Override
+	MutableDecimal<S> subtractSquared(Decimal<S> value, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> subtractSquared(Decimal<S> value, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> multiply(Decimal<S> multiplicand);
+
+	@Override
+	MutableDecimal<S> multiply(Decimal<S> multiplicand, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> multiply(Decimal<S> multiplicand, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> multiplyBy(Decimal<?> multiplicand);
+
+	@Override
+	MutableDecimal<S> multiplyBy(Decimal<?> multiplicand, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> multiplyBy(Decimal<?> multiplicand, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<?> multiplyExact(Decimal<?> multiplicand);
+
+	@Override
+	MutableDecimal<S> multiply(long multiplicand);
+
+	@Override
+	MutableDecimal<S> multiply(long multiplicand, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> multiply(double multiplicand);
+
+	@Override
+	MutableDecimal<S> multiply(double multiplicand, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> multiplyUnscaled(long unscaledMultiplicand);
+
+	@Override
+	MutableDecimal<S> multiplyUnscaled(long unscaledMultiplicand, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> multiplyUnscaled(long unscaledMultiplicand, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale);
+
+	@Override
+	MutableDecimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> multiplyByPowerOfTen(int n);
+
+	@Override
+	MutableDecimal<S> multiplyByPowerOfTen(int n, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> multiplyByPowerOfTen(int n, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divide(Decimal<S> divisor);
+
+	@Override
+	MutableDecimal<S> divide(Decimal<S> divisor, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divide(Decimal<S> divisor, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divideBy(Decimal<?> divisor);
+
+	@Override
+	MutableDecimal<S> divideBy(Decimal<?> divisor, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divideBy(Decimal<?> divisor, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divideTruncate(Decimal<S> divisor);
+
+	@Override
+	MutableDecimal<S> divideExact(Decimal<S> divisor);
+
+	@Override
+	MutableDecimal<S> divide(long divisor);
+
+	@Override
+	MutableDecimal<S> divide(long divisor, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divide(long divisor, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divide(double divisor);
+
+	@Override
+	MutableDecimal<S> divide(double divisor, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divideUnscaled(long unscaledDivisor);
+
+	@Override
+	MutableDecimal<S> divideUnscaled(long unscaledDivisor, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divideUnscaled(long unscaledDivisor, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divideUnscaled(long unscaledDivisor, int scale);
+
+	@Override
+	MutableDecimal<S> divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divideByPowerOfTen(int n);
+
+	@Override
+	MutableDecimal<S> divideByPowerOfTen(int n, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> divideByPowerOfTen(int n, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> divideToIntegralValue(Decimal<S> divisor);
+
+	@Override
+	MutableDecimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S>[] divideAndRemainder(Decimal<S> divisor);
+
+	@Override
+	MutableDecimal<S> remainder(Decimal<S> divisor);
+
+	@Override
+	MutableDecimal<S> negate();
+
+	@Override
+	MutableDecimal<S> negate(OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> abs();
+
+	@Override
+	MutableDecimal<S> abs(OverflowMode overflowMode);
+
+	@Override
+	MutableDecimal<S> invert();
+
+	@Override
+	MutableDecimal<S> invert(RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> invert(TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> square();
+
+	@Override
+	MutableDecimal<S> square(RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> square(TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> sqrt();
+
+	@Override
+	MutableDecimal<S> sqrt(RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> shiftLeft(int n);
+
+	@Override
+	MutableDecimal<S> shiftLeft(int n, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> shiftLeft(int n, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> shiftRight(int n);
+
+	@Override
+	MutableDecimal<S> shiftRight(int n, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> shiftRight(int n, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> pow(int n);
+
+	@Override
+	MutableDecimal<S> pow(int n, RoundingMode roundingMode);
+
+	@Override
+	MutableDecimal<S> pow(int n, TruncationPolicy truncationPolicy);
+
+	@Override
+	MutableDecimal<S> avg(Decimal<S> val);
+
+	@Override
+	MutableDecimal<S> avg(Decimal<S> val, RoundingMode roundingMode);
 }

@@ -251,7 +251,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 	
 	@Override
-	public Decimal<S> round(int precision, TruncationPolicy truncationPolicy) {
+	public D round(int precision, TruncationPolicy truncationPolicy) {
 		if (precision < getScale()) {
 			return createOrAssign(getArithmeticFor(truncationPolicy).round(unscaledValue(), precision));
 		}
@@ -683,7 +683,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 	
 	@Override
-	public Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode) {
+	public D divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode) {
 		final DecimalArithmetic arith = getArithmeticFor(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
 		try {
 			final long longValue = arith.divideByLong(unscaledValue(), divisor.unscaledValue());
@@ -965,7 +965,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public Decimal<S> min(Decimal<S> val) {
-		return isLessThanOrEqualTo(val) ? self() : val;
+		return isLessThanOrEqualTo(val) ? this : val;
 	}
 
 	@Override

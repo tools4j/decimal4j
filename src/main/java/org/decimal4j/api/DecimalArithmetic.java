@@ -165,8 +165,8 @@ public interface DecimalArithmetic {
 	long subtract(long uDecimalMinuend, long uDecimalSubtrahend);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal1 &times;
-	 * uDecimal2)</tt>.
+	 * Returns an unscaled decimal whose value is
+	 * {@code (uDecimal1 * uDecimal2)}.
 	 * 
 	 * @param uDecimal1
 	 *            first unscaled decimal value to be multiplied
@@ -180,14 +180,15 @@ public interface DecimalArithmetic {
 	long multiply(long uDecimal1, long uDecimal2);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal &times;
-	 * lValue)} where the second argument is a true long value instead of an unscaled decimal.
+	 * Returns an unscaled decimal whose value is {@code (uDecimal * lValue)}
+	 * where the second argument is a true long value instead of an unscaled
+	 * decimal.
 	 * 
 	 * @param uDecimal
 	 *            unscaled decimal value to be multiplied
 	 * @param lValue
 	 *            long value to be multiplied
-	 * @return {@code uDecimal * value}
+	 * @return {@code uDecimal * lValue}
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the {@link #getOverflowMode()
 	 *             overflow mode} is set to throw an exception
@@ -196,7 +197,7 @@ public interface DecimalArithmetic {
 
 	/**
 	 * Returns an unscaled decimal whose value is
-	 * <code>(uDecimal &times; 10<sup>n</sup>)</code>.
+	 * <code>(uDecimal * 10<sup>n</sup>)</code>.
 	 * <p>
 	 * The power, {@code n}, may be negative, in which case this method performs
 	 * a multiplication by a power of ten. If rounding must be performed (for
