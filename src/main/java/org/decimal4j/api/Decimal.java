@@ -1421,8 +1421,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> subtractSquared(Decimal<S> value, TruncationPolicy truncationPolicy);
 
-	//FIXME 
-
 	// multiply
 
 	/**
@@ -1741,7 +1739,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * to the scale of this Decimal using the using the {@link RoundingMode}
 	 * specified by the {@code truncationPolicy} argument. The
 	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
-	 * if an overflow occurs during the multiplication operation.
+	 * if an overflow occurs during the multiplication.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -1829,7 +1827,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * conversion step <i>before</i> the multiplication and again when rounding
 	 * the product to the {@link #getScale() scale} of this Decimal. The
 	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
-	 * if an overflow occurs during the multiplication operation.
+	 * if an overflow occurs during the multiplication.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -1859,7 +1857,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <tt>round(this * 10<sup>n</sup>)</tt>. For negative <tt>n</tt> the
-	 * multiplication turns into a de facto division and the result is rounded
+	 * multiplication turns into a de-facto division and the result is rounded
 	 * to the {@link #getScale() scale} of this Decimal using default
 	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. If the multiplication
 	 * causes an overflow, the result is silently truncated.
@@ -1883,7 +1881,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <tt>round(this * 10<sup>n</sup>)</tt>. For negative <tt>n</tt> the
-	 * multiplication turns into a de facto division and the result is rounded
+	 * multiplication turns into a de-facto division and the result is rounded
 	 * to the {@link #getScale() scale} of this Decimal using the specified
 	 * {@code roundingMode}. If the multiplication causes an overflow, the
 	 * result is silently truncated.
@@ -1913,7 +1911,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is
 	 * <tt>round(this * 10<sup>n</sup>)</tt>. For negative <tt>n</tt> the
-	 * multiplication turns into a de facto division and the result is rounded
+	 * multiplication turns into a de-facto division and the result is rounded
 	 * to the {@link #getScale() scale} of this Decimal using the
 	 * {@link RoundingMode} specified by the {@code truncationPolicy} argument.
 	 * The {@code truncationPolicy} also defines the {@link OverflowMode} to
@@ -1945,6 +1943,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             {@code n > 0}
 	 */
 	Decimal<S> multiplyByPowerOfTen(int n, TruncationPolicy truncationPolicy);
+
+	// FIXME
 
 	// divide
 
@@ -1986,19 +1986,117 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / 10<sup>n</sup>)</tt>. The result is rounded to the
+	 * {@link #getScale() scale} of this Decimal using default
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * <p>
+	 * For negative <tt>n</tt> the division turns into a de-facto
+	 * multiplication. If the multiplication causes an overflow, the result is
+	 * silently truncated.
+	 * <p>
+	 * The result of this operation is the same as for
+	 * {@link #multiplyByPowerOfTen(int) multiplyByPowerOfTen(-n)} given
+	 * {@code n > } {@link Integer#MIN_VALUE}.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param n
+	 *            the exponent of the power-of-ten divisor by which this
+	 *            {@code Decimal} is to be divided
+	 * @return <tt>round<sub>HALF_UP</sub>(this / 10<sup>n</sup>)</tt>
+	 */
 	Decimal<S> divideByPowerOfTen(int n);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / 10<sup>n</sup>)</tt>. The result is rounded to the
+	 * {@link #getScale() scale} of this Decimal using the specified
+	 * {@code roudningMode}.
+	 * <p>
+	 * For negative <tt>n</tt> the division turns into a de-facto
+	 * multiplication. If the multiplication causes an overflow, the result is
+	 * silently truncated.
+	 * <p>
+	 * The result of this operation is the same as for
+	 * {@link #multiplyByPowerOfTen(int, RoundingMode) multiplyByPowerOfTen(-n,
+	 * roundingMode)} given {@code n > } {@link Integer#MIN_VALUE}.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param n
+	 *            the exponent of the power-of-ten divisor by which this
+	 *            {@code Decimal} is to be divided
+	 * @param roundingMode
+	 *            the rounding mode to apply if the result needs to be rounded
+	 *            for the case {@code n > 0}
+	 * @return <tt>round(this / 10<sup>n</sup>)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code n > 0} and {@code roundingMode==UNNECESSARY} and
+	 *             rounding is necessary
+	 */
 	Decimal<S> divideByPowerOfTen(int n, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / 10<sup>n</sup>)</tt>. The result is rounded to the
+	 * {@link #getScale() scale} of this Decimal using the {@link RoundingMode}
+	 * specified by the {@code truncationPolicy} argument.
+	 * <p>
+	 * For negative <tt>n</tt> the division turns into a de-facto multiplication
+	 * and {@code truncationPolicy} defines the {@link OverflowMode} to apply if
+	 * an overflow occurs during the multiplication.
+	 * <p>
+	 * The result of this operation is the same as for
+	 * {@link #multiplyByPowerOfTen(int, TruncationPolicy)
+	 * multiplyByPowerOfTen(-n, truncationPolicy)} given {@code n > }
+	 * {@link Integer#MIN_VALUE}.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param n
+	 *            the exponent of the power-of-ten divisor by which this
+	 *            {@code Decimal} is to be divided
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} to apply
+	 *            if rounding is necessary when {@code n > 0} as well
+	 *            {@link OverflowMode} to use if {@code n < 0} and an overflow
+	 *            occurs during the de-facto multiplication
+	 * @return <tt>round(this / 10<sup>n</sup>)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary
+	 *             when {@code n > 0}, or if an overflow occurs and the policy
+	 *             declares {@link OverflowMode#CHECKED} for the case
+	 *             {@code n < 0}
+	 */
 	Decimal<S> divideByPowerOfTen(int n, TruncationPolicy truncationPolicy);
+
+	//FIXME
 
 	/**
 	 * Returns a {@code Decimal} whose value is the integer part of the quotient
-	 * {@code (this / divisor)} rounded down.
+	 * {@code (this / divisor)} rounded down. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
 	 *
 	 * @param divisor
 	 *            value by which this {@code Decimal} is to be divided.
-	 * @return The integer part of {@code this / divisor}.
+	 * @return The integer part of {@code (this / divisor)}.
 	 * @throws ArithmeticException
 	 *             if {@code divisor==0}
 	 */
@@ -2006,13 +2104,21 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the integer part of the quotient
-	 * {@code (this / divisor)} rounded down.
+	 * {@code (this / divisor)} rounded down. The specified {@code overflowMode}
+	 * determines whether to truncate the result silently or to throw an
+	 * exception if an overflow occurs.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
 	 *
 	 * @param divisor
 	 *            value by which this {@code Decimal} is to be divided.
 	 * @param overflowMode
-	 *            the mode to apply if the operation leads to an overflow
-	 * @return The integer part of {@code this / divisor}.
+	 *            the overflow mode to apply if the division leads to an
+	 *            overflow
+	 * @return The integer part of {@code (this / divisor)}.
 	 * @throws ArithmeticException
 	 *             if {@code divisor==0} or if {@code overflowMode==CHECKED} and
 	 *             an overflow occurs
@@ -2020,10 +2126,24 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode);
 
 	/**
+	 * Returns a {@code Decimal} whose value is the integer part of the quotient
+	 * {@code (this / divisor)} rounded down. The result is returned as
+	 * {@code long} value.
+	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided.
+	 * @return The integer part of {@code (this / divisor)} returned as
+	 *         {@code long}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 */
+	long divideToLongValue(Decimal<S> divisor);
+
+	/**
 	 * Returns a two-element {@code Decimal} array containing the result of
 	 * {@code divideToIntegralValue} followed by the result of {@code remainder}
-	 * on the two operands.
-	 *
+	 * on the two operands. If the division causes an overflow, the result is
+	 * silently truncated.
 	 * <p>
 	 * Note that if both the integer quotient and remainder are needed, this
 	 * method is faster than using the {@code divideToIntegralValue} and
@@ -2044,13 +2164,47 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S>[] divideAndRemainder(Decimal<S> divisor);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this % divisor)}.
+	 * Returns a two-element {@code Decimal} array containing the result of
+	 * {@code divideToIntegralValue} followed by the result of {@code remainder}
+	 * on the two operands. The specified {@code overflowMode} determines
+	 * whether to truncate the result silently or to throw an exception if an
+	 * overflow occurs.
+	 * <p>
+	 * Note that if both the integer quotient and remainder are needed, this
+	 * method is faster than using the {@code divideToIntegralValue} and
+	 * {@code remainder} methods separately because the division need only be
+	 * carried out once.
 	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided, and the
+	 *            remainder computed.
+	 * @param overflowMode
+	 *            the overflow mode to apply if the division leads to an
+	 *            overflow
+	 * @return a two element {@code Decimal} array: the quotient (the result of
+	 *         {@code divideToIntegralValue}) is the initial element and the
+	 *         remainder is the final element.
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} or if {@code overflowMode==CHECKED} and
+	 *             an overflow occurs
+	 * @see #divideToIntegralValue(Decimal)
+	 * @see #remainder(Decimal)
+	 */
+	Decimal<S>[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode);
+
+	//@formatter:off
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this % divisor)}.
 	 * <p>
 	 * The remainder is given by
-	 * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}
-	 * . Note that this is not the modulo operation (the result can be
+	 * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}.
+	 * Note that this is not the modulo operation (the result can be
 	 * negative).
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the operation.
 	 *
 	 * @param divisor
 	 *            value by which this {@code Decimal} is to be divided.
@@ -2059,23 +2213,38 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code divisor==0}
 	 * @see #divideToIntegralValue(Decimal)
 	 */
+	//@formatter:on
 	Decimal<S> remainder(Decimal<S> divisor);
 
 	// other arithmetic operations
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
-	 * the implementation, a new Decimal instance may be created and returned
-	 * for the result, or this Decimal may be modified and returned.
+	 * Returns a {@code Decimal} whose value is {@code (-this)}.
+	 * <p>
+	 * If an overflow occurs (which is true iff
+	 * {@code this.unscaledValue()==Long.MIN_VALUE}) then the result is still
+	 * negative and numerically equal to {@code this} value.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
 	 * 
 	 * @return {@code -this}
 	 */
 	Decimal<S> negate();
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (-this)}. Depending on
-	 * the implementation, a new Decimal instance may be created and returned
-	 * for the result, or this Decimal may be modified and returned.
+	 * Returns a {@code Decimal} whose value is {@code (-this)}.
+	 * <p>
+	 * The specified {@code overflowMode} determines whether to truncate the
+	 * result silently or to throw an exception if an overflow occurs (which is
+	 * true iff {@code this.unscaledValue()==Long.MIN_VALUE}).
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
 	 * 
 	 * @param overflowMode
 	 *            the overflow mode to apply
@@ -2089,9 +2258,16 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the absolute value of this
-	 * {@code Decimal}. Depending on the implementation, a new Decimal instance
-	 * may be created and returned for the result, or this Decimal may be
-	 * modified and returned.
+	 * {@code Decimal}.
+	 * <p>
+	 * If an overflow occurs (which is true iff
+	 * {@code this.unscaledValue()==Long.MIN_VALUE}) then the result is still
+	 * negative and numerically equal to {@code this} value.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
 	 * 
 	 * @return {@code abs(this)}
 	 */
@@ -2099,9 +2275,16 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is the absolute value of this
-	 * {@code Decimal}. Depending on the implementation, a new Decimal instance
-	 * may be created and returned for the result, or this Decimal may be
-	 * modified and returned.
+	 * {@code Decimal}.
+	 * <p>
+	 * The specified {@code overflowMode} determines whether to truncate the
+	 * result silently or to throw an exception if an overflow occurs (which is
+	 * true iff {@code this.unscaledValue()==Long.MIN_VALUE}).
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
 	 * 
 	 * @param overflowMode
 	 *            the overflow mode to apply
@@ -2114,90 +2297,161 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> abs(OverflowMode overflowMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (1/this)}. Depending on
-	 * the implementation, a new Decimal instance may be created and returned
-	 * for the result, or this Decimal may be modified and returned.
+	 * Returns a {@code Decimal} whose value is {@code round(1 / this)}. The
+	 * result is rounded to the {@link #getScale() scale} of this Decimal using
+	 * default {@link RoundingMode#HALF_UP HALF_UP} rounding. If the inversion
+	 * causes an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the inversion.
 	 * 
-	 * @return {@code 1/this}
+	 * @return <tt>round<sub>HALF_UP</sub>(1 / this)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code this==0}
 	 */
 	Decimal<S> invert();
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (1/this)} applying the
-	 * specified rounding mode. Depending on the implementation, a new Decimal
-	 * instance may be created and returned for the result, or this Decimal may
-	 * be modified and returned.
+	 * Returns a {@code Decimal} whose value is {@code round(1 / this)}. The
+	 * result is rounded to the {@link #getScale() scale} of this Decimal using
+	 * the specified {@code roundingMode}. If the inversion causes an overflow,
+	 * the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the inversion.
 	 * 
 	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
-	 * @return {@code 1/this}
+	 *            the rounding mode to apply if the result needs to be rounded
+	 * @return {@code round(1 / this)}
+	 * @throws ArithmeticException
+	 *             if {@code this==0} or if {@code roundingMode==UNNECESSARY}
+	 *             and rounding is necessary
 	 */
 	Decimal<S> invert(RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (1/this)} applying the
-	 * specified rounding mode. Depending on the implementation, a new Decimal
-	 * instance may be created and returned for the result, or this Decimal may
-	 * be modified and returned.
+	 * Returns a {@code Decimal} whose value is {@code round(1 / this)}. The
+	 * result is rounded to the {@link #getScale() scale} of this Decimal using
+	 * the {@link RoundingMode} specified by the {@code truncationPolicy}
+	 * argument. The {@code truncationPolicy} also defines the
+	 * {@link OverflowMode} to apply if an overflow occurs during the invert
+	 * operation.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the inversion.
 	 * 
 	 * @param truncationPolicy
-	 *            the truncation policy to apply for this operation
-	 * @return {@code 1/this}
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return {@code round(1 / this)}
+	 * @throws ArithmeticException
+	 *             if {@code this==0}, if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
 	 */
 	Decimal<S> invert(TruncationPolicy truncationPolicy);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this^2)}. Depending on
-	 * the implementation, a new Decimal instance may be created and returned
-	 * for the result, or this Decimal may be modified and returned.
+	 * Returns a {@code Decimal} whose value is <tt>(this<sup>2</sup>)</tt>. The
+	 * result is rounded to the {@link #getScale() scale} of this Decimal using
+	 * default {@link RoundingMode#HALF_UP HALF_UP} rounding. If the square
+	 * operation causes an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the square operation.
 	 * 
-	 * @return {@code this*this}
+	 * @return <tt>round<sub>HALF_UP</sub>(this * this)</tt>
 	 */
 	Decimal<S> square();
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this^2)} applying the
-	 * specified rounding mode. Depending on the implementation, a new Decimal
-	 * instance may be created and returned for the result, or this Decimal may
-	 * be modified and returned.
+	 * Returns a {@code Decimal} whose value is <tt>(this<sup>2</sup>)</tt>. The
+	 * result is rounded to the {@link #getScale() scale} of this Decimal using
+	 * the specified {@code roundingMode}. If the square operation causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the square operation.
 	 * 
 	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
-	 * @return {@code this*this}
+	 *            the rounding mode to apply if the result needs to be rounded
+	 * @return {@code round(this * this)}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
 	 */
 	Decimal<S> square(RoundingMode roundingMode);
 
 	/**
-	 * Returns a {@code Decimal} whose value is {@code (this^2)} applying the
-	 * specified rounding mode. Depending on the implementation, a new Decimal
-	 * instance may be created and returned for the result, or this Decimal may
-	 * be modified and returned.
+	 * Returns a {@code Decimal} whose value is <tt>(this<sup>2</sup>)</tt>. The
+	 * result is rounded to the {@link #getScale() scale} of this Decimal using
+	 * the {@link RoundingMode} specified by the {@code truncationPolicy}
+	 * argument. The {@code truncationPolicy} also defines the
+	 * {@link OverflowMode} to apply if an overflow occurs during the square
+	 * operation.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the square operation.
 	 * 
 	 * @param truncationPolicy
-	 *            the truncation policy to apply for this operation
-	 * @return {@code this*this}
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return {@code round(this * this)}
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
 	 */
 	Decimal<S> square(TruncationPolicy truncationPolicy);
 
 	/**
 	 * Returns a {@code Decimal} whose value is the square root of {@code this}
-	 * Decimal value. Depending on the implementation, a new Decimal instance
-	 * may be created and returned for the result, or this Decimal may be
-	 * modified and returned.
+	 * Decimal value. The result is rounded to the {@link #getScale() scale} of
+	 * this Decimal using default {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the operation.
 	 * 
 	 * @return {@code sqrt(this)}
+	 * @throws ArithmeticException
+	 *             if {@code this < 0}
 	 */
 	Decimal<S> sqrt();
 
 	/**
 	 * Returns a {@code Decimal} whose value is the square root of {@code this}
-	 * Decimal value applying the specified rounding mode. Depending on the
-	 * implementation, a new Decimal instance may be created and returned for
-	 * the result, or this Decimal may be modified and returned.
+	 * Decimal value. The result is rounded to the {@link #getScale() scale} of
+	 * this Decimal using the specified {@code roundingMode}.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the operation.
 	 * 
 	 * @param roundingMode
-	 *            the rounding mode to apply for this operation
+	 *            the rounding mode to apply if the result needs to be rounded
 	 * @return {@code sqrt(this)}
+	 * @throws ArithmeticException
+	 *             if {@code this < 0} or if {@code roundingMode==UNNECESSARY}
+	 *             and rounding is necessary
 	 */
 	Decimal<S> sqrt(RoundingMode roundingMode);
 
@@ -2215,6 +2469,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * a right shift.
 	 * <p>
 	 * Computes <tt>floor(this * 2<sup>n</sup>)</tt>.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 *
 	 * @param n
 	 *            shift distance, in bits.
@@ -2228,14 +2487,23 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * distance, {@code n}, may be negative, in which case this method performs
 	 * a right shift.
 	 * <p>
-	 * Computes <tt>floor(this * 2<sup>n</sup>)</tt>.
+	 * Computes <tt>round(this * 2<sup>n</sup>)</tt> using the specified
+	 * {@code roundingMode}.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 *
 	 * @param n
 	 *            shift distance, in bits.
 	 * @param roundingMode
 	 *            the rounding mode to use if truncation is involved for
-	 *            negative {@code n}, i.e. for right shifts
+	 *            negative {@code n}, that is, for right shifts
 	 * @return {@code this << n}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
 	 * @see #shiftRight
 	 */
 	Decimal<S> shiftLeft(int n, RoundingMode roundingMode);
@@ -2245,13 +2513,26 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * distance, {@code n}, may be negative, in which case this method performs
 	 * a right shift.
 	 * <p>
-	 * Computes <tt>floor(this * 2<sup>n</sup>)</tt>.
+	 * Computes <tt>round(this * 2<sup>n</sup>)</tt> using the
+	 * {@link RoundingMode} specified by the {@code truncationPolicy} argument.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 *
 	 * @param n
 	 *            shift distance, in bits.
 	 * @param truncationPolicy
-	 *            the truncation policy to use if truncation is involved
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
 	 * @return {@code this << n}
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
 	 * @see #shiftRight
 	 */
 	Decimal<S> shiftLeft(int n, TruncationPolicy truncationPolicy);
@@ -2262,6 +2543,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * case this method performs a left shift.
 	 * <p>
 	 * Computes <tt>floor(this / 2<sup>n</sup>)</tt>.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 *
 	 * @param n
 	 *            shift distance, in bits.
@@ -2275,7 +2561,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * is performed. The shift distance, {@code n}, may be negative, in which
 	 * case this method performs a left shift.
 	 * <p>
-	 * Computes <tt>floor(this / 2<sup>n</sup>)</tt>.
+	 * Computes <tt>round(this / 2<sup>n</sup>)</tt> using the specified
+	 * {@code roundingMode}.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 *
 	 * @param n
 	 *            shift distance, in bits.
@@ -2283,6 +2575,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the rounding mode to use if truncation is involved
 	 * @return {@code this >> n}
 	 * @see #shiftLeft
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
 	 */
 	Decimal<S> shiftRight(int n, RoundingMode roundingMode);
 
@@ -2291,13 +2586,26 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * is performed. The shift distance, {@code n}, may be negative, in which
 	 * case this method performs a left shift.
 	 * <p>
-	 * Computes <tt>floor(this / 2<sup>n</sup>)</tt>.
+	 * Computes <tt>round(this / 2<sup>n</sup>)</tt> using the
+	 * {@link RoundingMode} specified by the {@code truncationPolicy} argument.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 *
 	 * @param n
 	 *            shift distance, in bits.
 	 * @param truncationPolicy
-	 *            the truncation policy to use if truncation is involved
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
 	 * @return {@code this >> n}
+	 * @throws ArithmeticException
+	 *             if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
 	 * @see #shiftLeft
 	 */
 	Decimal<S> shiftRight(int n, TruncationPolicy truncationPolicy);
@@ -2325,6 +2633,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>The final value from either the positive or negative case is then
 	 * rounded using {@link RoundingMode#HALF_UP HALF_UP} rounding</li>
 	 * </ul>
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to
@@ -2361,6 +2674,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>The final value from either the positive or negative case is then
 	 * rounded using the specified {@code roundingMode}</li>
 	 * </ul>
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to
@@ -2404,6 +2722,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * rounded using the {@link RoundingMode} specified by
 	 * {@code truncationPolicy}</li>
 	 * </ul>
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the shift operation.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to

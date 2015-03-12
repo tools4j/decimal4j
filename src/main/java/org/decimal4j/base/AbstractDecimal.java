@@ -697,6 +697,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	}
 
 	@Override
+	public long divideToLongValue(Decimal<S> divisor) {
+		return unscaledValue() / divisor.unscaledValue();
+	}
+	
+	@Override
 	public D[] divideAndRemainder(Decimal<S> divisor) {
 		final long uDividend = unscaledValue();
 		final long uDivisor = divisor.unscaledValue();
@@ -707,6 +712,26 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		result[0] = create(uIntegral);
 		result[1] = create(uReminder);
 		return result;
+	}
+
+	@Override
+	public D[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode) {
+		try {
+			final long uDividend = unscaledValue();
+			final long uDivisor = divisor.unscaledValue();
+			final long lIntegral = uDividend / uDivisor;
+			final long uIntegral = getArithmeticFor(overflowMode).fromLong(lIntegral);
+			final long uReminder = uDividend - uDivisor * lIntegral;
+			final D[] result = createArray(2);
+			result[0] = create(uIntegral);
+			result[1] = create(uReminder);
+			return result;
+		} catch (ArithmeticException e) {
+			if (divisor.isZero()) {
+				throw new ArithmeticException("Division by zero: integral(" + this + " / " + divisor + ")");
+			}
+			throw new ArithmeticException("Overflow: integral(" + this + " / " + divisor + ")");
+		}
 	}
 
 	@Override
