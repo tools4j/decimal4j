@@ -558,6 +558,9 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	MutableDecimal<S>[] divideAndRemainder(Decimal<S> divisor);
 
 	@Override
+	MutableDecimal<S>[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode);
+
+	@Override
 	MutableDecimal<S> remainder(Decimal<S> divisor);
 
 	@Override

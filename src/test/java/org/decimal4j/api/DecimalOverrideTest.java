@@ -25,6 +25,7 @@ package org.decimal4j.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -50,12 +51,28 @@ public class DecimalOverrideTest {
 	public void shouldOverrideWithMutableDecimal() throws NoSuchMethodException, SecurityException {
 		shouldOverrideWith(MutableDecimal.class);
 	}
+	@Test
+	public void shouldOverrideWithImmutableDecimalArray() throws NoSuchMethodException, SecurityException {
+		shouldOverrideWithArrayOf(ImmutableDecimal.class);
+	}
+	@Test
+	public void shouldOverrideWithMutableDecimalArray() throws NoSuchMethodException, SecurityException {
+		shouldOverrideWithArrayOf(MutableDecimal.class);
+	}
 	
 	private void shouldOverrideWith(Class<?> subtype) throws NoSuchMethodException, SecurityException {
 		for (final Method method : getDecimalMethods()) {
 			final Method overrideMethod = subtype.getMethod(method.getName(), method.getParameterTypes());
 			assertNotNull("method should have override in " + subtype.getSimpleName() + ": " + method, overrideMethod);
 			assertEquals("return type should be " + subtype.getSimpleName() + ": " + overrideMethod, subtype, overrideMethod.getReturnType());
+		}
+	}
+	private void shouldOverrideWithArrayOf(Class<?> subtype) throws NoSuchMethodException, SecurityException {
+		for (final Method method : getDecimalArrayMethods()) {
+			final Method overrideMethod = subtype.getMethod(method.getName(), method.getParameterTypes());
+			assertNotNull("method should have override in " + subtype.getSimpleName() + ": " + method, overrideMethod);
+			assertTrue("return type should be an array: " + overrideMethod, overrideMethod.getReturnType().isArray());
+			assertEquals("return type should be " + subtype.getSimpleName() + "[]: " + overrideMethod, subtype, overrideMethod.getReturnType().getComponentType());
 		}
 	}
 
@@ -66,6 +83,15 @@ public class DecimalOverrideTest {
 				if (!EXCEPT_METHODS.contains(method.getName())) {
 					methods.add(method);
 				}
+			}
+		}
+		return methods;
+	}
+	private List<Method> getDecimalArrayMethods() {
+		final List<Method> methods = new ArrayList<Method>();
+		for (final Method method : Decimal.class.getMethods()) {
+			if (method.getReturnType().isArray() && method.getReturnType().getComponentType().equals(Decimal.class)) {
+				methods.add(method);
 			}
 		}
 		return methods;

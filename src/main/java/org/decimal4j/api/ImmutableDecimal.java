@@ -314,6 +314,9 @@ public interface ImmutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	ImmutableDecimal<S>[] divideAndRemainder(Decimal<S> divisor);
 
 	@Override
+	ImmutableDecimal<S>[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode);
+
+	@Override
 	ImmutableDecimal<S> remainder(Decimal<S> divisor);
 
 	@Override
