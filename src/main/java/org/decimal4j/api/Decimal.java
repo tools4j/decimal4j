@@ -430,6 +430,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
 	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the rounded value.
+	 * <p>
 	 * <i>Examples and special cases:</i>
 	 * <dl>
 	 * <dt>precision = 0</dt>
@@ -461,6 +466,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the rounded value.
 	 * <p>
 	 * <i>Examples and special cases:</i>
 	 * <dl>
@@ -498,6 +508,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * Note that contrary to the {@code scale(..)} operations this method does
 	 * not change the scale of the value --- extra digits are simply zeroised.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the rounded value.
 	 * <p>
 	 * <i>Examples and special cases:</i>
 	 * <dl>
@@ -2082,8 +2097,6 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> divideByPowerOfTen(int n, TruncationPolicy truncationPolicy);
 
-	//FIXME
-
 	/**
 	 * Returns a {@code Decimal} whose value is the integer part of the quotient
 	 * {@code (this / divisor)} rounded down. If the division causes an
@@ -2861,28 +2874,42 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	Decimal<S> max(Decimal<S> val);
 
 	/**
-	 * Returns the average of this {@code Decimal} and {@code val} using the
-	 * default rounding mode if rounding is necessary. The method is much more
+	 * Returns the average of this {@code Decimal} and {@code val}. The result
+	 * is rounded to the {@link #getScale() scale} of this Decimal using default
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. The method is much more
 	 * efficient than an addition and subsequent long division and is guaranteed
 	 * not to overflow.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the average operation.
 	 *
 	 * @param val
 	 *            value with which the average is to be computed.
-	 * @return {@code (this+val)/2} using the default rounding mode
+	 * @return <tt>round<sub>HALF_UP</sub>((this + val) / 2)</tt>
 	 */
 	Decimal<S> avg(Decimal<S> val);
 
 	/**
-	 * Returns the average of this {@code Decimal} and {@code val} using the
-	 * specified rounding mode if rounding is necessary. The method is much more
-	 * efficient than an addition and subsequent long division and is guaranteed
-	 * not to overflow.
+	 * Returns the average of this {@code Decimal} and {@code val}. The result
+	 * is rounded to the {@link #getScale() scale} of this Decimal using the
+	 * specified {@code roundingMode}. The method is much more efficient than an
+	 * addition and subsequent long division and is guaranteed not to overflow.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the average operation.
 	 *
 	 * @param val
 	 *            value with which the average is to be computed.
 	 * @param roundingMode
 	 *            the rounding mode to use if rounding is necessary
-	 * @return {@code (this+val)/2} using the specified rounding mode
+	 * @return {@code round((this + val) / 2)}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
 	 */
 	Decimal<S> avg(Decimal<S> val, RoundingMode roundingMode);
 
