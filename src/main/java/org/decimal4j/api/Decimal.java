@@ -1701,7 +1701,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             magnitude is too large for the double to be represented as a
 	 *             {@code Decimal}
 	 * @throws ArithmeticException
-	 *             if an overflow occurs during the multiply operation
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary or if an overflow occurs during the multiply
+	 *             operation
 	 */
 	Decimal<S> multiply(double multiplicand, RoundingMode roundingMode);
 
@@ -1959,46 +1961,493 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S> multiplyByPowerOfTen(int n, TruncationPolicy truncationPolicy);
 
-	// FIXME
-
 	// divide
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}.
+	 * The result is rounded to the {@link #getScale() scale} of this Decimal
+	 * using default {@link RoundingMode#HALF_UP HALF_UP} rounding. If the
+	 * division causes an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @return <tt>round<sub>HALF_UP</sub>(this / divisor)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 */
 	Decimal<S> divide(Decimal<S> divisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}.
+	 * The result is rounded to the {@link #getScale() scale} of this Decimal
+	 * using the specified {@code roundingMode}. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param roundingMode
+	 *            the rounding mode to apply if the result needs to be rounded
+	 * @return {@code round(this / divisor)}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} or if {@code roundingMode==UNNECESSARY}
+	 *             and rounding is necessary
+	 */
 	Decimal<S> divide(Decimal<S> divisor, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}.
+	 * The result is rounded to the {@link #getScale() scale} of this Decimal
+	 * using the {@link RoundingMode} specified by the {@code truncationPolicy}
+	 * argument. The {@code truncationPolicy} also defines the
+	 * {@link OverflowMode} to apply if an overflow occurs during the divide
+	 * operation.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return <tt>round(this / divisor)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}, or if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
 	Decimal<S> divide(Decimal<S> divisor, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}
+	 * after converting the given {@code divisor} argument to the scale of
+	 * {@code this} Decimal. {@link RoundingMode#HALF_UP HALF_UP} rounding mode
+	 * is used if necessary and applied twice during the conversion step
+	 * <i>before</i> the division and again when rounding the quotient to the
+	 * {@link #getScale() scale} of this Decimal. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @return <tt>round<sub>HALF_UP</sub>(this / divisor)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} after rounding it to the scale of this
+	 *             Decimal
+	 */
 	Decimal<S> divideBy(Decimal<?> divisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}
+	 * after converting the given {@code divisor} argument to the scale of
+	 * {@code this} Decimal. Rounding, if necessary, uses the specified
+	 * {@code roundingMode} and is applied during the conversion step
+	 * <i>before</i> the division and again when rounding the quotient to the
+	 * {@link #getScale() scale} of this Decimal. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param roundingMode
+	 *            the rounding mode to apply if the converted divisor or the
+	 *            resulting quotient needs to be rounded
+	 * @return {@code round(this / divisor)}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} after rounding it to the scale of this
+	 *             Decimal, or if {@code roundingMode==UNNECESSARY} and rounding
+	 *             is necessary
+	 */
 	Decimal<S> divideBy(Decimal<?> divisor, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}
+	 * after converting the given {@code divisor} argument to the scale of
+	 * {@code this} Decimal. Rounding, if necessary, is defined by the specified
+	 * {@code truncationPolicy} argument and is applied during the conversion
+	 * step <i>before</i> the division and again when rounding the quotient to
+	 * the {@link #getScale() scale} of this Decimal. The
+	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
+	 * if an overflow occurs during the divide operation.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return {@code round(this / divisor)}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} after rounding it to the scale of this
+	 *             Decimal, or if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
 	Decimal<S> divideBy(Decimal<?> divisor, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this / divisor)} rounded
+	 * down. This method is a shortcut for calling
+	 * {@link #divide(Decimal,RoundingMode) divide(divisor, RoundingMode.DOWN)}.
+	 * If the division causes an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @return <tt>round<sub>DOWN</sub>(this / divisor)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 */
 	Decimal<S> divideTruncate(Decimal<S> divisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code (this / divisor)},
+	 * checking for lost information. If the quotient cannot be represented
+	 * exactly with the {@link #getScale() scale} of this Decimal then an
+	 * {@code ArithmeticException} is thrown.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @return {@code this / divisor}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}, or if the result does not fit in a
+	 *             Decimal with the scale of this Decimal without rounding and
+	 *             without exceeding the the possible range of such a Decimal
+	 */
 	Decimal<S> divideExact(Decimal<S> divisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}.
+	 * The result is rounded to the {@link #getScale() scale} of this Decimal
+	 * using default {@link RoundingMode#HALF_UP HALF_UP} rounding. If the
+	 * division causes an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            long value by which this {@code Decimal} is to be divided
+	 * @return <tt>round<sub>HALF_UP</sub>(this / divisor)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}
+	 */
 	Decimal<S> divide(long divisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}.
+	 * The result is rounded to the {@link #getScale() scale} of this Decimal
+	 * using the specified {@code roundingMode}. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            long value by which this {@code Decimal} is to be divided
+	 * @param roundingMode
+	 *            the rounding mode to apply if the result needs to be rounded
+	 * @return {@code round(this / divisor)}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} or if {@code roundingMode==UNNECESSARY}
+	 *             and rounding is necessary
+	 */
 	Decimal<S> divide(long divisor, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}.
+	 * The result is rounded to the {@link #getScale() scale} of this Decimal
+	 * using the {@link RoundingMode} specified by the {@code truncationPolicy}
+	 * argument. The {@code truncationPolicy} also defines the
+	 * {@link OverflowMode} to apply if an overflow occurs during the divide
+	 * operation.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            long value by which this {@code Decimal} is to be divided
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return <tt>round(this / divisor)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}, or if {@code truncationPolicy} defines
+	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
+	 *             if the policy declares {@link OverflowMode#CHECKED} an
+	 *             overflow occurs (which is true iff
+	 *             {@code this.unscaledValue()==Long.MIN_VALUE} and
+	 *             {@code divisor==-1})
+	 */
 	Decimal<S> divide(long divisor, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}
+	 * after converting the given {@code double} argument into a Decimal value
+	 * of the same scale as {@code this} Decimal. {@link RoundingMode#HALF_UP
+	 * HALF_UP} rounding mode is used if necessary and applied twice during the
+	 * conversion step <i>before</i> the division and again when rounding the
+	 * quotient to the {@link #getScale() scale} of this Decimal. Overflows due
+	 * to conversion or division result in an exception.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @return <tt>round<sub>HALF_UP</sub>(this / divisor)</tt>
+	 * @throws NumberFormatException
+	 *             if {@code divisor} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a
+	 *             {@code Decimal}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} or if an overflow occurs during the
+	 *             divide operation
+	 */
 	Decimal<S> divide(double divisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is {@code round(this / divisor)}
+	 * after converting the given {@code double} argument into a Decimal value
+	 * of the same scale as {@code this} Decimal. Rounding, if necessary, uses
+	 * the specified {@code roundingMode} and is applied during the conversion
+	 * step <i>before</i> the division and again when rounding the quotient to
+	 * the {@link #getScale() scale} of this Decimal. Overflows due to
+	 * conversion or division result in an exception.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param divisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param roundingMode
+	 *            the rounding mode to apply if the converted divisor or the
+	 *            resulting quotient needs to be rounded
+	 * @return {@code round(this / divisor)}
+	 * @throws NumberFormatException
+	 *             if {@code divisor} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a
+	 *             {@code Decimal}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0}, if {@code roundingMode==UNNECESSARY}
+	 *             and rounding is necessary or if an overflow occurs during the
+	 *             divide operation
+	 */
 	Decimal<S> divide(double divisor, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt> with
+	 * the {@link #getScale() scale} of this Decimal. The result is rounded to
+	 * the scale of this Decimal using default {@link RoundingMode#HALF_UP
+	 * HALF_UP} rounding. If the division causes an overflow, the result is
+	 * silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param unscaledDivisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @return <tt>round<sub>HALF_UP</sub>(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @throws ArithmeticException
+	 *             if {@code unscaledDivisor==0}
+	 */
 	Decimal<S> divideUnscaled(long unscaledDivisor);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt> with
+	 * the {@link #getScale() scale} of this Decimal. The result is rounded to
+	 * the scale of this Decimal using the specified {@code roundingMode}. If
+	 * the division causes an overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param unscaledDivisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param roundingMode
+	 *            the rounding mode to apply if the result needs to be rounded
+	 * @return <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @throws ArithmeticException
+	 *             if {@code unscaledDivisor==0} or if
+	 *             {@code roundingMode==UNNECESSARY} and rounding is necessary
+	 */
 	Decimal<S> divideUnscaled(long unscaledDivisor, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt> with
+	 * the {@link #getScale() scale} of this Decimal. The result is rounded to
+	 * the scale of this Decimal using the using the {@link RoundingMode}
+	 * specified by the {@code truncationPolicy} argument. The
+	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
+	 * if an overflow occurs during the division.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param unscaledDivisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @throws ArithmeticException
+	 *             if {@code unscaledDivisor==0}, if {@code truncationPolicy}
+	 *             defines {@link RoundingMode#UNNECESSARY} and rounding is
+	 *             necessary or if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
 	Decimal<S> divideUnscaled(long unscaledDivisor, TruncationPolicy truncationPolicy);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>. The
+	 * {@code unscaledDivisor} argument is converted to the same scale as
+	 * {@code this} Decimal. {@link RoundingMode#HALF_UP HALF_UP} rounding mode
+	 * is used if necessary and rounding is applied twice during the conversion
+	 * step <i>before</i> the division and again when rounding the quotient to
+	 * the {@link #getScale() scale} of this Decimal. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param unscaledDivisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param scale
+	 *            the scale to apply to {@code unscaledDivisor}, positive to
+	 *            indicate the number of fraction digits to the right of the
+	 *            Decimal point and negative to indicate up-scaling with a power
+	 *            of ten
+	 * @return <tt>round<sub>HALF_UP</sub>(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @throws ArithmeticException
+	 *             if {@code unscaledDivisor==0}
+	 */
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>. The
+	 * {@code unscaledDivisor} argument is converted to the same scale as
+	 * {@code this} Decimal. Rounding, if necessary, uses the specified
+	 * {@code roundingMode} and is applied during the conversion step
+	 * <i>before</i> the division and again when rounding the quotient to the
+	 * {@link #getScale() scale} of this Decimal. If the division causes an
+	 * overflow, the result is silently truncated.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param unscaledDivisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param scale
+	 *            the scale to apply to {@code unscaledDivisor}, positive to
+	 *            indicate the number of fraction digits to the right of the
+	 *            Decimal point and negative to indicate up-scaling with a power
+	 *            of ten
+	 * @param roundingMode
+	 *            the rounding mode to apply if the result needs to be rounded
+	 * @return <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @throws ArithmeticException
+	 *             if {@code unscaledDivisor==0} or if
+	 *             {@code roundingMode==UNNECESSARY} and rounding is necessary
+	 */
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode);
 
+	/**
+	 * Returns a {@code Decimal} whose value is
+	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>. The
+	 * {@code unscaledDivisor} argument is converted to the same scale as
+	 * {@code this} Decimal. Rounding, if necessary, is defined by the specified
+	 * {@code truncationPolicy} argument and is applied during the conversion
+	 * step <i>before</i> the division and again when rounding the quotient to
+	 * the {@link #getScale() scale} of this Decimal. The
+	 * {@code truncationPolicy} also defines the {@link OverflowMode} to apply
+	 * if an overflow occurs during the division.
+	 * <p>
+	 * The returned value is a new instance if this Decimal is an
+	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
+	 * internal state is altered and {@code this} is returned as result now
+	 * representing the outcome of the division.
+	 * 
+	 * @param unscaledDivisor
+	 *            divisor value by which this {@code Decimal} is to be divided
+	 * @param scale
+	 *            the scale to apply to {@code unscaledDivisor}, positive to
+	 *            indicate the number of fraction digits to the right of the
+	 *            Decimal point and negative to indicate up-scaling with a power
+	 *            of ten
+	 * @param truncationPolicy
+	 *            the truncation policy specifying {@link RoundingMode} and
+	 *            {@link OverflowMode} to apply if rounding is necessary or if
+	 *            an overflow occurs
+	 * @return <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @throws ArithmeticException
+	 *             if {@code unscaledDivisor==0}, if {@code truncationPolicy}
+	 *             defines {@link RoundingMode#UNNECESSARY} and rounding is
+	 *             necessary or if an overflow occurs and the policy declares
+	 *             {@link OverflowMode#CHECKED}
+	 */
 	Decimal<S> divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy);
 
 	/**
