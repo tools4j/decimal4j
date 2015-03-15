@@ -121,11 +121,12 @@ public class MutableDecimal${scale}f extends
 	}
 
 	/**
-	 * Returns a new MutableDecimal${scale}f whose value is equal to {@code unscaledValue*10<sup>-${scale}}</sup>.
+	 * Returns a new MutableDecimal${scale}f whose value is equal to 
+	 * <code>unscaledValue * 10<sup>-${scale}</sup></code>.
 	 * 
 	 * @param unscaledValue
 	 *            the unscaled decimal value to convert
-	 * @return a new MutableDecimal${scale}f value initialised with {@code unscaledValue*10^-${scale}}
+	 * @return a new MutableDecimal${scale}f value initialised with <code>unscaledValue * 10<sup>-${scale}</sup></code>
 	 */
 	public static MutableDecimal${scale}f unscaled(long unscaledValue) {
 		return new MutableDecimal${scale}f(unscaledValue, Decimal${scale}f.SCALE);

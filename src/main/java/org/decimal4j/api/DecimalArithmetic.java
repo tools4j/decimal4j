@@ -433,18 +433,18 @@ public interface DecimalArithmetic {
 	 * digits are simply zeroised.
 	 * <p>
 	 * <i>Examples and special cases:</i>
-	 * <dl>
-	 * <dt>precision = 0</dt>
-	 * <dd>value is rounded to an integer value</dd>
-	 * <dt>precision = 2</dt>
-	 * <dd>value is rounded to the second digit after the decimal point</dd>
-	 * <dt>precision = -3</dt>
-	 * <dd>value is rounded to the thousands</dd>
-	 * <dt>precision >= scale</dt>
-	 * <dd>values is left unchanged</dd>
-	 * <dt>precision < scale - 18</dt>
-	 * <dd>{@code IllegalArgumentException} is thrown</dd>
-	 * </dl>
+	 * <ul>
+	 * <li><b>precision = 0</b><br>
+	 * value is rounded to an integer value</li>
+	 * <li><b>precision = 2</b><br>
+	 * value is rounded to the second digit after the decimal point</li>
+	 * <li><b>precision = -3</b><br>
+	 * value is rounded to the thousands</li>
+	 * <li><b>precision &ge; scale</b><br>
+	 * values is returned unchanged</li>
+	 * <li><b>precision &lt; scale - 18</b><br>
+	 * {@code IllegalArgumentException} is thrown</li>
+	 * </ul>
 	 * 
 	 * @param uDecimal
 	 *            the unscaled decimal value to round

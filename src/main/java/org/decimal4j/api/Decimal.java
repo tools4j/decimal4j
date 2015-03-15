@@ -3102,6 +3102,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * rounded using {@link RoundingMode#HALF_UP HALF_UP} rounding</li>
 	 * </ul>
 	 * </li>
+	 * </ul>
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -3144,6 +3145,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * rounded using the specified {@code roundingMode}</li>
 	 * </ul>
 	 * </li>
+	 * </ul>
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -3193,6 +3195,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * {@code truncationPolicy}</li>
 	 * </ul>
 	 * </li>
+	 * </ul>
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
