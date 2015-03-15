@@ -166,7 +166,7 @@ final class RoundingUtil {
 	 * @param remainder
 	 *            the remainder part
 	 * @param n
-	 *            the power of 2 of the divisor, must be > 0
+	 *            the power of 2 of the divisor, {@code n > 0}
 	 * @return the truncated part constant equivalent to the given arguments
 	 */
 	public static final TruncatedPart truncatedPartFor2powN(long remainder, int n) {
@@ -190,7 +190,7 @@ final class RoundingUtil {
 	 * @param lRemainder
 	 *            the low bits of the remainder part
 	 * @param n
-	 *            the power of 2 of the divisor, must be > 0
+	 *            the power of 2 of the divisor, {@code n > 0}
 	 * @return the truncated part constant equivalent to the given arguments
 	 */
 	public static final TruncatedPart truncatedPartFor2powN(long hRemainder, long lRemainder, int n) {

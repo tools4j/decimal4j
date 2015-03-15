@@ -140,8 +140,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * internal state is altered and {@code this} is returned as result now
 	 * representing the outcome of the operation.
 	 * 
-	 * @return <tt>&lfloor;this&rfloor;</tt> for non-negative and
-	 *         &lceil;this&rceil;</tt> for negative values
+	 * @return <code>&lfloor;this&rfloor;</code> for non-negative and
+	 *         <code>&lceil;this&rceil;</code> for negative values
 	 * @see #fractionalPart()
 	 * @see #isIntegral()
 	 * @see #isIntegralPartZero()
@@ -443,9 +443,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * value is rounded to the second digit after the decimal point</li>
 	 * <li><b>precision = -3</b><br>
 	 * value is rounded to the thousands</li>
-	 * <li><b>precision >= scale</b><br>
+	 * <li><b>precision &ge; scale</b><br>
 	 * values is returned unchanged</li>
-	 * <li><b>precision < scale - 18</b><br>
+	 * <li><b>precision &lt; scale - 18</b><br>
 	 * {@code IllegalArgumentException} is thrown</li>
 	 * </ul>
 	 * 
@@ -480,9 +480,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * value is rounded to the second digit after the decimal point</li>
 	 * <li><b>precision = -3</b><br>
 	 * value is rounded to the thousands</li>
-	 * <li><b>precision >= scale</b><br>
+	 * <li><b>precision &ge; scale</b><br>
 	 * values is returned unchanged</li>
-	 * <li><b>precision < scale - 18</b><br>
+	 * <li><b>precision &lt; scale - 18</b><br>
 	 * {@code IllegalArgumentException} is thrown</li>
 	 * </ul>
 	 * 
@@ -522,9 +522,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * value is rounded to the second digit after the decimal point</li>
 	 * <li><b>precision = -3</b><br>
 	 * value is rounded to the thousands</li>
-	 * <li><b>precision >= scale</b><br>
+	 * <li><b>precision &ge; scale</b><br>
 	 * values is returned unchanged</li>
-	 * <li><b>precision < scale - 18</b><br>
+	 * <li><b>precision &lt; scale - 18</b><br>
 	 * {@code IllegalArgumentException} is thrown</li>
 	 * </ul>
 	 * 
@@ -567,6 +567,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * is used if the scale change involves rounding. If an overflow occurs due
 	 * to the scale conversion, the result is silently truncated.
 	 * 
+	 * @param <S>
+	 *            the scale metrics type of the result
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
 	 * @return a Decimal instance with the given new scale metrics
@@ -600,6 +602,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * the scale change involves rounding. If an overflow occurs due to the
 	 * scale conversion, the result is silently truncated.
 	 * 
+	 * @param <S>
+	 *            the scale metrics type of the result
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
 	 * @param roundingMode
@@ -641,6 +645,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * {@link RoundingMode} and {@link OverflowMode} to apply if the scale
 	 * conversion leads to rounding or causes an overflow.
 	 * 
+	 * @param <S>
+	 *            the scale metrics type of the result
 	 * @param scaleMetrics
 	 *            the scale metrics to use for the result
 	 * @param truncationPolicy
@@ -3086,7 +3092,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>An {@code ArithmeticException} exception is thrown if
 	 * {@code abs(n) > 999999999}</li>
 	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
-	 * otherwise</li>
+	 * otherwise
 	 * <ul>
 	 * <li>if {@code n} is positive, the result is calculated via the repeated
 	 * squaring technique into a single accumulator</li>
@@ -3095,6 +3101,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>The final value from either the positive or negative case is then
 	 * rounded using {@link RoundingMode#HALF_UP HALF_UP} rounding</li>
 	 * </ul>
+	 * </li>
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -3127,7 +3134,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>An {@code ArithmeticException} exception is thrown if
 	 * {@code abs(n) > 999999999}</li>
 	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
-	 * otherwise</li>
+	 * otherwise
 	 * <ul>
 	 * <li>if {@code n} is positive, the result is calculated via the repeated
 	 * squaring technique into a single accumulator</li>
@@ -3136,6 +3143,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>The final value from either the positive or negative case is then
 	 * rounded using the specified {@code roundingMode}</li>
 	 * </ul>
+	 * </li>
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -3174,7 +3182,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <li>An {@code ArithmeticException} exception is thrown if
 	 * {@code abs(n) > 999999999}</li>
 	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
-	 * otherwise</li>
+	 * otherwise
 	 * <ul>
 	 * <li>if {@code n} is positive, the result is calculated via the repeated
 	 * squaring technique into a single accumulator</li>
@@ -3184,6 +3192,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * rounded using the {@link RoundingMode} specified by
 	 * {@code truncationPolicy}</li>
 	 * </ul>
+	 * </li>
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its

@@ -363,7 +363,7 @@ public class MutableDecimal${scale}f extends
 	/**
 	 * Returns a new MutableDecimal${scale}f whose value is equal to one millionth.
 	 * 
-	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-6/sup>.
+	 * @return a new MutableDecimal${scale}f value initialised with 10<sup>-6</sup>.
 	 */
 	public static MutableDecimal${scale}f millionth() {
 		return new MutableDecimal${scale}f(Decimal${scale}f.MILLIONTH);
