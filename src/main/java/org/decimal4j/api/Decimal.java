@@ -436,18 +436,18 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * representing the rounded value.
 	 * <p>
 	 * <i>Examples and special cases:</i>
-	 * <dl>
-	 * <dt>precision = 0</dt>
-	 * <dd>value is rounded to an integer value</dd>
-	 * <dt>precision = 2</dt>
-	 * <dd>value is rounded to the second digit after the decimal point</dd>
-	 * <dt>precision = -3</dt>
-	 * <dd>value is rounded to the thousands</dd>
-	 * <dt>precision >= scale</dt>
-	 * <dd>values is returned unchanged</dd>
-	 * <dt>precision < scale - 18</dt>
-	 * <dd>{@code IllegalArgumentException} is thrown</dd>
-	 * </dl>
+	 * <ul>
+	 * <li><b>precision = 0</b><br>
+	 * value is rounded to an integer value</li>
+	 * <li><b>precision = 2</b><br>
+	 * value is rounded to the second digit after the decimal point</li>
+	 * <li><b>precision = -3</b><br>
+	 * value is rounded to the thousands</li>
+	 * <li><b>precision >= scale</b><br>
+	 * values is returned unchanged</li>
+	 * <li><b>precision < scale - 18</b><br>
+	 * {@code IllegalArgumentException} is thrown</li>
+	 * </ul>
 	 * 
 	 * @param precision
 	 *            the precision to use for the rounding, for instance 2 to round
@@ -473,18 +473,18 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * representing the rounded value.
 	 * <p>
 	 * <i>Examples and special cases:</i>
-	 * <dl>
-	 * <dt>precision = 0</dt>
-	 * <dd>value is rounded to an integer value</dd>
-	 * <dt>precision = 2</dt>
-	 * <dd>value is rounded to the second digit after the decimal point</dd>
-	 * <dt>precision = -3</dt>
-	 * <dd>value is rounded to the thousands</dd>
-	 * <dt>precision >= scale</dt>
-	 * <dd>values is returned unchanged</dd>
-	 * <dt>precision < scale - 18</dt>
-	 * <dd>{@code IllegalArgumentException} is thrown</dd>
-	 * </dl>
+	 * <ul>
+	 * <li><b>precision = 0</b><br>
+	 * value is rounded to an integer value</li>
+	 * <li><b>precision = 2</b><br>
+	 * value is rounded to the second digit after the decimal point</li>
+	 * <li><b>precision = -3</b><br>
+	 * value is rounded to the thousands</li>
+	 * <li><b>precision >= scale</b><br>
+	 * values is returned unchanged</li>
+	 * <li><b>precision < scale - 18</b><br>
+	 * {@code IllegalArgumentException} is thrown</li>
+	 * </ul>
 	 * 
 	 * @param precision
 	 *            the precision to use for the rounding, for instance 2 to round
@@ -515,18 +515,18 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * representing the rounded value.
 	 * <p>
 	 * <i>Examples and special cases:</i>
-	 * <dl>
-	 * <dt>precision = 0</dt>
-	 * <dd>value is rounded to an integer value</dd>
-	 * <dt>precision = 2</dt>
-	 * <dd>value is rounded to the second digit after the decimal point</dd>
-	 * <dt>precision = -3</dt>
-	 * <dd>value is rounded to the thousands</dd>
-	 * <dt>precision >= scale</dt>
-	 * <dd>values is returned unchanged</dd>
-	 * <dt>precision < scale - 18</dt>
-	 * <dd>{@code IllegalArgumentException} is thrown</dd>
-	 * </dl>
+	 * <ul>
+	 * <li><b>precision = 0</b><br>
+	 * value is rounded to an integer value</li>
+	 * <li><b>precision = 2</b><br>
+	 * value is rounded to the second digit after the decimal point</li>
+	 * <li><b>precision = -3</b><br>
+	 * value is rounded to the thousands</li>
+	 * <li><b>precision >= scale</b><br>
+	 * values is returned unchanged</li>
+	 * <li><b>precision < scale - 18</b><br>
+	 * {@code IllegalArgumentException} is thrown</li>
+	 * </ul>
 	 * 
 	 * @param precision
 	 *            the precision to use for the rounding, for instance 2 to round
@@ -1780,13 +1780,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>round(this * unscaledMultiplicand &times; 10<sup>-scale</sup>)</tt>.
-	 * The {@code unscaledMultiplicand} argument is converted to the same scale
-	 * as {@code this} Decimal. {@link RoundingMode#HALF_UP HALF_UP} rounding
-	 * mode is used if necessary and rounding is applied twice during the
-	 * conversion step <i>before</i> the multiplication and again when rounding
-	 * the product to the {@link #getScale() scale} of this Decimal. If the
-	 * multiplication causes an overflow, the result is silently truncated.
+	 * <tt>round(this * round(unscaledMultiplicand &times; 10<sup>-scale</sup>))</tt>
+	 * . The {@code unscaledMultiplicand} argument is converted to the same
+	 * scale as {@code this} Decimal. {@link RoundingMode#HALF_UP HALF_UP}
+	 * rounding mode is used if necessary and rounding is applied twice during
+	 * the conversion step <i>before</i> the multiplication and again when
+	 * rounding the product to the {@link #getScale() scale} of this Decimal. If
+	 * the multiplication causes an overflow, the result is silently truncated.
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
@@ -1800,15 +1800,15 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            to indicate the number of fraction digits to the right of the
 	 *            Decimal point and negative to indicate up-scaling with a power
 	 *            of ten
-	 * @return <tt>round<sub>HALF_UP</sub>(this * unscaledMultiplicand &times; 10<sup>-scale</sup>)</tt>
+	 * @return <tt>round<sub>HALF_UP</sub>(this * round<sub>HALF_UP</sub>(unscaledMultiplicand &times; 10<sup>-scale</sup>))</tt>
 	 */
 	Decimal<S> multiplyUnscaled(long unscaledMultiplicand, int scale);
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>round(this * unscaledMultiplicand &times; 10<sup>-scale</sup>)</tt>.
-	 * The {@code unscaledMultiplicand} argument is converted to the same scale
-	 * as {@code this} Decimal. Rounding, if necessary, uses the specified
+	 * <tt>round(this * round(unscaledMultiplicand &times; 10<sup>-scale</sup>))</tt>
+	 * . The {@code unscaledMultiplicand} argument is converted to the same
+	 * scale as {@code this} Decimal. Rounding, if necessary, uses the specified
 	 * {@code roundingMode} and is applied during the conversion step
 	 * <i>before</i> the multiplication and again when rounding the product to
 	 * the {@link #getScale() scale} of this Decimal. If the multiplication
@@ -1828,7 +1828,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            of ten
 	 * @param roundingMode
 	 *            the rounding mode to apply if the result needs to be rounded
-	 * @return <tt>round(this * unscaledMultiplicand &times; 10<sup>-scale</sup>)</tt>
+	 * @return <tt>round(this * round(unscaledMultiplicand &times; 10<sup>-scale</sup>))</tt>
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is
 	 *             necessary
@@ -1837,9 +1837,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>round(this * unscaledMultiplicand &times; 10<sup>-scale</sup>)</tt>.
-	 * The {@code unscaledMultiplicand} argument is converted to the same scale
-	 * as {@code this} Decimal. Rounding, if necessary, is defined by the
+	 * <tt>round(this * round(unscaledMultiplicand &times; 10<sup>-scale</sup>))</tt>
+	 * . The {@code unscaledMultiplicand} argument is converted to the same
+	 * scale as {@code this} Decimal. Rounding, if necessary, is defined by the
 	 * specified {@code truncationPolicy} argument and is applied during the
 	 * conversion step <i>before</i> the multiplication and again when rounding
 	 * the product to the {@link #getScale() scale} of this Decimal. The
@@ -1862,7 +1862,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the truncation policy specifying {@link RoundingMode} and
 	 *            {@link OverflowMode} to apply if rounding is necessary or if
 	 *            an overflow occurs
-	 * @return <tt>round(this * unscaledMultiplicand &times; 10<sup>-scale</sup>)</tt>
+	 * @return <tt>round(this * round(unscaledMultiplicand &times; 10<sup>-scale</sup>))</tt>
 	 * @throws ArithmeticException
 	 *             if {@code truncationPolicy} defines
 	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
@@ -2357,8 +2357,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>. The
-	 * {@code unscaledDivisor} argument is converted to the same scale as
+	 * <tt>round(this / round(unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * . The {@code unscaledDivisor} argument is converted to the same scale as
 	 * {@code this} Decimal. {@link RoundingMode#HALF_UP HALF_UP} rounding mode
 	 * is used if necessary and rounding is applied twice during the conversion
 	 * step <i>before</i> the division and again when rounding the quotient to
@@ -2377,7 +2377,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            indicate the number of fraction digits to the right of the
 	 *            Decimal point and negative to indicate up-scaling with a power
 	 *            of ten
-	 * @return <tt>round<sub>HALF_UP</sub>(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @return <tt>round<sub>HALF_UP</sub>(this / round<sub>HALF_UP</sub>(unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
 	 * @throws ArithmeticException
 	 *             if {@code unscaledDivisor==0}
 	 */
@@ -2385,8 +2385,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>. The
-	 * {@code unscaledDivisor} argument is converted to the same scale as
+	 * <tt>round(this / round(unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * . The {@code unscaledDivisor} argument is converted to the same scale as
 	 * {@code this} Decimal. Rounding, if necessary, uses the specified
 	 * {@code roundingMode} and is applied during the conversion step
 	 * <i>before</i> the division and again when rounding the quotient to the
@@ -2407,7 +2407,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            of ten
 	 * @param roundingMode
 	 *            the rounding mode to apply if the result needs to be rounded
-	 * @return <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @return <tt>round(this / round(unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
 	 * @throws ArithmeticException
 	 *             if {@code unscaledDivisor==0} or if
 	 *             {@code roundingMode==UNNECESSARY} and rounding is necessary
@@ -2416,8 +2416,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 
 	/**
 	 * Returns a {@code Decimal} whose value is
-	 * <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>. The
-	 * {@code unscaledDivisor} argument is converted to the same scale as
+	 * <tt>round(this / round(unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * . The {@code unscaledDivisor} argument is converted to the same scale as
 	 * {@code this} Decimal. Rounding, if necessary, is defined by the specified
 	 * {@code truncationPolicy} argument and is applied during the conversion
 	 * step <i>before</i> the division and again when rounding the quotient to
@@ -2441,7 +2441,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the truncation policy specifying {@link RoundingMode} and
 	 *            {@link OverflowMode} to apply if rounding is necessary or if
 	 *            an overflow occurs
-	 * @return <tt>round(this / (unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
+	 * @return <tt>round(this / round(unscaledDivisor &times; 10<sup>-scale</sup>))</tt>
 	 * @throws ArithmeticException
 	 *             if {@code unscaledDivisor==0}, if {@code truncationPolicy}
 	 *             defines {@link RoundingMode#UNNECESSARY} and rounding is
