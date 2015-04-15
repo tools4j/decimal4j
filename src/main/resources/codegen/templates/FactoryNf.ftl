@@ -27,6 +27,16 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	public Scale${scale}f getScaleMetrics() {
 		return Scale${scale}f.INSTANCE;
 	}
+	
+	@Override
+	public Class<Decimal${scale}f> immutableType() {
+		return Decimal${scale}f.class;
+	}
+
+	@Override
+	public Class<MutableDecimal${scale}f> mutableType() {
+		return MutableDecimal${scale}f.class;
+	}
 
 	@Override
 	public Decimal${scale}f valueOf(long value) {

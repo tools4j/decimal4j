@@ -23,8 +23,11 @@
  */
 package org.decimal4j.factory;
 
-import org.decimal4j.scale.ScaleMetrics;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.factory.Factory0f;
 import org.decimal4j.factory.Factory10f;
 import org.decimal4j.factory.Factory11f;
@@ -73,6 +76,13 @@ public final class Factories {
 		Factory18f.INSTANCE
 	};
 	//@formatter:on
+
+	/**
+	 * All decimal factory constants in an immutable ordered list:
+	 * <p>
+	 * {@code VALUES=[Factory0f.INSTANCE, Factory1f.INSTANCE, ..., Factory18f.INSTANCE]}
+	 */
+	public static List<DecimalFactory<?>> VALUES = Collections.unmodifiableList(Arrays.asList(FACTORIES));
 
 	/**
 	 * Returns the {@code DecimalFactory} constant based on a given scale.

@@ -81,6 +81,18 @@ public final class Scales {
 	 * {@code VALUES=[Scale0f.INSTANCE, Scale1f.INSTANCE, ..., Scale18f.INSTANCE]}
 	 */
 	public static List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(SCALES));
+	
+	/**
+	 * The minimum scale that can be passed to {@link #getScaleMetrics(int)} without causing an
+	 * exception; the minimum scale is 0.
+	 */
+	public static final int MIN_SCALE = 0;
+
+	/**
+	 * The maximum scale that can be passed to {@link #getScaleMetrics(int)} without causing an
+	 * exception; the maximum scale is 18.
+	 */
+	public static final int MAX_SCALE = 18;
 
 	//@formatter:off
 	private static final long[] SCALE_FACTORS = {
@@ -114,12 +126,14 @@ public final class Scales {
 	 * @return the scale metrics constant corresponding to {@code scale}
 	 * @throws IllegalArgumentException
 	 *             if scale is not in {@code [0, 18]}
+	 * @see #MIN_SCALE
+	 * @see #MAX_SCALE
 	 */
 	public static ScaleMetrics getScaleMetrics(int scale) {
-		if (0 <= scale & scale <= 18) {
+		if (MIN_SCALE <= scale & scale <= MAX_SCALE) {
 			return SCALES[scale];
 		}
-		throw new IllegalArgumentException("illegal scale, must be in [0,18] but was: " + scale);
+		throw new IllegalArgumentException("illegal scale, must be in ["+ MIN_SCALE + "," + MAX_SCALE + "] but was: " + scale);
 	}
 
 	/**

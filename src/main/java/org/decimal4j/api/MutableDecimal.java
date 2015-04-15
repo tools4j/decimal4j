@@ -288,6 +288,32 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 */
 	MutableDecimal<S> set(String value, RoundingMode roundingMode);
 
+	/**
+	 * Returns the minimum of this {@code Decimal} and {@code val}.
+	 *
+	 * @param val
+	 *            value with which the minimum is to be computed.
+	 * @return the {@code Decimal} whose value is the lesser of this
+	 *         {@code Decimal} and {@code val}. If they are equal, as defined by
+	 *         the {@link #compareTo(Decimal) compareTo} method, {@code this} is
+	 *         returned.
+	 * @see #compareTo(Decimal)
+	 */
+	MutableDecimal<S> min(MutableDecimal<S> val);
+
+	/**
+	 * Returns the maximum of this {@code Decimal} and {@code val}.
+	 *
+	 * @param val
+	 *            value with which the maximum is to be computed.
+	 * @return the {@code Decimal} whose value is the greater of this
+	 *         {@code Decimal} and {@code val}. If they are equal, as defined by
+	 *         the {@link #compareTo(Decimal) compareTo} method, {@code this} is
+	 *         returned.
+	 * @see #compareTo(Decimal)
+	 */
+	MutableDecimal<S> max(MutableDecimal<S> val);
+
 	//override some methods with specialized return type
 
 	@Override

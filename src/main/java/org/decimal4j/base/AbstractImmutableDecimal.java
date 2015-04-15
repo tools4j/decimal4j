@@ -56,6 +56,11 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	}
 
 	@Override
+	public final long unscaledValue() {
+		return unscaled;
+	}
+
+	@Override
 	public ImmutableDecimal<?> scale(int scale) {
 		return scale(scale, DecimalRounding.HALF_UP.getUncheckedTruncationPolicy());
 	}
@@ -113,8 +118,12 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	}
 
 	@Override
-	public final long unscaledValue() {
-		return unscaled;
+	public ImmutableDecimal<S> min(ImmutableDecimal<S> val) {
+		return isLessThanOrEqualTo(val) ? this : val;
 	}
 
+	@Override
+	public ImmutableDecimal<S> max(ImmutableDecimal<S> val) {
+		return isGreaterThanOrEqualTo(val) ? this : val;
+	}
 }

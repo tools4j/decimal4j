@@ -231,4 +231,13 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		return self();
 	}
 
+	@Override
+	public MutableDecimal<S> min(MutableDecimal<S> val) {
+		return isLessThanOrEqualTo(val) ? this : val;
+	}
+
+	@Override
+	public MutableDecimal<S> max(MutableDecimal<S> val) {
+		return isGreaterThanOrEqualTo(val) ? this : val;
+	}
 }

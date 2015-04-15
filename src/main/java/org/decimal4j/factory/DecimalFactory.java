@@ -51,6 +51,20 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	S getScaleMetrics();
 
 	/**
+	 * Returns the implementing class for immutable values.
+	 *  
+	 * @return the implementation type for immutable decimals
+	 */
+	Class<? extends ImmutableDecimal<S>> immutableType();
+
+	/**
+	 * Returns the implementing class for mutable values.
+	 *  
+	 * @return the implementation type for mutable decimals
+	 */
+	Class<? extends MutableDecimal<S>> mutableType();
+
+	/**
 	 * Returns a new decimal value whose value is numerically equal to that of
 	 * the specified {@code long} value.
 	 *
@@ -149,5 +163,4 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @return a new array of the specified length
 	 */
 	MutableDecimal<S>[] newMutableArray(int length);
-
 }
