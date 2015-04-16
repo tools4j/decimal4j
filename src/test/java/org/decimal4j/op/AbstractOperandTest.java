@@ -148,7 +148,7 @@ abstract public class AbstractOperandTest {
         return val;
 	}
 
-	protected static <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
+	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
 		return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
 	}
 

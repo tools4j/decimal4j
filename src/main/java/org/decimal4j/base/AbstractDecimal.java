@@ -998,6 +998,37 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		return isGreaterThanOrEqualTo(val) ? this : val;
 	}
 
+	/**
+	 * Returns the minimum of this {@code Decimal} and {@code val}.
+	 *
+	 * @param val
+	 *            value with which the minimum is to be computed.
+	 * @return the {@code Decimal} whose value is the lesser of this
+	 *         {@code Decimal} and {@code val}. If they are equal, as defined by
+	 *         the {@link #compareTo(Decimal) compareTo} method, {@code this} is
+	 *         returned.
+	 * @see #compareTo(Decimal)
+	 */
+	public D min(D val) {
+		return isLessThanOrEqualTo(val) ? self() : val;
+	}
+
+
+	/**
+	 * Returns the maximum of this {@code Decimal} and {@code val}.
+	 *
+	 * @param val
+	 *            value with which the maximum is to be computed.
+	 * @return the {@code Decimal} whose value is the greater of this
+	 *         {@code Decimal} and {@code val}. If they are equal, as defined by
+	 *         the {@link #compareTo(Decimal) compareTo} method, {@code this} is
+	 *         returned.
+	 * @see #compareTo(Decimal)
+	 */
+	public D max(D val) {
+		return isGreaterThanOrEqualTo(val) ? self() : val;
+	}
+
 	@Override
 	public D avg(Decimal<S> val) {
 		return createOrAssign(getDefaultArithmetic().avg(unscaledValue(), val.unscaledValue()));
