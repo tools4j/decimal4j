@@ -66,6 +66,7 @@ public enum SpecialValueSet {
 		this(toSortedSet(sets));
 	}
 	
+	@SafeVarargs //safe cause privately used
 	private SpecialValueSet(SortedSet<Long>... sets) {
 		this(toSortedSet(sets));
 	}
