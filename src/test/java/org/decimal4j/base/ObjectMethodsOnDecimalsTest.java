@@ -1,20 +1,17 @@
 package org.decimal4j.base;
 
 import static com.google.common.truth.Truth.ASSERT;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
+import static org.decimal4j.base.DecimalArgumentProviders.newDecimal;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import junitparams.naming.TestCaseName;
 
 import org.decimal4j.api.Decimal;
-import org.decimal4j.factory.Factories;
+import org.decimal4j.base.DecimalArgumentProviders.BinaryDecimalArgumentProvider;
+import org.decimal4j.base.DecimalArgumentProviders.TernaryDecimalArgumentProvider;
+import org.decimal4j.base.DecimalArgumentProviders.UnaryDecimalArgumentProvider;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
-import org.decimal4j.test.TestSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -29,8 +26,6 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitParamsRunner.class)
 public class ObjectMethodsOnDecimalsTest {
 
-  private static final Random RND = new Random();
-
   // Test cases for equals
 
   /**
@@ -38,7 +33,7 @@ public class ObjectMethodsOnDecimalsTest {
    * {@link Decimal} implementations.
    */
   @Test
-  @Parameters(source = ParameterProvider.class, method = "provideInputForReflexivityCheck")
+  @Parameters(source = UnaryDecimalArgumentProvider.class)
   @TestCaseName("reflexivity check: {0}")
   public void equalsIsReflexive(final Decimal<ScaleMetrics> first) {
     ASSERT.that(first).isEqualTo(first);
@@ -49,7 +44,7 @@ public class ObjectMethodsOnDecimalsTest {
    * {@link Decimal} implementations.
    */
   @Test
-  @Parameters(source = ParameterProvider.class, method = "provideInputForSymmetryCheck")
+  @Parameters(source = BinaryDecimalArgumentProvider.class)
   @TestCaseName("symmetry check: [{0}, {1}]")
   public void equalsIsSymmetric(final Decimal<ScaleMetrics> first,
       final Decimal<ScaleMetrics> second) {
@@ -65,7 +60,7 @@ public class ObjectMethodsOnDecimalsTest {
    * {@link Decimal} implementations.
    */
   @Test
-  @Parameters(source = ParameterProvider.class, method = "provideInputForTransitivityCheck")
+  @Parameters(source = TernaryDecimalArgumentProvider.class)
   @TestCaseName("transitivity check: [{0}, {1}, {2}]")
   public void equalsIsTransitive(final Decimal<ScaleMetrics> first,
       final Decimal<ScaleMetrics> second, final Decimal<ScaleMetrics> third) {
@@ -78,7 +73,7 @@ public class ObjectMethodsOnDecimalsTest {
   }
 
   @Test
-  @Parameters(source = ParameterProvider.class, method = "provideInputForReflexivityCheck")
+  @Parameters(source = UnaryDecimalArgumentProvider.class)
   @TestCaseName("equals is null-safe: {0}")
   public void equalsIsNullSafe(final Decimal<ScaleMetrics> first) {
     // given
@@ -89,7 +84,7 @@ public class ObjectMethodsOnDecimalsTest {
   }
 
   @Test
-  @Parameters(source = ParameterProvider.class, method = "provideInputForReflexivityCheck")
+  @Parameters(source = UnaryDecimalArgumentProvider.class)
   @TestCaseName("non-decimal test: {0}")
   public void isNotEqualToNonDecimalObjects(final Decimal<ScaleMetrics> first) {
     // given
@@ -124,70 +119,42 @@ public class ObjectMethodsOnDecimalsTest {
     ASSERT.that(first).isNotEqualTo(second);
   }
 
-  // Helpers
+  // Test cases for hashCode
 
-  public static class ParameterProvider {
-    public static Object[] provideInputForReflexivityCheck() {
-      final List<Object[]> data = new ArrayList<Object[]>();
+  @Test
+  @Parameters(source = BinaryDecimalArgumentProvider.class)
+  @TestCaseName("hashCode check: [{0}, {1}]")
+  public void equalDecimalsHaveEqualHashCodes(final Decimal<ScaleMetrics> first,
+      final Decimal<ScaleMetrics> second) {
+    // given
+    ASSERT.that(first).isEqualTo(second);
 
-      Decimal<ScaleMetrics> decimal;
-      for (final ScaleMetrics s : TestSettings.SCALES) {
-        decimal = newDecimal(s, RND.nextLong());
+    // when
+    final int hashCodeFirst = first.hashCode();
+    final int hashCodeSecond = second.hashCode();
 
-        data.add(new Object[] {decimal});
-        data.add(new Object[] {decimal.toMutableDecimal()});
-      }
-      return data.toArray();
-    }
-
-    public static Object[] provideInputForSymmetryCheck() {
-      final List<Object[]> data = new ArrayList<Object[]>();
-
-      long random;
-      Decimal<ScaleMetrics> firstDecimal, secondDecimal;
-
-      for (final ScaleMetrics s : TestSettings.SCALES) {
-        random = RND.nextLong();
-
-        firstDecimal = newDecimal(s, random);
-        secondDecimal = newDecimal(s, random);
-
-        data.add(new Object[] {firstDecimal, secondDecimal});
-        data.add(new Object[] {firstDecimal, firstDecimal.toMutableDecimal()});
-        data.add(new Object[] {firstDecimal, secondDecimal.toMutableDecimal()});
-        data.add(new Object[] {firstDecimal.toMutableDecimal(), secondDecimal.toMutableDecimal()});
-        data.add(new Object[] {secondDecimal, secondDecimal.toMutableDecimal()});
-        data.add(new Object[] {secondDecimal, firstDecimal.toMutableDecimal()});
-      }
-
-      return data.toArray();
-    }
-
-    public static Object[] provideInputForTransitivityCheck() {
-      final List<Object[]> data = new ArrayList<Object[]>();
-
-      long random;
-      Decimal<ScaleMetrics> firstDecimal, secondDecimal, thirdDecimal;
-
-      for (final ScaleMetrics s : TestSettings.SCALES) {
-        random = RND.nextLong();
-
-        firstDecimal = newDecimal(s, random);
-        secondDecimal = newDecimal(s, random);
-        thirdDecimal = newDecimal(s, random);
-
-        data.add(new Object[] {firstDecimal, secondDecimal, thirdDecimal});
-        data.add(new Object[] {firstDecimal, secondDecimal, thirdDecimal.toMutableDecimal()});
-      }
-
-      return data.toArray();
-    }
-
+    // then
+    ASSERT.that(hashCodeFirst).isEqualTo(hashCodeSecond);
   }
 
-  private static Decimal<ScaleMetrics> newDecimal(final ScaleMetrics scaleMetrics,
-      final long unscaled) {
-    return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
+  // Test cases for toString
+  // NOTE: Decimal#toString does not have a fixed format to parse/check, so this case just checks,
+  // that it is overridden, thus equal decimals must have the same string representation
+
+  @Test
+  @Parameters(source = BinaryDecimalArgumentProvider.class)
+  @TestCaseName("toString() check: [{0}, {1}]")
+  public void equalDecimalsHaveSameStringRepresentation(final Decimal<ScaleMetrics> first,
+      final Decimal<ScaleMetrics> second) {
+    // given
+    ASSERT.that(first).isEqualTo(second);
+
+    // when
+    final String stringFirst = first.toString();
+    final String stringSecond = second.toString();
+
+    // then
+    ASSERT.that(stringFirst).isEqualTo(stringSecond);
   }
 
 }
