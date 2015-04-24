@@ -6,6 +6,7 @@ package org.decimal4j.mutable;
 import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.base.AbstractMutableDecimal;
 import org.decimal4j.immutable.Decimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
@@ -111,8 +112,23 @@ public class MutableDecimal${scale}f extends
 	}
 
 	@Override
+	public int getScale() {
+		return ${scale};
+	}
+
+	@Override
 	public Factory${scale}f getFactory() {
 		return Decimal${scale}f.FACTORY;
+	}
+	
+	@Override
+	protected DecimalArithmetic getDefaultArithmetic() {
+		return Decimal${scale}f.DEFAULT_ARITHMETICS;
+	}
+	
+	@Override
+	protected DecimalArithmetic getDefaultCheckedArithmetic() {
+		return Decimal${scale}f.DEFAULT_CHECKED_ARITHMETICS;
 	}
 
 	@Override

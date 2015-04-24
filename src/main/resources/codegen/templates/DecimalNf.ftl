@@ -8,10 +8,12 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
+import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.base.AbstractImmutableDecimal;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
+import org.decimal4j.truncate.OverflowMode;
 
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
@@ -26,6 +28,18 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	/** Factory constant for Decimal${scale}f returned by {@link #getFactory()}.*/
 	public static final Factory${scale}f FACTORY = Factory${scale}f.INSTANCE;
 	
+	/**
+	 * Default arithmetic for Decimal${scale}f performing unchecked operations with rounding mode 
+	 * {@link RoundingMode#HALF_UP HALF_UP}.
+	 */
+	public static final DecimalArithmetic DEFAULT_ARITHMETICS = SCALE.getDefaultArithmetic();
+	
+	/**
+	 * Default arithmetic for Decimal${scale}f performing checked operations with rounding mode 
+	 * {@link RoundingMode#HALF_UP HALF_UP}.
+	 */
+	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETICS = SCALE.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.HALF_UP));
+
 	/** The unscaled long value that represents one.*/
 	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
 
@@ -179,6 +193,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 
 	@Override
+	public int getScale() {
+		return ${scale};
+	}
+
+	@Override
 	public Factory${scale}f getFactory() {
 		return FACTORY;
 	}
@@ -186,6 +205,16 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	@Override
 	protected Decimal${scale}f self() {
 		return this;
+	}
+
+	@Override
+	protected DecimalArithmetic getDefaultArithmetic() {
+		return DEFAULT_ARITHMETICS;
+	}
+	
+	@Override
+	protected DecimalArithmetic getDefaultCheckedArithmetic() {
+		return DEFAULT_CHECKED_ARITHMETICS;
 	}
 
     /**
