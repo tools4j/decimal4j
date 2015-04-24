@@ -13,7 +13,7 @@ import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
 
 @SuppressWarnings("serial")
-public class MutableDecimal${scale}f extends
+public final class MutableDecimal${scale}f extends
 		AbstractMutableDecimal<Scale${scale}f, MutableDecimal${scale}f> implements
 		Cloneable {
 
@@ -29,7 +29,7 @@ public class MutableDecimal${scale}f extends
 	}
 
 	public MutableDecimal${scale}f(String value) {
-		this(Decimal${scale}f.SCALE.getDefaultArithmetic().parse(value));
+		this(Decimal${scale}f.DEFAULT_ARITHMETIC.parse(value));
 	}
 
 	public MutableDecimal${scale}f(String value, RoundingMode roundingMode) {
@@ -43,12 +43,12 @@ public class MutableDecimal${scale}f extends
 
 	public MutableDecimal${scale}f(double value) {
 		this();
-		add(value);
+		set(value);
 	}
 
 	public MutableDecimal${scale}f(double value, RoundingMode roundingMode) {
 		this();
-		add(value, roundingMode);
+		set(value, roundingMode);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class MutableDecimal${scale}f extends
 	 */
 	public MutableDecimal${scale}f(long unscaledValue, int scale) {
 		this();
-		addUnscaled(unscaledValue, scale);
+		setUnscaled(unscaledValue, scale);
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class MutableDecimal${scale}f extends
 	 */
 	public MutableDecimal${scale}f(long unscaledValue, int scale, RoundingMode roundingMode) {
 		this();
-		addUnscaled(unscaledValue, scale, roundingMode);
+		setUnscaled(unscaledValue, scale, roundingMode);
 	}
 
 	public MutableDecimal${scale}f(Decimal<Scale${scale}f> value) {
@@ -123,12 +123,12 @@ public class MutableDecimal${scale}f extends
 	
 	@Override
 	protected DecimalArithmetic getDefaultArithmetic() {
-		return Decimal${scale}f.DEFAULT_ARITHMETICS;
+		return Decimal${scale}f.DEFAULT_ARITHMETIC;
 	}
 	
 	@Override
 	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return Decimal${scale}f.DEFAULT_CHECKED_ARITHMETICS;
+		return Decimal${scale}f.DEFAULT_CHECKED_ARITHMETIC;
 	}
 
 	@Override

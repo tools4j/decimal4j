@@ -32,13 +32,13 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 * Default arithmetic for Decimal${scale}f performing unchecked operations with rounding mode 
 	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 */
-	public static final DecimalArithmetic DEFAULT_ARITHMETICS = SCALE.getDefaultArithmetic();
+	public static final DecimalArithmetic DEFAULT_ARITHMETIC = SCALE.getDefaultArithmetic();
 	
 	/**
 	 * Default arithmetic for Decimal${scale}f performing checked operations with rounding mode 
 	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 */
-	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETICS = SCALE.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.HALF_UP));
+	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETIC = SCALE.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.HALF_UP));
 
 	/** The unscaled long value that represents one.*/
 	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
@@ -59,8 +59,8 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 <#else>
     private static final int MAX_CONSTANT = 9;
 </#if>
-    private static Decimal${scale}f POS_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
-    private static Decimal${scale}f NEG_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
+    private static final Decimal${scale}f POS_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
+    private static final Decimal${scale}f NEG_CONST[] = new Decimal${scale}f[MAX_CONSTANT+1];
 
     static {
         for (int i = 1; i <= MAX_CONSTANT; i++) {
@@ -184,7 +184,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 
 	public Decimal${scale}f(String value) {
-		super(SCALE.getDefaultArithmetic().parse(value));
+		super(DEFAULT_ARITHMETIC.parse(value));
 	}
 	
 	@Override
@@ -209,12 +209,12 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	@Override
 	protected DecimalArithmetic getDefaultArithmetic() {
-		return DEFAULT_ARITHMETICS;
+		return DEFAULT_ARITHMETIC;
 	}
 	
 	@Override
 	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return DEFAULT_CHECKED_ARITHMETICS;
+		return DEFAULT_CHECKED_ARITHMETIC;
 	}
 
     /**
@@ -231,35 +231,35 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
             return POS_CONST[(int) value];
         else if (value < 0 & value >= -MAX_CONSTANT)
             return NEG_CONST[(int) -value];
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromLong(value));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromLong(value));
 	}
 
 	public static Decimal${scale}f valueOf(float value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromFloat(value));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromFloat(value));
 	}
 
 	public static Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromFloat(value));
+		return valueOfUnscaled(SCALE.getArithmetic(roundingMode).fromFloat(value));
 	}
 
 	public static Decimal${scale}f valueOf(double value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromDouble(value));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromDouble(value));
 	}
 
 	public static Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromDouble(value));
+		return valueOfUnscaled(SCALE.getArithmetic(roundingMode).fromDouble(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigInteger value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigInteger(value));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromBigInteger(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigDecimal value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromBigDecimal(value));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromBigDecimal(value));
 	}
 
 	public static Decimal${scale}f valueOf(BigDecimal value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromBigDecimal(value));
+		return valueOfUnscaled(SCALE.getArithmetic(roundingMode).fromBigDecimal(value));
 	}
 
 	public static Decimal${scale}f valueOf(Decimal<?> value) {
@@ -271,11 +271,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 
 	public static Decimal${scale}f valueOf(String value) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().parse(value));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.parse(value));
 	}
 
 	public static Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).parse(value));
+		return valueOfUnscaled(SCALE.getArithmetic(roundingMode).parse(value));
 	}
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {
@@ -295,11 +295,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
-		return valueOfUnscaled(SCALE.getDefaultArithmetic().fromUnscaled(unscaledValue, scale));
+		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromUnscaled(unscaledValue, scale));
 	}
 
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
-		return valueOfUnscaled(Scale${scale}f.INSTANCE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
+		return valueOfUnscaled(SCALE.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
 	}
 
 	@Override
