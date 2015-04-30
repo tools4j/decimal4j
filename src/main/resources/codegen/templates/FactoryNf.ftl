@@ -11,6 +11,7 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.immutable.Decimal${scale}f;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
+import org.decimal4j.scale.ScaleMetrics;
 
 /**
  * The factory for decimals with scale ${scale} creating {@link Decimal${scale}f} and
@@ -36,6 +37,16 @@ public enum Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	@Override
 	public Class<MutableDecimal${scale}f> mutableType() {
 		return MutableDecimal${scale}f.class;
+	}
+
+	@Override
+	public DecimalFactory<?> deriveFactory(int scale) {
+		return Factories.getDecimalFactory(scale);
+	}
+	
+	@Override
+	public <S extends ScaleMetrics> DecimalFactory<S> deriveFactory(S scaleMetrics) {
+		return Factories.getDecimalFactory(scaleMetrics);
 	}
 
 	@Override

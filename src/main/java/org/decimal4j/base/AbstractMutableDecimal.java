@@ -27,7 +27,6 @@ import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.MutableDecimal;
-import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
@@ -110,7 +109,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		}
 		final ScaleMetrics targetMetrics = Scales.getScaleMetrics(scale);
 		final long targetUnscaled = targetMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, myScale);
-		return Factories.getDecimalFactory(scale).newMutable().setUnscaled(targetUnscaled);
+		return getFactory().deriveFactory(scale).newMutable().setUnscaled(targetUnscaled);
 	}
 
 	@Override
@@ -123,7 +122,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 			return self;
 		}
 		final long targetUnscaled = scaleMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, getScale());
-		return Factories.getDecimalFactory(scaleMetrics).newMutable().setUnscaled(targetUnscaled);
+		return getFactory().deriveFactory(scaleMetrics).newMutable().setUnscaled(targetUnscaled);
 	}
 
 	@Override
@@ -131,7 +130,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		final int targetScale = getScale() + multiplicand.getScale();
 		try {
 			final long unscaledProduct = getCheckedArithmeticFor(RoundingMode.DOWN).multiplyByLong(unscaled, multiplicand.unscaledValue());
-			return Factories.getDecimalFactory(targetScale).newMutable().setUnscaled(unscaledProduct);
+			return getFactory().deriveFactory(targetScale).newMutable().setUnscaled(unscaledProduct);
 		} catch (ArithmeticException e) {
 			throw new ArithmeticException("Overflow: " + this + " * " + multiplicand);
 		}

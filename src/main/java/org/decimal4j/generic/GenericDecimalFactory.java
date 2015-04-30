@@ -31,6 +31,7 @@ import java.util.Objects;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
+import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
@@ -73,6 +74,15 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 	@Override
 	public Class<? extends MutableDecimal<S>> mutableType() {
 		return (Class<? extends GenericMutableDecimal<S>>)(Class<?>) GenericMutableDecimal.class;
+	}
+	
+	@Override
+	public GenericDecimalFactory<?> deriveFactory(int scale) {
+		return Factories.getGenericDecimalFactory(scale);
+	}
+	
+	public <T extends ScaleMetrics> GenericDecimalFactory<T> deriveFactory(T scaleMetrics) {
+		return Factories.getGenericDecimalFactory(scaleMetrics);
 	}
 
 	@Override

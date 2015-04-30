@@ -52,17 +52,38 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns the implementing class for immutable values.
-	 *  
+	 * 
 	 * @return the implementation type for immutable decimals
 	 */
 	Class<? extends ImmutableDecimal<S>> immutableType();
 
 	/**
 	 * Returns the implementing class for mutable values.
-	 *  
+	 * 
 	 * @return the implementation type for mutable decimals
 	 */
 	Class<? extends MutableDecimal<S>> mutableType();
+
+	/**
+	 * Returns a factory for the given {@code scale}.
+	 * 
+	 * @param scale
+	 *            the scale of Decimal numbers created by the returned factory
+	 * @return a decimal factory for numbers with the given scale
+	 */
+	DecimalFactory<?> deriveFactory(int scale);
+
+	/**
+	 * Returns a factory for the given {@code scaleMetrics}.
+	 * 
+	 * @param scaleMetrics
+	 *            the metrics defining the scale of the Decimal numbers created
+	 *            by the returned factory
+	 * @return a decimal factory for numbers with the scale specified by
+	 *         {@code scaleMetrics}
+	 */
+	@SuppressWarnings("hiding")
+	<S extends ScaleMetrics> DecimalFactory<S> deriveFactory(S scaleMetrics);
 
 	/**
 	 * Returns a new decimal value whose value is numerically equal to that of
