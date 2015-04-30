@@ -28,7 +28,7 @@ import java.util.Objects;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.base.AbstractMutableDecimal;
-import org.decimal4j.factory.DecimalFactory;
+import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
@@ -40,8 +40,9 @@ import org.decimal4j.scale.Scales;
  */
 public final class GenericMutableDecimal<S extends ScaleMetrics> extends AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable{
 
+	private static final long serialVersionUID = 1L;
+
 	private final S scaleMetrics;
-	private final DecimalFactory<S> factory;
 	
 	/**
 	 * Creates a new {@code GenericMutableDecimal} with value zero.
@@ -63,7 +64,6 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 	public GenericMutableDecimal(S scaleMetrics, long unscaledValue) {
 		super(unscaledValue);
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
-		this.factory = new GenericDecimalFactory<S>(scaleMetrics);
 	}
 
 	public static <S extends ScaleMetrics> GenericMutableDecimal<S> valueOf(Decimal<S> decimal) {
@@ -103,8 +103,8 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 	}
 
 	@Override
-	public DecimalFactory<S> getFactory() {
-		return factory;
+	public GenericDecimalFactory<S> getFactory() {
+		return Factories.getGenericDecimalFactory(scaleMetrics);
 	}
 	
 	@SuppressWarnings("unchecked")

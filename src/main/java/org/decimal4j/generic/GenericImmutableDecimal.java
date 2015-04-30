@@ -28,7 +28,7 @@ import java.util.Objects;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.base.AbstractImmutableDecimal;
-import org.decimal4j.factory.DecimalFactory;
+import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
@@ -40,13 +40,13 @@ import org.decimal4j.scale.Scales;
  */
 public final class GenericImmutableDecimal<S extends ScaleMetrics> extends AbstractImmutableDecimal<S, GenericImmutableDecimal<S>> {
 
+	private static final long serialVersionUID = 1L;
+
 	private final S scaleMetrics;
-	private final DecimalFactory<S> factory;
 
 	public GenericImmutableDecimal(S scaleMetrics, long unscaled) {
 		super(unscaled);
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
-		this.factory = new GenericDecimalFactory<S>(scaleMetrics);
 	}
 
 	public GenericImmutableDecimal(Decimal<S> decimal) {
@@ -74,8 +74,8 @@ public final class GenericImmutableDecimal<S extends ScaleMetrics> extends Abstr
 	}
 
 	@Override
-	public DecimalFactory<S> getFactory() {
-		return factory;
+	public GenericDecimalFactory<S> getFactory() {
+		return Factories.getGenericDecimalFactory(scaleMetrics);
 	}
 
 	@Override

@@ -34,6 +34,15 @@ import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
+/**
+ * <tt>GenericDecimalFactory</tt> is a {@link DecimalFactory} for generic decimal values.
+ * Different generic decimal instances of the same class can have different scales as
+ * opposed to the decimal values defined in the {@code immutable} and {@code mutable}
+ * packages.
+ * 
+ * @see GenericImmutableDecimal
+ * @see GenericMutableDecimal
+ */
 public final class GenericDecimalFactory<S extends ScaleMetrics> implements DecimalFactory<S> {
 
 	private final S scaleMetrics;

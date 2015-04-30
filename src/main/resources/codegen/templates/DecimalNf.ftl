@@ -18,8 +18,9 @@ import org.decimal4j.scale.Scale${scale}f;
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
  * number of ${scale} digits to the right of the decimal point.
  */
-@SuppressWarnings("serial")
 public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scale}f, Decimal${scale}f> {
+
+	private static final long serialVersionUID = 1L;
 
 	/** Scale metrics constant for Decimal${scale}f returned by {@link #getScaleMetrics()}*/
 	public static final Scale${scale}f SCALE = Scale${scale}f.INSTANCE;

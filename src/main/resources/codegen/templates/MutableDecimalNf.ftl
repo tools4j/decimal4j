@@ -12,10 +12,11 @@ import org.decimal4j.immutable.Decimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
 
-@SuppressWarnings("serial")
 public final class MutableDecimal${scale}f extends
 		AbstractMutableDecimal<Scale${scale}f, MutableDecimal${scale}f> implements
 		Cloneable {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Creates a new {@code MutableDecimal${scale}f} with value zero.

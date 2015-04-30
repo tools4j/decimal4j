@@ -47,6 +47,7 @@ import org.decimal4j.factory.Factory6f;
 import org.decimal4j.factory.Factory7f;
 import org.decimal4j.factory.Factory8f;
 import org.decimal4j.factory.Factory9f;
+import org.decimal4j.generic.GenericDecimalFactory;
 
 /**
  * Utility class with static methods to access {@link DecimalFactory} instances.
@@ -76,6 +77,16 @@ public final class Factories {
 		Factory18f.INSTANCE
 	};
 	//@formatter:on
+	
+	private static final GenericDecimalFactory<?>[] GENERIC_FACTORIES = initGenericFactories();
+
+	private static GenericDecimalFactory<?>[] initGenericFactories() {
+		final GenericDecimalFactory<?>[] genericFactories = new GenericDecimalFactory<?>[FACTORIES.length];
+		for (int i = 0; i < FACTORIES.length; i++) {
+			genericFactories[i] = new GenericDecimalFactory<ScaleMetrics>(FACTORIES[i].getScaleMetrics());
+		}
+		return genericFactories;
+	}
 
 	/**
 	 * All decimal factory constants in an immutable ordered list:
@@ -97,7 +108,7 @@ public final class Factories {
 		if (0 <= scale & scale <= 18) {
 			return FACTORIES[scale];
 		}
-		throw new IllegalArgumentException("illegal scale, must be in [0,18] but was: " + scale);
+		throw new IllegalArgumentException("Illegal scale, must be in [0,18] but was: " + scale);
 	}
 
 	/**
@@ -107,9 +118,38 @@ public final class Factories {
 	 *            the scale metrics
 	 * @return the factory constant corresponding to {@code scaleMetrics}
 	 */
-	public static <S extends ScaleMetrics> DecimalFactory<S> getDecimalFactory(S scaleMetrics) {
+	public static final <S extends ScaleMetrics> DecimalFactory<S> getDecimalFactory(S scaleMetrics) {
 		@SuppressWarnings("unchecked")
 		final DecimalFactory<S> factory = (DecimalFactory<S>)getDecimalFactory(scaleMetrics.getScale());
+		return factory;
+	}
+
+	/**
+	 * Returns the {@code GenericDecimalFactory} based on a given scale.
+	 * 
+	 * @param scale
+	 *            the scale value; must be in {@code [0,18]} both ends inclusive
+	 * @return the generic factory corresponding to {@code scale}
+	 * @throws IllegalArgumentException
+	 *             if scale is not in {@code [0, 18]}
+	 */
+	public static final GenericDecimalFactory<?> getGenericDecimalFactory(int scale) {
+		if (0 <= scale & scale <= 18) {
+			return GENERIC_FACTORIES[scale];
+		}
+		throw new IllegalArgumentException("Illegal scale, must be in [0,18] but was: " + scale);
+	}
+
+	/**
+	 * Returns the {@code GenericDecimalFactory} for the given scale metrics.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics
+	 * @return the generic factory corresponding to {@code scaleMetrics}
+	 */
+	public static final <S extends ScaleMetrics> GenericDecimalFactory<S> getGenericDecimalFactory(S scaleMetrics) {
+		@SuppressWarnings("unchecked")
+		final GenericDecimalFactory<S> factory = (GenericDecimalFactory<S>)getGenericDecimalFactory(scaleMetrics.getScale());
 		return factory;
 	}
 
