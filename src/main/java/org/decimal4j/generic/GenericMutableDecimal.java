@@ -124,7 +124,7 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 		try {
 			return (GenericMutableDecimal<S>)super.clone();
 		} catch (CloneNotSupportedException e) {
-			throw new InternalError("clone should be supported", e);
+			throw new RuntimeException("clone should be supported", e);
 		}
 	}
 
