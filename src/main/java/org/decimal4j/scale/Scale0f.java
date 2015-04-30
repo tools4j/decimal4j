@@ -23,8 +23,17 @@
  */
 package org.decimal4j.scale;
 
+import static java.math.RoundingMode.DOWN;
+import static java.math.RoundingMode.FLOOR;
+import static java.math.RoundingMode.HALF_EVEN;
+import static java.math.RoundingMode.HALF_UP;
+import static java.math.RoundingMode.UNNECESSARY;
+import static org.decimal4j.truncate.OverflowMode.CHECKED;
+import static org.decimal4j.truncate.OverflowMode.UNCHECKED;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.EnumMap;
 
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.arithmetic.CheckedScale0fRoundingArithmetic;
@@ -32,53 +41,56 @@ import org.decimal4j.arithmetic.CheckedScale0fTruncatingArithmetic;
 import org.decimal4j.arithmetic.UncheckedScale0fRoundingArithmetic;
 import org.decimal4j.arithmetic.UncheckedScale0fTruncatingArithmetic;
 import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * Scale class for decimals with {@link #getScale() scale} 0 (aka as integers)
- * and {@link #getScaleFactor() scale factor} 1.
+ * Scale class for decimals with {@link #getScale() scale} 0 and
+ * {@link #getScaleFactor() scale factor} 1. Decimals with scale zero are
+ * essentially longs.
  */
-public final class Scale0f extends AbstractScale {
+public enum Scale0f implements ScaleMetrics {
 
 	/**
 	 * The singleton instance for scale 0.
 	 */
-	public static final Scale0f INSTANCE = new Scale0f();
+	INSTANCE;
 
-	@Override
-	protected EnumMap<RoundingMode, DecimalArithmetic> initArithmetic() {
-		final EnumMap<RoundingMode, DecimalArithmetic> map = new EnumMap<RoundingMode, DecimalArithmetic>(RoundingMode.class);
+	private static final long LONG_MASK = 0xffffffffL;
+
+	private static final DecimalArithmetic[] UNCHECKED_ARITHMETIC = initArithmetic(UNCHECKED);
+	private static final DecimalArithmetic[] CHECKED_ARITHMETIC = initArithmetic(CHECKED);
+
+	private static final DecimalArithmetic DEFAULT_ARITHMETIC = UNCHECKED_ARITHMETIC[HALF_UP.ordinal()];
+	private static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETIC = CHECKED_ARITHMETIC[HALF_UP.ordinal()];
+	private static final DecimalArithmetic ROUNDING_DOWN_ARITHMETIC = UNCHECKED_ARITHMETIC[DOWN.ordinal()];
+	private static final DecimalArithmetic ROUNDING_FLOOR_ARITHMETIC = UNCHECKED_ARITHMETIC[FLOOR.ordinal()];
+	private static final DecimalArithmetic ROUNDING_HALF_EVEN_ARITHMETIC = UNCHECKED_ARITHMETIC[HALF_EVEN.ordinal()];
+	private static final DecimalArithmetic ROUNDING_UNNECESSARY_ARITHMETIC = UNCHECKED_ARITHMETIC[UNNECESSARY.ordinal()];
+
+	private static DecimalArithmetic[] initArithmetic(OverflowMode overflowMode) {
+		final boolean checked = overflowMode == CHECKED;
+		final DecimalArithmetic[] arith = new DecimalArithmetic[DecimalRounding.VALUES.size()];
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
-			final RoundingMode roundingMode = dr.getRoundingMode();
-			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, UncheckedScale0fTruncatingArithmetic.INSTANCE);
+			final int index = dr.getRoundingMode().ordinal();
+			if (dr == DecimalRounding.DOWN) {
+				arith[index] = checked ? CheckedScale0fTruncatingArithmetic.INSTANCE
+						: UncheckedScale0fTruncatingArithmetic.INSTANCE;
 			} else {
-				map.put(roundingMode, new UncheckedScale0fRoundingArithmetic(dr));
+				arith[index] = checked ? new CheckedScale0fRoundingArithmetic(dr)
+						: new UncheckedScale0fRoundingArithmetic(dr);
 			}
 		}
-		return map;
+		return arith;
 	}
 
 	@Override
-	protected EnumMap<RoundingMode, DecimalArithmetic> initCheckedArithmetic() {
-		final EnumMap<RoundingMode, DecimalArithmetic> map = new EnumMap<RoundingMode, DecimalArithmetic>(RoundingMode.class);
-		for (final DecimalRounding dr : DecimalRounding.VALUES) {
-			final RoundingMode roundingMode = dr.getRoundingMode();
-			if (roundingMode == RoundingMode.DOWN) {
-				map.put(roundingMode, CheckedScale0fTruncatingArithmetic.INSTANCE);
-			} else {
-				map.put(roundingMode, new CheckedScale0fRoundingArithmetic(dr));
-			}
-		}
-		return map;
-	}
-
-	@Override
-	public int getScale() {
+	public final int getScale() {
 		return 0;
 	}
 
 	@Override
-	public long getScaleFactor() {
+	public final long getScaleFactor() {
 		return 1;
 	}
 
@@ -88,37 +100,104 @@ public final class Scale0f extends AbstractScale {
 	}
 
 	@Override
-	public long multiplyByScaleFactor(long factor) {
+	public final BigInteger getScaleFactorAsBigInteger() {
+		return BigInteger.ONE;
+	}
+
+	@Override
+	public final BigDecimal getScaleFactorAsBigDecimal() {
+		return BigDecimal.ONE;
+	}
+
+	@Override
+	public final long getMaxIntegerValue() {
+		return Long.MAX_VALUE;
+	}
+
+	@Override
+	public final long getMinIntegerValue() {
+		return Long.MIN_VALUE;
+	}
+
+	@Override
+	public final long multiplyByScaleFactor(long factor) {
 		return factor;
 	}
 
 	@Override
-	public long multiplyByScaleFactorExact(long factor) {
+	public final long multiplyByScaleFactorExact(long factor) {
 		return factor;
 	}
-	
+
 	@Override
-	public long mulloByScaleFactor(int factor) {
+	public final long mulloByScaleFactor(int factor) {
 		return factor & LONG_MASK;
 	}
 
 	@Override
-	public long mulhiByScaleFactor(int factor) {
+	public final long mulhiByScaleFactor(int factor) {
 		return 0;
 	}
 
 	@Override
-	public long divideByScaleFactor(long dividend) {
+	public final long divideByScaleFactor(long dividend) {
 		return dividend;
 	}
-	
+
 	@Override
-	public long divideUnsignedByScaleFactor(long unsignedDividend) {
+	public final long divideUnsignedByScaleFactor(long unsignedDividend) {
 		return unsignedDividend;
 	}
 
 	@Override
-	public long moduloByScaleFactor(long dividend) {
+	public final long moduloByScaleFactor(long dividend) {
 		return 0;
+	}
+
+	@Override
+	public final DecimalArithmetic getDefaultArithmetic() {
+		return DEFAULT_ARITHMETIC;
+	}
+
+	@Override
+	public final DecimalArithmetic getDefaultCheckedArithmetic() {
+		return DEFAULT_CHECKED_ARITHMETIC;
+	}
+
+	@Override
+	public final DecimalArithmetic getRoundingDownArithmetic() {
+		return ROUNDING_DOWN_ARITHMETIC;
+	}
+
+	@Override
+	public final DecimalArithmetic getRoundingFloorArithmetic() {
+		return ROUNDING_FLOOR_ARITHMETIC;
+	}
+
+	@Override
+	public final DecimalArithmetic getRoundingHalfEvenArithmetic() {
+		return ROUNDING_HALF_EVEN_ARITHMETIC;
+	}
+
+	@Override
+	public final DecimalArithmetic getRoundingUnnecessaryArithmetic() {
+		return ROUNDING_UNNECESSARY_ARITHMETIC;
+	}
+
+	@Override
+	public final DecimalArithmetic getArithmetic(RoundingMode roundingMode) {
+		return UNCHECKED_ARITHMETIC[roundingMode.ordinal()];
+	}
+
+	@Override
+	public final DecimalArithmetic getArithmetic(TruncationPolicy truncationPolicy) {
+		final OverflowMode overflow = truncationPolicy.getOverflowMode();
+		final RoundingMode rounding = truncationPolicy.getRoundingMode();
+		return (overflow == UNCHECKED ? UNCHECKED_ARITHMETIC : CHECKED_ARITHMETIC)[rounding.ordinal()];
+	}
+
+	@Override
+	public final String toString() {
+		return "Scale0f";
 	}
 }

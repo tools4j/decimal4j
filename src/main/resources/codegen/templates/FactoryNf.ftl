@@ -16,12 +16,12 @@ import org.decimal4j.scale.Scale${scale}f;
  * The factory for decimals with scale ${scale} creating {@link Decimal${scale}f} and
  * {@link MutableDecimal${scale}f} instances.
  */
-public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
+public enum Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 
 	/**
 	 * Singleton factory instance for immutable and mutable decimals with scale ${scale}.
 	 */
-	public static final Factory${scale}f INSTANCE = new Factory${scale}f();
+	INSTANCE;
 
 	@Override
 	public Scale${scale}f getScaleMetrics() {
@@ -89,12 +89,12 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(String value) {
+	public Decimal${scale}f parse(String value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
+	public Decimal${scale}f parse(String value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
 	}
 
@@ -126,11 +126,6 @@ public final class Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	@Override
 	public MutableDecimal${scale}f[] newMutableArray(int length) {
 		return new MutableDecimal${scale}f[length];
-	}
-
-	// constructor for singleton instance
-	private Factory${scale}f() {
-		super();
 	}
 }
 </#list>

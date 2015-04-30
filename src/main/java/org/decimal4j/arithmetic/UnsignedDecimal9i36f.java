@@ -23,6 +23,8 @@
  */
 package org.decimal4j.arithmetic;
 
+import java.math.RoundingMode;
+
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
@@ -370,7 +372,7 @@ final class UnsignedDecimal9i36f {
 		return 0;//overflow, everything was shifted out to the left
 	}
 	private final long checkedMultiplyByPowerOf10AndRound(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
-		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getTruncatingArithmetic(arith.getOverflowMode());
+		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getArithmetic(arith.getOverflowMode().getTruncationPolicyFor(RoundingMode.DOWN));
 		long iv = arith18.add(arith18.fromLong(ival), val3);//ival * 10^18 + val3
 		if (pow10 <= 36) {
 			return getDecimal(sgn, pow10 - 18, iv, val2, val1, val0, 0, 0, 0, 0, 0, arith, rounding);

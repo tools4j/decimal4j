@@ -23,6 +23,7 @@
  */
 package org.decimal4j.jmh.value;
 
+import java.math.RoundingMode;
 import java.util.Random;
 
 import org.decimal4j.jmh.state.AbstractValueBenchmarkState;
@@ -136,7 +137,7 @@ public enum BenchmarkType {
 			final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(benchmarkState.scale);
 			final double maxBase = Math.pow(scaleMetrics.getMaxIntegerValue(), 1.0/powState.exponent);
 			final double doubleValue = maxBase * Math.random() * Math.signum(Math.random());
-			return scaleMetrics.getTruncatingArithmetic(OverflowMode.CHECKED).fromDouble(doubleValue);
+			return scaleMetrics.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.DOWN)).fromDouble(doubleValue);
 		}
 		@Override
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {

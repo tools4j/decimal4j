@@ -128,7 +128,27 @@ public final class MutableDecimal${scale}f extends
 	
 	@Override
 	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return Decimal${scale}f.DEFAULT_CHECKED_ARITHMETIC;
+		return Decimal${scale}f.SCALE.getDefaultCheckedArithmetic();
+	}
+
+	@Override
+	protected DecimalArithmetic getRoundingDownArithmetic() {
+		return Decimal${scale}f.SCALE.getRoundingDownArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingFloorArithmetic() {
+		return Decimal${scale}f.SCALE.getRoundingFloorArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingHalfEvenArithmetic() {
+		return Decimal${scale}f.SCALE.getRoundingHalfEvenArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingUnnecessaryArithmetic() {
+		return Decimal${scale}f.SCALE.getRoundingUnnecessaryArithmetic();
 	}
 
 	@Override

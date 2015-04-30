@@ -117,12 +117,12 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 	}
 
 	@Override
-	public GenericImmutableDecimal<S> valueOf(String value) {
+	public GenericImmutableDecimal<S> parse(String value) {
 		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getDefaultArithmetic().parse(value));
 	}
 
 	@Override
-	public GenericImmutableDecimal<S> valueOf(String value, RoundingMode roundingMode) {
+	public GenericImmutableDecimal<S> parse(String value, RoundingMode roundingMode) {
 		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).parse(value));
 	}
 

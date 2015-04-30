@@ -92,9 +92,9 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	ImmutableDecimal<S> valueOf(Decimal<?> value, RoundingMode roundingMode);
 
-	ImmutableDecimal<S> valueOf(String value);
+	ImmutableDecimal<S> parse(String value);
 
-	ImmutableDecimal<S> valueOf(String value, RoundingMode roundingMode);
+	ImmutableDecimal<S> parse(String value, RoundingMode roundingMode);
 
 	/**
 	 * Creates and returns an immutable value from an unscaled long value.

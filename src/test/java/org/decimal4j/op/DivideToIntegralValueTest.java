@@ -24,6 +24,7 @@
 package org.decimal4j.op;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +51,8 @@ public class DivideToIntegralValueTest extends Abstract2DecimalArgsToDecimalResu
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getTruncatingArithmetic(OverflowMode.UNCHECKED)});
-			data.add(new Object[] {s, OverflowMode.CHECKED, s.getTruncatingArithmetic(OverflowMode.CHECKED)});
+			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getRoundingDownArithmetic()});
+			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.DOWN))});
 		}
 		return data;
 	}

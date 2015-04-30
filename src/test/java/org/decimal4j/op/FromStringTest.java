@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test {@link DecimalArithmetic#parse(String)} via
- * {@link DecimalFactory#valueOf(String)}, {@link MutableDecimal#set(String)}
+ * {@link DecimalFactory#parse(String)}, {@link MutableDecimal#set(String)}
  * and the static {@code valueOf(String)} methods of the Immutable Decimal
  * implementations.
  */
@@ -201,9 +201,9 @@ public class FromStringTest extends AbstractOperandTest {
 		if (RND.nextBoolean()) {
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
-				return Factories.getDecimalFactory(scaleMetrics).valueOf(operand);
+				return Factories.getDecimalFactory(scaleMetrics).parse(operand);
 			} else {
-				return Factories.getDecimalFactory(scaleMetrics).valueOf(operand, getRoundingMode());
+				return Factories.getDecimalFactory(scaleMetrics).parse(operand, getRoundingMode());
 			}
 		} else if (RND.nextBoolean()) {
 			//Factory, mutable

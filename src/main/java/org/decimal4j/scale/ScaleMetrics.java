@@ -29,7 +29,6 @@ import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
@@ -190,15 +189,47 @@ public interface ScaleMetrics {
 	DecimalArithmetic getDefaultArithmetic();
 
 	/**
-	 * Returns the truncating arithmetic for this scale and with the specified
-	 * {@code overflowMode} that performs all operations without rounding.
+	 * Returns the default arithmetic for this scale performing checked
+	 * operations with rounding mode {@link RoundingMode#HALF_UP HALF_UP}.
 	 * 
-	 * @param overflowMode
-	 *            the overflow mode used by the returned arithmetic
-	 * @return truncating arithmetic for this scale
-	 * @see RoundingMode#DOWN
+	 * @return default arithmetic for this scale rounding HALF_UP with overflow
+	 *         checks
 	 */
-	DecimalArithmetic getTruncatingArithmetic(OverflowMode overflowMode);
+	DecimalArithmetic getDefaultCheckedArithmetic();
+
+	/**
+	 * Returns the arithmetic for this scale performing unchecked operations
+	 * with rounding mode {@link RoundingMode#DOWN DOWN}.
+	 * 
+	 * @return arithmetic for this scale rounding DOWN without overflow checks
+	 */
+	DecimalArithmetic getRoundingDownArithmetic();
+
+	/**
+	 * Returns the arithmetic for this scale performing unchecked operations
+	 * with rounding mode {@link RoundingMode#FLOOR FLOOR}.
+	 * 
+	 * @return arithmetic for this scale rounding FLOOR without overflow checks
+	 */
+	DecimalArithmetic getRoundingFloorArithmetic();
+
+	/**
+	 * Returns the arithmetic for this scale performing unchecked operations
+	 * with rounding mode {@link RoundingMode#HALF_EVEN HALF_EVEN}.
+	 * 
+	 * @return arithmetic for this scale rounding HALF_EVEN without overflow
+	 *         checks
+	 */
+	DecimalArithmetic getRoundingHalfEvenArithmetic();
+
+	/**
+	 * Returns the arithmetic for this scale performing unchecked operations
+	 * with rounding mode {@link RoundingMode#UNNECESSARY UNNECESSARY}.
+	 * 
+	 * @return default arithmetic for this scale for rounding UNNECESSARY mode
+	 *         without overflow checks
+	 */
+	DecimalArithmetic getRoundingUnnecessaryArithmetic();
 
 	/**
 	 * Returns the arithmetic for this scale that performs all operations with

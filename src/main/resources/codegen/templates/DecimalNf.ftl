@@ -10,10 +10,9 @@ import java.math.RoundingMode;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.base.AbstractImmutableDecimal;
-import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
+import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
-import org.decimal4j.truncate.OverflowMode;
 
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
@@ -34,12 +33,6 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 */
 	public static final DecimalArithmetic DEFAULT_ARITHMETIC = SCALE.getDefaultArithmetic();
 	
-	/**
-	 * Default arithmetic for Decimal${scale}f performing checked operations with rounding mode 
-	 * {@link RoundingMode#HALF_UP HALF_UP}.
-	 */
-	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETIC = SCALE.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.HALF_UP));
-
 	/** The unscaled long value that represents one.*/
 	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
 
@@ -214,7 +207,27 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	
 	@Override
 	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return DEFAULT_CHECKED_ARITHMETIC;
+		return SCALE.getDefaultCheckedArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingDownArithmetic() {
+		return SCALE.getRoundingDownArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingFloorArithmetic() {
+		return SCALE.getRoundingFloorArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingHalfEvenArithmetic() {
+		return SCALE.getRoundingHalfEvenArithmetic();
+	}
+	
+	@Override
+	protected DecimalArithmetic getRoundingUnnecessaryArithmetic() {
+		return SCALE.getRoundingUnnecessaryArithmetic();
 	}
 
     /**

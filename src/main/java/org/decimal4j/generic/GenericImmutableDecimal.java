@@ -23,35 +23,30 @@
  */
 package org.decimal4j.generic;
 
-import java.math.RoundingMode;
 import java.util.Objects;
 
 import org.decimal4j.api.Decimal;
-import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.base.AbstractImmutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
-import org.decimal4j.truncate.OverflowMode;
 
 /**
- * <tt>ImmutableDecimal</tt> represents an immutable decimal number with a variable
- * number of digits to the right of the decimal point.
+ * <tt>GenericImmutableDecimal</tt> is an {@link ImmutableDecimal} implemented in a generic way, 
+ * that is, different instances can have different scales. In contrast the classes defined in
+ * the {@code immutable} package have have no generic parameter as they have a fixed scale per 
+ * class. 
  */
-@SuppressWarnings("serial")
 public final class GenericImmutableDecimal<S extends ScaleMetrics> extends AbstractImmutableDecimal<S, GenericImmutableDecimal<S>> {
 
 	private final S scaleMetrics;
 	private final DecimalFactory<S> factory;
-	private final DecimalArithmetic defaultArithmetics;
-	private final DecimalArithmetic defaultCheckedArithmetics;
 
 	public GenericImmutableDecimal(S scaleMetrics, long unscaled) {
 		super(unscaled);
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
 		this.factory = new GenericDecimalFactory<S>(scaleMetrics);
-		this.defaultArithmetics = scaleMetrics.getDefaultArithmetic();
-		this.defaultCheckedArithmetics = scaleMetrics.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.HALF_UP));
 	}
 
 	public GenericImmutableDecimal(Decimal<S> decimal) {
@@ -86,16 +81,6 @@ public final class GenericImmutableDecimal<S extends ScaleMetrics> extends Abstr
 	@Override
 	protected GenericImmutableDecimal<S> self() {
 		return this;
-	}
-
-	@Override
-	protected DecimalArithmetic getDefaultArithmetic() {
-		return defaultArithmetics;
-	}
-	
-	@Override
-	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return defaultCheckedArithmetics;
 	}
 
 	@Override

@@ -23,24 +23,25 @@
  */
 package org.decimal4j.generic;
 
-import java.math.RoundingMode;
 import java.util.Objects;
 
 import org.decimal4j.api.Decimal;
-import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.base.AbstractMutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
-import org.decimal4j.truncate.OverflowMode;
 
-@SuppressWarnings("serial")
-public final class GenericMutableDecimal<S extends ScaleMetrics> extends AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable {
+/**
+ * <tt>GenericMutableDecimal</tt> is an {@link MutableDecimal} implemented in a generic way, 
+ * that is, different instances can have different scales. In contrast the classes defined in
+ * the {@code mutable} package have have no generic parameter as they have a fixed scale per 
+ * class. 
+ */
+public final class GenericMutableDecimal<S extends ScaleMetrics> extends AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable{
 
 	private final S scaleMetrics;
 	private final DecimalFactory<S> factory;
-	private final DecimalArithmetic defaultArithmetics;
-	private final DecimalArithmetic defaultCheckedArithmetics;
 	
 	/**
 	 * Creates a new {@code GenericMutableDecimal} with value zero.
@@ -63,8 +64,6 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 		super(unscaledValue);
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
 		this.factory = new GenericDecimalFactory<S>(scaleMetrics);
-		this.defaultArithmetics = scaleMetrics.getDefaultArithmetic();
-		this.defaultCheckedArithmetics = scaleMetrics.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.HALF_UP));
 	}
 
 	public static <S extends ScaleMetrics> GenericMutableDecimal<S> valueOf(Decimal<S> decimal) {
@@ -108,16 +107,6 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 		return factory;
 	}
 	
-	@Override
-	protected DecimalArithmetic getDefaultArithmetic() {
-		return defaultArithmetics;
-	}
-	
-	@Override
-	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return defaultCheckedArithmetics;
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public GenericMutableDecimal<S> clone() {
