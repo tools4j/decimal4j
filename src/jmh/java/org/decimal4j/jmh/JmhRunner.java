@@ -24,6 +24,8 @@
 package org.decimal4j.jmh;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +56,8 @@ public class JmhRunner {
 		this.benchmarkClass = benchmarkClass;
 	}
 	public void run() throws RunnerException, IOException, InterruptedException {
-		final Process process = Runtime.getRuntime().exec("java -cp ./build/libs/javasoft-decimal-1.0-jmh.jar " + JmhRunner.class.getName() + " " + benchmarkClass.getSimpleName());
+		final File jmhJar = findJmhJar();
+		final Process process = Runtime.getRuntime().exec("java -cp " + jmhJar.getAbsolutePath() + " " + JmhRunner.class.getName() + " " + benchmarkClass.getSimpleName());
 		final Thread t1 = read(process.getInputStream());
 		final Thread t2 = read(process.getErrorStream());
 		if (0 != process.waitFor()) {
@@ -62,6 +65,20 @@ public class JmhRunner {
 		}
 		t1.interrupt();
 		t2.interrupt();
+	}
+	
+	private final File findJmhJar() {
+		final File libDir = new File("./build/libs");
+		final File[] files = libDir.listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith("-jmh.jar");
+			}
+		});
+		if (files != null && files.length == 1) {
+			return files[0];
+		}
+		throw new IllegalStateException("no jmh jar file found in '" + libDir.getAbsolutePath() + "', hint: run 'gradle jmhJar' first");
 	}
 	private static Thread read(InputStream inputStream) {
 		final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
