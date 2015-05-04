@@ -58,9 +58,6 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics for the new generic factory.
-	 * 
-	 * @see #create(ScaleMetrics)
-	 * @see #create(int)
 	 */
 	public GenericDecimalFactory(S scaleMetrics) {
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");

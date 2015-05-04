@@ -79,6 +79,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param scaleMetrics
 	 *            the metrics defining the scale of the Decimal numbers created
 	 *            by the returned factory
+	 * @param <S> the generic type for {@code scaleMetrics}
 	 * @return a decimal factory for numbers with the scale specified by
 	 *         {@code scaleMetrics}
 	 */

@@ -77,6 +77,7 @@ public final class GenericImmutableDecimal<S extends ScaleMetrics> extends Abstr
 	 * 
 	 * @param decimal
 	 *            the numeric value to assign to the created immutable Decimal
+	 * @param <S> the scale metrics type
 	 * @return a new generic immutable Decimal value with scale and value copied
 	 *         from the {@code decimal} argument
 	 */
@@ -95,6 +96,7 @@ public final class GenericImmutableDecimal<S extends ScaleMetrics> extends Abstr
 	 * @param unscaled
 	 *            the unscaled long value representing the new Decimal's
 	 *            numerical value before applying the scale factor
+	 * @param <S> the scale metrics type
 	 * @return a new Decimal value representing
 	 *         <code>unscaledValue &times; 10<sup>-scale</sup></code>
 	 */
@@ -109,7 +111,7 @@ public final class GenericImmutableDecimal<S extends ScaleMetrics> extends Abstr
 	 * 
 	 * @param scale
 	 *            the scale for the new value
-	 * @param unscaledValue
+	 * @param unscaled
 	 *            the unscaled long value representing the new Decimal's
 	 *            numerical value before applying the scale factor
 	 * @return a new Decimal value representing

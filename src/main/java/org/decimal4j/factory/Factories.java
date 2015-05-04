@@ -116,6 +116,7 @@ public final class Factories {
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics
+	 * @param <S> the generic type for {@code scaleMetrics}
 	 * @return the factory constant corresponding to {@code scaleMetrics}
 	 */
 	public static final <S extends ScaleMetrics> DecimalFactory<S> getDecimalFactory(S scaleMetrics) {
@@ -145,6 +146,7 @@ public final class Factories {
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics
+	 * @param <S> the generic type for {@code scaleMetrics}
 	 * @return the generic factory corresponding to {@code scaleMetrics}
 	 */
 	public static final <S extends ScaleMetrics> GenericDecimalFactory<S> getGenericDecimalFactory(S scaleMetrics) {

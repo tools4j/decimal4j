@@ -119,6 +119,9 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	 * rounding mode {@link RoundingMode#HALF_UP HALF_UP} and the specified
 	 * {@code overflowMode}.
 	 * 
+	 * @param overflowMode
+	 *            the overflow for the returned arithmetic
+	 * 
 	 * @return default arithmetic with {@link RoundingMode#HALF_UP HALF_UP}
 	 *         rounding and the given {@code overflowMode}
 	 */
@@ -175,6 +178,8 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	 * Returns the arithmetic performing unchecked operations with the specified
 	 * {@link RoundingMode}.
 	 * 
+	 * @param roundingMode
+	 *            the rounding for the returned arithmetic
 	 * @return arithmetic with specified {@code roundingMode} and
 	 *         {@link OverflowMode#UNCHECKED UNCHECKED} overflow mode
 	 */
@@ -186,6 +191,8 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	 * Returns the arithmetic performing checked operations with the specified
 	 * {@link RoundingMode}.
 	 * 
+	 * @param roundingMode
+	 *            the rounding for the returned arithmetic
 	 * @return arithmetic with specified {@code roundingMode} and
 	 *         {@link OverflowMode#CHECKED CHECKED} overflow mode
 	 */
@@ -196,6 +203,8 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	/**
 	 * Returns the arithmetic for the specified {@code truncationPolicy}.
 	 * 
+	 * @param truncationPolicy
+	 *            the truncation policy for the returned arithmetic
 	 * @return arithmetic performing operations according to the given
 	 *         {@code truncationPolicy}
 	 */
