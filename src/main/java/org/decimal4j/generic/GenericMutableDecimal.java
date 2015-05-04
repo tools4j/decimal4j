@@ -33,45 +33,100 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
 /**
- * <tt>GenericMutableDecimal</tt> is an {@link MutableDecimal} implemented in a generic way, 
- * that is, different instances can have different scales. In contrast the classes defined in
- * the {@code mutable} package have have no generic parameter as they have a fixed scale per 
- * class. 
+ * <tt>GenericMutableDecimal</tt> is an {@link MutableDecimal} implemented in a
+ * generic way, that is, different instances can have different scales. In
+ * contrast the classes defined in the {@code mutable} package have have no
+ * generic parameter as they have a fixed scale per class.
  */
-public final class GenericMutableDecimal<S extends ScaleMetrics> extends AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable{
+public final class GenericMutableDecimal<S extends ScaleMetrics> extends
+		AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
 	private final S scaleMetrics;
-	
+
 	/**
 	 * Creates a new {@code GenericMutableDecimal} with value zero.
+	 * 
+	 * @param scale
+	 *            metrics the metrics object defining the scale for the zero
+	 *            value
 	 */
 	public GenericMutableDecimal(S scaleMetrics) {
 		this(scaleMetrics, 0);
 	}
 
 	/**
-	 * Creates a new {@code GenericMutableDecimal} with the same value as 
-	 * the given {@code decimal} argument.
+	 * Creates a new {@code GenericMutableDecimal} with the same value and scale
+	 * as the given {@code decimal} argument.
 	 * 
-	 * @param decimal the numeric value to assign to the created mutable decimal
+	 * @param decimal
+	 *            the numeric value to assign to the created mutable Decimal
 	 */
 	public GenericMutableDecimal(Decimal<S> decimal) {
 		this(decimal.getScaleMetrics(), decimal.unscaledValue());
 	}
 
+	/**
+	 * Creates a new {@code GenericMutableDecimal} with the scale specified by
+	 * the given {@code scaleMetrics} argument. The numeric value of new the
+	 * Decimal is <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 * 
+	 * @param scaleMetrics
+	 *            the metrics object defining the scale for the new value
+	 * @param unscaledValue
+	 *            the unscaled long value representing the new Decimal's
+	 *            numerical value before applying the scale factor
+	 */
 	public GenericMutableDecimal(S scaleMetrics, long unscaledValue) {
 		super(unscaledValue);
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
 	}
 
+	/**
+	 * Creates and returns a new {@code GenericMutableDecimal} with the same
+	 * value and scale as the given {@code decimal} argument.
+	 * 
+	 * @param decimal
+	 *            the numeric value to assign to the created mutable Decimal
+	 * @return a new generic mutable Decimal value with scale and value copied
+	 *         from the {@code decimal} argument
+	 */
 	public static <S extends ScaleMetrics> GenericMutableDecimal<S> valueOf(Decimal<S> decimal) {
 		return new GenericMutableDecimal<S>(decimal);
 	}
+
+	/**
+	 * Creates and returns a new {@code GenericMutableDecimal} with the scale
+	 * specified by the given {@code scaleMetrics} argument. The numeric value
+	 * of new the Decimal is
+	 * <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 * 
+	 * @param scaleMetrics
+	 *            the metrics object defining the scale for the new value
+	 * @param unscaled
+	 *            the unscaled long value representing the new Decimal's
+	 *            numerical value before applying the scale factor
+	 * @return a new Decimal value representing
+	 *         <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 */
 	public static <S extends ScaleMetrics> GenericMutableDecimal<S> valueOfUnscaled(S scaleMetrics, long unscaled) {
 		return new GenericMutableDecimal<S>(scaleMetrics, unscaled);
 	}
+
+	/**
+	 * Creates and returns a new {@code GenericMutableDecimal} with the
+	 * specified {@code scale} and value. The numeric value of new the Decimal
+	 * is <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 * 
+	 * @param scale
+	 *            the scale for the new value
+	 * @param unscaledValue
+	 *            the unscaled long value representing the new Decimal's
+	 *            numerical value before applying the scale factor
+	 * @return a new Decimal value representing
+	 *         <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 */
 	public static GenericMutableDecimal<?> valueOfUnscaled(int scale, long unscaled) {
 		return valueOfUnscaled(Scales.getScaleMetrics(scale), unscaled);
 	}
@@ -80,7 +135,7 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 	protected GenericMutableDecimal<S> create(long unscaled) {
 		return new GenericMutableDecimal<S>(scaleMetrics, unscaled);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected GenericMutableDecimal<S>[] createArray(int length) {
@@ -106,12 +161,12 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends Abstrac
 	public GenericDecimalFactory<S> getFactory() {
 		return Factories.getGenericDecimalFactory(scaleMetrics);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public GenericMutableDecimal<S> clone() {
 		try {
-			return (GenericMutableDecimal<S>)super.clone();
+			return (GenericMutableDecimal<S>) super.clone();
 		} catch (CloneNotSupportedException e) {
 			throw new RuntimeException("clone should be supported", e);
 		}

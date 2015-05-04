@@ -33,13 +33,15 @@ import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.scale.Scales;
 
 /**
- * <tt>GenericDecimalFactory</tt> is a {@link DecimalFactory} for generic decimal values.
- * Different generic decimal instances of the same class can have different scales as
- * opposed to the decimal values defined in the {@code immutable} and {@code mutable}
- * packages.
+ * <tt>GenericDecimalFactory</tt> is a {@link DecimalFactory} for generic
+ * decimal values. Different generic decimal instances of the same class can
+ * have different scales as opposed to the decimal values defined in the
+ * {@code immutable} and {@code mutable} packages.
+ * <p>
+ * The recommended way to create a generic factory is via
+ * {@link Factories#getGenericDecimalFactory(ScaleMetrics)}.
  * 
  * @see GenericImmutableDecimal
  * @see GenericMutableDecimal
@@ -48,15 +50,20 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 
 	private final S scaleMetrics;
 
+	/**
+	 * Constructor with scale metrics argument.
+	 * <p>
+	 * <b>Note:</b> Application code should use
+	 * {@link Factories#getGenericDecimalFactory(ScaleMetrics)} instead.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics for the new generic factory.
+	 * 
+	 * @see #create(ScaleMetrics)
+	 * @see #create(int)
+	 */
 	public GenericDecimalFactory(S scaleMetrics) {
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
-	}
-	
-	public static <S extends ScaleMetrics> GenericDecimalFactory<S> create(S scaleMetrics) {
-		return new GenericDecimalFactory<S>(scaleMetrics);
-	}
-	public static GenericDecimalFactory<?> create(int scale) {
-		return create(Scales.getScaleMetrics(scale));
 	}
 
 	@Override
@@ -67,20 +74,20 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends GenericImmutableDecimal<S>> immutableType() {
-		return (Class<? extends GenericImmutableDecimal<S>>)(Class<?>) GenericImmutableDecimal.class;
+		return (Class<? extends GenericImmutableDecimal<S>>) (Class<?>) GenericImmutableDecimal.class;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends MutableDecimal<S>> mutableType() {
-		return (Class<? extends GenericMutableDecimal<S>>)(Class<?>) GenericMutableDecimal.class;
+		return (Class<? extends GenericMutableDecimal<S>>) (Class<?>) GenericMutableDecimal.class;
 	}
-	
+
 	@Override
 	public GenericDecimalFactory<?> deriveFactory(int scale) {
 		return Factories.getGenericDecimalFactory(scale);
 	}
-	
+
 	public <T extends ScaleMetrics> GenericDecimalFactory<T> deriveFactory(T scaleMetrics) {
 		return Factories.getGenericDecimalFactory(scaleMetrics);
 	}
@@ -122,17 +129,20 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 
 	@Override
 	public GenericImmutableDecimal<S> valueOf(BigDecimal value, RoundingMode roundingMode) {
-		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).fromBigDecimal(value));
+		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).fromBigDecimal(
+				value));
 	}
 
 	@Override
 	public GenericImmutableDecimal<S> valueOf(Decimal<?> value) {
-		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getDefaultArithmetic().fromUnscaled(value.unscaledValue(), value.getScale()));
+		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getDefaultArithmetic().fromUnscaled(
+				value.unscaledValue(), value.getScale()));
 	}
 
 	@Override
 	public GenericImmutableDecimal<S> valueOf(Decimal<?> value, RoundingMode roundingMode) {
-		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).fromUnscaled(value.unscaledValue(), value.getScale()));
+		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).fromUnscaled(
+				value.unscaledValue(), value.getScale()));
 	}
 
 	@Override
@@ -152,12 +162,14 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 
 	@Override
 	public GenericImmutableDecimal<S> valueOfUnscaled(long unscaledValue, int scale) {
-		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getDefaultArithmetic().fromUnscaled(unscaledValue, scale));
+		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getDefaultArithmetic().fromUnscaled(
+				unscaledValue, scale));
 	}
 
 	@Override
 	public GenericImmutableDecimal<S> valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
-		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
+		return new GenericImmutableDecimal<S>(scaleMetrics, scaleMetrics.getArithmetic(roundingMode).fromUnscaled(
+				unscaledValue, scale));
 	}
 
 	@SuppressWarnings("unchecked")

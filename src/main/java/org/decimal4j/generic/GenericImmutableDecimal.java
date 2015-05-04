@@ -44,21 +44,77 @@ public final class GenericImmutableDecimal<S extends ScaleMetrics> extends Abstr
 
 	private final S scaleMetrics;
 
-	public GenericImmutableDecimal(S scaleMetrics, long unscaled) {
-		super(unscaled);
+	/**
+	 * Creates a new {@code GenericImmutableDecimal} with the scale specified by
+	 * the given {@code scaleMetrics} argument. The numeric value of new the
+	 * Decimal is <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 * 
+	 * @param scaleMetrics
+	 *            the metrics object defining the scale for the new value
+	 * @param unscaledValue
+	 *            the unscaled long value representing the new Decimal's
+	 *            numerical value before applying the scale factor
+	 */
+	public GenericImmutableDecimal(S scaleMetrics, long unscaledValue) {
+		super(unscaledValue);
 		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
 	}
 
+	/**
+	 * Creates a new {@code GenericImmutableDecimal} with the same value and scale
+	 * as the given {@code decimal} argument.
+	 * 
+	 * @param decimal
+	 *            the numeric value to assign to the created immutable Decimal
+	 */
 	public GenericImmutableDecimal(Decimal<S> decimal) {
 		this(decimal.getScaleMetrics(), decimal.unscaledValue());
 	}
 	
+	/**
+	 * Creates and returns a new {@code GenericImmutableDecimal} with the same
+	 * value and scale as the given {@code decimal} argument.
+	 * 
+	 * @param decimal
+	 *            the numeric value to assign to the created immutable Decimal
+	 * @return a new generic immutable Decimal value with scale and value copied
+	 *         from the {@code decimal} argument
+	 */
 	public static <S extends ScaleMetrics> GenericImmutableDecimal<S> valueOf(Decimal<S> decimal) {
 		return new GenericImmutableDecimal<S>(decimal);
 	}
+
+	/**
+	 * Creates and returns a new {@code GenericImmutableDecimal} with the scale
+	 * specified by the given {@code scaleMetrics} argument. The numeric value
+	 * of new the Decimal is
+	 * <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 * 
+	 * @param scaleMetrics
+	 *            the metrics object defining the scale for the new value
+	 * @param unscaled
+	 *            the unscaled long value representing the new Decimal's
+	 *            numerical value before applying the scale factor
+	 * @return a new Decimal value representing
+	 *         <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 */
 	public static <S extends ScaleMetrics> GenericImmutableDecimal<S> valueOfUnscaled(S scaleMetrics, long unscaled) {
 		return new GenericImmutableDecimal<S>(scaleMetrics, unscaled);
 	}
+
+	/**
+	 * Creates and returns a new {@code GenericImmutableDecimal} with the
+	 * specified {@code scale} and value. The numeric value of new the Decimal
+	 * is <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 * 
+	 * @param scale
+	 *            the scale for the new value
+	 * @param unscaledValue
+	 *            the unscaled long value representing the new Decimal's
+	 *            numerical value before applying the scale factor
+	 * @return a new Decimal value representing
+	 *         <code>unscaledValue &times; 10<sup>-scale</sup></code>
+	 */
 	public static GenericImmutableDecimal<?> valueOfUnscaled(int scale, long unscaled) {
 		return valueOfUnscaled(Scales.getScaleMetrics(scale), unscaled);
 	}
