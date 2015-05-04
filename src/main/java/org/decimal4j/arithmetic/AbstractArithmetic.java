@@ -29,6 +29,7 @@ import java.math.RoundingMode;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
+import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
@@ -51,6 +52,34 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 	@Override
 	public TruncationPolicy getTruncationPolicy() {
 		return getOverflowMode().getTruncationPolicyFor(getRoundingMode());
+	}
+	
+	@Override
+	public DecimalArithmetic deriveArithmetic(int scale) {
+		if (scale != getScale()) {
+			return Scales.getScaleMetrics(scale).getArithmetic(getTruncationPolicy());
+		}
+		return this;
+	}
+	
+	@Override
+	public DecimalArithmetic deriveArithmetic(RoundingMode roundingMode) {
+		return deriveArithmetic(getOverflowMode().getTruncationPolicyFor(roundingMode));
+	}
+	
+	@Override
+	public DecimalArithmetic deriveArithmetic(RoundingMode roundingMode, OverflowMode overflowMode) {
+		return deriveArithmetic(overflowMode.getTruncationPolicyFor(roundingMode));
+	}
+	
+	@Override
+	public DecimalArithmetic deriveArithmetic(OverflowMode overflowMode) {
+		return deriveArithmetic(overflowMode.getTruncationPolicyFor(getRoundingMode()));
+	}
+	
+	@Override
+	public DecimalArithmetic deriveArithmetic(TruncationPolicy truncationPolicy) {
+		return getScaleMetrics().getArithmetic(truncationPolicy);
 	}
 
 	@Override

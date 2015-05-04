@@ -28,6 +28,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
@@ -101,6 +102,85 @@ public interface DecimalArithmetic {
 	 *         handles truncation
 	 */
 	TruncationPolicy getTruncationPolicy();
+
+	/**
+	 * Derives an arithmetic instance for the specified {@code scale} using this
+	 * arithmetic's {@link #getRoundingMode() rounding mode} and
+	 * {@link #getOverflowMode() overflow mode}.
+	 * 
+	 * @param scale
+	 *            the scale for the new arithmetic; must be in {@code [0,18]}
+	 *            both ends inclusive
+	 * @return an arithmetic instance with the given scale and this arithmetic's
+	 *         rounding and overflow mode
+	 * @throws IllegalArgumentException
+	 *             if scale is not in {@code [0, 18]}
+	 * @see Scales#getScaleMetrics(int)
+	 * @see ScaleMetrics#getArithmetic(RoundingMode)
+	 * @see ScaleMetrics#getArithmetic(TruncationPolicy)
+	 */
+	DecimalArithmetic deriveArithmetic(int scale);
+
+	/**
+	 * Derives an arithmetic instance for the same {@link #getScale() scale} as
+	 * this arithmetic but for the specified {@code roundingMode}. The returned
+	 * arithmetic uses the same {@link #getOverflowMode() overflow mode} as this
+	 * arithmetic.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode for the new arithmetic
+	 * @return an arithmetic instance with the given rounding mode and this
+	 *         arithmetic's scale and overflow mode
+	 * @throws NullPointerException
+	 *             if rounding mode is null
+	 */
+	DecimalArithmetic deriveArithmetic(RoundingMode roundingMode);
+
+	/**
+	 * Derives an arithmetic instance for the same {@link #getScale() scale} as
+	 * this arithmetic but for the specified {@code roundingMode} and
+	 * {@code overflowMode}.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode for the new arithmetic
+	 * @param overflowMode
+	 *            the overflow mode for the new arithmetic
+	 * @return an arithmetic instance with the given rounding and overflow mode
+	 *         and this arithmetic's scale
+	 * @throws NullPointerException
+	 *             if any of the arguments is null
+	 */
+	DecimalArithmetic deriveArithmetic(RoundingMode roundingMode, OverflowMode overflowMode);
+
+	/**
+	 * Derives an arithmetic instance for the same {@link #getScale() scale} as
+	 * this arithmetic but for the specified {@code overflowMode}. The returned
+	 * arithmetic uses the same {@link #getRoundingMode() rounding mode} as this
+	 * arithmetic.
+	 * 
+	 * @param overflowMode
+	 *            the overflow mode for the new arithmetic
+	 * @return an arithmetic instance with the given overflow mode and this
+	 *         arithmetic's scale and rounding mode
+	 * @throws NullPointerException
+	 *             if overflow mode is null
+	 */
+	DecimalArithmetic deriveArithmetic(OverflowMode overflowMode);
+
+	/**
+	 * Derives an arithmetic instance for the same {@link #getScale() scale} as
+	 * this arithmetic but with rounding and overflow mode specified by the
+	 * given {@code truncationPolicy}.
+	 * 
+	 * @param truncationPolicy
+	 *            the truncation policy specifying rounding and overflow mode
+	 *            for the new arithmetic
+	 * @return an arithmetic instance with rounding and overflow mode specified
+	 *         by the truncation policy using this arithmetic's scale
+	 * @throws NullPointerException
+	 *             if truncation policy is null
+	 */
+	DecimalArithmetic deriveArithmetic(TruncationPolicy truncationPolicy);
 
 	/**
 	 * Returns the unscaled decimal for the decimal value {@code 1}. One is the
