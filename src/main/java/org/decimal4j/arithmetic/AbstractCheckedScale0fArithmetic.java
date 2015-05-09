@@ -63,11 +63,6 @@ abstract public class AbstractCheckedScale0fArithmetic extends
 	}
 	
 	@Override
-	public final long avg(long a, long b) {
-		return Avg.avg(a, b);
-	}
-
-	@Override
 	public final long fromLong(long value) {
 		return value;
 	}

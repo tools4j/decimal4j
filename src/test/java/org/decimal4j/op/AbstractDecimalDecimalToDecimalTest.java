@@ -31,11 +31,12 @@ import org.decimal4j.scale.ScaleMetrics;
 
 /**
  * Base class for tests comparing the result of some binary operation of the
- * {@link Decimal} with a Decimal argument and a long argument. The expected 
- * result is produced by the equivalent operation of the {@link BigDecimal}. The 
- * test operand values are created based on random long values.
+ * {@link Decimal} with the expected result produced by the equivalent operation
+ * of the {@link BigDecimal}. The test operand values are created based on random
+ * long values.
  */
-abstract public class Abstract1DecimalArg1LongArgToDecimalResultTest extends AbstractOperandTest {
+abstract public class AbstractDecimalDecimalToDecimalTest extends
+		AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -45,58 +46,55 @@ abstract public class Abstract1DecimalArg1LongArgToDecimalResultTest extends Abs
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArg1LongArgToDecimalResultTest(DecimalArithmetic arithmetic) {
+	public AbstractDecimalDecimalToDecimalTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected BigDecimal expectedResult(BigDecimal a, long b);
+	abstract protected BigDecimal expectedResult(BigDecimal a, BigDecimal b);
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b);
-	
-	abstract protected long randomLongOperand();
-
-	abstract protected long[] getSpecialLongOperands();
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b);
 	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics), randomLongOperand());
+		final Decimal<S> dOpA = randomDecimal(scaleMetrics);
+		final Decimal<S> dOpB = randomDecimal(scaleMetrics);
+		runTest(scaleMetrics, "[" + index + "]", dOpA, dOpB);
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
 		final long[] specialValues = getSpecialValues(scaleMetrics);
-		final long[] specialLongOperands = getSpecialLongOperands();
 		for (int i = 0; i < specialValues.length; i++) {
-			for (int j = 0; j < specialLongOperands.length; j++) {
-				runTest(scaleMetrics, "[" + i + ", " + j + "]", newDecimal(scaleMetrics, specialValues[i]), specialLongOperands[j]);
+			for (int j = 0; j < specialValues.length; j++) {
+				final Decimal<S> dOpA = newDecimal(scaleMetrics, specialValues[i]);
+				final Decimal<S> dOpB = newDecimal(scaleMetrics, specialValues[j]);
+				runTest(scaleMetrics, "[" + i + ", " + j + "]", dOpA, dOpB);
 			}
 		}
+		
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, long b) {
-		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<S> dOpB) {
+		final BigDecimal bdOpA = toBigDecimal(dOpA);
+		final BigDecimal bdOpB = toBigDecimal(dOpB);
 
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperandA, b));
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOpA, bdOpB));
 		} catch (ArithmeticException e) {
-			expected = ArithmeticResult.forException(e);
-		} catch (IllegalArgumentException e) {
 			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
 		ArithmeticResult<Long> actual;
 		try {
-			actual = ArithmeticResult.forResult(actualResult(dOperandA, b));
+			actual = ArithmeticResult.forResult(actualResult(dOpA, dOpB));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
-		} catch (IllegalArgumentException e) {
-			actual = ArithmeticResult.forException(e);
 		}
-		
+
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " " + dOpB);
 	}
 }

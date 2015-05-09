@@ -33,7 +33,7 @@ import org.decimal4j.truncate.OverflowMode;
  * Arithmetic implementation with rounding and overflow check for scales other
  * than zero. An exception is thrown if an operation leads to an overflow.
  */
-public class CheckedScaleNfRoundingArithmetic extends
+public final class CheckedScaleNfRoundingArithmetic extends
 		AbstractCheckedScaleNfArithmetic {
 
 	private final DecimalRounding rounding;
@@ -71,6 +71,21 @@ public class CheckedScaleNfRoundingArithmetic extends
 	}
 
 	@Override
+	public long addLong(long uDecimal, long lValue) {
+		return Checked.addDecimalAndLong(this, uDecimal, lValue);
+	}
+
+	@Override
+	public long subtractLong(long uDecimal, long lValue) {
+		return Checked.subtractLongFromDecimal(this, uDecimal, lValue);
+	}
+
+	@Override
+	public long avg(long uDecimal1, long uDecimal2) {
+		return Avg.avg(this, rounding, uDecimal1, uDecimal2);
+	}
+
+	@Override
 	public long invert(long uDecimal) {
 		return Invert.invert(this, rounding, uDecimal);
 	}
@@ -88,6 +103,11 @@ public class CheckedScaleNfRoundingArithmetic extends
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideChecked(this, rounding, uDecimalDividend, uDecimalDivisor);
+	}
+
+	@Override
+	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		return Div.divideByLongChecked(this, rounding, uDecimalDividend, lDivisor);
 	}
 
 	@Override

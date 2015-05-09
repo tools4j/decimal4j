@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#integralPart()}
  */
 @RunWith(Parameterized.class)
-public class IntegralPartTest extends Abstract1DecimalArgToDecimalResultTest {
+public class IntegralPartTest extends AbstractDecimalToDecimalTest {
 	
 	public IntegralPartTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
 		super(arithmetic);

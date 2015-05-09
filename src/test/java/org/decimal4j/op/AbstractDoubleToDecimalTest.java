@@ -31,11 +31,11 @@ import org.decimal4j.scale.ScaleMetrics;
 
 /**
  * Base class for tests comparing the result of some unary operation of the
- * {@link Decimal} with the expected result produced by the equivalent operation
- * of the {@link BigDecimal}. The test operand are values created based on random
- * long values.
+ * {@link Decimal} with a double argument. The expected result is produced by
+ * the equivalent operation of the {@link BigDecimal}.
  */
-abstract public class Abstract1DecimalArgToDecimalResultTest extends AbstractOperandTest {
+abstract public class AbstractDoubleToDecimalTest extends
+		AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -45,34 +45,41 @@ abstract public class Abstract1DecimalArgToDecimalResultTest extends AbstractOpe
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArgToDecimalResultTest(DecimalArithmetic arithmetic) {
+	public AbstractDoubleToDecimalTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected BigDecimal expectedResult(BigDecimal operand);
+	abstract protected BigDecimal expectedResult(double operand);
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand);
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, double operand);
+
+	protected double randomDoubleOperand() {
+		return FloatAndDoubleUtil.randomDoubleOperand(RND);
+	}
+
+	protected double[] getSpecialDoubleOperands() {
+		return FloatAndDoubleUtil.specialDoubleOperands(getScaleMetrics());
+	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics));
+		runTest(scaleMetrics, "[" + index + "]", randomDoubleOperand());
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
-		final long[] specialValues = getSpecialValues(scaleMetrics);
-		for (int i = 0; i < specialValues.length; i++) {
-			runTest(scaleMetrics, "[" + i + "]", newDecimal(scaleMetrics, specialValues[i]));
+		final double[] specialOperands = getSpecialDoubleOperands();
+		for (int i = 0; i < specialOperands.length; i++) {
+			runTest(scaleMetrics, "[" + i + "]", specialOperands[i]);
 		}
 	}
 
-	private <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperand) {
-		final BigDecimal bdOperand = toBigDecimal(dOperand);
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, double operand) {
 
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperand));
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(operand));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
@@ -82,14 +89,14 @@ abstract public class Abstract1DecimalArgToDecimalResultTest extends AbstractOpe
 		//actual
 		ArithmeticResult<Long> actual;
 		try {
-			actual = ArithmeticResult.forResult(actualResult(dOperand));
+			actual = ArithmeticResult.forResult(actualResult(scaleMetrics, operand));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
 			actual = ArithmeticResult.forException(e);
 		}
-		
+
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperand + " " + operation());
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
 	}
 }

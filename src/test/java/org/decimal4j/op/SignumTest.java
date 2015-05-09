@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#signum()}
  */
 @RunWith(Parameterized.class)
-public class SignumTest extends Abstract1DecimalArgToAnyResultTest<Integer> {
+public class SignumTest extends AbstractDecimalToAnyTest<Integer> {
 	
 	public SignumTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
 		super(arithmetic);
@@ -66,6 +66,10 @@ public class SignumTest extends Abstract1DecimalArgToAnyResultTest<Integer> {
 	
 	@Override
 	protected <S extends ScaleMetrics> Integer actualResult(Decimal<S> operand) {
-		return operand.signum();
+		if (RND.nextBoolean()) {
+			return operand.signum();
+		}
+		//do some native tests because this is otherwise not covered
+		return arithmetic.signum(operand.unscaledValue());
 	}
 }

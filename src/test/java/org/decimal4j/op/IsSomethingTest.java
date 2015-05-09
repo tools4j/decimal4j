@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * as {@link Decimal#isZero()}, {@link Decimal#isOne()}, {@link Decimal#isNegative()} etc.
  */
 @RunWith(Parameterized.class)
-public class IsSomethingTest extends Abstract1DecimalArgToAnyResultTest<Boolean> {
+public class IsSomethingTest extends AbstractDecimalToAnyTest<Boolean> {
 	
 	public static enum Operation {
 		isZero {

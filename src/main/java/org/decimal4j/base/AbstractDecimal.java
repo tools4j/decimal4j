@@ -377,14 +377,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D add(long augend) {
-		final DecimalArithmetic arith = getDefaultArithmetic();
-		return createOrAssign(arith.add(unscaledValue(), arith.fromLong(augend)));
+		return createOrAssign(getDefaultArithmetic().addLong(unscaledValue(), augend));
 	}
 
 	@Override
 	public D add(long augend, OverflowMode overflowMode) {
-		final DecimalArithmetic arith = getArithmeticFor(overflowMode);
-		return createOrAssign(arith.add(unscaledValue(), arith.fromLong(augend)));
+		return createOrAssign(getArithmeticFor(overflowMode).addLong(unscaledValue(), augend));
 	}
 
 	@Override
@@ -471,14 +469,12 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D subtract(long subtrahend) {
-		final DecimalArithmetic arith = getDefaultArithmetic();
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromLong(subtrahend)));
+		return createOrAssign(getDefaultArithmetic().subtractLong(unscaledValue(), subtrahend));
 	}
 
 	@Override
 	public D subtract(long subtrahend, OverflowMode overflowMode) {
-		final DecimalArithmetic arith = getArithmeticFor(overflowMode);
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromLong(subtrahend)));
+		return createOrAssign(getArithmeticFor(overflowMode).subtractLong(unscaledValue(), subtrahend));
 	}
 
 	@Override

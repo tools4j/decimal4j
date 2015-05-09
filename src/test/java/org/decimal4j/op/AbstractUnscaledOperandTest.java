@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Base class for unit tests with an unscaled decimal operand.
  */
-abstract public class AbstractUnscaledOperandTest extends Abstract1DecimalArg1LongArgToDecimalResultTest {
+abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToDecimalTest {
 	
 	protected final int scale;
 

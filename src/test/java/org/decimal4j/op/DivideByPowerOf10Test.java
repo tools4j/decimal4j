@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#divideByPowerOfTen(int)}
  */
 @RunWith(Parameterized.class)
-public class DivideByPowerOf10Test extends Abstract1DecimalArg1IntArgToDecimalResultTest {
+public class DivideByPowerOf10Test extends AbstractDecimalIntToDecimalTest {
 	
 	public DivideByPowerOf10Test(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
 		super(arithmetic);

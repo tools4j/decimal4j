@@ -33,7 +33,7 @@ import org.decimal4j.truncate.DecimalRounding;
  * special case with {@link Scale0f}, that is, for longs. An exception is thrown
  * if an operation leads to an overflow.
  */
-public class CheckedScale0fTruncatingArithmetic extends
+public final class CheckedScale0fTruncatingArithmetic extends
 		AbstractCheckedScale0fArithmetic {
 
 	/**
@@ -44,6 +44,21 @@ public class CheckedScale0fTruncatingArithmetic extends
 	@Override
 	public RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
+	}
+
+	@Override
+	public long addLong(long uDecimal, long lValue) {
+		return Checked.add(this, uDecimal, lValue);
+	}
+
+	@Override
+	public long subtractLong(long uDecimal, long lValue) {
+		return Checked.subtract(this, uDecimal, lValue);
+	}
+
+	@Override
+	public final long avg(long a, long b) {
+		return Avg.avg(a, b);
 	}
 
 	@Override
@@ -59,6 +74,11 @@ public class CheckedScale0fTruncatingArithmetic extends
 	@Override
 	public long sqrt(long uDecimal) {
 		return Sqrt.sqrtLong(uDecimal);
+	}
+
+	@Override
+	public long divideByLong(long uDecimalDividend, long lDivisor) {
+		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
 	}
 
 	@Override

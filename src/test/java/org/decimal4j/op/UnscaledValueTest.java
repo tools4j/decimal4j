@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#abs()}
  */
 @RunWith(Parameterized.class)
-public class UnscaledValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
+public class UnscaledValueTest extends AbstractDecimalToAnyTest<Long> {
 	
 	public UnscaledValueTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

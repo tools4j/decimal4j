@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#abs()}
  */
 @RunWith(Parameterized.class)
-public class AbsTest extends Abstract1DecimalArgToDecimalResultTest {
+public class AbsTest extends AbstractDecimalToDecimalTest {
 	
 	public AbsTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);
@@ -72,6 +72,10 @@ public class AbsTest extends Abstract1DecimalArgToDecimalResultTest {
 		if (isUnchecked() && RND.nextBoolean()) {
 			return operand.abs();
 		}
-		return operand.abs(getOverflowMode());
+		if (RND.nextBoolean()) {
+			return operand.abs(getOverflowMode());
+		}
+		//do some native tests because this is otherwise not covered
+		return newDecimal(operand.getScaleMetrics(), arithmetic.abs(operand.unscaledValue()));
 	}
 }

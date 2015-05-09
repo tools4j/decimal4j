@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#add(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class AddTest extends Abstract2DecimalArgsToDecimalResultTest {
+public class AddTest extends AbstractDecimalDecimalToDecimalTest {
 	
 	public AddTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -38,7 +38,7 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Base class for unit tests with a double operand.
  */
-abstract public class AbstractDoubleOperandTest extends Abstract1DecimalArg1DoubleArgToDecimalResultTest {
+abstract public class AbstractDoubleOperandTest extends AbstractDecimalDoubleToDecimalTest {
 	
 	protected final MathContext MATH_CONTEXT_DOUBLE_TO_LONG_64 = new MathContext(19, RoundingMode.HALF_EVEN);
 

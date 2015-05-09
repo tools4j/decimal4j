@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#multiplyByPowerOfTen(int)}
  */
 @RunWith(Parameterized.class)
-public class MultiplyByPowerOf10Test extends Abstract1DecimalArg1IntArgToDecimalResultTest {
+public class MultiplyByPowerOf10Test extends AbstractDecimalIntToDecimalTest {
 	
 	public MultiplyByPowerOf10Test(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
 		super(arithmetic);

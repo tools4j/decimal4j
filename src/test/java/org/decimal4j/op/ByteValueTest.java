@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * {@link Decimal#byteValueExact()}.
  */
 @RunWith(Parameterized.class)
-public class ByteValueTest extends Abstract1DecimalArgToAnyResultTest<Byte> {
+public class ByteValueTest extends AbstractDecimalToAnyTest<Byte> {
 
 	private final boolean exact;
 

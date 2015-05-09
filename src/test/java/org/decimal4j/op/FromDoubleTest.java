@@ -49,7 +49,7 @@ import org.junit.runners.Parameterized.Parameters;
  * that are involving doubles.
  */
 @RunWith(Parameterized.class)
-public class FromDoubleTest extends Abstract1DoubleArgToDecimalResultTest {
+public class FromDoubleTest extends AbstractDoubleToDecimalTest {
 
 	public FromDoubleTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

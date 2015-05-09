@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * {@link Decimal#shortValueExact()}.
  */
 @RunWith(Parameterized.class)
-public class ShortValueTest extends Abstract1DecimalArgToAnyResultTest<Short> {
+public class ShortValueTest extends AbstractDecimalToAnyTest<Short> {
 
 	private final boolean exact;
 

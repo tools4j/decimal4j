@@ -32,6 +32,7 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -40,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#avg(Decimal)} and {@link Decimal#avg(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
+public class AvgTest extends AbstractDecimalDecimalToDecimalTest {
 	
 	private static final BigDecimal TWO = BigDecimal.valueOf(2);
 	
@@ -73,8 +74,12 @@ public class AvgTest extends Abstract2DecimalArgsToDecimalResultTest {
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
 		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.avg(b);
-		} else {
+		}
+		if (RND.nextBoolean()) {
 			return a.avg(b, getRoundingMode());
 		}
+		//also test checked arithmetic otherwise this is not covered
+		final DecimalArithmetic checkedAith = a.getScaleMetrics().getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(getRoundingMode()));
+		return newDecimal(a.getScaleMetrics(), checkedAith.avg(a.unscaledValue(), b.unscaledValue()));
 	}
 }

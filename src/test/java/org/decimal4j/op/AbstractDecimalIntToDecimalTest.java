@@ -30,14 +30,12 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
- * Base class for tests comparing the result of some unary operation of the
- * {@link Decimal} with the expected result produced by the equivalent operation
- * of the {@link BigDecimal}. The test operand values are created based on random
- * long values.
- * 
- * @param <R> the result type of the operation, common type for {@link Decimal} and {@link BigDecimal}
+ * Base class for tests comparing the result of some binary operation of the
+ * {@link Decimal} with a Decimal argument and an integer argument. The expected 
+ * result is produced by the equivalent operation of the {@link BigDecimal}. The 
+ * test operand values are created based on random long values.
  */
-abstract public class Abstract1DecimalArgToAnyResultTest<R> extends AbstractOperandTest {
+abstract public class AbstractDecimalIntToDecimalTest extends AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -47,48 +45,55 @@ abstract public class Abstract1DecimalArgToAnyResultTest<R> extends AbstractOper
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArgToAnyResultTest(DecimalArithmetic arithmetic) {
+	public AbstractDecimalIntToDecimalTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected R expectedResult(BigDecimal operand);
-	abstract protected <S extends ScaleMetrics> R actualResult(Decimal<S> operand);
+	abstract protected BigDecimal expectedResult(BigDecimal a, int b);
 
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b);
+	
+	abstract protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand);
+
+	abstract protected int[] getSpecialIntOperands();
+	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics));
+		final Decimal<S> decimalOperand = randomDecimal(scaleMetrics);
+		runTest(scaleMetrics, "[" + index + "]", decimalOperand, randomIntOperand(decimalOperand));
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
 		final long[] specialValues = getSpecialValues(scaleMetrics);
+		final int[] specialIntOperands = getSpecialIntOperands();
 		for (int i = 0; i < specialValues.length; i++) {
-			runTest(scaleMetrics, "[" + i + "]", newDecimal(scaleMetrics, specialValues[i]));
+			for (int j = 0; j < specialIntOperands.length; j++) {
+				runTest(scaleMetrics, "[" + i + ", " + j + "]", newDecimal(scaleMetrics, specialValues[i]), specialIntOperands[j]);
+			}
 		}
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperand) {
-		final BigDecimal bdOperand = toBigDecimal(dOperand);
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, int b) {
+		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 
 		//expected
-		ArithmeticResult<R> expected;
+		ArithmeticResult<Long> expected;
 		try {
-			final R exp = expectedResult(bdOperand);
-			expected = ArithmeticResult.forResult(exp.toString(), exp);
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperandA, b));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
-		ArithmeticResult<R> actual;
+		ArithmeticResult<Long> actual;
 		try {
-			final R act = actualResult(dOperand);
-			actual = ArithmeticResult.forResult(act.toString(), act);
+			actual = ArithmeticResult.forResult(actualResult(dOperandA, b));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		}
 		
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperand + " " + operation());
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
 	}
 }

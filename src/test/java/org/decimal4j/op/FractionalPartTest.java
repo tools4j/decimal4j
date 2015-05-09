@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#fractionalPart()}
  */
 @RunWith(Parameterized.class)
-public class FractionalPartTest extends Abstract1DecimalArgToDecimalResultTest {
+public class FractionalPartTest extends AbstractDecimalToDecimalTest {
 	
 	public FractionalPartTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -31,11 +31,11 @@ import org.decimal4j.scale.ScaleMetrics;
 
 /**
  * Base class for tests comparing the result of some binary operation of the
- * {@link Decimal} with a Decimal argument and a double argument. The expected 
+ * {@link Decimal} with a Decimal argument and a long argument. The expected 
  * result is produced by the equivalent operation of the {@link BigDecimal}. The 
  * test operand values are created based on random long values.
  */
-abstract public class Abstract1DecimalArg1DoubleArgToDecimalResultTest extends AbstractOperandTest {
+abstract public class AbstractDecimalLongToDecimalTest extends AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -45,39 +45,35 @@ abstract public class Abstract1DecimalArg1DoubleArgToDecimalResultTest extends A
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArg1DoubleArgToDecimalResultTest(DecimalArithmetic arithmetic) {
+	public AbstractDecimalLongToDecimalTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected BigDecimal expectedResult(BigDecimal a, double b);
+	abstract protected BigDecimal expectedResult(BigDecimal a, long b);
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, double b);
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b);
 	
-	protected double randomDoubleOperand() {
-		return FloatAndDoubleUtil.randomDoubleOperand(RND);
-	}
+	abstract protected long randomLongOperand();
 
-	protected double[] getSpecialDoubleOperands() {
-		return FloatAndDoubleUtil.specialDoubleOperands(getScaleMetrics());
-	}
+	abstract protected long[] getSpecialLongOperands();
 	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics), randomDoubleOperand());
+		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics), randomLongOperand());
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
 		final long[] specialValues = getSpecialValues(scaleMetrics);
-		final double[] specialDoubleOperands = getSpecialDoubleOperands();
+		final long[] specialLongOperands = getSpecialLongOperands();
 		for (int i = 0; i < specialValues.length; i++) {
-			for (int j = 0; j < specialDoubleOperands.length; j++) {
-				runTest(scaleMetrics, "[" + i + ", " + j + "]", newDecimal(scaleMetrics, specialValues[i]), specialDoubleOperands[j]);
+			for (int j = 0; j < specialLongOperands.length; j++) {
+				runTest(scaleMetrics, "[" + i + ", " + j + "]", newDecimal(scaleMetrics, specialValues[i]), specialLongOperands[j]);
 			}
 		}
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, double b) {
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, long b) {
 		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 
 		//expected

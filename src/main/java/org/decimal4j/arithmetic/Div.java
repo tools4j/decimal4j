@@ -36,10 +36,48 @@ final class Div {
 
 	private static final long LONG_MASK = 0xffffffffL;
 
+	/**
+	 * Calculates unchecked division by a long value with rounding.
+	 * 
+	 * @param rounding
+	 *            the decimal rounding to apply if rounding is necessary
+	 * @param uDecimalDividend
+	 *            the unscaled decimal dividend
+	 * @param lDivisor
+	 *            the long divisor
+	 * @return the division result with rounding and no overflow checks
+	 */
 	public static long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
 		final long quotient = uDecimalDividend / lDivisor;
 		final long remainder = uDecimalDividend - quotient * lDivisor;
 		return quotient + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
+	}
+
+	/**
+	 * Calculates checked division by a long value with rounding.
+	 * 
+	 * @param arith
+	 *            the arithmetic used to format numbers when throwing exceptions
+	 * @param rounding
+	 *            the decimal rounding to apply if rounding is necessary
+	 * @param uDecimalDividend
+	 *            the unscaled decimal dividend
+	 * @param lDivisor
+	 *            the long divisor
+	 * @return the division result with rounding and overflow checks
+	 */
+	public static long divideByLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
+		if (lDivisor == 0) {
+			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + lDivisor);
+		}
+		try {
+			final long quotient = Checked.divideByLong(arith, uDecimalDividend, lDivisor);
+			final long remainder = uDecimalDividend - quotient * lDivisor;
+			final long inc = RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);;
+			return Checked.add(arith, quotient, inc);
+		} catch (ArithmeticException e) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + lDivisor);
+		}
 	}
 
 	/**

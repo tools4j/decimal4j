@@ -34,7 +34,7 @@ import org.decimal4j.truncate.DecimalRounding;
  * {@link Scale0f}, that is, for longs. If an operation leads to an overflow the
  * result is silently truncated.
  */
-public class UncheckedScale0fRoundingArithmetic extends
+public final class UncheckedScale0fRoundingArithmetic extends
 		AbstractUncheckedScale0fArithmetic {
 
 	private final DecimalRounding rounding;
@@ -60,6 +60,11 @@ public class UncheckedScale0fRoundingArithmetic extends
 	@Override
 	public long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideByLong(rounding, uDecimalDividend, uDecimalDivisor);
+	}
+
+	@Override
+	public long avg(long uDecimal1, long uDecimal2) {
+		return Avg.avg(this, rounding, uDecimal1, uDecimal2);
 	}
 
 	@Override

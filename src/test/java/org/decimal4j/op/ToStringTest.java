@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#abs()}
  */
 @RunWith(Parameterized.class)
-public class ToStringTest extends Abstract1DecimalArgToAnyResultTest<String> {
+public class ToStringTest extends AbstractDecimalToAnyTest<String> {
 	
 	public ToStringTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#divideAndRemainder(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class DivideAndRemainderTest extends Abstract2DecimalArgsToAnyResultTest<Object[]> {
+public class DivideAndRemainderTest extends AbstractDecimalDecimalToAnyTest<Object[]> {
 	
 	public DivideAndRemainderTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
 		super(arithmetic);

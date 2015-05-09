@@ -124,15 +124,11 @@ public enum Scale${scale}f implements ScaleMetrics {
 
 	@Override
 	public final long multiplyByScaleFactorExact(long factor) {
-		final int leadingZeros = Long.numberOfLeadingZeros(factor) + Long.numberOfLeadingZeros(~factor) + NLZ_SCALE_FACTOR;
 		final long result = factor * SCALE_FACTOR;
-		if (leadingZeros > Long.SIZE + 1) {
+		if (MIN_INTEGER_VALUE <= factor & factor <= MAX_INTEGER_VALUE) {
 			return result;
 		}
-		if (leadingZeros < Long.SIZE || (result / SCALE_FACTOR) != factor) {
-			throw new ArithmeticException("Overflow: " + factor + " * " + SCALE_FACTOR + " = " + result);
-		}
-		return result;
+		throw new ArithmeticException("Overflow: " + factor + " * " + SCALE_FACTOR + " = " + result);
 	}
 	
 	@Override

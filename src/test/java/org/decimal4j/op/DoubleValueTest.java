@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#doubleValue()}
  */
 @RunWith(Parameterized.class)
-public class DoubleValueTest extends Abstract1DecimalArgToAnyResultTest<Double> {
+public class DoubleValueTest extends AbstractDecimalToAnyTest<Double> {
 
 	public DoubleValueTest(ScaleMetrics scaleMetrics, RoundingMode rounding, DecimalArithmetic arithmetic) {
 		super(arithmetic);

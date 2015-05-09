@@ -35,7 +35,7 @@ import org.decimal4j.truncate.OverflowMode;
  * Arithmetic implementation without rounding for scales other than zero. If an
  * operation leads to an overflow the result is silently truncated.
  */
-public class UncheckedScaleNfTruncatingArithmetic extends
+public final class UncheckedScaleNfTruncatingArithmetic extends
 		AbstractUncheckedScaleNfArithmetic implements DecimalArithmetic {
 
 	/**

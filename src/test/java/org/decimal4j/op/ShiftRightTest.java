@@ -44,7 +44,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#shiftLeft(int)}
  */
 @RunWith(Parameterized.class)
-public class ShiftRightTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
+public class ShiftRightTest extends AbstractDecimalIntToDecimalTest {
 	
 	public ShiftRightTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -42,7 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
  * and {@link Decimal#toBigInteger(RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class ToBigIntegerTest extends Abstract1DecimalArgToAnyResultTest<BigInteger> {
+public class ToBigIntegerTest extends AbstractDecimalToAnyTest<BigInteger> {
 	
 	private final boolean exact;
 

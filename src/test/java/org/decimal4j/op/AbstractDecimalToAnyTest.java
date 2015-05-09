@@ -31,11 +31,13 @@ import org.decimal4j.scale.ScaleMetrics;
 
 /**
  * Base class for tests comparing the result of some unary operation of the
- * {@link Decimal} with a float argument. The expected result is produced by
- * the equivalent operation of the {@link BigDecimal}.
+ * {@link Decimal} with the expected result produced by the equivalent operation
+ * of the {@link BigDecimal}. The test operand values are created based on random
+ * long values.
+ * 
+ * @param <R> the result type of the operation, common type for {@link Decimal} and {@link BigDecimal}
  */
-abstract public class Abstract1FloatArgToDecimalResultTest extends
-		AbstractOperandTest {
+abstract public class AbstractDecimalToAnyTest<R> extends AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -45,58 +47,48 @@ abstract public class Abstract1FloatArgToDecimalResultTest extends
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1FloatArgToDecimalResultTest(DecimalArithmetic arithmetic) {
+	public AbstractDecimalToAnyTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected BigDecimal expectedResult(float operand);
-
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, float operand);
-
-	protected float randomDoubleOperand() {
-		return FloatAndDoubleUtil.randomFloatOperand(RND);
-	}
-
-	protected float[] getSpecialDoubleOperands() {
-		return FloatAndDoubleUtil.specialFloatOperands(getScaleMetrics());
-	}
+	abstract protected R expectedResult(BigDecimal operand);
+	abstract protected <S extends ScaleMetrics> R actualResult(Decimal<S> operand);
 
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDoubleOperand());
+		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics));
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
-		final float[] specialOperands = getSpecialDoubleOperands();
-		for (int i = 0; i < specialOperands.length; i++) {
-			runTest(scaleMetrics, "[" + i + "]", specialOperands[i]);
+		final long[] specialValues = getSpecialValues(scaleMetrics);
+		for (int i = 0; i < specialValues.length; i++) {
+			runTest(scaleMetrics, "[" + i + "]", newDecimal(scaleMetrics, specialValues[i]));
 		}
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, float operand) {
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperand) {
+		final BigDecimal bdOperand = toBigDecimal(dOperand);
 
 		//expected
-		ArithmeticResult<Long> expected;
+		ArithmeticResult<R> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetic, expectedResult(operand));
+			final R exp = expectedResult(bdOperand);
+			expected = ArithmeticResult.forResult(exp.toString(), exp);
 		} catch (ArithmeticException e) {
-			expected = ArithmeticResult.forException(e);
-		} catch (IllegalArgumentException e) {
 			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
-		ArithmeticResult<Long> actual;
+		ArithmeticResult<R> actual;
 		try {
-			actual = ArithmeticResult.forResult(actualResult(scaleMetrics, operand));
+			final R act = actualResult(dOperand);
+			actual = ArithmeticResult.forResult(act.toString(), act);
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
-		} catch (IllegalArgumentException e) {
-			actual = ArithmeticResult.forException(e);
 		}
-
+		
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperand + " " + operation());
 	}
 }

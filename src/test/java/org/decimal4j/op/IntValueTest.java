@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#intValue()} and {@link Decimal#intValueExact()}.
  */
 @RunWith(Parameterized.class)
-public class IntValueTest extends Abstract1DecimalArgToAnyResultTest<Integer> {
+public class IntValueTest extends AbstractDecimalToAnyTest<Integer> {
 	
 	private final boolean exact;
 

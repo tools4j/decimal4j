@@ -24,6 +24,7 @@
 package org.decimal4j.arithmetic;
 
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.scale.ScaleMetrics;
 
 
 /**
@@ -31,10 +32,45 @@ import org.decimal4j.api.DecimalArithmetic;
  */
 final class Checked {
 
+	private static final boolean isAddOverflow(long long1, long long2, long result) {
+		return (long1 ^ long2) >= 0 & (long1 ^ result) < 0;
+	}
+	private static final boolean isSubtractOverflow(long minuend, long subtrahend, long result) {
+		return (minuend ^ subtrahend) < 0 & (minuend ^ result) < 0;
+	}
 	public static final long addLong(long long1, long long2) {
 		final long result = long1 + long2;
-		if ((long1 ^ long2) >= 0 & (long1 ^ result) < 0) {
+		if (isAddOverflow(long1, long2, result)) {
 			throw new ArithmeticException("Overflow: " + long1 + " + " + long2 + " = " + result);
+		}
+		return result;
+	}
+	public static final long addDecimalAndLong(DecimalArithmetic arith, long uDecimal, long lValue) {
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final long minInt = scaleMetrics.getMinIntegerValue(); 
+		final long maxInt = scaleMetrics.getMaxIntegerValue();
+		if (minInt <= lValue & lValue <= maxInt) {
+			return add(arith, uDecimal, scaleMetrics.multiplyByScaleFactor(lValue));
+		} else {
+			if ((uDecimal ^ lValue) >= 0) {
+				throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " + " + lValue);
+			}
+			//else: different sign, we must be careful, 
+			//scaling could overflow but this could be offset by other operand
+		}
+		final long ival = scaleMetrics.divideByScaleFactor(uDecimal);
+		final long fval = uDecimal - scaleMetrics.multiplyByScaleFactor(ival);
+		final long ires = ival + lValue;//cannot overflow with different sign
+		final long scaled = scaleMetrics.multiplyByScaleFactor(ires);
+		final long result = scaled + fval;
+		if (ires < minInt | ires > maxInt) {
+			if ((ires + 1 != minInt & ires - 1 != maxInt) | !isAddOverflow(scaled, fval, result)) {
+				throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " + " + lValue + " = " + result);
+			}
+			//else: adding fval brought value back into the valid range: 
+			//ires was only off by one and adding fval is overflow, hence back into valid range
+		} else if (isAddOverflow(scaled, fval, result)) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " + " + lValue + " = " + result);
 		}
 		return result;
 	}
@@ -48,8 +84,38 @@ final class Checked {
 
 	public static final long subtract(DecimalArithmetic arith, long uDecimalMinuend, long uDecimalSubtrahend) {
 		final long result = uDecimalMinuend - uDecimalSubtrahend;
-		if ((uDecimalMinuend ^ uDecimalSubtrahend) < 0 & (uDecimalMinuend ^ result) < 0) {
+		if (isSubtractOverflow(uDecimalMinuend, uDecimalSubtrahend, result)) {
 			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalMinuend) + " - " + arith.toString(uDecimalSubtrahend) + " = " + arith.toString(result));
+		}
+		return result;
+	}
+
+	public static final long subtractLongFromDecimal(DecimalArithmetic arith, long uDecimal, long lValue) {
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final long minInt = scaleMetrics.getMinIntegerValue(); 
+		final long maxInt = scaleMetrics.getMaxIntegerValue();
+		if (minInt <= lValue & lValue <= maxInt) {
+			return subtract(arith, uDecimal, scaleMetrics.multiplyByScaleFactor(lValue));
+		} else {
+			if ((uDecimal ^ lValue) < 0) {
+				throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " - " + lValue);
+			}
+			//else: same sign, we must be careful, 
+			//scaling could overflow but this could be offset by other operand
+		}
+		final long ival = scaleMetrics.divideByScaleFactor(uDecimal);
+		final long fval = uDecimal - scaleMetrics.multiplyByScaleFactor(ival);
+		final long ires = ival - lValue;//cannot overflow with same sign
+		final long scaled = scaleMetrics.multiplyByScaleFactor(ires);
+		final long result = scaled + fval;
+		if (ires < minInt | ires > maxInt) {
+			if ((ires + 1 != minInt & ires - 1 != maxInt) | !isAddOverflow(scaled, fval, result)) {
+				throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " - " + lValue + " = " + result);
+			}
+			//else: adding fval brought value back into the valid range: 
+			//ires was only off by one and adding fval is overflow, hence back into valid range
+		} else if (isAddOverflow(scaled, fval, result)) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " - " + lValue + " = " + result);
 		}
 		return result;
 	}

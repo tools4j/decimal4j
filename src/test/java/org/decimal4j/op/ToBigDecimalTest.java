@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#toBigDecimal()} and {@link Decimal#toBigDecimal(int, RoundingMode)} 
  */
 @RunWith(Parameterized.class)
-public class ToBigDecimalTest extends Abstract1DecimalArgToAnyResultTest<BigDecimal> {
+public class ToBigDecimalTest extends AbstractDecimalToAnyTest<BigDecimal> {
 
 	private final Integer newScale;
 	

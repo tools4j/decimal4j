@@ -27,23 +27,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#addSquared(Decimal)}
+ * Base class for unit tests with a long value operand (not an unscaled decimal).
  */
-@RunWith(Parameterized.class)
-public class AddSquaredTest extends AbstractDecimalDecimalToDecimalTest {
+abstract public class AbstractLongOperandTest extends AbstractDecimalLongToDecimalTest {
 	
-	public AddSquaredTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+	public AbstractLongOperandTest(ScaleMetrics sm, OverflowMode om, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
@@ -51,37 +46,26 @@ public class AddSquaredTest extends AbstractDecimalDecimalToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetic arith = s.getArithmetic(tp);
-				data.add(new Object[] {s, tp, arith});
+			for (final OverflowMode om : OverflowMode.values()) {
+				final DecimalArithmetic arith = om.isChecked() ? s.getDefaultCheckedArithmetic() : s.getDefaultArithmetic();
+				data.add(new Object[] {s, om, arith});
 			}
 		}
 		return data;
 	}
-
+	
 	@Override
-	protected String operation() {
-		return "+ square ";
+	protected long randomLongOperand() {
+		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
 	}
 	
 	@Override
-	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		//NOTE: by definition we apply rounding and overflow check to the squaring
-		final BigDecimal b2 = b.multiply(b).setScale(getScale(), getRoundingMode());
-		if (!isUnchecked()) {
-			JDKSupport.bigIntegerToLongValueExact(b2.unscaledValue());
-		}
-		return a.add(b2);
+	protected long[] getSpecialLongOperands() {
+		return getSpecialValues(getScaleMetrics());
 	}
 	
-	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
-			return a.addSquared(b);
-		}
-		if (isUnchecked() && RND.nextBoolean()) {
-			return a.addSquared(b, getRoundingMode());
-		}
-		return a.addSquared(b, getTruncationPolicy());
+	protected BigDecimal toBigDecimal(long value) {
+		return BigDecimal.valueOf(value);
 	}
+	
 }

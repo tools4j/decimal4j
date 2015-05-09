@@ -34,10 +34,12 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import org.decimal4j.base.AbstractDecimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
+import org.decimal4j.scale.Scales;
 import org.junit.Test;
 
 /**
@@ -47,12 +49,14 @@ import org.junit.Test;
  */
 public class DecimalOverrideTest {
 	
+	private static final Random RND = new Random();
 	private static final List<String> EXCEPT_METHODS_IFACE = Arrays.asList("min", "max");
 	private static final List<String> EXCEPT_METHODS_CLASS = Arrays.asList("min", "max", "multiplyExact", "scale");
 
 	@Test
 	public void shouldOverrideWithImmutableDecimal() throws NoSuchMethodException, SecurityException {
 		shouldOverrideWith(ImmutableDecimal.class);
+		shouldOverrideWith(Factories.getGenericDecimalFactory(RND.nextInt(Scales.MAX_SCALE + 1)).immutableType());
 		for (final DecimalFactory<?> factory : Factories.VALUES) {
 			shouldOverrideWith(factory.immutableType());
 		}
@@ -60,6 +64,7 @@ public class DecimalOverrideTest {
 	@Test
 	public void shouldOverrideWithMutableDecimal() throws NoSuchMethodException, SecurityException {
 		shouldOverrideWith(MutableDecimal.class);
+		shouldOverrideWith(Factories.getGenericDecimalFactory(RND.nextInt(Scales.MAX_SCALE + 1)).mutableType());
 		for (final DecimalFactory<?> factory : Factories.VALUES) {
 			shouldOverrideWith(factory.mutableType());
 		}
@@ -67,6 +72,7 @@ public class DecimalOverrideTest {
 	@Test
 	public void shouldOverrideWithImmutableDecimalArray() throws NoSuchMethodException, SecurityException {
 		shouldOverrideWithArrayOf(ImmutableDecimal.class);
+		shouldOverrideWithArrayOf(Factories.getGenericDecimalFactory(RND.nextInt(Scales.MAX_SCALE + 1)).immutableType());
 		for (final DecimalFactory<?> factory : Factories.VALUES) {
 			shouldOverrideWithArrayOf(factory.immutableType());
 		}
@@ -74,6 +80,7 @@ public class DecimalOverrideTest {
 	@Test
 	public void shouldOverrideWithMutableDecimalArray() throws NoSuchMethodException, SecurityException {
 		shouldOverrideWithArrayOf(MutableDecimal.class);
+		shouldOverrideWithArrayOf(Factories.getGenericDecimalFactory(RND.nextInt(Scales.MAX_SCALE + 1)).mutableType());
 		for (final DecimalFactory<?> factory : Factories.VALUES) {
 			shouldOverrideWithArrayOf(factory.mutableType());
 		}

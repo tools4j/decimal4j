@@ -34,7 +34,7 @@ import org.decimal4j.truncate.OverflowMode;
  * Arithmetic implementation with rounding for scales other than zero. If an
  * operation leads to an overflow the result is silently truncated.
  */
-public class UncheckedScaleNfRoundingArithmetic extends
+public final class UncheckedScaleNfRoundingArithmetic extends
 		AbstractUncheckedScaleNfArithmetic {
 
 	private final DecimalRounding rounding;
@@ -73,6 +73,11 @@ public class UncheckedScaleNfRoundingArithmetic extends
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return getDecimalRounding().getRoundingMode();
+	}
+
+	@Override
+	public long avg(long uDecimal1, long uDecimal2) {
+		return Avg.avg(this, rounding, uDecimal1, uDecimal2);
 	}
 
 	@Override

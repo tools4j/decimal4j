@@ -30,12 +30,12 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
- * Base class for tests comparing the result of some binary operation of the
- * {@link Decimal} with a Decimal argument and an integer argument. The expected 
- * result is produced by the equivalent operation of the {@link BigDecimal}. The 
- * test operand values are created based on random long values.
+ * Base class for tests comparing the result of some unary operation of the
+ * {@link Decimal} with a float argument. The expected result is produced by
+ * the equivalent operation of the {@link BigDecimal}.
  */
-abstract public class Abstract1DecimalArg1IntArgToDecimalResultTest extends AbstractOperandTest {
+abstract public class AbstractFloatToDecimalTest extends
+		AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -45,55 +45,58 @@ abstract public class Abstract1DecimalArg1IntArgToDecimalResultTest extends Abst
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public Abstract1DecimalArg1IntArgToDecimalResultTest(DecimalArithmetic arithmetic) {
+	public AbstractFloatToDecimalTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected BigDecimal expectedResult(BigDecimal a, int b);
+	abstract protected BigDecimal expectedResult(float operand);
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, int b);
-	
-	abstract protected <S extends ScaleMetrics> int randomIntOperand(Decimal<S> decimalOperand);
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, float operand);
 
-	abstract protected int[] getSpecialIntOperands();
-	
+	protected float randomDoubleOperand() {
+		return FloatAndDoubleUtil.randomFloatOperand(RND);
+	}
+
+	protected float[] getSpecialDoubleOperands() {
+		return FloatAndDoubleUtil.specialFloatOperands(getScaleMetrics());
+	}
+
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		final Decimal<S> decimalOperand = randomDecimal(scaleMetrics);
-		runTest(scaleMetrics, "[" + index + "]", decimalOperand, randomIntOperand(decimalOperand));
+		runTest(scaleMetrics, "[" + index + "]", randomDoubleOperand());
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
-		final long[] specialValues = getSpecialValues(scaleMetrics);
-		final int[] specialIntOperands = getSpecialIntOperands();
-		for (int i = 0; i < specialValues.length; i++) {
-			for (int j = 0; j < specialIntOperands.length; j++) {
-				runTest(scaleMetrics, "[" + i + ", " + j + "]", newDecimal(scaleMetrics, specialValues[i]), specialIntOperands[j]);
-			}
+		final float[] specialOperands = getSpecialDoubleOperands();
+		for (int i = 0; i < specialOperands.length; i++) {
+			runTest(scaleMetrics, "[" + i + "]", specialOperands[i]);
 		}
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, int b) {
-		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, float operand) {
 
 		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperandA, b));
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(operand));
 		} catch (ArithmeticException e) {
+			expected = ArithmeticResult.forException(e);
+		} catch (IllegalArgumentException e) {
 			expected = ArithmeticResult.forException(e);
 		}
 
 		//actual
 		ArithmeticResult<Long> actual;
 		try {
-			actual = ArithmeticResult.forResult(actualResult(dOperandA, b));
+			actual = ArithmeticResult.forResult(actualResult(scaleMetrics, operand));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
+		} catch (IllegalArgumentException e) {
+			actual = ArithmeticResult.forException(e);
 		}
-		
+
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
 	}
 }

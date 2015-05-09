@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#compareTo(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class ComparteToTest extends Abstract2DecimalArgsToAnyResultTest<Integer> {
+public class ComparteToTest extends AbstractDecimalDecimalToAnyTest<Integer> {
 	
 	public ComparteToTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
 		super(arithmetic);

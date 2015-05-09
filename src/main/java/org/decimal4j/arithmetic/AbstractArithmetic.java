@@ -84,7 +84,7 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 
 	@Override
 	public final int signum(long uDecimal) {
-		return (int) ((uDecimal >> 63) | (-uDecimal >>> 63));
+		return Long.signum(uDecimal);
 	}
 
 	@Override
@@ -124,11 +124,6 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 		}
 		//let the big decimal deal with such large numbers then
 		return BigDecimal.valueOf(uDecimal, thisScale).setScale(scale, getRoundingMode());
-	}
-
-	@Override
-	public long avg(long a, long b) {
-		return Avg.avg(this, a, b);
 	}
 
 }

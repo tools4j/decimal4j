@@ -31,7 +31,7 @@ import org.decimal4j.truncate.TruncatedPart;
 /**
  * Contains methods to convert from and to double.
  */
-class DoubleConversion {
+final class DoubleConversion {
 
 	private static final long LONG_MASK = 0xffffffffL;
 

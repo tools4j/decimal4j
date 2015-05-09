@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#pow(int)}
  */
 @RunWith(Parameterized.class)
-public class PowTest extends Abstract1DecimalArg1IntArgToDecimalResultTest {
+public class PowTest extends AbstractDecimalIntToDecimalTest {
 	
 	private static final int MAX_POW_EXPONENT = getMaxPowExponent();
 	

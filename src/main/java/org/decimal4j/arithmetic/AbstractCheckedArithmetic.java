@@ -55,11 +55,6 @@ abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
 	}
 
 	@Override
-	public long divideByLong(long uDecimalDividend, long lDivisor) {
-		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
-	}
-
-	@Override
 	public long abs(long uDecimal) {
 		return Checked.abs(this, uDecimal);
 	}

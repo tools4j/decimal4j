@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * as {@link Decimal#isEqualTo(Decimal)}, {@link Decimal#isGreaterThan(Decimal)} etc.
  */
 @RunWith(Parameterized.class)
-public class IsCompartedToTest extends Abstract2DecimalArgsToAnyResultTest<Boolean> {
+public class IsCompartedToTest extends AbstractDecimalDecimalToAnyTest<Boolean> {
 	
 	public static enum Operation {
 		isEqualto {

@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#invert()}
  */
 @RunWith(Parameterized.class)
-public class InvertTest extends Abstract1DecimalArgToDecimalResultTest {
+public class InvertTest extends AbstractDecimalToDecimalTest {
 	
 	public InvertTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -23,9 +23,8 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.math.RoundingMode;
-
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.truncate.DecimalRounding;
 
 /**
  * Provides static methods to calculate average of two numbers, that is, {@code (a+b)/2}.
@@ -37,10 +36,9 @@ final class Avg {
 		final long floor = (a & b) + (xor >> 1);
 		return floor + ((floor >>> 63) & xor);
 	}
-	public static long avg(DecimalArithmetic arith, long a, long b) {
-		final RoundingMode roundingMode = arith.getRoundingMode();
+	public static long avg(DecimalArithmetic arith, DecimalRounding rounding, long a, long b) {
 		final long xor = a ^ b;
-		switch (roundingMode) {
+		switch (rounding) {
 		case FLOOR: {
 			return (a & b) + (xor >> 1);
 		}
@@ -72,7 +70,7 @@ final class Avg {
 		}
 		default: {
 			//should not get here
-			throw new IllegalArgumentException("Unsupported rounding mode: " + roundingMode);
+			throw new IllegalArgumentException("Unsupported rounding mode: " + rounding);
 		}}
 	}
 

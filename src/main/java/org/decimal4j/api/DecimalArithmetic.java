@@ -230,6 +230,21 @@ public interface DecimalArithmetic {
 	long add(long uDecimal1, long uDecimal2);
 
 	/**
+	 * Returns an unscaled decimal whose value is
+	 * {@code (uDecimal + lValue * scaleFactor)}.
+	 * 
+	 * @param uDecimal
+	 *            unscaled decimal value to be added
+	 * @param lValue
+	 *            long value to be added
+	 * @return (uDecimal + lValue * scaleFactor)}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
+	 */
+	long addLong(long uDecimal, long lValue);
+
+	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimalMinuend -
 	 * uDecimalSubtrahend)}.
 	 * 
@@ -243,6 +258,21 @@ public interface DecimalArithmetic {
 	 *             overflow mode} is set to throw an exception
 	 */
 	long subtract(long uDecimalMinuend, long uDecimalSubtrahend);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * {@code (uDecimal - lValue * scaleFactor)}.
+	 * 
+	 * @param uDecimal
+	 *            unscaled decimal value to be subtracted
+	 * @param lValue
+	 *            long value to be subtracted
+	 * @return (uDecimal - lValue * scaleFactor)}
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the {@link #getOverflowMode()
+	 *             overflow mode} is set to throw an exception
+	 */
+	long subtractLong(long uDecimal, long lValue);
 
 	/**
 	 * Returns an unscaled decimal whose value is

@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * and {@link Decimal#longValue(RoundingMode)}.
  */
 @RunWith(Parameterized.class)
-public class LongValueTest extends Abstract1DecimalArgToAnyResultTest<Long> {
+public class LongValueTest extends AbstractDecimalToAnyTest<Long> {
 	
 	private final boolean exact;
 

@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#subtract(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class SubtractTest extends Abstract2DecimalArgsToDecimalResultTest {
+public class SubtractTest extends AbstractDecimalDecimalToDecimalTest {
 	
 	public SubtractTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

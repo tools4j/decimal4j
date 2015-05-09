@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#square()}
  */
 @RunWith(Parameterized.class)
-public class SquareTest extends Abstract1DecimalArgToDecimalResultTest {
+public class SquareTest extends AbstractDecimalToDecimalTest {
 	
 	public SquareTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#negate()}
  */
 @RunWith(Parameterized.class)
-public class NegateTest extends Abstract1DecimalArgToDecimalResultTest {
+public class NegateTest extends AbstractDecimalToDecimalTest {
 	
 	public NegateTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -31,7 +31,7 @@ import org.decimal4j.truncate.TruncatedPart;
 /**
  * Contains methods to convert from and to float.
  */
-class FloatConversion {
+final class FloatConversion {
 
 	private static final long LONG_MASK = 0xffffffffL;
 

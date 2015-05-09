@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#divide(Decimal, RoundingMode)}
  */
 @RunWith(Parameterized.class)
-public class DivideTest extends Abstract2DecimalArgsToDecimalResultTest {
+public class DivideTest extends AbstractDecimalDecimalToDecimalTest {
 	
 	public DivideTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
 		super(arithmetic);

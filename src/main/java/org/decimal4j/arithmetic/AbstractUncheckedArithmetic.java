@@ -52,10 +52,20 @@ abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
 	public long add(long uDecimal1, long uDecimal2) {
 		return uDecimal1 + uDecimal2;
 	}
+	
+	@Override
+	public long addLong(long uDecimal, long lValue) {
+		return uDecimal + fromLong(lValue);
+	}
 
 	@Override
 	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
 		return uDecimalMinuend - uDecimalSubtrahend;
+	}
+
+	@Override
+	public long subtractLong(long uDecimal, long lValue) {
+		return uDecimal - fromLong(lValue);
 	}
 
 	@Override

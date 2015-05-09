@@ -44,7 +44,7 @@ import org.junit.runners.Parameterized.Parameters;
  * and all its overload variants.
  */
 @RunWith(Parameterized.class)
-public class MinMaxTest extends Abstract2DecimalArgsToDecimalResultTest {
+public class MinMaxTest extends AbstractDecimalDecimalToDecimalTest {
 	
 	public static enum Op {
 		Min, Max

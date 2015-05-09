@@ -47,7 +47,7 @@ import org.junit.runners.Parameterized.Parameters;
  * implementations.
  */
 @RunWith(Parameterized.class)
-public class FromFloatTest extends Abstract1FloatArgToDecimalResultTest {
+public class FromFloatTest extends AbstractFloatToDecimalTest {
 
 	public FromFloatTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

@@ -36,6 +36,7 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -97,10 +98,6 @@ public class SqrtTest extends AbstractOperandTest {
 		return "sqrt";
 	}
 
-	private BigDecimal expectedResult(BigDecimal bigDecimal) {
-		//we calculate 20 extra decimal places, should be enough, chance that we have 20 zero's or a 5 and 19 zeros is relatively low
-		return sqrt(bigDecimal.multiply(TEN_POW_2xPRECISION)).divide(TEN_POW_PRECISION, getScale(), getRoundingMode());
-	}
 	public static BigDecimal sqrt(BigDecimal bigDecimal) {
 		if (bigDecimal.signum() < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + bigDecimal);
@@ -125,14 +122,6 @@ public class SqrtTest extends AbstractOperandTest {
 		return new BigDecimal(root.shiftRight(1), scale);
 	}
 
-	private <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
-		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
-			return operand.sqrt();
-		} else {
-			return operand.sqrt(getRoundingMode());
-		}
-	}
-	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		runTest(randomDecimal(scaleMetrics), index);
@@ -197,5 +186,21 @@ public class SqrtTest extends AbstractOperandTest {
 			//as expected
 			return;
 		}
+	}
+
+	private BigDecimal expectedResult(BigDecimal bigDecimal) {
+		//we calculate 20 extra decimal places, should be enough, chance that we have 20 zero's or a 5 and 19 zeros is relatively low
+		return sqrt(bigDecimal.multiply(TEN_POW_2xPRECISION)).divide(TEN_POW_PRECISION, getScale(), getRoundingMode());
+	}
+	private <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+			return operand.sqrt();
+		}
+		if (RND.nextBoolean()) {
+			return operand.sqrt(getRoundingMode());
+		}
+		//also test checked arithmetic otherwise this is not covered
+		final DecimalArithmetic checkedAith = operand.getScaleMetrics().getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(getRoundingMode()));
+		return newDecimal(operand.getScaleMetrics(), checkedAith.sqrt(operand.unscaledValue()));
 	}
 }

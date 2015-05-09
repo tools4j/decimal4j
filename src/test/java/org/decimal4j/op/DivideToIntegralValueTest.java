@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#divideToIntegralValue(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class DivideToIntegralValueTest extends Abstract2DecimalArgsToDecimalResultTest {
+public class DivideToIntegralValueTest extends AbstractDecimalDecimalToDecimalTest {
 	
 	public DivideToIntegralValueTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

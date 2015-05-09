@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#pow(int)}
  */
 @RunWith(Parameterized.class)
-public class RoundTest extends Abstract1DecimalArgToDecimalResultTest {
+public class RoundTest extends AbstractDecimalToDecimalTest {
 	
 	private final int precision;
 	

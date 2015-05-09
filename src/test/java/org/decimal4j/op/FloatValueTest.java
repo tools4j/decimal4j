@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#floatValue()}
  */
 @RunWith(Parameterized.class)
-public class FloatValueTest extends Abstract1DecimalArgToAnyResultTest<Float> {
+public class FloatValueTest extends AbstractDecimalToAnyTest<Float> {
 
 	public FloatValueTest(ScaleMetrics scaleMetrics, RoundingMode rounding, DecimalArithmetic arithmetic) {
 		super(arithmetic);
