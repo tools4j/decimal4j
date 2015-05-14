@@ -23,6 +23,8 @@
  */
 package org.decimal4j.api;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import org.decimal4j.scale.ScaleMetrics;
@@ -117,10 +119,23 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param value
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning the given {@code value}
-	 * @throws NumberFormatException
+	 * @throws ArithmeticException
 	 *             if the value cannot be converted into a Decimal
 	 */
 	MutableDecimal<S> set(long value);
+
+	/**
+	 * Sets {@code this} Decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}. An exception is thrown if
+	 * the value cannot be represented as a Decimal.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @throws ArithmeticException
+	 *             if the value cannot be converted into a Decimal
+	 */
+	MutableDecimal<S> set(BigInteger value);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
@@ -185,6 +200,38 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 *             if the value cannot be converted into a Decimal
 	 */
 	MutableDecimal<S> set(double value, RoundingMode roundingMode);
+
+	/**
+	 * Sets {@code this} Decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}. An exception is thrown if
+	 * the value cannot be represented as a Decimal.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @throws NumberFormatException
+	 *             if the value cannot be converted into a Decimal
+	 */
+	MutableDecimal<S> set(BigDecimal value);
+
+	/**
+	 * Sets {@code this} Decimal to the specified {@code value} and returns
+	 * {@code this} now representing {@code value}. An exception is thrown if
+	 * the value cannot be represented as a Decimal.
+	 * 
+	 * @param value
+	 *            value to be set
+	 * @param roundingMode
+	 *            the rounding mode to apply if the value argument needs to be
+	 *            truncated when converted into a Decimal number
+	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
+	 *             UNNESSESSARY} and rounding is necessary
+	 * @throws NumberFormatException
+	 *             if the value cannot be converted into a Decimal
+	 */
+	MutableDecimal<S> set(BigDecimal value, RoundingMode roundingMode);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} and

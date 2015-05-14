@@ -23,12 +23,16 @@
  */
 package org.decimal4j.factory;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
+import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
@@ -36,19 +40,25 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link DecimalFactory#valueOf(long)}, {@link MutableDecimal#set(long)} 
+ * Unit test for {@link DecimalFactory#valueOf(BigInteger)}, {@link MutableDecimal#set(BigInteger)} 
  * and indirectly also the static {@code valueOf(..)} method of the immutable Decimal.
  */
 @RunWith(Parameterized.class)
-public class ValueOfLongTest extends AbstractFactoryTest<Long> {
+public class ValueOfBigIntegerTest extends AbstractFactoryTest<BigInteger> {
 
-	public ValueOfLongTest(ScaleMetrics s, DecimalArithmetic arithmetic) {
+	public ValueOfBigIntegerTest(ScaleMetrics s, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
 	@Override
-	protected Long randomValue(ScaleMetrics scaleMetrics) {
-		return randomLong();
+	protected BigInteger randomValue(ScaleMetrics scaleMetrics) {
+		if (RND.nextInt(10) != 0) {
+			return BigInteger.valueOf(randomLong());
+		}
+		//every tenth potentially an overflow
+		final byte[] bytes = new byte[1 + RND.nextInt(100)];
+		RND.nextBytes(bytes);
+		return new BigInteger(bytes);
 	}
 
 	@Parameters(name = "{index}: {0}")
@@ -61,26 +71,30 @@ public class ValueOfLongTest extends AbstractFactoryTest<Long> {
 	}
 
 	@Override
-	protected Long[] specialValues(ScaleMetrics scaleMetrics) {
+	protected BigInteger[] specialValues(ScaleMetrics scaleMetrics) {
 		final long[] specials = TestSettings.TEST_CASES.getSpecialValuesFor(scaleMetrics);
-		final Long[] result = new Long[specials.length];
+		final Set<BigInteger> set = new TreeSet<BigInteger>();
 		for (int i = 0; i < specials.length; i++) {
-			result[i] = specials[i];
+			set.add(BigInteger.valueOf(specials[i]));
 		}
-		return result;
+		//add two non-long values
+		set.add(BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.ONE));
+		set.add(BigInteger.valueOf(Long.MIN_VALUE).subtract(BigInteger.ONE));
+		return set.toArray(new BigInteger[set.size()]);
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Long expectedResult(S scaleMetrics, Long value) {
-		if (scaleMetrics.getMinIntegerValue() <= value & value <= scaleMetrics.getMaxIntegerValue()) {
+	protected <S extends ScaleMetrics> BigInteger expectedResult(S scaleMetrics, BigInteger value) {
+		final long lvalue = JDKSupport.bigIntegerToLongValueExact(value);
+		if (scaleMetrics.getMinIntegerValue() <= lvalue & lvalue <= scaleMetrics.getMaxIntegerValue()) {
 			return value;
 		}
 		throw new ArithmeticException("overflow for " + scaleMetrics + " with value " + value);
 	}
 	@Override
-	protected <S extends ScaleMetrics> Long actualResult(DecimalFactory<S> factory, Long value) {
+	protected <S extends ScaleMetrics> BigInteger actualResult(DecimalFactory<S> factory, BigInteger value) {
 		final Decimal<S> decimal = RND.nextBoolean() ? factory.valueOf(value) : factory.newMutable().set(value);
-		return RND.nextBoolean() ? decimal.longValue() : decimal.longValueExact();
+		return RND.nextBoolean() ? decimal.toBigInteger() : decimal.toBigIntegerExact();
 	}
 	
 }

@@ -23,6 +23,8 @@
  */
 package org.decimal4j.base;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
@@ -177,6 +179,12 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	}
 
 	@Override
+	public D set(BigInteger value) {
+		unscaled = getDefaultCheckedArithmetic().fromBigInteger(value);
+		return self();
+	}
+
+	@Override
 	public D set(float value) {
 		unscaled = getDefaultCheckedArithmetic().fromFloat(value);
 		return self();
@@ -197,6 +205,18 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	@Override
 	public D set(double value, RoundingMode roundingMode) {
 		unscaled = getCheckedArithmeticFor(roundingMode).fromDouble(value);
+		return self();
+	}
+
+	@Override
+	public D set(BigDecimal value) {
+		unscaled = getDefaultCheckedArithmetic().fromBigDecimal(value);
+		return self();
+	}
+
+	@Override
+	public D set(BigDecimal value, RoundingMode roundingMode) {
+		unscaled = getCheckedArithmeticFor(roundingMode).fromBigDecimal(value);
 		return self();
 	}
 

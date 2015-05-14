@@ -36,13 +36,13 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link DecimalFactory#valueOf(long)}, {@link MutableDecimal#set(long)} 
- * and indirectly also the static {@code valueOf(..)} method of the immutable Decimal.
+ * Unit test for {@link DecimalFactory#valueOfUnscaled(long)}, {@link MutableDecimal#setUnscaled(long)} 
+ * and indirectly also the static {@code valueOfUnscaled(..)} method of the immutable Decimal.
  */
 @RunWith(Parameterized.class)
-public class ValueOfLongTest extends AbstractFactoryTest<Long> {
+public class ValueOfUnscaledTest extends AbstractFactoryTest<Long> {
 
-	public ValueOfLongTest(ScaleMetrics s, DecimalArithmetic arithmetic) {
+	public ValueOfUnscaledTest(ScaleMetrics s, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
@@ -71,16 +71,9 @@ public class ValueOfLongTest extends AbstractFactoryTest<Long> {
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Long expectedResult(S scaleMetrics, Long value) {
-		if (scaleMetrics.getMinIntegerValue() <= value & value <= scaleMetrics.getMaxIntegerValue()) {
-			return value;
-		}
-		throw new ArithmeticException("overflow for " + scaleMetrics + " with value " + value);
-	}
-	@Override
 	protected <S extends ScaleMetrics> Long actualResult(DecimalFactory<S> factory, Long value) {
-		final Decimal<S> decimal = RND.nextBoolean() ? factory.valueOf(value) : factory.newMutable().set(value);
-		return RND.nextBoolean() ? decimal.longValue() : decimal.longValueExact();
+		final Decimal<S> decimal = RND.nextBoolean() ? factory.valueOfUnscaled(value) : factory.newMutable().setUnscaled(value);
+		return decimal.unscaledValue();
 	}
 	
 }

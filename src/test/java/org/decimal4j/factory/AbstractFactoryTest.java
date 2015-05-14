@@ -63,7 +63,7 @@ abstract public class AbstractFactoryTest<V> extends AbstractDecimalTest {
 		final int n = getRandomTestCount();
 		final ScaleMetrics scaleMetrics = arithmetic.getScaleMetrics();
 		for (int i = 0; i < n; i++) {
-			runTest(getDecimalFactory(), ".random[" + i + "]", randomValue(scaleMetrics));
+			runTest(".random[" + i + "]", randomValue(scaleMetrics));
 		}
 	}
 
@@ -71,11 +71,14 @@ abstract public class AbstractFactoryTest<V> extends AbstractDecimalTest {
 	public void runSpecialValueTest() {
 		int index = 0;
 		for (final V value : specialValues(getScaleMetrics())) {
-			runTest(getDecimalFactory(), ".special[" + index + "]", value);
+			runTest(".special[" + index + "]", value);
 			index++;
 		}
 	}
 
+	protected void runTest(String name, V value) {
+		runTest(getDecimalFactory(), name, value);
+	}
 	private <S extends ScaleMetrics> void runTest(DecimalFactory<S> decimalFactory, String name, V value) {
 		//expected
 		ArithmeticResult<V> expected;

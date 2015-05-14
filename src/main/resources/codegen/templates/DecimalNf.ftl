@@ -251,7 +251,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
             return POS_CONST[(int) value];
         else if (value < 0 & value >= -MAX_CONSTANT)
             return NEG_CONST[(int) -value];
-		return valueOfUnscaled(DEFAULT_ARITHMETIC.fromLong(value));
+		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromLong(value));
 	}
 
 	public static Decimal${scale}f valueOf(float value) {
