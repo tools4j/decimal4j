@@ -104,7 +104,6 @@ public class ScaleTest extends AbstractOperandTest {
 	}
 
 	private <S extends ScaleMetrics> Decimal<?> actualResult(Decimal<S> a, int targetScale) {
-		a = RND.nextBoolean() ? a : a.toMutableDecimal();//scale is implemented separately for mutable/immutable
 		final ScaleMetrics metrics = Scales.getScaleMetrics(targetScale);
 		final RoundingMode mode = getRoundingMode();
 		final TruncationPolicy policy = getTruncationPolicy();

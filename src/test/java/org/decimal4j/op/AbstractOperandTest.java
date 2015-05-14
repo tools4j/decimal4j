@@ -149,7 +149,19 @@ abstract public class AbstractOperandTest {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
-		return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
+		switch (RND.nextInt(4)) {
+		case 0:
+			return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
+		case 1:
+			return Factories.getDecimalFactory(scaleMetrics).newMutable().setUnscaled(unscaled);
+		case 2:
+			return Factories.getGenericDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
+		case 3:
+			return Factories.getGenericDecimalFactory(scaleMetrics).newMutable().setUnscaled(unscaled);
+		default:
+			//should not get here
+			throw new RuntimeException("random out of bounds");
+		}
 	}
 
 	protected static BigDecimal toBigDecimal(Decimal<?> decimal) {
