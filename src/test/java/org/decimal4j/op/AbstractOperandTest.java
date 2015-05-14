@@ -24,32 +24,18 @@
 package org.decimal4j.op;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.Random;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.test.AbstractDecimalTest;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.OverflowMode;
-import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.Test;
 
 /**
- * Base class for tests of operands with random and special values. The class
- * provides also some helper methods for subclasses comparing the result of an
- * operation of the {@link Decimal} with the expected result produced by the
- * equivalent operation of the {@link BigDecimal}.
+ * Base class for tests of operands with random and special values.
  */
-abstract public class AbstractOperandTest {
-
-	protected static final Random RND = new Random();
-
-	protected final DecimalArithmetic arithmetic;
-	protected final MathContext mathContextLong64;
-	protected final MathContext mathContextLong128;
+abstract public class AbstractOperandTest extends AbstractDecimalTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -60,41 +46,7 @@ abstract public class AbstractOperandTest {
 	 *            policy
 	 */
 	public AbstractOperandTest(DecimalArithmetic arithmetic) {
-		this.arithmetic = arithmetic;
-		this.mathContextLong64 = new MathContext(19, arithmetic.getRoundingMode());
-		this.mathContextLong128 = new MathContext(39, arithmetic.getRoundingMode());
-	}
-
-	protected int getScale() {
-		return arithmetic.getScale();
-	}
-	
-	protected ScaleMetrics getScaleMetrics() {
-		return arithmetic.getScaleMetrics();
-	}
-
-	protected TruncationPolicy getTruncationPolicy() {
-		return arithmetic.getTruncationPolicy();
-	}
-	protected RoundingMode getRoundingMode() {
-		return arithmetic.getRoundingMode();
-	}
-	protected OverflowMode getOverflowMode() {
-		return arithmetic.getOverflowMode();
-	}
-
-	protected boolean isStandardTruncationPolicy() {
-		return arithmetic.getRoundingMode() == TruncationPolicy.DEFAULT.getRoundingMode() && arithmetic.getOverflowMode() == TruncationPolicy.DEFAULT.getOverflowMode();
-	}
-
-	protected boolean isRoundingDown() {
-		return arithmetic.getRoundingMode() == RoundingMode.DOWN;
-	}
-	protected boolean isRoundingDefault() {
-		return arithmetic.getRoundingMode() == TruncationPolicy.DEFAULT.getRoundingMode();
-	}
-	protected boolean isUnchecked() {
-		return !arithmetic.getOverflowMode().isChecked();
+		super(arithmetic);
 	}
 
 	protected int getRandomTestCount() {
@@ -116,6 +68,10 @@ abstract public class AbstractOperandTest {
 		runSpecialValueTest(scaleMetrics);
 	}
 
+	protected static BigDecimal toBigDecimal(Decimal<?> decimal) {
+		return decimal.toBigDecimal();
+	}
+
 	/**
 	 * Returns the operation string, such as "+", "-", "*", "/", "abs" etc.
 	 * 
@@ -127,44 +83,4 @@ abstract public class AbstractOperandTest {
 
 	abstract protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics);
 
-	protected long[] getSpecialValues(ScaleMetrics scaleMetrics) {
-		return TestSettings.TEST_CASES.getSpecialValuesFor(scaleMetrics);
-	}
-
-	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
-		final long unscaled = RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
-		return newDecimal(scaleMetrics, unscaled);
-	}
-	
-	protected static long randomLong(long n) {
-        if (n <= 0)
-            throw new IllegalArgumentException("n must be positive, but was " + n);
-
-        long bits, val;
-        do {
-            bits = RND.nextLong() >>> 1;
-            val = bits % n;
-        } while (bits - val + (n-1) < 0);
-        return val;
-	}
-
-	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
-		switch (RND.nextInt(4)) {
-		case 0:
-			return Factories.getDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
-		case 1:
-			return Factories.getDecimalFactory(scaleMetrics).newMutable().setUnscaled(unscaled);
-		case 2:
-			return Factories.getGenericDecimalFactory(scaleMetrics).valueOfUnscaled(unscaled);
-		case 3:
-			return Factories.getGenericDecimalFactory(scaleMetrics).newMutable().setUnscaled(unscaled);
-		default:
-			//should not get here
-			throw new RuntimeException("random out of bounds");
-		}
-	}
-
-	protected static BigDecimal toBigDecimal(Decimal<?> decimal) {
-		return decimal.toBigDecimal();
-	}
 }

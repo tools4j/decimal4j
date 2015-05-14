@@ -25,7 +25,6 @@ package org.decimal4j.truncate;
 
 import static org.junit.Assert.assertEquals;
 
-import org.decimal4j.truncate.TruncatedPart;
 import org.junit.Test;
 
 /**

@@ -188,6 +188,11 @@ public enum Scale0f implements ScaleMetrics {
 	public final DecimalArithmetic getArithmetic(RoundingMode roundingMode) {
 		return UNCHECKED_ARITHMETIC[roundingMode.ordinal()];
 	}
+	
+	@Override
+	public DecimalArithmetic getCheckedArithmetic(RoundingMode roundingMode) {
+		return CHECKED_ARITHMETIC[roundingMode.ordinal()];
+	}
 
 	@Override
 	public final DecimalArithmetic getArithmetic(TruncationPolicy truncationPolicy) {

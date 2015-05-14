@@ -206,6 +206,11 @@ public enum Scale${scale}f implements ScaleMetrics {
 	}
 
 	@Override
+	public final DecimalArithmetic getCheckedArithmetic(RoundingMode roundingMode) {
+		return CHECKED_ARITHMETIC[roundingMode.ordinal()];
+	}
+
+	@Override
 	public final DecimalArithmetic getArithmetic(TruncationPolicy truncationPolicy) {
 		final OverflowMode overflow = truncationPolicy.getOverflowMode();
 		final RoundingMode rounding = truncationPolicy.getRoundingMode();

@@ -244,6 +244,17 @@ public interface ScaleMetrics {
 
 	/**
 	 * Returns the arithmetic for this scale that performs all operations with
+	 * the specified {@code roundingMode} and with overflow checks.
+	 *
+	 * @param roundingMode
+	 *            the rounding mode used by the returned arithmetic
+	 * @return arithmetic for this scale with specified rounding mode and
+	 *         with overflow checks
+	 */
+	DecimalArithmetic getCheckedArithmetic(RoundingMode roundingMode);
+
+	/**
+	 * Returns the arithmetic for this scale that performs all operations with
 	 * the specified {@code truncationPolicy}.
 	 *
 	 * @param truncationPolicy

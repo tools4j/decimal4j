@@ -33,6 +33,7 @@ import java.util.TreeSet;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.Assume;

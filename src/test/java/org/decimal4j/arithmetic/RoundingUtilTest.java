@@ -25,7 +25,6 @@ package org.decimal4j.arithmetic;
 
 import static org.junit.Assert.assertEquals;
 
-import org.decimal4j.arithmetic.RoundingUtil;
 import org.decimal4j.truncate.TruncatedPart;
 import org.junit.Test;
 

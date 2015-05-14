@@ -36,7 +36,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.decimal4j.arithmetic.RoundingUtil;
 import org.decimal4j.truncate.DecimalRounding;
 import org.junit.Rule;
 import org.junit.Test;

@@ -197,7 +197,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	 *         {@link OverflowMode#CHECKED CHECKED} overflow mode
 	 */
 	protected DecimalArithmetic getCheckedArithmeticFor(RoundingMode roundingMode) {
-		return getScaleMetrics().getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode));
+		return getScaleMetrics().getCheckedArithmetic(roundingMode);
 	}
 
 	/**

@@ -30,14 +30,14 @@ import java.util.List;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.Scale0f;
+import org.decimal4j.scale.Scale17f;
+import org.decimal4j.scale.Scale18f;
+import org.decimal4j.scale.Scale6f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
-import org.decimal4j.scale.Scale17f;
-import org.decimal4j.scale.Scale18f;
-import org.decimal4j.scale.Scale6f;
 
 public class DivideProblemTest extends DivideTest {
 

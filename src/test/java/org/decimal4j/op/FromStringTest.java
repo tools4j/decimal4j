@@ -38,6 +38,7 @@ import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

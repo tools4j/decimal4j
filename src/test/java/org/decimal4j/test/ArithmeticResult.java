@@ -21,7 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.op;
+package org.decimal4j.test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -38,7 +38,7 @@ import org.decimal4j.arithmetic.JDKSupport;
  *
  * @param <T> the type of the compared value
  */
-class ArithmeticResult<T> {
+public class ArithmeticResult<T> {
 	private final String resultString;
 	private final T compareValue;
 	private final Exception exception;

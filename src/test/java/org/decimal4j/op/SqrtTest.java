@@ -34,14 +34,14 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.OverflowMode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.decimal4j.scale.Scale18f;
 
 /**
  * Unit test for {@link Decimal#invert()}
@@ -140,13 +140,16 @@ public class SqrtTest extends AbstractOperandTest {
 			runNegativeTest(operand);
 			return;
 		}
-		
+
+		//given: positive
 		if ((getRoundingMode() == RoundingMode.DOWN || getRoundingMode() == RoundingMode.FLOOR) && RND.nextBoolean()) {
-			//when: positive
+			//given
+			final BigDecimal x = operand.toBigDecimal();
+
+			//when
 			final Decimal<S> actual = actualResult(operand);
 			
 			//then: compare operand with actual^2 and (actual+ULP)^2
-			final BigDecimal x = operand.toBigDecimal();
 			final BigDecimal xSquared = actual.toBigDecimal().pow(2);
 			final BigDecimal xPlusUlpSquared = actual.addUnscaled(1).toBigDecimal().pow(2);
 			
@@ -200,7 +203,7 @@ public class SqrtTest extends AbstractOperandTest {
 			return operand.sqrt(getRoundingMode());
 		}
 		//also test checked arithmetic otherwise this is not covered
-		final DecimalArithmetic checkedAith = operand.getScaleMetrics().getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(getRoundingMode()));
+		final DecimalArithmetic checkedAith = operand.getScaleMetrics().getCheckedArithmetic(getRoundingMode());
 		return newDecimal(operand.getScaleMetrics(), checkedAith.sqrt(operand.unscaledValue()));
 	}
 }

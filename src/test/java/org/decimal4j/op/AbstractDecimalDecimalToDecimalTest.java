@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.test.ArithmeticResult;
 
 /**
  * Base class for tests comparing the result of some binary operation of the
