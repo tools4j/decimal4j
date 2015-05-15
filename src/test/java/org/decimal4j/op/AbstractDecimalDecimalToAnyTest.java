@@ -33,15 +33,14 @@ import org.decimal4j.test.ArithmeticResult;
 /**
  * Base class for tests comparing the result of some binary operation of the
  * {@link Decimal} with the expected result produced by the equivalent operation
- * of the {@link BigDecimal}. The test operand values are created based on random
- * long values.
+ * of the {@link BigDecimal}. The test operand values are created based on
+ * random long values.
  * 
  * @param <R>
  *            the result type of the operation, common type for {@link Decimal}
  *            and {@link BigDecimal}
  */
-abstract public class AbstractDecimalDecimalToAnyTest<R> extends
-		AbstractOperandTest {
+abstract public class AbstractDecimalDecimalToAnyTest<R> extends AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -83,7 +82,7 @@ abstract public class AbstractDecimalDecimalToAnyTest<R> extends
 		final BigDecimal bdOpA = toBigDecimal(dOpA);
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
 
-		//expected
+		// expected
 		ArithmeticResult<R> expected;
 		try {
 			final R exp = expectedResult(bdOpA, bdOpB);
@@ -92,7 +91,7 @@ abstract public class AbstractDecimalDecimalToAnyTest<R> extends
 			expected = ArithmeticResult.forException(e);
 		}
 
-		//actual
+		// actual
 		ArithmeticResult<R> actual;
 		try {
 			final R act = actualResult(dOpA, dOpB);
@@ -101,7 +100,8 @@ abstract public class AbstractDecimalDecimalToAnyTest<R> extends
 			actual = ArithmeticResult.forException(e);
 		}
 
-		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " " + dOpB);
+		// assert
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " "
+				+ dOpB);
 	}
 }

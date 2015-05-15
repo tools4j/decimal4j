@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Base class for unit tests with an unscaled decimal operand.
  */
 abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToDecimalTest {
-	
+
 	protected final int scale;
 
 	public AbstractUnscaledOperandTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
@@ -56,27 +56,28 @@ abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToD
 			for (final TruncationPolicy tp : TestSettings.POLICIES) {
 				final DecimalArithmetic arith = s.getArithmetic(tp);
 				for (int scale : getScales(s.getScale())) {
-					data.add(new Object[] {s, tp, scale, arith});
+					data.add(new Object[] { s, tp, scale, arith });
 				}
 			}
 		}
 		return data;
 	}
-	
+
 	private static Set<Integer> getScales(int scale) {
 		final Set<Integer> vals = new TreeSet<Integer>();
 		switch (TestSettings.TEST_CASES) {
 		case TINY:
-			vals.addAll(Arrays.asList(-1, 0, scale-1, scale, scale+1, 18, 19));
+			vals.addAll(Arrays.asList(-1, 0, scale - 1, scale, scale + 1, 18, 19));
 			break;
 		case SMALL:
-			vals.addAll(Arrays.asList(-1, 0, 1, scale-1, scale, scale+1, 17, 18, 19));
+			vals.addAll(Arrays.asList(-1, 0, 1, scale - 1, scale, scale + 1, 17, 18, 19));
 			break;
 		case STANDARD:
-			vals.addAll(Arrays.asList(-10, -1, 0, 1, scale-1, scale, scale+1, 17, 18, 19, 30));
+			vals.addAll(Arrays.asList(-10, -1, 0, 1, scale - 1, scale, scale + 1, 17, 18, 19, 30));
 			break;
 		case ALL:
-			vals.addAll(Arrays.asList(-100, -20, -10, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 100));
+			vals.addAll(Arrays.asList(-100, -20, -10, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+					17, 18, 19, 20, 25, 30, 100));
 			break;
 		default:
 			throw new RuntimeException("illegal test cases: " + TestSettings.TEST_CASES);
@@ -88,17 +89,17 @@ abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToD
 	protected long randomLongOperand() {
 		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
 	}
-	
+
 	@Override
 	protected long[] getSpecialLongOperands() {
 		return getSpecialValues(getScaleMetrics());
 	}
-	
+
 	@Override
 	protected int getRandomTestCount() {
 		return 1000;
 	}
-	
+
 	protected BigDecimal toBigDecimal(long unscaled) {
 		BigDecimal other = BigDecimal.valueOf(unscaled, scale);
 		if (scale != getScale()) {
@@ -106,11 +107,11 @@ abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToD
 			if (isUnchecked()) {
 				other = BigDecimal.valueOf(other.unscaledValue().longValue(), getScale());
 			} else {
-				//check for overflow
+				// check for overflow
 				JDKSupport.bigIntegerToLongValueExact(other.unscaledValue());
 			}
 		}
 		return other;
 	}
-	
+
 }

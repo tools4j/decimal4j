@@ -27,16 +27,16 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.op.util.FloatAndDoubleUtil;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
 
 /**
  * Base class for tests comparing the result of some unary operation of the
- * {@link Decimal} with a float argument. The expected result is produced by
- * the equivalent operation of the {@link BigDecimal}.
+ * {@link Decimal} with a float argument. The expected result is produced by the
+ * equivalent operation of the {@link BigDecimal}.
  */
-abstract public class AbstractFloatToDecimalTest extends
-		AbstractOperandTest {
+abstract public class AbstractFloatToDecimalTest extends AbstractOperandTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -77,7 +77,7 @@ abstract public class AbstractFloatToDecimalTest extends
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, float operand) {
 
-		//expected
+		// expected
 		ArithmeticResult<Long> expected;
 		try {
 			expected = ArithmeticResult.forResult(arithmetic, expectedResult(operand));
@@ -87,7 +87,7 @@ abstract public class AbstractFloatToDecimalTest extends
 			expected = ArithmeticResult.forException(e);
 		}
 
-		//actual
+		// actual
 		ArithmeticResult<Long> actual;
 		try {
 			actual = ArithmeticResult.forResult(actualResult(scaleMetrics, operand));
@@ -97,7 +97,7 @@ abstract public class AbstractFloatToDecimalTest extends
 			actual = ArithmeticResult.forException(e);
 		}
 
-		//assert
+		// assert
 		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
 	}
 }

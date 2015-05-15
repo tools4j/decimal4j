@@ -21,46 +21,58 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.op;
+package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.util.FloatAndDoubleUtil;
+import org.decimal4j.op.AbstractDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
+import org.decimal4j.truncate.OverflowMode;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Base class for unit tests with a double operand.
+ * Unit test for {@link Decimal#negate()}
  */
-abstract public class AbstractDoubleOperandTest extends AbstractDecimalDoubleToDecimalTest {
+@RunWith(Parameterized.class)
+public class NegateTest extends AbstractDecimalToDecimalTest {
 	
-	protected final MathContext MATH_CONTEXT_DOUBLE_TO_LONG_64 = new MathContext(19, RoundingMode.HALF_EVEN);
-
-	public AbstractDoubleOperandTest(ScaleMetrics s, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+	public NegateTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	@Parameters(name = "{index}: {0}, {1}")
+	@Parameters(name = "{index}: scale={0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.CHECKED_POLICIES) {
-				final DecimalArithmetic arith = s.getArithmetic(tp);
-				data.add(new Object[] {s, tp, arith});
-			}
+			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getRoundingDownArithmetic()});
+			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.DOWN))});
 		}
 		return data;
 	}
-	
-	protected BigDecimal toBigDecimal(double operand) {
-		return FloatAndDoubleUtil.doubleToBigDecimal(operand, getScale(), getRoundingMode()).setScale(getScale(), getRoundingMode());
+
+	@Override
+	protected String operation() {
+		return "-";
 	}
 	
+	@Override
+	protected BigDecimal expectedResult(BigDecimal operand) {
+		return operand.negate();
+	}
+	
+	@Override
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> operand) {
+		if (isUnchecked() && RND.nextBoolean()) {
+			return operand.negate();
+		}
+		return operand.negate(getOverflowMode());
+	}
 }

@@ -29,6 +29,7 @@ import java.util.Random;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
@@ -96,10 +97,10 @@ abstract public class AbstractDecimalTest {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
-		return newDecimal(scaleMetrics, randomLong());
+		return newDecimal(scaleMetrics, randomLongOrInt());
 	}
 
-	protected static long randomLong() {
+	protected static long randomLongOrInt() {
 		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
 	}
 	protected static long randomLong(long n) {
@@ -129,4 +130,9 @@ abstract public class AbstractDecimalTest {
 			throw new RuntimeException("random out of bounds");
 		}
 	}
+
+	protected <S extends ScaleMetrics> DecimalFactory<S> getDecimalFactory(S scaleMetrics) {
+		return RND.nextBoolean() ? Factories.getDecimalFactory(scaleMetrics) : Factories.getGenericDecimalFactory(scaleMetrics);
+	}
+
 }

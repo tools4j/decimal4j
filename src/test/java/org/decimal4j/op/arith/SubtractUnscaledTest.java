@@ -21,46 +21,52 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.op;
+package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.util.FloatAndDoubleUtil;
+import org.decimal4j.op.AbstractUnscaledOperandTest;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
- * Base class for unit tests with a double operand.
+ * Unit test for {@link Decimal#addUnscaled(long)}
  */
-abstract public class AbstractDoubleOperandTest extends AbstractDecimalDoubleToDecimalTest {
+@RunWith(Parameterized.class)
+public class SubtractUnscaledTest extends AbstractUnscaledOperandTest {
 	
-	protected final MathContext MATH_CONTEXT_DOUBLE_TO_LONG_64 = new MathContext(19, RoundingMode.HALF_EVEN);
-
-	public AbstractDoubleOperandTest(ScaleMetrics s, TruncationPolicy tp, DecimalArithmetic arithmetic) {
-		super(arithmetic);
+	public SubtractUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
+		super(sm, tp, scale, arithmetic);
 	}
 
-	@Parameters(name = "{index}: {0}, {1}")
-	public static Iterable<Object[]> data() {
-		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.CHECKED_POLICIES) {
-				final DecimalArithmetic arith = s.getArithmetic(tp);
-				data.add(new Object[] {s, tp, arith});
+	@Override
+	protected String operation() {
+		return "- 10^" + (-scale) + " *";
+	}
+	
+	@Override
+	protected BigDecimal expectedResult(BigDecimal a, long b) {
+		return a.subtract(toBigDecimal(b));
+	}
+	
+	@Override
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
+		if (scale == getScale() && RND.nextBoolean()) {
+			if (isUnchecked() && RND.nextBoolean()) {
+				return a.subtractUnscaled(b);
 			}
+			return a.subtractUnscaled(b, getOverflowMode());
 		}
-		return data;
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+			return a.subtractUnscaled(b, scale);
+		}
+		if (isUnchecked() && RND.nextBoolean()) {
+			return a.subtractUnscaled(b, scale, getRoundingMode());
+		}
+		return a.subtractUnscaled(b, scale, getTruncationPolicy());
 	}
-	
-	protected BigDecimal toBigDecimal(double operand) {
-		return FloatAndDoubleUtil.doubleToBigDecimal(operand, getScale(), getRoundingMode()).setScale(getScale(), getRoundingMode());
-	}
-	
 }

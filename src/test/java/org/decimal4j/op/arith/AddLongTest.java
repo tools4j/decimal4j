@@ -21,53 +21,62 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.op;
+package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.op.AbstractLongOperandTest;
+import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.OverflowMode;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
- * Base class for unit tests with a long value operand (not an unscaled
- * decimal).
+ * Unit test for {@link Decimal#add(long)} and {@link Decimal#add(long, OverflowMode)}.
  */
-abstract public class AbstractLongOperandTest extends AbstractDecimalLongToDecimalTest {
+@RunWith(Parameterized.class)
+public class AddLongTest extends AbstractLongOperandTest {
 
-	public AbstractLongOperandTest(ScaleMetrics sm, OverflowMode om, DecimalArithmetic arithmetic) {
-		super(arithmetic);
+	public AddLongTest(ScaleMetrics sm, OverflowMode om, DecimalArithmetic arithmetic) {
+		super(sm, om, arithmetic);
 	}
 
-	@Parameters(name = "{index}: {0}, {1}")
-	public static Iterable<Object[]> data() {
-		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final OverflowMode om : OverflowMode.values()) {
-				final DecimalArithmetic arith = om.isChecked() ? s.getDefaultCheckedArithmetic() : s
-						.getDefaultArithmetic();
-				data.add(new Object[] { s, om, arith });
-			}
+	@Override
+	protected String operation() {
+		return "+";
+	}
+	
+	@Override
+	protected BigDecimal expectedResult(BigDecimal a, long b) {
+		return a.add(toBigDecimal(b));
+	}
+	
+	@Test
+	public void runProblemTest0() {
+		if (getScale() == 18 && !isUnchecked()) {
+			final Decimal<Scale18f> dValue = newDecimal(Scale18f.INSTANCE, -999999999999999999L);
+			runTest(Scale18f.INSTANCE, "problem", dValue, 10);
 		}
-		return data;
+	}
+
+	@Test
+	public void runProblemTest1() {
+		if (getScale() == 18 && !isUnchecked()) {
+			final Decimal<Scale18f> dValue = newDecimal(Scale18f.INSTANCE, Long.MIN_VALUE);
+			runTest(Scale18f.INSTANCE, "problem", dValue, 19);
+		}
 	}
 
 	@Override
-	protected long randomLongOperand() {
-		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
-	}
-
-	@Override
-	protected long[] getSpecialLongOperands() {
-		return getSpecialValues(getScaleMetrics());
-	}
-
-	protected BigDecimal toBigDecimal(long value) {
-		return BigDecimal.valueOf(value);
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b) {
+		if (isUnchecked() && RND.nextBoolean()) {
+			return a.add(b);
+		}
+		return a.add(b, getOverflowMode());
 	}
 
 }
