@@ -109,7 +109,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	public ImmutableDecimal<?> multiplyExact(Decimal<?> multiplicand) {
 		final int targetScale = getScale() + multiplicand.getScale();
 		try {
-			final long unscaledProduct = getCheckedArithmeticFor(RoundingMode.DOWN).multiplyByLong(unscaled, multiplicand.unscaledValue());
+			final long unscaledProduct = getDefaultCheckedArithmetic().multiplyByLong(unscaled, multiplicand.unscaledValue());
 			return getFactory().deriveFactory(targetScale).valueOfUnscaled(unscaledProduct);
 		} catch (ArithmeticException e) {
 			throw new ArithmeticException("Overflow: " + this + " * " + multiplicand);

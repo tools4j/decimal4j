@@ -33,6 +33,7 @@ import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
+import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
@@ -744,7 +745,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D divideExact(Decimal<S> divisor) {
-		return divide(divisor, OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.UNNECESSARY));
+		return divide(divisor, DecimalRounding.UNNECESSARY.getCheckedTruncationPolicy());
 	}
 
 	@Override
@@ -775,21 +776,26 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode) {
+		final long longValue = divideToLongValue(divisor, overflowMode);
+		return createOrAssign(getArithmeticFor(overflowMode).fromLong(longValue));
+	}
+
+	@Override
+	public long divideToLongValue(Decimal<S> divisor) {
+		return unscaledValue() / divisor.unscaledValue();
+	}
+
+	@Override
+	public long divideToLongValue(Decimal<S> divisor, OverflowMode overflowMode) {
 		final DecimalArithmetic arith = getArithmeticFor(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
 		try {
-			final long longValue = arith.divideByLong(unscaledValue(), divisor.unscaledValue());
-			return createOrAssign(getArithmeticFor(overflowMode).fromLong(longValue));
+			return arith.divideByLong(unscaledValue(), divisor.unscaledValue());
 		} catch (ArithmeticException e) {
 			if (divisor.isZero()) {
 				throw new ArithmeticException("Division by zero: integral(" + this + " / " + divisor + ")");
 			}
 			throw new ArithmeticException("Overflow: integral(" + this + " / " + divisor + ")");
 		}
-	}
-
-	@Override
-	public long divideToLongValue(Decimal<S> divisor) {
-		return unscaledValue() / divisor.unscaledValue();
 	}
 
 	@Override
@@ -808,10 +814,11 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode) {
 		try {
+			final DecimalArithmetic arith = getArithmeticFor(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
 			final long uDividend = unscaledValue();
 			final long uDivisor = divisor.unscaledValue();
-			final long lIntegral = uDividend / uDivisor;
-			final long uIntegral = getArithmeticFor(overflowMode).fromLong(lIntegral);
+			final long lIntegral = arith.divideByLong(uDividend, uDivisor);
+			final long uIntegral = arith.fromLong(lIntegral);
 			final long uReminder = uDividend - uDivisor * lIntegral;
 			final D[] result = createArray(2);
 			result[0] = create(uIntegral);

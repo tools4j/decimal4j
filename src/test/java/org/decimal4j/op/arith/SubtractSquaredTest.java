@@ -29,55 +29,60 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.op.AbstractDecimalDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.DecimalRounding;
-import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#divideToIntegralValue(Decimal)}
+ * Unit test for {@link Decimal#subtractSquared(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class DivideToIntegralValueTest extends AbstractDecimalDecimalToDecimalTest {
+public class SubtractSquaredTest extends AbstractDecimalDecimalToDecimalTest {
 	
-	public DivideToIntegralValueTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
+	public SubtractSquaredTest(ScaleMetrics scaleMetrics, TruncationPolicy tp, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	@Parameters(name = "{index}: {0} {1}")
+	@Parameters(name = "{index}: {0}, {1}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getRoundingDownArithmetic()});
-			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(DecimalRounding.DOWN.getCheckedTruncationPolicy())});
+			for (final TruncationPolicy tp : TestSettings.POLICIES) {
+				final DecimalArithmetic arith = s.getArithmetic(tp);
+				data.add(new Object[] {s, tp, arith});
+			}
 		}
 		return data;
-	}
-	
-	@Override
-	public void runSpecialValueTest() {
-		super.runSpecialValueTest();
 	}
 
 	@Override
 	protected String operation() {
-		return "divideToIntegralValue";
+		return "- square ";
 	}
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.divideToIntegralValue(b, mathContextLong64);
+		//NOTE: by definition we apply rounding and overflow check to the squaring
+		final BigDecimal b2 = b.multiply(b).setScale(getScale(), getRoundingMode());
+		if (!isUnchecked()) {
+			JDKSupport.bigIntegerToLongValueExact(b2.unscaledValue());
+		}
+		return a.subtract(b2);
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
-		if (isUnchecked() && RND.nextBoolean()) {
-			return a.divideToIntegralValue(b);
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+			return a.subtractSquared(b);
 		}
-		return a.divideToIntegralValue(b, getOverflowMode());
+		if (isUnchecked() && RND.nextBoolean()) {
+			return a.subtractSquared(b, getRoundingMode());
+		}
+		return a.subtractSquared(b, getTruncationPolicy());
 	}
 }

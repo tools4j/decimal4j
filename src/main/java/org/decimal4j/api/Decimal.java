@@ -2596,7 +2596,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is the integer part of the quotient
 	 * {@code (this / divisor)} rounded down. The result is returned as
-	 * {@code long} value.
+	 * {@code long} value. If the division causes an
+	 * overflow, the result is silently truncated.
 	 *
 	 * @param divisor
 	 *            value by which this {@code Decimal} is to be divided.
@@ -2606,6 +2607,26 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code divisor==0}
 	 */
 	long divideToLongValue(Decimal<S> divisor);
+
+	/**
+	 * Returns a {@code Decimal} whose value is the integer part of the quotient
+	 * {@code (this / divisor)} rounded down. The result is returned as
+	 * {@code long} value. The specified {@code overflowMode}
+	 * determines whether to truncate the result silently or to throw an
+	 * exception if an overflow occurs.
+	 *
+	 * @param divisor
+	 *            value by which this {@code Decimal} is to be divided.
+	 * @param overflowMode
+	 *            the overflow mode to apply if the division leads to an
+	 *            overflow
+	 * @return The integer part of {@code (this / divisor)} returned as
+	 *         {@code long}
+	 * @throws ArithmeticException
+	 *             if {@code divisor==0} or if {@code overflowMode==CHECKED} and
+	 *             an overflow occurs
+	 */
+	long divideToLongValue(Decimal<S> divisor, OverflowMode overflowMode);
 
 	/**
 	 * Returns a two-element {@code Decimal} array containing the result of

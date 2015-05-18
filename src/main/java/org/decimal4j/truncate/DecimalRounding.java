@@ -214,7 +214,7 @@ public enum DecimalRounding {
 	 * 
 	 * @return the corresponding rounding mode
 	 */
-	public RoundingMode getRoundingMode() {
+	public final RoundingMode getRoundingMode() {
 		return roundingMode;
 	}
 
@@ -225,7 +225,7 @@ public enum DecimalRounding {
 	 * @return the truncation policy defined by this decimal rounding and the
 	 *         checked overflow mode
 	 */
-	public TruncationPolicy getCheckedTruncationPolicy() {
+	public final TruncationPolicy getCheckedTruncationPolicy() {
 		return checkedPolicy;
 	}
 
@@ -236,7 +236,7 @@ public enum DecimalRounding {
 	 * @return the truncation policy defined by this decimal rounding and the
 	 *         unchecked overflow mode
 	 */
-	public TruncationPolicy getUncheckedTruncationPolicy() {
+	public final TruncationPolicy getUncheckedTruncationPolicy() {
 		return uncheckedPolicy;
 	}
 

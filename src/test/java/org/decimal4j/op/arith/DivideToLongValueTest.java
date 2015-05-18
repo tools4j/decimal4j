@@ -32,20 +32,20 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalDecimalToAnyTest;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#divideAndRemainder(Decimal)}
+ * Unit test for {@link Decimal#divideToLongValue(Decimal)}
  */
 @RunWith(Parameterized.class)
-public class DivideAndRemainderTest extends AbstractDecimalDecimalToAnyTest<Object[]> {
+public class DivideToLongValueTest extends AbstractDecimalDecimalToAnyTest<Long> {
 	
-	public DivideAndRemainderTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
+	public DivideToLongValueTest(ScaleMetrics scaleMetrics, OverflowMode overflowMode, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
@@ -54,62 +54,32 @@ public class DivideAndRemainderTest extends AbstractDecimalDecimalToAnyTest<Obje
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getRoundingDownArithmetic()});
-			data.add(new Object[] {s, OverflowMode.CHECKED, s.getDefaultCheckedArithmetic()});
+			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(DecimalRounding.DOWN.getCheckedTruncationPolicy())});
 		}
 		return data;
+	}
+	
+	@Override
+	public void runSpecialValueTest() {
+		super.runSpecialValueTest();
 	}
 
 	@Override
 	protected String operation() {
-		return "divideAndRemainder";
+		return "divideToIntegralValue";
 	}
 	
 	@Override
-	protected BigDecimal[] expectedResult(BigDecimal a, BigDecimal b) {
-		final BigDecimal[] res = a.divideAndRemainder(b, mathContextLong64);
-		res[0] = res[0].setScale(getScale(), RoundingMode.UNNECESSARY);
-		res[1] = res[1].setScale(getScale(), RoundingMode.UNNECESSARY);
-		return res;
+	protected Long expectedResult(BigDecimal a, BigDecimal b) {
+		final BigDecimal result = a.divideToIntegralValue(b, mathContextLong64).setScale(getScale(), RoundingMode.DOWN);
+		return isUnchecked() ? result.longValue() : result.longValueExact();
 	}
 	
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S>[] actualResult(Decimal<S> a, Decimal<S> b) {
+	protected <S extends ScaleMetrics> Long actualResult(Decimal<S> a, Decimal<S> b) {
 		if (isUnchecked() && RND.nextBoolean()) {
-			return a.divideAndRemainder(b);
+			return a.divideToLongValue(b);
 		}
-		return a.divideAndRemainder(b, getOverflowMode());
-	}
-	@Override
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<S> dOpB) {
-		final BigDecimal bdOpA = toBigDecimal(dOpA);
-		final BigDecimal bdOpB = toBigDecimal(dOpB);
-
-		//expected
-		ArithmeticResult<Long> expected0;
-		ArithmeticResult<Long> expected1;
-		try {
-			final BigDecimal[] exp = expectedResult(bdOpA, bdOpB);
-			expected0 = ArithmeticResult.forResult(arithmetic, exp[0]);
-			expected1 = ArithmeticResult.forResult(arithmetic, exp[1]);
-		} catch (ArithmeticException e) {
-			expected0 = ArithmeticResult.forException(e);
-			expected1 = ArithmeticResult.forException(e);
-		}
-
-		//actual
-		ArithmeticResult<Long> actual0;
-		ArithmeticResult<Long> actual1;
-		try {
-			final Decimal<S>[] act = actualResult(dOpA, dOpB);
-			actual0 = ArithmeticResult.forResult(act[0]);
-			actual1 = ArithmeticResult.forResult(act[1]);
-		} catch (ArithmeticException e) {
-			actual0 = ArithmeticResult.forException(e);
-			actual1 = ArithmeticResult.forException(e);
-		}
-
-		//assert
-		actual0.assertEquivalentTo(expected0, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + "[0] " + dOpB);
-		actual1.assertEquivalentTo(expected1, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + "[1] " + dOpB);
+		return a.divideToLongValue(b, getOverflowMode());
 	}
 }
