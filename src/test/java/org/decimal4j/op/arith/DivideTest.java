@@ -79,12 +79,16 @@ public class DivideTest extends AbstractDecimalDecimalToDecimalTest {
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
 		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return a.divide(b);
-		} else {
-			if (isUnchecked() && RND.nextBoolean()) {
-				return a.divide(b, getRoundingMode());
-			} else {
-				return a.divide(b, getTruncationPolicy());
-			}
 		}
+		if (isUnchecked() && RND.nextBoolean()) {
+			return a.divide(b, getRoundingMode());
+		}
+		if (isUnchecked() && getRoundingMode() == RoundingMode.DOWN && RND.nextBoolean()) { 
+			return a.divideTruncate(b);
+		}
+		if (!isUnchecked() && getRoundingMode() == RoundingMode.UNNECESSARY && RND.nextBoolean()) { 
+			return a.divideExact(b);
+		}
+		return a.divide(b, getTruncationPolicy());
 	}
 }
