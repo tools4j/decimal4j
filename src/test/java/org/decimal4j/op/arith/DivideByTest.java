@@ -24,13 +24,13 @@
 package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractDecimalDecimalToDecimalTest;
+import org.decimal4j.arithmetic.JDKSupport;
+import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -39,22 +39,23 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#multiply(Decimal, RoundingMode)}
+ * Unit test for {@link Decimal#divideBy(Decimal)} etc.
  */
 @RunWith(Parameterized.class)
-public class MultiplyTest extends AbstractDecimalDecimalToDecimalTest {
+public class DivideByTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 	
-	public MultiplyTest(ScaleMetrics scaleMetrics, TruncationPolicy truncationPolicy, DecimalArithmetic arithmetic) {
-		super(arithmetic);
+	public DivideByTest(ScaleMetrics scaleMetrics, int scale, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+		super(arithmetic, scale);
 	}
 
-	@Parameters(name = "{index}: {0}, {1}")
+	@Parameters(name = "{index}: {0}, scale={1}, {2}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetic arith = s.getArithmetic(tp);
-				data.add(new Object[] {s, tp, arith});
+			for (final ScaleMetrics otherScale : TestSettings.SCALES) {
+				for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
+					data.add(new Object[] {s, otherScale.getScale(), tp, s.getArithmetic(tp)});
+				}
 			}
 		}
 		return data;
@@ -62,22 +63,37 @@ public class MultiplyTest extends AbstractDecimalDecimalToDecimalTest {
 
 	@Override
 	protected String operation() {
-		return "*";
+		return "/";
 	}
 	
+	protected boolean isAssertable(BigDecimal a, BigDecimal b) {
+		if (isUnchecked()) {
+			try {
+				return b.setScale(getScale(), getRoundingMode()).unscaledValue().bitLength() <= 63;
+			} catch (ArithmeticException e) {
+				return true;//RoundingMode.UNNECESSARY but rounding is necessary
+			}
+		}
+		return true;
+	}
+
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.multiply(b);
+		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
+		if (!isUnchecked()) {
+			JDKSupport.bigIntegerToLongValueExact(bScaled.unscaledValue());
+		}
+		return a.divide(bScaled, mathContextLong128);
 	}
 	
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b) {
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<?> b) {
 		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
-			return a.multiply(b);
+			return a.divideBy(b);
 		}
 		if (isUnchecked() && RND.nextBoolean()) {
-			return a.multiply(b, getRoundingMode());
+			return a.divideBy(b, getRoundingMode());
 		}
-		return a.multiply(b, getTruncationPolicy());
+		return a.divideBy(b, getTruncationPolicy());
 	}
 }

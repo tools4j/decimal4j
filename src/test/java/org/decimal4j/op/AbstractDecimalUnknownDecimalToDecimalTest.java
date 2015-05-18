@@ -27,36 +27,32 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
 
 /**
  * Base class for tests comparing the result of some binary operation of the
- * {@link Decimal} with the expected result produced by the equivalent operation
- * of the {@link BigDecimal}.
+ * {@link Decimal} with a wildcard {@code Decimal<?>}. The expected result is
+ * produced by the equivalent operation of the {@link BigDecimal}.
  */
-abstract public class AbstractDecimalDecimalToDecimalTest extends AbstractOperandTest {
+abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends AbstractOperandTest {
 
-	/**
-	 * Constructor with arithemtics determining scale, rounding mode and
-	 * overflow policy.
-	 * 
-	 * @param arithmetic
-	 *            the arithmetic determining scale, rounding mode and overlfow
-	 *            policy
-	 */
-	public AbstractDecimalDecimalToDecimalTest(DecimalArithmetic arithmetic) {
+	protected final int unknownDecimalScale;
+
+	public AbstractDecimalUnknownDecimalToDecimalTest(DecimalArithmetic arithmetic, int unknownDecimalScale) {
 		super(arithmetic);
+		this.unknownDecimalScale = unknownDecimalScale;
 	}
-
+	
 	abstract protected BigDecimal expectedResult(BigDecimal a, BigDecimal b);
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<S> b);
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<?> b);
 
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		final Decimal<S> dOpA = randomDecimal(scaleMetrics);
-		final Decimal<S> dOpB = randomDecimal(scaleMetrics);
+		final Decimal<?> dOpB = Factories.getDecimalFactory(unknownDecimalScale).valueOfUnscaled(randomLongOrInt());
 		runTest(scaleMetrics, "[" + index + "]", dOpA, dOpB);
 	}
 
@@ -66,17 +62,24 @@ abstract public class AbstractDecimalDecimalToDecimalTest extends AbstractOperan
 		for (int i = 0; i < specialValues.length; i++) {
 			for (int j = 0; j < specialValues.length; j++) {
 				final Decimal<S> dOpA = newDecimal(scaleMetrics, specialValues[i]);
-				final Decimal<S> dOpB = newDecimal(scaleMetrics, specialValues[j]);
+				final Decimal<?> dOpB = Factories.getDecimalFactory(unknownDecimalScale).valueOfUnscaled(specialValues[j]);
 				runTest(scaleMetrics, "[" + i + ", " + j + "]", dOpA, dOpB);
 			}
 		}
-
+	}
+	
+	protected boolean isAssertable(BigDecimal a, BigDecimal b) {
+		return true;
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<S> dOpB) {
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<?> dOpB) {
 		final BigDecimal bdOpA = toBigDecimal(dOpA);
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
-
+		
+		if (!isAssertable(bdOpA, bdOpB)) {
+			return;
+		}
+		
 		// expected
 		ArithmeticResult<Long> expected;
 		try {

@@ -37,7 +37,6 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
-import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -180,13 +179,6 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 	}
 	
 	@Override
-	@Test
-	public void runSpecialValueTest() {
-		Assume.assumeTrue("overflown results without CHECKED mode don't match", getOverflowMode().isChecked());
-		super.runSpecialValueTest();
-	}
-	
-	@Override
 	protected int getRandomTestCount() {
 		return 1000;
 	}
@@ -249,6 +241,10 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 		try {
 			actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
 		} catch (AssertionError e) {
+			if (isUnchecked() && expected.isOverflow() ) {
+				//overflown results without CHECKED mode don't match
+				return;
+			}
 			if (!isWithinAllowedTolerance(expected, actual, b)) {
 				throw e;
 			}
@@ -288,6 +284,8 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 			return false;
 		}
 	}
+	
+	
 
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, int b) {

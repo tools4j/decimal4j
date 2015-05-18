@@ -42,33 +42,46 @@ public class ArithmeticResult<T> {
 	private final String resultString;
 	private final T compareValue;
 	private final Exception exception;
+	private final Boolean overflow;
 
+	private ArithmeticResult(String resultString, T compareValue, Boolean overflow) {
+		this.resultString = resultString;
+		this.compareValue = compareValue;
+		this.exception = null;
+		this.overflow = overflow;
+	}
 	private ArithmeticResult(String resultString, T compareValue, ArithmeticException exception) {
 		this.resultString = resultString;
 		this.compareValue = compareValue;
 		this.exception = exception;
+		this.overflow = null;
 	}
 	private ArithmeticResult(String resultString, T compareValue, IllegalArgumentException exception) {
 		this.resultString = resultString;
 		this.compareValue = compareValue;
 		this.exception = exception;
+		this.overflow = null;
 	}
 	private ArithmeticResult(String resultString, T compareValue, NullPointerException exception) {
 		this.resultString = resultString;
 		this.compareValue = compareValue;
 		this.exception = exception;
+		this.overflow = null;
 	}
 
 	public static <T> ArithmeticResult<T> forResult(String resultString, T comparableValue) {
-		return new ArithmeticResult<T>(resultString, comparableValue, (ArithmeticException)null);
+		return new ArithmeticResult<T>(resultString, comparableValue, (Boolean)null);
+	}
+	public static <T> ArithmeticResult<T> forResult(String resultString, T comparableValue, Boolean overflow) {
+		return new ArithmeticResult<T>(resultString, comparableValue, overflow);
 	}
 	public static ArithmeticResult<Long> forResult(DecimalArithmetic arithmetic, BigDecimal result) {
 		final BigDecimal rnd = result.setScale(arithmetic.getScale(), arithmetic.getRoundingMode());
 		final long resultUnscaled = arithmetic.getOverflowMode().isChecked() ? JDKSupport.bigIntegerToLongValueExact(rnd.unscaledValue()) : rnd.unscaledValue().longValue();
-		return forResult(result.toPlainString(), resultUnscaled);
+		return forResult(result.toPlainString(), resultUnscaled, rnd.unscaledValue().bitLength() > 63);
 	}
 	public static ArithmeticResult<Long> forResult(Decimal<?> result) {
-		return forResult(result.toString(), result.unscaledValue());
+		return forResult(result.toString(), result.unscaledValue(), null);
 	}
 	public static <T> ArithmeticResult<T> forException(ArithmeticException e) {
 		return new ArithmeticResult<T>(null, null, e);
@@ -93,6 +106,14 @@ public class ArithmeticResult<T> {
 		} else {
 			assertEquals(messagePrefix + " = " + expected.resultString, expected.compareValue, compareValue);
 		}
+	}
+	
+	public boolean isException() {
+		return exception != null;
+	}
+	
+	public boolean isOverflow() {
+		return overflow != null && overflow.booleanValue();
 	}
 	
 	public T getCompareValue() {

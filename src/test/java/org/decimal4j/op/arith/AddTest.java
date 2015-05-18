@@ -39,7 +39,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#add(Decimal)}
+ * Unit test for {@link Decimal#add(Decimal)} and {@link Decimal#add(Decimal, OverflowMode)}.
  */
 @RunWith(Parameterized.class)
 public class AddTest extends AbstractDecimalDecimalToDecimalTest {
@@ -73,6 +73,6 @@ public class AddTest extends AbstractDecimalDecimalToDecimalTest {
 		if (isUnchecked() && RND.nextBoolean()) {
 			return a.add(b);
 		}
-		return a.add(b, getTruncationPolicy());
+		return a.add(b, getOverflowMode());
 	}
 }
