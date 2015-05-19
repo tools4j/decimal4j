@@ -24,6 +24,7 @@
 package org.decimal4j.truncate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.junit.Test;
 
@@ -71,5 +72,12 @@ public class TruncatedPartTest {
 	@Test
 	public void testFirstNineRestNonZero() {
 		assertEquals(TruncatedPart.GREATER_THAN_HALF, TruncatedPart.valueOf(9, false));
+	}
+	@Test
+	public void testValueOf() {
+		//a bit a thumb test but we do a lot to get 100% coverage... 
+		for (final TruncatedPart part : TruncatedPart.values()) {
+			assertSame("should be same instance", part, TruncatedPart.valueOf(part.name()));
+		}
 	}
 }
