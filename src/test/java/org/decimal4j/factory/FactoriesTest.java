@@ -25,15 +25,22 @@ package org.decimal4j.factory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import org.decimal4j.api.ImmutableDecimal;
+import org.decimal4j.api.MutableDecimal;
+import org.decimal4j.generic.GenericImmutableDecimal;
+import org.decimal4j.generic.GenericMutableDecimal;
+import org.decimal4j.immutable.Decimal0f;
+import org.decimal4j.mutable.MutableDecimal0f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.junit.Test;
 
 /**
- * Unit test for {@link Factories}.
+ * Unit test for {@link Factories} and implementations of {@link DecimalFactory}.
  */
 public class FactoriesTest {
 	
@@ -87,6 +94,39 @@ public class FactoriesTest {
 		Factories.getGenericDecimalFactory(Scales.MAX_SCALE + 1);
 	}
 	
+	@Test
+	public void shouldCreateDecimalArray() throws Exception {
+		for (final ScaleMetrics sm : Scales.VALUES) {
+			//given
+			final int len = (int)(Math.random() * 100);
+
+			// when
+			final ImmutableDecimal<?>[] immutables = Factories.getDecimalFactory(sm).newArray(len);
+			final MutableDecimal<?>[] mutables = Factories.getDecimalFactory(sm).newMutableArray(len);
+			final GenericImmutableDecimal<?>[] genericImmutables = Factories.getGenericDecimalFactory(sm).newArray(len);
+			final GenericMutableDecimal<?>[] genericMutables = Factories.getGenericDecimalFactory(sm).newMutableArray(len);
+	
+			// then
+			assertEquals("immutable array should have length " + len, len, immutables.length);
+			assertEquals("mutable array should have length " + len, len, mutables.length);
+			assertEquals("genericImmutables array should have length " + len, len, genericImmutables.length);
+			assertEquals("genericMutables array should have length " + len, len, genericMutables.length);
+			
+			for (int i = 0; i < len; i++) {
+				assertNull("immutables[" + i + "' should be null", immutables[i]);
+				assertNull("mutables[" + i + "' should be null", mutables[i]);
+				assertNull("genericImmutables[" + i + "' should be null", genericImmutables[i]);
+				assertNull("genericMutables[" + i + "' should be null", genericMutables[i]);
+			}
+
+			final int scale = sm.getScale();
+			final String ipkg = Decimal0f.class.getPackage().getName();
+			final String mpkg = MutableDecimal0f.class.getPackage().getName();
+			assertEquals("immutable array should have specific component type", Class.forName(ipkg + ".Decimal" + scale + "f"), immutables.getClass().getComponentType());
+			assertEquals("mutable array should have specific component type", Class.forName(mpkg + ".MutableDecimal" + scale + "f"), mutables.getClass().getComponentType());
+		}
+	}
+
 	@Test
 	public void valuesListShouldBeSortedByScale() {
 		assertEquals("Factories.VALUES size not equal to all scales", Scales.MAX_SCALE - Scales.MIN_SCALE + 1, Factories.VALUES.size());

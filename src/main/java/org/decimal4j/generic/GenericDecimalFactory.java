@@ -182,7 +182,7 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public MutableDecimal<S>[] newMutableArray(int length) {
+	public GenericMutableDecimal<S>[] newMutableArray(int length) {
 		return new GenericMutableDecimal[length];
 	}
 }

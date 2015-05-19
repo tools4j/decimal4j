@@ -25,6 +25,7 @@ package org.decimal4j.generic;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -98,6 +99,27 @@ public class GenericDecimalTest {
 		assertEquals("immutable should have unscaled value " + unscaled, unscaled, immutable.unscaledValue());
 		assertEquals("mutable should have unscaled value " + unscaled, unscaled, mutable.unscaledValue());
 		assertEquals("immutable and mutable value should be equal", immutable, mutable);
+	}
+
+	@Test
+	public void shouldCreateGenericValueArray() {
+		for (final ScaleMetrics sm : Scales.VALUES) {
+			//given
+			final int len = RND.nextInt(100);
+
+			// when
+			final GenericImmutableDecimal<?>[] immutables = Factories.getGenericDecimalFactory(sm).newArray(len);
+			final GenericMutableDecimal<?>[] mutables = Factories.getGenericDecimalFactory(sm).newMutableArray(len);
+	
+			// then
+			assertEquals("immutable array should have length " + len, len, immutables.length);
+			assertEquals("mutable array should have length " + len, len, mutables.length);
+			
+			for (int i = 0; i < len; i++) {
+				assertNull("immutables[" + i + "' should be null", immutables[i]);
+				assertNull("mutables[" + i + "' should be null", mutables[i]);
+			}
+		}
 	}
 
 	@Test
