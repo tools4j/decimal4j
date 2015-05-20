@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractLongOperandTest;
+import org.decimal4j.op.AbstractDecimalLongToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized;
  * Unit test for {@link Decimal#multiply(long)} and {@link Decimal#multiply(long, OverflowMode)}.
  */
 @RunWith(Parameterized.class)
-public class MultiplyLongTest extends AbstractLongOperandTest {
+public class MultiplyLongTest extends AbstractDecimalLongToDecimalTest {
 
 	public MultiplyLongTest(ScaleMetrics sm, OverflowMode om, DecimalArithmetic arithmetic) {
 		super(sm, om, arithmetic);

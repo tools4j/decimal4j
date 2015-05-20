@@ -26,6 +26,8 @@ package org.decimal4j.truncate;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.util.EnumSet;
+
 import org.junit.Test;
 
 /**
@@ -73,6 +75,39 @@ public class TruncatedPartTest {
 	public void testFirstNineRestNonZero() {
 		assertEquals(TruncatedPart.GREATER_THAN_HALF, TruncatedPart.valueOf(9, false));
 	}
+	
+	@Test
+	public void testGreaterThanZero() {
+		final EnumSet<TruncatedPart> expectTrue = EnumSet.complementOf(EnumSet.of(TruncatedPart.ZERO));
+		for (final TruncatedPart part : TruncatedPart.values()) {
+			assertEquals(expectTrue.contains(part), part.isGreaterThanZero());
+		}
+	}
+
+	@Test
+	public void testEqualToHalf() {
+		final EnumSet<TruncatedPart> expectTrue = EnumSet.of(TruncatedPart.EQUAL_TO_HALF);
+		for (final TruncatedPart part : TruncatedPart.values()) {
+			assertEquals(expectTrue.contains(part), part.isEqualToHalf());
+		}
+	}
+	
+	@Test
+	public void testGreaterEqualHalf() {
+		final EnumSet<TruncatedPart> expectTrue = EnumSet.of(TruncatedPart.EQUAL_TO_HALF, TruncatedPart.GREATER_THAN_HALF);
+		for (final TruncatedPart part : TruncatedPart.values()) {
+			assertEquals(expectTrue.contains(part), part.isGreaterEqualHalf());
+		}
+	}
+
+	@Test
+	public void testGreaterThanHalf() {
+		final EnumSet<TruncatedPart> expectTrue = EnumSet.of(TruncatedPart.GREATER_THAN_HALF);
+		for (final TruncatedPart part : TruncatedPart.values()) {
+			assertEquals(expectTrue.contains(part), part.isGreaterThanHalf());
+		}
+	}
+
 	@Test
 	public void testValueOf() {
 		//a bit a thumb test but we do a lot to get 100% coverage... 

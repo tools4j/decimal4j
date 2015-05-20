@@ -36,7 +36,7 @@ import org.decimal4j.test.ArithmeticResult;
  * {@link Decimal} with a float argument. The expected result is produced by the
  * equivalent operation of the {@link BigDecimal}.
  */
-abstract public class AbstractFloatToDecimalTest extends AbstractOperandTest {
+abstract public class AbstractFloatToDecimalTest extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -54,22 +54,22 @@ abstract public class AbstractFloatToDecimalTest extends AbstractOperandTest {
 
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, float operand);
 
-	protected float randomDoubleOperand() {
+	protected float randomFloatOperand() {
 		return FloatAndDoubleUtil.randomFloatOperand(RND);
 	}
 
-	protected float[] getSpecialDoubleOperands() {
+	protected float[] getSpecialFloatOperands() {
 		return FloatAndDoubleUtil.specialFloatOperands(getScaleMetrics());
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomDoubleOperand());
+		runTest(scaleMetrics, "[" + index + "]", randomFloatOperand());
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
-		final float[] specialOperands = getSpecialDoubleOperands();
+		final float[] specialOperands = getSpecialFloatOperands();
 		for (int i = 0; i < specialOperands.length; i++) {
 			runTest(scaleMetrics, "[" + i + "]", specialOperands[i]);
 		}

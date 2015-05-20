@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractLongOperandTest;
+import org.decimal4j.op.AbstractDecimalLongToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -43,7 +43,7 @@ import org.junit.runners.Parameterized.Parameters;
  * and {@link Decimal#divide(long, TruncationPolicy)}
  */
 @RunWith(Parameterized.class)
-public class DivideLongTest extends AbstractLongOperandTest {
+public class DivideLongTest extends AbstractDecimalLongToDecimalTest {
 
 	public DivideLongTest(ScaleMetrics sm, TruncationPolicy tp, DecimalArithmetic arithmetic) {
 		super(sm, tp.getOverflowMode(), arithmetic);

@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractUnscaledOperandTest;
+import org.decimal4j.op.AbstractDecimalUnscaledToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.Test;
@@ -38,7 +38,7 @@ import org.junit.runners.Parameterized;
  * Unit test for {@link Decimal#addUnscaled(long)}
  */
 @RunWith(Parameterized.class)
-public class DivideUnscaledTest extends AbstractUnscaledOperandTest {
+public class DivideUnscaledTest extends AbstractDecimalUnscaledToDecimalTest {
 	
 	public DivideUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
 		super(sm, tp, scale, arithmetic);

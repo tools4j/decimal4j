@@ -36,7 +36,7 @@ import org.decimal4j.test.ArithmeticResult;
  * {@link Decimal} with a double argument. The expected result is produced by
  * the equivalent operation of the {@link BigDecimal}.
  */
-abstract public class AbstractDoubleToDecimalTest extends AbstractOperandTest {
+abstract public class AbstractDoubleToDecimalTest extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and

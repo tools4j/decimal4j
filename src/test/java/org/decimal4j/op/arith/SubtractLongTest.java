@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractLongOperandTest;
+import org.decimal4j.op.AbstractDecimalLongToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized;
  * Unit test for {@link Decimal#subtract(long)} and {@link Decimal#subtract(long, OverflowMode)}.
  */
 @RunWith(Parameterized.class)
-public class SubtractLongTest extends AbstractLongOperandTest {
+public class SubtractLongTest extends AbstractDecimalLongToDecimalTest {
 
 	public SubtractLongTest(ScaleMetrics sm, OverflowMode om, DecimalArithmetic arithmetic) {
 		super(sm, om, arithmetic);

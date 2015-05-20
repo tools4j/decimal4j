@@ -21,49 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.op;
+package org.decimal4j.op.util;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
-import org.junit.runners.Parameterized.Parameters;
 
-/**
- * Base class for unit tests with an unscaled decimal operand.
- */
-abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToDecimalTest {
+public class UnscaledUtil {
 
-	protected final int scale;
-
-	public AbstractUnscaledOperandTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
-		super(arithmetic);
-		this.scale = scale;
+	public static long[] getSpecialUnscaledOperands(int scale) {
+		int valueScale = scale;
+		valueScale = Math.max(Scales.MIN_SCALE, valueScale);
+		valueScale = Math.min(Scales.MAX_SCALE, valueScale);
+		return TestSettings.TEST_CASES.getSpecialValuesFor(Scales.getScaleMetrics(valueScale));
 	}
 
-	@Parameters(name = "{index}: {0}, {1}, scale={2}")
-	public static Iterable<Object[]> data() {
-		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				final DecimalArithmetic arith = s.getArithmetic(tp);
-				for (int scale : getScales(s.getScale())) {
-					data.add(new Object[] { s, tp, scale, arith });
-				}
-			}
-		}
-		return data;
-	}
-
-	private static Set<Integer> getScales(int scale) {
+	public static Set<Integer> getScales(ScaleMetrics scaleMetrics) {
+		final int scale = scaleMetrics.getScale();
 		final Set<Integer> vals = new TreeSet<Integer>();
 		switch (TestSettings.TEST_CASES) {
 		case TINY:
@@ -85,33 +66,21 @@ abstract public class AbstractUnscaledOperandTest extends AbstractDecimalLongToD
 		return vals;
 	}
 
-	@Override
-	protected long randomLongOperand() {
-		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
+	private UnscaledUtil() {
+		super();
 	}
 
-	@Override
-	protected long[] getSpecialLongOperands() {
-		return getSpecialValues(getScaleMetrics());
-	}
-
-	@Override
-	protected int getRandomTestCount() {
-		return 1000;
-	}
-
-	protected BigDecimal toBigDecimal(long unscaled) {
+	public static BigDecimal toBigDecimal(DecimalArithmetic arith, long unscaled, int scale) {
 		BigDecimal other = BigDecimal.valueOf(unscaled, scale);
-		if (scale != getScale()) {
-			other = other.setScale(getScale(), getRoundingMode());
-			if (isUnchecked()) {
-				other = BigDecimal.valueOf(other.unscaledValue().longValue(), getScale());
-			} else {
+		if (scale != arith.getScale()) {
+			other = other.setScale(arith.getScale(), arith.getRoundingMode());
+			if (arith.getOverflowMode().isChecked()) {
 				// check for overflow
 				JDKSupport.bigIntegerToLongValueExact(other.unscaledValue());
+			} else {
+				other = BigDecimal.valueOf(other.unscaledValue().longValue(), arith.getScale());
 			}
 		}
 		return other;
 	}
-
 }

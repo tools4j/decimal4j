@@ -34,7 +34,7 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractOperandTest;
+import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
@@ -48,7 +48,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#invert()}
  */
 @RunWith(Parameterized.class)
-public class SqrtTest extends AbstractOperandTest {
+public class SqrtTest extends AbstractRandomAndSpecialValueTest {
 	
 	private static final int precision = 20;
 	private static final BigDecimal TEN_POW_PRECISION = BigDecimal.TEN.pow(precision);

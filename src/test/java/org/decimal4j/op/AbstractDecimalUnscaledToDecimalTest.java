@@ -28,46 +28,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.op.util.UnscaledUtil;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Base class for unit tests with a long value operand (not an unscaled
- * decimal).
+ * Base class for unit tests with an unscaled decimal operand.
  */
-abstract public class AbstractLongOperandTest extends AbstractDecimalLongToDecimalTest {
+abstract public class AbstractDecimalUnscaledToDecimalTest extends AbstractDecimalLongValueToDecimalTest {
 
-	public AbstractLongOperandTest(ScaleMetrics sm, OverflowMode om, DecimalArithmetic arithmetic) {
+	protected final int scale;
+
+	public AbstractDecimalUnscaledToDecimalTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
 		super(arithmetic);
+		this.scale = scale;
 	}
 
-	@Parameters(name = "{index}: {0}, {1}")
+	@Parameters(name = "{index}: {0}, {1}, scale={2}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final OverflowMode om : OverflowMode.values()) {
-				final DecimalArithmetic arith = om.isChecked() ? s.getDefaultCheckedArithmetic() : s
-						.getDefaultArithmetic();
-				data.add(new Object[] { s, om, arith });
+			for (final TruncationPolicy tp : TestSettings.POLICIES) {
+				final DecimalArithmetic arith = s.getArithmetic(tp);
+				for (int scale : UnscaledUtil.getScales(s)) {
+					data.add(new Object[] { s, tp, scale, arith });
+				}
 			}
 		}
 		return data;
 	}
 
 	@Override
-	protected long randomLongOperand() {
-		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
+	protected long[] getSpecialLongOperands() {
+		return UnscaledUtil.getSpecialUnscaledOperands(scale);
 	}
 
 	@Override
-	protected long[] getSpecialLongOperands() {
-		return getSpecialValues(getScaleMetrics());
+	protected int getRandomTestCount() {
+		return 1000;
 	}
 
-	protected BigDecimal toBigDecimal(long value) {
-		return BigDecimal.valueOf(value);
+	protected BigDecimal toBigDecimal(long unscaled) {
+		return UnscaledUtil.toBigDecimal(arithmetic, unscaled, scale);
 	}
 
 }

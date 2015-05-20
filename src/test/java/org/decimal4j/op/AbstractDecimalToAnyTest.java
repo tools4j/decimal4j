@@ -38,7 +38,7 @@ import org.decimal4j.test.ArithmeticResult;
  * 
  * @param <R> the result type of the operation, common type for {@link Decimal} and {@link BigDecimal}
  */
-abstract public class AbstractDecimalToAnyTest<R> extends AbstractOperandTest {
+abstract public class AbstractDecimalToAnyTest<R> extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and

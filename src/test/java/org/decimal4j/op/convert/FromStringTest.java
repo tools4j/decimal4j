@@ -36,7 +36,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.factory.DecimalFactory;
-import org.decimal4j.op.AbstractOperandTest;
+import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
@@ -51,7 +51,7 @@ import org.junit.runners.Parameterized.Parameters;
  * implementations.
  */
 @RunWith(Parameterized.class)
-public class FromStringTest extends AbstractOperandTest {
+public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 
 	public FromStringTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
 		super(arithmetic);

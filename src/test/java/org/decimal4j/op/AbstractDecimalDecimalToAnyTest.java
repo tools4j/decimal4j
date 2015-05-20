@@ -40,7 +40,7 @@ import org.decimal4j.test.ArithmeticResult;
  *            the result type of the operation, common type for {@link Decimal}
  *            and {@link BigDecimal}
  */
-abstract public class AbstractDecimalDecimalToAnyTest<R> extends AbstractOperandTest {
+abstract public class AbstractDecimalDecimalToAnyTest<R> extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and

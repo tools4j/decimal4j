@@ -27,7 +27,7 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractDoubleOperandTest;
+import org.decimal4j.op.AbstractDecimalDoubleToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized;
  * Unit test for {@link Decimal#add(double)} etc. 
  */
 @RunWith(Parameterized.class)
-public class AddDoubleTest extends AbstractDoubleOperandTest {
+public class AddDoubleTest extends AbstractDecimalDoubleToDecimalTest {
 	
 	public AddDoubleTest(ScaleMetrics sm, TruncationPolicy tp, DecimalArithmetic arithmetic) {
 		super(sm, tp, arithmetic);

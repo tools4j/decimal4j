@@ -24,22 +24,19 @@
 package org.decimal4j.op;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.scale.Scales;
 import org.decimal4j.test.ArithmeticResult;
 
 /**
- * Base class for tests asserting the result of some unary operation of the
- * {@link Decimal} with a {@link BigDecimal} argument. The expected result is
- * produced by the equivalent operation of the {@link BigDecimal}.
+ * Base class for tests comparing the result of some binary operation of the
+ * {@link Decimal} with a Decimal argument and a long argument. The expected 
+ * result is produced by the equivalent operation of the {@link BigDecimal}. The 
+ * test operand values are created based on random long values.
  */
-abstract public class AbstractBigDecimalToDecimalTest extends AbstractRandomAndSpecialValueTest {
+abstract public class AbstractDecimalLongValueToDecimalTest extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and
@@ -49,72 +46,60 @@ abstract public class AbstractBigDecimalToDecimalTest extends AbstractRandomAndS
 	 *            the arithmetic determining scale, rounding mode and overlfow
 	 *            policy
 	 */
-	public AbstractBigDecimalToDecimalTest(DecimalArithmetic arithmetic) {
+	public AbstractDecimalLongValueToDecimalTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	abstract protected BigDecimal expectedResult(BigDecimal operand);
+	abstract protected BigDecimal expectedResult(BigDecimal a, long b);
 
-	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, BigDecimal operand);
-
-	protected BigDecimal randomBigDecimalOperand() {
-		final int scale = RND.nextInt(1 + Scales.MAX_SCALE);
-		if (RND.nextInt(10) != 0) {
-			return BigDecimal.valueOf(randomLongOrInt(), scale);
-		}
-		// every tenth potentially an overflow
-		final byte[] bytes = new byte[1 + RND.nextInt(100)];
-		RND.nextBytes(bytes);
-		return new BigDecimal(new BigInteger(bytes), scale);
+	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, long b);
+	
+	protected long randomLongOperand() {
+		return randomLongOrInt();
 	}
 
-	protected BigDecimal[] getSpecialBigDecimalOperands() {
-		final long[] specials = getSpecialValues(getScaleMetrics());
-		final Set<BigDecimal> set = new HashSet<BigDecimal>();
-		for (int i = 0; i < specials.length; i++) {
-			for (final ScaleMetrics scale : Scales.VALUES) {
-				set.add(BigDecimal.valueOf(specials[i], scale.getScale()));
-			}
-		}
-		return set.toArray(new BigDecimal[set.size()]);
-	}
-
+	abstract protected long[] getSpecialLongOperands();
+	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomBigDecimalOperand());
+		runTest(scaleMetrics, "[" + index + "]", randomDecimal(scaleMetrics), randomLongOperand());
 	}
 
 	@Override
 	protected <S extends ScaleMetrics> void runSpecialValueTest(S scaleMetrics) {
-		final BigDecimal[] specialOperands = getSpecialBigDecimalOperands();
-		for (int i = 0; i < specialOperands.length; i++) {
-			runTest(scaleMetrics, "[" + i + "]", specialOperands[i]);
+		final long[] specialValues = getSpecialValues(scaleMetrics);
+		final long[] specialLongOperands = getSpecialLongOperands();
+		for (int i = 0; i < specialValues.length; i++) {
+			for (int j = 0; j < specialLongOperands.length; j++) {
+				runTest(scaleMetrics, "[" + i + ", " + j + "]", newDecimal(scaleMetrics, specialValues[i]), specialLongOperands[j]);
+			}
 		}
 	}
 
-	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, BigDecimal operand) {
+	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, long b) {
+		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 
-		// expected
+		//expected
 		ArithmeticResult<Long> expected;
 		try {
-			expected = ArithmeticResult.forResult(arithmetic, expectedResult(operand));
+			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOperandA, b));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
 			expected = ArithmeticResult.forException(e);
 		}
 
-		// actual
+		//actual
 		ArithmeticResult<Long> actual;
 		try {
-			actual = ArithmeticResult.forResult(actualResult(scaleMetrics, operand));
+			actual = ArithmeticResult.forResult(actualResult(dOperandA, b));
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
 			actual = ArithmeticResult.forException(e);
 		}
-
-		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
+		
+		//assert
+		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
 	}
 }

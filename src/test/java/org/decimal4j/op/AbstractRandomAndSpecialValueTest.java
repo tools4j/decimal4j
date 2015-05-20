@@ -33,19 +33,23 @@ import org.decimal4j.test.TestSettings;
 import org.junit.Test;
 
 /**
- * Base class for tests of operands with random and special values.
+ * Base class for {@link Decimal} unit tests performing two types of tests, one with
+ * random values and another one with special values.
+ *  
+ * @see #runRandomTest()
+ * @see #runSpecialValueTest()
  */
-abstract public class AbstractOperandTest extends AbstractDecimalTest {
+abstract public class AbstractRandomAndSpecialValueTest extends AbstractDecimalTest {
 
 	/**
-	 * Constructor with arithemtics determining scale, rounding mode and
-	 * overflow policy.
+	 * Constructor with arithmetic determining scale, rounding mode and
+	 * overflow mode.
 	 * 
 	 * @param arithmetic
-	 *            the arithmetic determining scale, rounding mode and overlfow
-	 *            policy
+	 *            the arithmetic determining scale, rounding mode and overflow
+	 *            mode
 	 */
-	public AbstractOperandTest(DecimalArithmetic arithmetic) {
+	public AbstractRandomAndSpecialValueTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 

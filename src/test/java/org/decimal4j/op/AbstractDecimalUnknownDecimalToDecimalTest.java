@@ -36,7 +36,7 @@ import org.decimal4j.test.ArithmeticResult;
  * {@link Decimal} with a wildcard {@code Decimal<?>}. The expected result is
  * produced by the equivalent operation of the {@link BigDecimal}.
  */
-abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends AbstractOperandTest {
+abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends AbstractRandomAndSpecialValueTest {
 
 	protected final int unknownDecimalScale;
 

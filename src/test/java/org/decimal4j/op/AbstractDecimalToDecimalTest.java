@@ -36,7 +36,7 @@ import org.decimal4j.test.ArithmeticResult;
  * of the {@link BigDecimal}. The test operand are values created based on random
  * long values.
  */
-abstract public class AbstractDecimalToDecimalTest extends AbstractOperandTest {
+abstract public class AbstractDecimalToDecimalTest extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor with arithemtics determining scale, rounding mode and

@@ -139,5 +139,15 @@ public class DivideProblemTest extends DivideTest {
 			runTest(Scale6f.INSTANCE, "problem", dOpA, dOpB);
 		}
 	}
+	
+	@Override
+	public void runRandomTest() {
+		// no op
+	}
+	
+	@Override
+	public void runSpecialValueTest() {
+		// no op
+	}
 
 }

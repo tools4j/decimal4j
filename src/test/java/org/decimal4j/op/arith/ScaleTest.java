@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractOperandTest;
+import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.test.ArithmeticResult;
@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized.Parameters;
  * {@link Decimal#scale(int)} etc.
  */
 @RunWith(Parameterized.class)
-public class ScaleTest extends AbstractOperandTest {
+public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 
 	private final int targetScale;
 
