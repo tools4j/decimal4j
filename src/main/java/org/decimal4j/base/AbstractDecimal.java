@@ -1143,7 +1143,10 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public int hashCode() {
 		final long unscaled = unscaledValue();
-		return (int) (unscaled ^ (unscaled >>> 32));
+		long hash = getScale();
+		hash = 31 * hash + (unscaled >>> 32);
+		hash = 31 * hash + unscaled;
+		return (int) hash;
 	}
 
 	@Override

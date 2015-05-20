@@ -2596,8 +2596,8 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is the integer part of the quotient
 	 * {@code (this / divisor)} rounded down. The result is returned as
-	 * {@code long} value. If the division causes an
-	 * overflow, the result is silently truncated.
+	 * {@code long} value. If the division causes an overflow, the result is
+	 * silently truncated.
 	 *
 	 * @param divisor
 	 *            value by which this {@code Decimal} is to be divided.
@@ -2611,9 +2611,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	/**
 	 * Returns a {@code Decimal} whose value is the integer part of the quotient
 	 * {@code (this / divisor)} rounded down. The result is returned as
-	 * {@code long} value. The specified {@code overflowMode}
-	 * determines whether to truncate the result silently or to throw an
-	 * exception if an overflow occurs.
+	 * {@code long} value. The specified {@code overflowMode} determines whether
+	 * to truncate the result silently or to throw an exception if an overflow
+	 * occurs.
 	 *
 	 * @param divisor
 	 *            value by which this {@code Decimal} is to be divided.
@@ -2681,13 +2681,13 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 */
 	Decimal<S>[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode);
 
-	//@formatter:off
+	// @formatter:off
 	/**
 	 * Returns a {@code Decimal} whose value is {@code (this % divisor)}.
 	 * <p>
 	 * The remainder is given by
-	 * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}.
-	 * Note that this is not the modulo operation (the result can be
+	 * {@code this.subtract(this.divideToIntegralValue(divisor).multiply(divisor))}
+	 * . Note that this is not the modulo operation (the result can be
 	 * negative).
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an
@@ -2702,7 +2702,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *             if {@code divisor==0}
 	 * @see #divideToIntegralValue(Decimal)
 	 */
-	//@formatter:on
+	// @formatter:on
 	Decimal<S> remainder(Decimal<S> divisor);
 
 	// other arithmetic operations
@@ -3530,14 +3530,9 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	// finally some basic object methods plus equals
 
 	/**
-	 * Returns a hash code for this {@code Decimal}. The result is the exclusive
-	 * OR of the two halves of the primitive unscaled {@code long} value making
-	 * up this {@code Decimal} object. That is, the hashcode is the value of the
-	 * expression:
-	 * 
-	 * <blockquote>
-	 * {@code (int)(this.unscaledValue()^(this.unscaledValue()>>>32))}
-	 * </blockquote>
+	 * Returns a hash code for this {@code Decimal}. The hash code is calculated
+	 * from {@link #getScale() scale} and {@link #unscaledValue() unscaled
+	 * value}.
 	 * 
 	 * @return a hash code value for this object
 	 */
@@ -3545,16 +3540,16 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	int hashCode();
 
 	/**
-	 * Compares this object to the specified object. The result is {@code true}
+	 * Compares this Decimal to the specified object. The result is {@code true}
 	 * if and only if the argument is a {@code Decimal} value with the same
-	 * {@link #getScaleMetrics() scale} and {@link #unscaledValue() unscaled
-	 * value} as this Decimal.
+	 * {@link #getScale() scale} and {@link #unscaledValue() unscaled value} as
+	 * this Decimal.
 	 * 
 	 * @param obj
-	 *            the object to compare with.
+	 *            the object to compare with
 	 * @return {@code true} if the argument is a {@code Decimal} object that
 	 *         contains the same value and scale as this object; {@code false}
-	 *         otherwise.
+	 *         otherwise
 	 */
 	@Override
 	boolean equals(Object obj);
