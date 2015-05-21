@@ -36,6 +36,8 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.factory.DecimalFactory;
+import org.decimal4j.immutable.Decimal0f;
+import org.decimal4j.mutable.MutableDecimal0f;
 import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
@@ -46,8 +48,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test {@link DecimalArithmetic#parse(String)} via
- * {@link DecimalFactory#parse(String)}, {@link MutableDecimal#set(String)}
- * and the static {@code valueOf(String)} methods of the Immutable Decimal
+ * {@link DecimalFactory#parse(String)}, {@link MutableDecimal#set(String)} and
+ * the static {@code valueOf(String)} methods of the Immutable Decimal
  * implementations.
  */
 @RunWith(Parameterized.class)
@@ -78,12 +80,13 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		final String s = Long.toString(RND.nextLong());
 		return toDecimalString(s, RND.nextInt(s.length() + 1));
 	}
+
 	private static String toDecimalString(String s, int decimalIndex) {
 		if (decimalIndex < 0 || decimalIndex >= s.length()) {
 			return s;
 		}
 		if (decimalIndex == 0 && s.startsWith("-")) {
-			decimalIndex++; 
+			decimalIndex++;
 		}
 		return s.substring(0, decimalIndex) + "." + s.substring(decimalIndex);
 	}
@@ -109,16 +112,25 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 					values.add(decimalString + "5000000000000000000000000000001");
 					values.add(decimalString + "9999999999999999999999999999999");
 				}
-				//some invalid
+				// some invalid
 				values.add(decimalString + "A");
 				values.add(decimalString + "000000000000000000000000000000Z");
 			}
 		}
-		//some potential overflow values
-		values.add("9223372036854775808");//Long.MAX_VALUE + 1
-		values.add("-9223372036854775809");//Long.MIN_VALUE - 1
-		values.add("9223372036854775808".substring(0, 19-getScale()) + "." + "9223372036854775808".substring(19-getScale()));//Long.MAX_VALUE + 1, with decimal point
-		values.add("-9223372036854775809".substring(0, 20-getScale()) + "." + "-9223372036854775809".substring(20-getScale()));//Long.MAX_VALUE + 1, with decimal point
+		// some potential overflow values
+		values.add("9223372036854775808");// Long.MAX_VALUE + 1
+		values.add("-9223372036854775809");// Long.MIN_VALUE - 1
+		values.add("9223372036854775808".substring(0, 19 - getScale()) + "."
+				+ "9223372036854775808".substring(19 - getScale()));// Long.MAX_VALUE
+																	// + 1, with
+																	// decimal
+																	// point
+		values.add("-9223372036854775809".substring(0, 20 - getScale()) + "."
+				+ "-9223372036854775809".substring(20 - getScale()));// Long.MAX_VALUE
+																		// + 1,
+																		// with
+																		// decimal
+																		// point
 		values.add(Long.MAX_VALUE + "0");
 		values.add(Long.MAX_VALUE + "0.0");
 		values.add(Long.MAX_VALUE + ".1");
@@ -129,7 +141,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		values.add(Long.MIN_VALUE + ".1");
 		values.add(Long.MIN_VALUE + ".5");
 		values.add(Long.MIN_VALUE + ".9");
-		//some invalid values
+		// some invalid values
 		values.add("");
 		values.add(" 1");
 		values.add("1 ");
@@ -144,7 +156,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		values.add("-1.");
 		values.add("+1.A");
 		values.add("-1.A");
-		values.add(null);//test null input
+		values.add(null);// test null input
 		return values.toArray(new String[values.size()]);
 	}
 
@@ -163,7 +175,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, String operand) {
 
-		//expected
+		// expected
 		ArithmeticResult<Long> expected;
 		try {
 			expected = ArithmeticResult.forResult(arithmetic, expectedResult(operand));
@@ -175,7 +187,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 			expected = ArithmeticResult.forException(e);
 		}
 
-		//actual
+		// actual
 		ArithmeticResult<Long> actual;
 		try {
 			actual = ArithmeticResult.forResult(actualResult(scaleMetrics, operand));
@@ -187,46 +199,87 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 			actual = ArithmeticResult.forException(e);
 		}
 
-		//assert
+		// assert
 		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
 	}
 
 	protected BigDecimal expectedResult(String operand) {
 		final BigDecimal value = new BigDecimal(operand).setScale(getScale(), getRoundingMode());
-		//check that the conversion does not overflow
+		// check that the conversion does not overflow
 		JDKSupport.bigIntegerToLongValueExact(value.unscaledValue());
 		return value;
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, String operand) {
-		if (RND.nextBoolean()) {
-			//Factory, immutable
+		switch (RND.nextInt(4)) {
+		case 0:
+			// Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).parse(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).parse(operand, getRoundingMode());
 			}
-		} else if (RND.nextBoolean()) {
-			//Factory, mutable
+		case 1:
+			// Factory, mutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
-		} else {
-			//Immutable, valueOf method
+		case 2:
+			// String constructor
+			// NOTE: immutable has no constructor with rounding mode param
+			if (isRoundingDefault()) {
+				if (RND.nextBoolean()) {
+					return newImmutableInstance(scaleMetrics, operand);
+				}
+				return newMutableInstance(scaleMetrics, operand, null);
+			} else {
+				return newMutableInstance(scaleMetrics, operand, getRoundingMode());
+			}
+		case 3:// fallthrough
+		default:
+			// Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
+		}
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newImmutableInstance(S scaleMetrics, String operand) {
+		return newInstance(scaleMetrics, getImmutableClassName(), operand, null);
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, String operand, RoundingMode roundingMode) {
+		return newInstance(scaleMetrics, getMutableClassName(), operand, roundingMode);
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newInstance(S scaleMetrics, String className, String operand, RoundingMode roundingMode) {
+		try {
+			@SuppressWarnings("unchecked")
+			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(className);
+			if (roundingMode == null) {
+				return clazz.getConstructor(String.class).newInstance(operand);
+			} else {
+				return clazz.getConstructor(String.class, RoundingMode.class).newInstance(operand, roundingMode);
+			}
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
+		} catch (Exception e) {
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, String operand) {
 		try {
-			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
+			final Class<?> clazz = Class.forName(getImmutableClassName());
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return (Decimal<S>) clazz.getMethod("valueOf", String.class).invoke(null, operand);
 			} else {
-				return (Decimal<S>) clazz.getMethod("valueOf", String.class, RoundingMode.class).invoke(null, operand, getRoundingMode());
+				return (Decimal<S>) clazz.getMethod("valueOf", String.class, RoundingMode.class).invoke(null, operand,
+						getRoundingMode());
 			}
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
@@ -236,6 +289,14 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		} catch (Exception e) {
 			throw new RuntimeException("could not invoke valueOf method, e=" + e, e);
 		}
+	}
+
+	private String getImmutableClassName() {
+		return Decimal0f.class.getName().replace("0f", getScale() + "f");
+	}
+
+	private String getMutableClassName() {
+		return MutableDecimal0f.class.getName().replace("0f", getScale() + "f");
 	}
 
 }

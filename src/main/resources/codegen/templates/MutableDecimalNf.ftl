@@ -30,11 +30,11 @@ public final class MutableDecimal${scale}f extends
 	}
 
 	public MutableDecimal${scale}f(String value) {
-		this(Decimal${scale}f.DEFAULT_ARITHMETIC.parse(value));
+		super(Decimal${scale}f.DEFAULT_CHECKED_ARITHMETIC.parse(value));
 	}
 
 	public MutableDecimal${scale}f(String value, RoundingMode roundingMode) {
-		this(Decimal${scale}f.SCALE.getArithmetic(roundingMode).parse(value));
+		super(Decimal${scale}f.SCALE.getCheckedArithmetic(roundingMode).parse(value));
 	}
 
 	public MutableDecimal${scale}f(long value) {
