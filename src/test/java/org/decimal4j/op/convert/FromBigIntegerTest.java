@@ -57,8 +57,8 @@ public class FromBigIntegerTest extends AbstractBigIntegerToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			final DecimalArithmetic arith = s.getDefaultCheckedArithmetic();
-			data.add(new Object[] { s, arith });
+			data.add(new Object[] { s, s.getDefaultArithmetic() });
+			data.add(new Object[] { s, s.getDefaultCheckedArithmetic() });
 		}
 		return data;
 	}
@@ -75,6 +75,9 @@ public class FromBigIntegerTest extends AbstractBigIntegerToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, BigInteger operand) {
+		if (isUnchecked()) {
+			return newDecimal(scaleMetrics, arithmetic.fromBigInteger(operand));
+		}
 		if (RND.nextBoolean()) {
 			//Factory, immutable
 			return getDecimalFactory(scaleMetrics).valueOf(operand);

@@ -37,6 +37,7 @@ import org.decimal4j.op.AbstractUnscaledToDecimalTest;
 import org.decimal4j.op.util.UnscaledUtil;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -51,7 +52,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 
-	public FromUnscaledTest(ScaleMetrics sm, RoundingMode rm, int scale, DecimalArithmetic arithmetic) {
+	public FromUnscaledTest(ScaleMetrics sm, TruncationPolicy tp, int scale, DecimalArithmetic arithmetic) {
 		super(scale, arithmetic);
 	}
 
@@ -64,10 +65,10 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				final DecimalArithmetic arith = s.getCheckedArithmetic(rm);
+			for (final TruncationPolicy tp : TestSettings.POLICIES) {
+				final DecimalArithmetic arith = s.getArithmetic(tp);
 				for (int scale : UnscaledUtil.getScales(s)) {
-					data.add(new Object[] { s, rm, scale, arith });
+					data.add(new Object[] { s, tp, scale, arith });
 				}
 			}
 		}
@@ -81,6 +82,9 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, long operand) {
+		if (isUnchecked()) {
+			return newDecimal(scaleMetrics, arithmetic.fromUnscaled(operand, scale));
+		}
 		final boolean noScale = scale == scaleMetrics.getScale() && RND.nextBoolean();
 		final DecimalFactory<S> factory = getDecimalFactory(scaleMetrics);
 		if (RND.nextBoolean()) {

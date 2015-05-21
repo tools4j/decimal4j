@@ -617,6 +617,10 @@ public interface DecimalArithmetic {
 
 	/**
 	 * Converts the specified {@link BigInteger} value to an unscaled decimal.
+	 * <p>
+	 * Note: this operation is <b>not</b> strictly garbage free, meaning that
+	 * temporary objects may be allocated if an unchecked overflow occurs during
+	 * the conversion.
 	 * 
 	 * @param value
 	 *            the value to convert

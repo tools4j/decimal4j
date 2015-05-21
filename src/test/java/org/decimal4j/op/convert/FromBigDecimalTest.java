@@ -36,6 +36,7 @@ import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.op.AbstractBigDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -49,7 +50,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 
-	public FromBigDecimalTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
+	public FromBigDecimalTest(ScaleMetrics s, TruncationPolicy tp, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
@@ -57,9 +58,8 @@ public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final RoundingMode mode : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				final DecimalArithmetic arith = s.getCheckedArithmetic(mode);
-				data.add(new Object[] { s, mode, arith });
+			for (final TruncationPolicy tp : TestSettings.POLICIES) {
+				data.add(new Object[] { s, tp, s.getArithmetic(tp) });
 			}
 		}
 		return data;
@@ -77,6 +77,9 @@ public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, BigDecimal operand) {
+		if (isUnchecked()) {
+			return newDecimal(scaleMetrics, arithmetic.fromBigDecimal(operand));
+		}
 		if (RND.nextBoolean()) {
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {

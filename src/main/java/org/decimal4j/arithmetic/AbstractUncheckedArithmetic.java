@@ -80,7 +80,10 @@ abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
-		//FIXME make garbage free
+		if (value.bitLength() <= 63) {
+			return fromLong(value.longValue());
+		}
+		//NOTE: overflow case is not garbage free
 		return value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()).longValue();
 	}
 }

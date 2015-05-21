@@ -71,13 +71,16 @@ abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
 
 	@Override
 	public long fromBigInteger(BigInteger value) {
-		//FIXME make garbage free
-		return JDKSupport.bigIntegerToLongValueExact(value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()));
+		if (value.bitLength() <= 63) {
+			return fromLong(value.longValue());
+		}
+		throw new ArithmeticException("Overflow: cannot convert " + value + " to Decimal with scale " + getScale());
 	}
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		//FIXME make garbage free
+		//TODO any chance to make this garbage free? 
+		//Difficult as we cannot look inside the BigDecimal value
 		final BigDecimal scaled = value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode());
 		return JDKSupport.bigIntegerToLongValueExact(scaled.toBigInteger());
 	}

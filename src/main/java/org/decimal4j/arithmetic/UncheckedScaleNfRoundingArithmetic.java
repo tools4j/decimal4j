@@ -160,7 +160,9 @@ public final class UncheckedScaleNfRoundingArithmetic extends
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode()).longValue();//FIXME make garbage free
+		//TODO any chance to make this garbage free? 
+		//Difficult as we cannot look inside the BigDecimal value
+		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode()).longValue();
 	}
 
 	@Override

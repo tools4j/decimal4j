@@ -140,7 +140,9 @@ public final class UncheckedScaleNfTruncatingArithmetic extends
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).longValue();//FIXME make garbage free
+		//TODO any chance to make this garbage free? 
+		//Difficult as we cannot look inside the BigDecimal value
+		return value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).longValue();
 	}
 	
 	@Override

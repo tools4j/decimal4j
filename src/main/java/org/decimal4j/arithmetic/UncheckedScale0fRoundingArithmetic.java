@@ -134,7 +134,9 @@ public final class UncheckedScale0fRoundingArithmetic extends
 
 	@Override
 	public long fromBigDecimal(BigDecimal value) {
-		return value.setScale(0, getRoundingMode()).longValueExact();//FIXME make garbage free
+		//TODO any chance to make this garbage free? 
+		//Difficult as we cannot look inside the BigDecimal value
+		return value.setScale(0, getRoundingMode()).longValue();
 	}
 
 	@Override
