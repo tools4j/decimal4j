@@ -101,7 +101,7 @@ public class FromFloatTest extends AbstractFloatToDecimalTest {
 	@SuppressWarnings("unchecked")
 	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, float operand) {
 		try {
-			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
+			final Class<?> clazz = Class.forName(getImmutableClassName());
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return (Decimal<S>) clazz.getMethod("valueOf", float.class).invoke(null, operand);
 			} else {

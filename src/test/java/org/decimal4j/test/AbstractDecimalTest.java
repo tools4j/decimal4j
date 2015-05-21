@@ -31,6 +31,8 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
+import org.decimal4j.immutable.Decimal0f;
+import org.decimal4j.mutable.MutableDecimal0f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -133,6 +135,14 @@ abstract public class AbstractDecimalTest {
 
 	protected <S extends ScaleMetrics> DecimalFactory<S> getDecimalFactory(S scaleMetrics) {
 		return RND.nextBoolean() ? Factories.getDecimalFactory(scaleMetrics) : Factories.getGenericDecimalFactory(scaleMetrics);
+	}
+	
+	protected String getImmutableClassName() {
+		return Decimal0f.class.getName().replace("0f", getScale() + "f");
+	}
+
+	protected String getMutableClassName() {
+		return MutableDecimal0f.class.getName().replace("0f", getScale() + "f");
 	}
 
 }

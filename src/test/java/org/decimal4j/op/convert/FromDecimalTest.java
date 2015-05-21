@@ -101,7 +101,7 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 	@SuppressWarnings("unchecked")
 	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, Decimal<?> operand) {
 		try {
-			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
+			final Class<?> clazz = Class.forName(getImmutableClassName());
 			if (operand.getScale() == scaleMetrics.getScale() && RND.nextBoolean()) {
 				return (Decimal<S>) clazz.getMethod("valueOf", Decimal.class).invoke(null, operand);
 			} else {

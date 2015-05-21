@@ -36,8 +36,6 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.factory.DecimalFactory;
-import org.decimal4j.immutable.Decimal0f;
-import org.decimal4j.mutable.MutableDecimal0f;
 import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
@@ -289,14 +287,6 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		} catch (Exception e) {
 			throw new RuntimeException("could not invoke valueOf method, e=" + e, e);
 		}
-	}
-
-	private String getImmutableClassName() {
-		return Decimal0f.class.getName().replace("0f", getScale() + "f");
-	}
-
-	private String getMutableClassName() {
-		return MutableDecimal0f.class.getName().replace("0f", getScale() + "f");
 	}
 
 }

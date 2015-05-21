@@ -117,7 +117,7 @@ public class FromDoubleTest extends AbstractDoubleToDecimalTest {
 	@SuppressWarnings("unchecked")
 	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, double operand) {
 		try {
-			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
+			final Class<?> clazz = Class.forName(getImmutableClassName());
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return (Decimal<S>) clazz.getMethod("valueOf", double.class).invoke(null, operand);
 			} else {

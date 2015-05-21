@@ -107,7 +107,7 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 	@SuppressWarnings("unchecked")
 	private <S extends ScaleMetrics> Decimal<S> valueOfUnscaled(S scaleMetrics, long operand) {
 		try {
-			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
+			final Class<?> clazz = Class.forName(getImmutableClassName());
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				if (scale == scaleMetrics.getScale() && RND.nextBoolean()) {
 					return (Decimal<S>) clazz.getMethod("valueOfUnscaled", long.class)//

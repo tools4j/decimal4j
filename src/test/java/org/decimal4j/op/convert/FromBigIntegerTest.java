@@ -90,7 +90,7 @@ public class FromBigIntegerTest extends AbstractBigIntegerToDecimalTest {
 	@SuppressWarnings("unchecked")
 	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, BigInteger operand) {
 		try {
-			final Class<?> clazz = Class.forName("org.decimal4j.immutable.Decimal" + getScale() + "f");
+			final Class<?> clazz = Class.forName(getImmutableClassName());
 			return (Decimal<S>) clazz.getMethod("valueOf", BigInteger.class).invoke(null, operand);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
