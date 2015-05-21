@@ -118,17 +118,12 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		// some potential overflow values
 		values.add("9223372036854775808");// Long.MAX_VALUE + 1
 		values.add("-9223372036854775809");// Long.MIN_VALUE - 1
+		// Long.MAX_VALUE + 1, with decimal point
 		values.add("9223372036854775808".substring(0, 19 - getScale()) + "."
-				+ "9223372036854775808".substring(19 - getScale()));// Long.MAX_VALUE
-																	// + 1, with
-																	// decimal
-																	// point
+				+ "9223372036854775808".substring(19 - getScale()));
+		// Long.MIN_VALUE - 1, with decimal point
 		values.add("-9223372036854775809".substring(0, 20 - getScale()) + "."
-				+ "-9223372036854775809".substring(20 - getScale()));// Long.MAX_VALUE
-																		// + 1,
-																		// with
-																		// decimal
-																		// point
+				+ "-9223372036854775809".substring(20 - getScale()));
 		values.add(Long.MAX_VALUE + "0");
 		values.add(Long.MAX_VALUE + "0.0");
 		values.add(Long.MAX_VALUE + ".1");
