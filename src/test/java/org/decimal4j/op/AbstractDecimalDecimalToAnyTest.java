@@ -75,7 +75,6 @@ abstract public class AbstractDecimalDecimalToAnyTest<R> extends AbstractRandomA
 				runTest(scaleMetrics, "[" + i + ", " + j + "]", dOpA, dOpB);
 			}
 		}
-
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<S> dOpB) {

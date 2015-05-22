@@ -108,6 +108,10 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	@Override
 	public ImmutableDecimal<?> multiplyExact(Decimal<?> multiplicand) {
 		final int targetScale = getScale() + multiplicand.getScale();
+		if (targetScale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("sum of scales in exact multiplication exceeds max scale " 
+					+ Scales.MAX_SCALE + ": " + this + " * " + multiplicand);
+		}
 		try {
 			final long unscaledProduct = getDefaultCheckedArithmetic().multiplyByLong(unscaled, multiplicand.unscaledValue());
 			return getFactory().deriveFactory(targetScale).valueOfUnscaled(unscaledProduct);
