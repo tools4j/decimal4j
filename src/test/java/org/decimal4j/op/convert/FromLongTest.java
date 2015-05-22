@@ -25,109 +25,84 @@ package org.decimal4j.op.convert;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
-import org.decimal4j.factory.DecimalFactory;
-import org.decimal4j.op.AbstractDoubleToDecimalTest;
-import org.decimal4j.op.util.FloatAndDoubleUtil;
+import org.decimal4j.op.AbstractLongValueToDecimalTest;
+import org.decimal4j.scale.Scale0f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test {@link DecimalArithmetic#fromDouble(double)} via
- * {@link DecimalFactory#valueOf(double)}, {@link MutableDecimal#set(double)}
- * and the static {@code valueOf(double)} methods of the Immutable Decimal
- * implementations. The same conversion method is also used in other operations
- * that are involving doubles.
+ * Test {@link DecimalArithmetic#fromLong(long) via {
+ * @link DecimalFactory#valueOf(long)} etc., {@link MutableDecimal#set(long)}
+ * etc. and the static {@code valueOf(long)} method of the Immutable Decimal
+ * implementations.
  */
 @RunWith(Parameterized.class)
-public class FromDoubleTest extends AbstractDoubleToDecimalTest {
+public class FromLongTest extends AbstractLongValueToDecimalTest {
 
-	public FromDoubleTest(ScaleMetrics s, RoundingMode mode, DecimalArithmetic arithmetic) {
+	public FromLongTest(ScaleMetrics sm, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	@Parameters(name = "{index}: {0}, {1}")
+	@Override
+	protected String operation() {
+		return "fromLong";
+	}
+
+	@Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final RoundingMode mode : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				final DecimalArithmetic arith = s.getArithmetic(mode);
-				data.add(new Object[] { s, mode, arith });
-			}
+			data.add(new Object[] { s, s.getDefaultArithmetic()});
+			data.add(new Object[] { s, s.getDefaultCheckedArithmetic()});
 		}
 		return data;
 	}
 
 	@Override
-	protected String operation() {
-		return "fromDouble";
-	}
-
-	@Test
-	public void testProblem1() {
-		if (getScale() == 4 && getRoundingMode() == RoundingMode.HALF_DOWN) {
-			runTest(getScaleMetrics(), "testProblem1", 3.354719257560035e-4);
-		}
-	}
-
-	@Test
-	public void testProblem2() {
-		if (getScale() == 4 && getRoundingMode() == RoundingMode.HALF_DOWN) {
-			runTest(getScaleMetrics(), "testProblem2", 3.9541250940045014e-4);
-		}
+	protected long[] getSpecialLongOperands() {
+		return TestSettings.TEST_CASES.getSpecialValuesFor(Scale0f.INSTANCE);
 	}
 
 	@Override
-	protected BigDecimal expectedResult(double operand) {
-		return FloatAndDoubleUtil.doubleToBigDecimal(operand, getScale(), getRoundingMode());
+	protected BigDecimal expectedResult(long operand) {
+		return BigDecimal.valueOf(operand);
 	}
 
 	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, double operand) {
-		switch(RND.nextInt(4)) {
+	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, long operand) {
+		if (isUnchecked()) {
+			return newDecimal(scaleMetrics, arithmetic.fromLong(operand));
+		}
+		switch (RND.nextInt(4)) {
 		case 0:
-			//Factory, immutable
-			if (isRoundingDefault() && RND.nextBoolean()) {
-				return getDecimalFactory(scaleMetrics).valueOf(operand);
-			} else {
-				return getDecimalFactory(scaleMetrics).valueOf(operand, getRoundingMode());
-			}
+			// Factory, immutable
+			return getDecimalFactory(scaleMetrics).valueOf(operand);
 		case 1:
-			//Factory, mutable
-			if (isRoundingDefault() && RND.nextBoolean()) {
-				return getDecimalFactory(scaleMetrics).newMutable().set(operand);
-			} else {
-				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
-			}
+			// Factory, mutable
+			return getDecimalFactory(scaleMetrics).newMutable().set(operand);
 		case 2:
-			//mutable constructor
 			return newMutableInstance(scaleMetrics, operand);
 		case 3://fall through
 		default:
-			//Immutable, valueOf method
+			// Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
 		}
 	}
 
-	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, double operand) {
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, long operand) {
 		try {
 			@SuppressWarnings("unchecked")
 			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
-			if (isRoundingDefault() && RND.nextBoolean()) {
-				return clazz.getConstructor(double.class).newInstance(operand);
-			} else {
-				return clazz.getConstructor(double.class, RoundingMode.class).newInstance(operand, getRoundingMode());
-			}
+			return clazz.getConstructor(long.class).newInstance(operand);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) e.getTargetException();
@@ -139,17 +114,13 @@ public class FromDoubleTest extends AbstractDoubleToDecimalTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, double operand) {
+	private <S extends ScaleMetrics> Decimal<S> valueOf(S scaleMetrics, long operand) {
 		try {
 			final Class<?> clazz = Class.forName(getImmutableClassName());
-			if (isRoundingDefault() && RND.nextBoolean()) {
-				return (Decimal<S>) clazz.getMethod("valueOf", double.class).invoke(null, operand);
-			} else {
-				return (Decimal<S>) clazz.getMethod("valueOf", double.class, RoundingMode.class).invoke(null, operand, getRoundingMode());
-			}
+			return (Decimal<S>) clazz.getMethod("valueOf", long.class).invoke(null, operand);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
-				throw (RuntimeException)e.getTargetException();
+				throw (RuntimeException) e.getTargetException();
 			}
 			throw new RuntimeException("could not invoke valueOf method, e=" + e, e);
 		} catch (Exception e) {

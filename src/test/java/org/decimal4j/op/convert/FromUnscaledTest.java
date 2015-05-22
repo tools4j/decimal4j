@@ -87,14 +87,15 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 		}
 		final boolean noScale = scale == scaleMetrics.getScale() && RND.nextBoolean();
 		final DecimalFactory<S> factory = getDecimalFactory(scaleMetrics);
-		if (RND.nextBoolean()) {
+		switch (RND.nextInt(4)) {
+		case 0:
 			// Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return noScale ? factory.valueOfUnscaled(operand) : factory.valueOfUnscaled(operand, scale);
 			} else {
 				return factory.valueOfUnscaled(operand, scale, getRoundingMode());
 			}
-		} else if (RND.nextBoolean()) {
+		case 1:
 			// Factory, mutable
 			final MutableDecimal<S> mutable = factory.newMutable();
 			if (isRoundingDefault() && RND.nextBoolean()) {
@@ -102,9 +103,38 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 			} else {
 				return mutable.setUnscaled(operand, scale, getRoundingMode());
 			}
-		} else {
+		case 2:
+			return newMutableInstance(scaleMetrics, operand);
+		case 3:// fall through
+		default:
 			// Immutable, valueOfUnscaled method
 			return valueOfUnscaled(scaleMetrics, operand);
+		}
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, long operand) {
+		try {
+			@SuppressWarnings("unchecked")
+			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
+			if (isRoundingDefault() && RND.nextBoolean()) {
+				if (scale == scaleMetrics.getScale() && RND.nextBoolean()) {
+					@SuppressWarnings("unchecked")
+					final Decimal<S> result = (Decimal<S>)clazz.getMethod("unscaled", long.class).invoke(null, operand);
+					return result;
+				} else {
+					return clazz.getConstructor(long.class, int.class).newInstance(operand, scale);
+				}
+			} else {
+				return clazz.getConstructor(long.class, int.class, RoundingMode.class)//
+						.newInstance(operand, scale, getRoundingMode());
+			}
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
+		} catch (Exception e) {
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
 		}
 	}
 
