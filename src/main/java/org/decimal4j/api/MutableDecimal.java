@@ -360,6 +360,14 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @see #compareTo(Decimal)
 	 */
 	MutableDecimal<S> max(MutableDecimal<S> val);
+	
+	/**
+	 * Returns a clone of this mutable Decimal numerically identical to this
+	 * value.
+	 * 
+	 * @return a numerically identical clone of this value
+	 */
+	MutableDecimal<S> clone();
 
 	//override some methods with specialized return type
 

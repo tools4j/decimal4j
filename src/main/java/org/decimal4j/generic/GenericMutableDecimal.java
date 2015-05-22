@@ -165,14 +165,9 @@ public final class GenericMutableDecimal<S extends ScaleMetrics> extends
 		return Factories.getGenericDecimalFactory(scaleMetrics);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public GenericMutableDecimal<S> clone() {
-		try {
-			return (GenericMutableDecimal<S>) super.clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException("clone should be supported", e);
-		}
+		return new GenericMutableDecimal<S>(scaleMetrics, unscaledValue());
 	}
 
 	@Override

@@ -249,7 +249,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 		unscaled = getCheckedArithmeticFor(roundingMode).parse(value);
 		return self();
 	}
-
+	
 	@Override
 	public MutableDecimal<S> min(MutableDecimal<S> val) {
 		return isLessThanOrEqualTo(val) ? this : val;
@@ -259,4 +259,7 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	public MutableDecimal<S> max(MutableDecimal<S> val) {
 		return isGreaterThanOrEqualTo(val) ? this : val;
 	}
+
+	@Override
+	abstract public D clone();
 }
