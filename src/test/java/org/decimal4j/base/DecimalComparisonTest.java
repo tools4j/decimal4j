@@ -23,7 +23,9 @@
  */
 package org.decimal4j.base;
 
-import static com.google.common.truth.Truth.ASSERT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import junitparams.naming.TestCaseName;
@@ -41,24 +43,25 @@ import org.junit.runner.RunWith;
 @RunWith(JUnitParamsRunner.class)
 public class DecimalComparisonTest {
 
-  // Test cases for compareTo
+	// Test cases for compareTo
 
-  /**
-   * Checks that natural ordering given on {@link Decimal} implementations is consistent with
-   * <code>equals<code>.
-   * 
-   * Note: (x.compareTo(y)==0) == (x.equals(y) is not strictly required by the contract, but {@link Decimal} implementations fulfill it
-   */
-  @Test
-  @Parameters(source = BinaryDecimalArgumentProvider.class)
-  @TestCaseName("{0}.compareTo({1}) == 0]")
-  public void compareToIsConsistentWithEquals(final Decimal<ScaleMetrics> first,
-      final Decimal<ScaleMetrics> second) {
-    // given
-    ASSERT.that(first).isEqualTo(second);
+	/**
+	 * Checks that natural ordering given on {@link Decimal} implementations is
+	 * consistent with <code>equals<code>.
+	 * 
+	 * Note: (x.compareTo(y)==0) == (x.equals(y) is not strictly required by the contract, but {@link Decimal} implementations fulfill it
+	 */
+	@Test
+	@Parameters(source = BinaryDecimalArgumentProvider.class)
+	@TestCaseName("{0}.compareTo({1}) == 0]")
+	public void compareToIsConsistentWithEquals(
+			final Decimal<ScaleMetrics> first,
+			final Decimal<ScaleMetrics> second) {
+		// given
+		assertEquals(first, second);
 
-    // then
-    ASSERT.that(first).comparesEqualTo(second);
-  }
+		// then
+		assertTrue(first.compareTo(second) == 0);
+	}
 
 }

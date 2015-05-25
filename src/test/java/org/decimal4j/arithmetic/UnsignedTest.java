@@ -23,7 +23,10 @@
  */
 package org.decimal4j.arithmetic;
 
-import static com.google.common.truth.Truth.ASSERT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import junitparams.naming.TestCaseName;
@@ -53,7 +56,7 @@ public class UnsignedTest {
 		final long result = Unsigned.divide(dividend, divisor);
 
 		// then
-		ASSERT.that(result).isEqualTo(expectedQuotient);
+		assertEquals(expectedQuotient, result);
 	}
 
 	// Special cases for division
@@ -194,17 +197,17 @@ public class UnsignedTest {
 	}
 
 	private static void assertLess(final long first, final long second) {
-		ASSERT.that(Unsigned.compare(first, second)).isLessThan(0);
-		ASSERT.that(Unsigned.isLess(first, second)).isTrue();
-		ASSERT.that(Unsigned.isLessOrEqual(first, second)).isTrue();
-		ASSERT.that(Unsigned.isGreater(first, second)).isFalse();
+		assertTrue(Unsigned.compare(first, second) < 0);
+		assertTrue(Unsigned.isLess(first, second));
+		assertTrue(Unsigned.isLessOrEqual(first, second));
+		assertFalse(Unsigned.isGreater(first, second));
 	}
 
 	private static void assertGreater(final long first, final long second) {
-		ASSERT.that(Unsigned.compare(first, second)).isGreaterThan(0);
-		ASSERT.that(Unsigned.isGreater(first, second)).isTrue();
-		ASSERT.that(Unsigned.isLess(first, second)).isFalse();
-		ASSERT.that(Unsigned.isLessOrEqual(first, second)).isFalse();
+		assertTrue(Unsigned.compare(first, second) > 0);
+		assertTrue(Unsigned.isGreater(first, second));
+		assertFalse(Unsigned.isLess(first, second));
+		assertFalse(Unsigned.isLessOrEqual(first, second));
 	}
 
 }
