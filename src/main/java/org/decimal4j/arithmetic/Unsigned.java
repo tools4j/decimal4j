@@ -141,8 +141,8 @@ public final class Unsigned {
 		return quotient + (isLess(rem, divisor) ? 0 : 1);
 	}
 
-	// no instances
 	private Unsigned() {
-		super();
+		// no instances
 	}
+
 }
