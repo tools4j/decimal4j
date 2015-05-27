@@ -3550,6 +3550,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @return {@code true} if the argument is a {@code Decimal} object that
 	 *         contains the same value and scale as this object; {@code false}
 	 *         otherwise
+	 * 
+	 * @see #isEqualTo(Decimal)
+	 * @see #isEqualToNumerically(Decimal)
+	 * @see #hashCode()
 	 */
 	@Override
 	boolean equals(Object obj);
