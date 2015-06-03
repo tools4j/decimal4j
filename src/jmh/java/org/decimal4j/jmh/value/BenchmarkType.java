@@ -113,9 +113,11 @@ public enum BenchmarkType {
 		@Override
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//avoid overflows
+			//one * first / second <= Long.MAX_VALUE 
+			//   -->        second >= one * first / Long.MAX_VALUE
 			final long one = Scales.getScaleMetrics(benchmarkState.scale).getScaleFactor();
 			final long min = (long)Math.ceil(one * Math.abs((double)first) / Long.MAX_VALUE);
-			final long value = min + randomLong(Math.max(0, valueType.maxValue - min));
+			final long value = min + randomLong(Math.max(1, valueType.maxValue - min));
 			//NOTE: value may be larger than valueType.maxValue, but no overflow seems more important here
 			
 			//positive or negative?
