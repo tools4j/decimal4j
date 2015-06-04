@@ -23,6 +23,7 @@
  */
 package org.decimal4j.jmh.value;
 
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Random;
 
@@ -114,9 +115,10 @@ public enum BenchmarkType {
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			//avoid overflows
 			//one * first / second <= Long.MAX_VALUE 
-			//   -->        second >= one * first / Long.MAX_VALUE
-			final long one = Scales.getScaleMetrics(benchmarkState.scale).getScaleFactor();
-			final long min = (long)Math.ceil(one * Math.abs((double)first) / Long.MAX_VALUE);
+			//   -->        second >= one * first / (Long.MAX_VALUE - 1)
+			final BigInteger one = Scales.getScaleMetrics(benchmarkState.scale).getScaleFactorAsBigInteger();
+			//min = 1 + abs(one * first / Long.MAX_VALUE)
+			final long min = 1 + one.multiply(BigInteger.valueOf(first)).divide(BigInteger.valueOf(Long.MAX_VALUE)).abs().longValue();
 			final long value = min + randomLong(Math.max(1, valueType.maxValue - min));
 			//NOTE: value may be larger than valueType.maxValue, but no overflow seems more important here
 			

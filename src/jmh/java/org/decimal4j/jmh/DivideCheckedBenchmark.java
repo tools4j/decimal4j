@@ -75,7 +75,7 @@ public class DivideCheckedBenchmark extends AbstractBenchmark {
 
 	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(DivideBenchmarkState state, Values<S> values) {
 		try {
-			final BigDecimal result = values.bigDecimal1.divide(values.bigDecimal2, state.mcLong64);
+			final BigDecimal result = values.bigDecimal1.divide(values.bigDecimal2, state.scale, state.roundingMode);
 			//check overflow
 			JDKSupport.bigIntegerToLongValueExact(result.unscaledValue());
 			return result;

@@ -73,7 +73,7 @@ public class DivideBenchmark extends AbstractBenchmark {
 	}
 
 	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(DivideBenchmarkState state, Values<S> values) {
-		return values.bigDecimal1.divide(values.bigDecimal2, state.mcLong64);
+		return values.bigDecimal1.divide(values.bigDecimal2, state.scale, state.roundingMode);
 	}
 
 	private static final <S extends ScaleMetrics> Decimal<S> immutableDecimals(DivideBenchmarkState state, Values<S> values) {
