@@ -34,6 +34,17 @@ import org.decimal4j.scale.Scale9f;
  */
 final class Mul {
 
+	//floor(sqrt(Long.MAX_VALUE))
+	private static final long SQRT_MAX_VALUE = 3037000499L;
+
+	private static boolean doesProductFitInLong(long uDecimal1, long uDecimal2) {
+		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
+		return leadingZeros > Long.SIZE + 1;
+	}
+	private static boolean doesSquareFitInLong(long uDecimal) {
+		return -SQRT_MAX_VALUE <= uDecimal & uDecimal <= SQRT_MAX_VALUE;
+	}
+	
 	/**
 	 * Calculates the multiple {@code uDecimal1 * uDecimal2 / scaleFactor}
 	 * without rounding.
@@ -51,15 +62,15 @@ final class Mul {
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
 		}
+		
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final int scale = scaleMetrics.getScale();
 
-		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
-		if (leadingZeros > Long.SIZE + 1) {
+		if (doesProductFitInLong(uDecimal1, uDecimal2)) {
 			//product fits in long, just do it
 			return scaleMetrics.divideByScaleFactor(uDecimal1 * uDecimal2);
 		}
 
+		final int scale = scaleMetrics.getScale();
 		if (scale <= 9) {
 			//use scale to split into 2 parts: i (integral) and f (fractional)
 			//with this scale, the low order product f1*f2 fits in a long
@@ -108,18 +119,14 @@ final class Mul {
 			return special.multiply(arith, uDecimal1, uDecimal2);
 		}
 
-		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final int scale = scaleMetrics.getScale();
-		
-		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
-		if (leadingZeros > Long.SIZE + 1) {
+		if (doesProductFitInLong(uDecimal1, uDecimal2)) {
 			//product fits in long, just do it
-			final long u1xu2 = uDecimal1 * uDecimal2;
-			final long u1xu2d = scaleMetrics.divideByScaleFactor(u1xu2);
-			final long u1xu2r = u1xu2 - scaleMetrics.multiplyByScaleFactor(u1xu2d);
-			return u1xu2d + RoundingUtil.calculateRoundingIncrement(rounding, u1xu2d, u1xu2r, scaleMetrics.getScaleFactor());
+			return multiply32(arith, rounding, uDecimal1, uDecimal2);
 		}
 		
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final int scale = scaleMetrics.getScale();
+
 		if (scale <= 9) {
 			//use scale to split into 2 parts: i (integral) and f (fractional)
 			//with this scale, the low order product f1*f2 fits in a long
@@ -158,6 +165,14 @@ final class Mul {
 			return unrounded + RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
+	
+	private static long multiply32(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		final long u1xu2 = uDecimal1 * uDecimal2;
+		final long u1xu2d = scaleMetrics.divideByScaleFactor(u1xu2);
+		final long u1xu2r = u1xu2 - scaleMetrics.multiplyByScaleFactor(u1xu2d);
+		return u1xu2d + RoundingUtil.calculateRoundingIncrement(rounding, u1xu2d, u1xu2r, scaleMetrics.getScaleFactor());
+	}
 
 	/**
 	 * Calculates the multiple {@code uDecimal1 * uDecimal2 / scaleFactor}
@@ -182,18 +197,14 @@ final class Mul {
 				return special.multiply(arith, uDecimal1, uDecimal2);
 			}
 	
+			if (doesProductFitInLong(uDecimal1, uDecimal2)) {
+				//product fits in long, just do it
+				return multiply32(arith, rounding, uDecimal1, uDecimal2);
+			}
+
 			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 			final int scale = scaleMetrics.getScale();
-			
-			final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
-			if (leadingZeros > Long.SIZE + 1) {
-				//product fits in long, just do it
-				final long u1xu2 = uDecimal1 * uDecimal2;
-				final long u1xu2d = scaleMetrics.divideByScaleFactor(u1xu2);
-				final long u1xu2r = u1xu2 - scaleMetrics.multiplyByScaleFactor(u1xu2d);
-				return u1xu2d + RoundingUtil.calculateRoundingIncrement(rounding, u1xu2d, u1xu2r, scaleMetrics.getScaleFactor());
-			}
-			
+
 			if (scale <= 9) {
 				//use scale to split into 2 parts: i (integral) and f (fractional)
 				//with this scale, the low order product f1*f2 fits in a long
@@ -265,6 +276,10 @@ final class Mul {
 	 * @return the square result without rounding
 	 */
 	public static long square(ScaleMetrics scaleMetrics, long uDecimal) {
+		if (doesSquareFitInLong(uDecimal)) {
+			//square fits in long, just do it
+			return scaleMetrics.divideByScaleFactor(uDecimal * uDecimal);
+		}
 		final int scale = scaleMetrics.getScale();
 		if (scale <= 9) {
 			//use scale to split into 2 parts: i (integral) and f (fractional)
@@ -300,6 +315,10 @@ final class Mul {
 	 * @return the square result with rounding
 	 */
 	public static long square(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
+		if (doesSquareFitInLong(uDecimal)) {
+			//square fits in long, just do it
+			return square32(scaleMetrics, rounding, uDecimal);
+		}
 		final int scale = scaleMetrics.getScale();
 		if (scale <= 9) {
 			//use scale to split into 2 parts: i (integral) and f (fractional)
@@ -332,11 +351,23 @@ final class Mul {
 			return unrounded + RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
+
+	//PRECONDITION: uDecimal <= SQRT_MAX_VALUE
+	private static long square32(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
+		final long u2 = uDecimal * uDecimal;
+		final long u2d = scaleMetrics.divideByScaleFactor(u2);
+		final long u2r = u2 - scaleMetrics.multiplyByScaleFactor(u2d);
+		return u2d + RoundingUtil.calculateRoundingIncrement(rounding, u2d, u2r, scaleMetrics.getScaleFactor());
+	}
 	
 	// TODO merge with other versions
 	public static long squareChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		if (doesSquareFitInLong(uDecimal)) {
+			//square fits in long, just do it
+			return square32(scaleMetrics, rounding, uDecimal);
+		}
 		try {
-			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 			final int scale = scaleMetrics.getScale();
 			if (scale <= 9) {
 				// use scale to split into 2 parts: i (integral) and f (fractional)
@@ -403,6 +434,11 @@ final class Mul {
 			}
 
 			final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+
+			if (doesProductFitInLong(uDecimal1, uDecimal2)) {
+				return scaleMetrics.divideByScaleFactor(uDecimal1 * uDecimal2);
+			}
+			
 			final int scale = scaleMetrics.getScale();
 			if (scale <= 9) {
 				//use scale to split into 2 parts: i (integral) and f (fractional)
@@ -454,6 +490,10 @@ final class Mul {
 
 	public static long squareChecked(DecimalArithmetic arith, long uDecimal) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
+		if (doesSquareFitInLong(uDecimal)) {
+			//square fits in long, just do it
+			return scaleMetrics.divideByScaleFactor(uDecimal * uDecimal);
+		}
 		final int scale = scaleMetrics.getScale();
 		try {
 			if (scale <= 9) {
