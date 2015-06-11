@@ -20,7 +20,6 @@ import org.decimal4j.arithmetic.CheckedScaleNfRoundingArithmetic;
 import org.decimal4j.arithmetic.CheckedScaleNfTruncatingArithmetic;
 import org.decimal4j.arithmetic.UncheckedScaleNfRoundingArithmetic;
 import org.decimal4j.arithmetic.UncheckedScaleNfTruncatingArithmetic;
-import org.decimal4j.arithmetic.Unsigned;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -156,13 +155,8 @@ public enum Scale${scale}f implements ScaleMetrics {
 
 	@Override
 	public final long divideUnsignedByScaleFactor(long unsignedDividend) {
-		if (unsignedDividend >= 0) {
-			return unsignedDividend / SCALE_FACTOR;
-		}
-
-		final long quotient = ((unsignedDividend >>> 1) / SCALE_FACTOR) << 1;
-		final long rem = unsignedDividend - quotient * SCALE_FACTOR;
-		return quotient + (Unsigned.isLess(rem, SCALE_FACTOR) ? 0 : 1);
+		//we can do this since SCALE_FACTOR > 1 and even
+		return (unsignedDividend >>> 1) / (SCALE_FACTOR >>> 1);
 	}
 
 	@Override
