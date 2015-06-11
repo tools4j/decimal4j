@@ -403,10 +403,10 @@ final class Div {
 		long rhat = unCB - q * vn1;
 		
 		//correct, first attempt
-		while ((q >>> 32) != 0) {
+		while (q > LONG_MASK) {
 			q--;
 			rhat += vn1;
-			if ((rhat >>> 32) != 0) {
+			if (rhat > LONG_MASK) {
 				return q;
 			}
 		}
@@ -416,7 +416,7 @@ final class Div {
 		while (Unsigned.isGreater(left, right)) {
 			q--;
 			rhat += vn1;
-			if ((rhat >>> 32) != 0) {
+			if (rhat > LONG_MASK) {
 				return q;
 			}
 			left -= vn0;
