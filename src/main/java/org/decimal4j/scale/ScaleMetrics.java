@@ -111,13 +111,16 @@ public interface ScaleMetrics {
 	long getMinIntegerValue();
 
 	/**
-	 * Returns true if the specified integer {@code value) can be represented 
+	 * Returns true if the specified integer {@code value} can be represented
 	 * using this scale.
 	 * 
-	 * @return true if {@code (Long.MIN_VALUE / scaleFactor) <= value <= Long.MAX_VALUE / scaleFactor}
+	 * @param value
+	 *            the value to test
+	 * @return true if
+	 *         {@code (Long.MIN_VALUE / scaleFactor) <= value <= (Long.MAX_VALUE / scaleFactor)}
 	 */
 	boolean isValidIntegerValue(long value);
-	
+
 	/**
 	 * Returns {@code factor*scaleFactor}.
 	 * 
@@ -256,8 +259,8 @@ public interface ScaleMetrics {
 	 *
 	 * @param roundingMode
 	 *            the rounding mode used by the returned arithmetic
-	 * @return arithmetic for this scale with specified rounding mode and
-	 *         with overflow checks
+	 * @return arithmetic for this scale with specified rounding mode and with
+	 *         overflow checks
 	 */
 	DecimalArithmetic getCheckedArithmetic(RoundingMode roundingMode);
 
