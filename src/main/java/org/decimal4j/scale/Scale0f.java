@@ -118,6 +118,11 @@ public enum Scale0f implements ScaleMetrics {
 	public final long getMinIntegerValue() {
 		return Long.MIN_VALUE;
 	}
+	
+	@Override
+	public boolean isValidIntegerValue(long value) {
+		return true;
+	}
 
 	@Override
 	public final long multiplyByScaleFactor(long factor) {

@@ -88,7 +88,7 @@ public class BigIntegerFromToTest extends AbstractFromToTest<BigInteger> {
 	@Override
 	protected <S extends ScaleMetrics> BigInteger expectedResult(S scaleMetrics, BigInteger value) {
 		final long lvalue = JDKSupport.bigIntegerToLongValueExact(value);
-		if (scaleMetrics.getMinIntegerValue() <= lvalue & lvalue <= scaleMetrics.getMaxIntegerValue()) {
+		if (scaleMetrics.isValidIntegerValue(lvalue)) {
 			return value;
 		}
 		throw new ArithmeticException("overflow for " + scaleMetrics + " with value " + value);

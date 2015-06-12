@@ -38,6 +38,11 @@ public enum Scale${scale}f implements ScaleMetrics {
 	private static final long LONG_MASK = 0xffffffffL;
 
 	/**
+	 * The scale value <code>${scale}</code>.
+	 */
+	public static final int SCALE = ${scale};
+
+	/**
 	 * The scale factor <code>10<sup>${scale}</sup></code>.
 	 */
 	public static final long SCALE_FACTOR = ${"1"?right_pad(scale+1, "0")}L;
@@ -83,7 +88,7 @@ public enum Scale${scale}f implements ScaleMetrics {
 
 	@Override
 	public final int getScale() {
-		return ${scale};
+		return SCALE;
 	}
 
 	@Override
@@ -119,6 +124,11 @@ public enum Scale${scale}f implements ScaleMetrics {
 	@Override
 	public final long getMinIntegerValue() {
 		return MIN_INTEGER_VALUE;
+	}
+
+	@Override
+	public final boolean isValidIntegerValue(long value) {
+		return MIN_INTEGER_VALUE <= value & value <= MAX_INTEGER_VALUE;
 	}
 
 	@Override

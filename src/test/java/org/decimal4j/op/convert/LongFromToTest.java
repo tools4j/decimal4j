@@ -74,7 +74,7 @@ public class LongFromToTest extends AbstractFromToTest<Long> {
 
 	@Override
 	protected <S extends ScaleMetrics> Long expectedResult(S scaleMetrics, Long value) {
-		if (scaleMetrics.getMinIntegerValue() <= value & value <= scaleMetrics.getMaxIntegerValue()) {
+		if (scaleMetrics.isValidIntegerValue(value)) {
 			return value;
 		}
 		throw new ArithmeticException("overflow for " + scaleMetrics + " with value " + value);

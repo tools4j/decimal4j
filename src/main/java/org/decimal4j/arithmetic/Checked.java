@@ -49,9 +49,7 @@ final class Checked {
 
 	public static final long addDecimalAndLong(DecimalArithmetic arith, long uDecimal, long lValue) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final long minInt = scaleMetrics.getMinIntegerValue();
-		final long maxInt = scaleMetrics.getMaxIntegerValue();
-		if (minInt <= lValue & lValue <= maxInt) {
+		if (scaleMetrics.isValidIntegerValue(lValue)) {
 			return add(arith, uDecimal, scaleMetrics.multiplyByScaleFactor(lValue));
 		} else {
 			if ((uDecimal ^ lValue) >= 0) {
@@ -60,6 +58,8 @@ final class Checked {
 			// else: different sign, we must be careful,
 			// scaling could overflow but this could be offset by other operand
 		}
+		final long minInt = scaleMetrics.getMinIntegerValue();
+		final long maxInt = scaleMetrics.getMaxIntegerValue();
 		final long ival = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long fval = uDecimal - scaleMetrics.multiplyByScaleFactor(ival);
 		final long ires = ival + lValue;// cannot overflow with different sign
@@ -98,9 +98,7 @@ final class Checked {
 
 	public static final long subtractLongFromDecimal(DecimalArithmetic arith, long uDecimal, long lValue) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final long minInt = scaleMetrics.getMinIntegerValue();
-		final long maxInt = scaleMetrics.getMaxIntegerValue();
-		if (minInt <= lValue & lValue <= maxInt) {
+		if (scaleMetrics.isValidIntegerValue(lValue)) {
 			return subtract(arith, uDecimal, scaleMetrics.multiplyByScaleFactor(lValue));
 		} else {
 			if ((uDecimal ^ lValue) < 0) {
@@ -109,6 +107,8 @@ final class Checked {
 			// else: same sign, we must be careful,
 			// scaling could overflow but this could be offset by other operand
 		}
+		final long minInt = scaleMetrics.getMinIntegerValue();
+		final long maxInt = scaleMetrics.getMaxIntegerValue();
 		final long ival = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long fval = uDecimal - scaleMetrics.multiplyByScaleFactor(ival);
 		final long ires = ival - lValue;// cannot overflow with same sign

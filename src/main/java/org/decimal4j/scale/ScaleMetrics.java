@@ -111,6 +111,14 @@ public interface ScaleMetrics {
 	long getMinIntegerValue();
 
 	/**
+	 * Returns true if the specified integer {@code value) can be represented 
+	 * using this scale.
+	 * 
+	 * @return true if {@code (Long.MIN_VALUE / scaleFactor) <= value <= Long.MAX_VALUE / scaleFactor}
+	 */
+	boolean isValidIntegerValue(long value);
+	
+	/**
 	 * Returns {@code factor*scaleFactor}.
 	 * 
 	 * @param factor
