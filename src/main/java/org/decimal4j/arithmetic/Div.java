@@ -110,6 +110,13 @@ final class Div {
 			//just do it, multiplication result fits in long
 			return scaleMetrics.multiplyByScaleFactor(uDecimalDividend) / uDecimalDivisor;
 		}
+		if (scaleMetrics.isValidIntegerValue(uDecimalDivisor)) {
+			//perform component wise division (reminder fits in long after scaling)
+			final long integralPart = uDecimalDividend / uDecimalDivisor;
+			final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
+			final long fractionalPart = scaleMetrics.multiplyByScaleFactor(remainder) / uDecimalDivisor;
+			return scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+		}
 		return scaleTo128divBy64(scaleMetrics, DecimalRounding.DOWN, uDecimalDividend, uDecimalDivisor);
 	}
 
@@ -147,6 +154,16 @@ final class Div {
 			final long quot = scaledDividend / uDecimalDivisor;
 			final long rem = scaledDividend - quot * uDecimalDivisor;
 			return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
+		}
+		if (scaleMetrics.isValidIntegerValue(uDecimalDivisor)) {
+			//perform component wise division (reminder fits in long after scaling)
+			final long integralPart = uDecimalDividend / uDecimalDivisor;
+			final long remainder = uDecimalDividend - integralPart * uDecimalDivisor;
+			final long scaledReminder = scaleMetrics.multiplyByScaleFactor(remainder);
+			final long fractionalPart = scaledReminder / uDecimalDivisor;
+			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
+			final long truncated = scaleMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
+			return truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
 		}
 		return Div.scaleTo128divBy64(scaleMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
