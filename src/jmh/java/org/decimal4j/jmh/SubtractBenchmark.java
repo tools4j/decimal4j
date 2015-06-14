@@ -73,7 +73,7 @@ public class SubtractBenchmark extends AbstractBenchmark {
 	}
 
 	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(SubtractBenchmarkState state, Values<S> values) {
-		return values.bigDecimal1.subtract(values.bigDecimal2, state.mcLong64);
+		return values.bigDecimal1.subtract(values.bigDecimal2);
 	}
 
 	private static final <S extends ScaleMetrics> Decimal<S> immutableDecimals(SubtractBenchmarkState state, Values<S> values) {

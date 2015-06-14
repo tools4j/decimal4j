@@ -75,7 +75,7 @@ public class AddCheckedBenchmark extends AbstractBenchmark {
 
 	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(AddBenchmarkState state, Values<S> values) {
 		try {
-			final BigDecimal result = values.bigDecimal1.add(values.bigDecimal2, state.mcLong64);
+			final BigDecimal result = values.bigDecimal1.add(values.bigDecimal2);
 			//check overflow
 			JDKSupport.bigIntegerToLongValueExact(result.unscaledValue());
 			return result;

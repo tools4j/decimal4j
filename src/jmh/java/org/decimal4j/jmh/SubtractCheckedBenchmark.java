@@ -75,7 +75,7 @@ public class SubtractCheckedBenchmark extends AbstractBenchmark {
 
 	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(SubtractBenchmarkState state, Values<S> values) {
 		try {
-			final BigDecimal result = values.bigDecimal1.subtract(values.bigDecimal2, state.mcLong64);
+			final BigDecimal result = values.bigDecimal1.subtract(values.bigDecimal2);
 			//check overflow
 			JDKSupport.bigIntegerToLongValueExact(result.unscaledValue());
 			return result;

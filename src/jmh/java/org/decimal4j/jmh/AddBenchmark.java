@@ -73,7 +73,7 @@ public class AddBenchmark extends AbstractBenchmark {
 	}
 
 	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(AddBenchmarkState state, Values<S> values) {
-		return values.bigDecimal1.add(values.bigDecimal2, state.mcLong64);
+		return values.bigDecimal1.add(values.bigDecimal2);
 	}
 
 	private static final <S extends ScaleMetrics> Decimal<S> immutableDecimals(AddBenchmarkState state, Values<S> values) {
