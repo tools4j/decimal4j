@@ -37,10 +37,17 @@ final class Mul {
 	//floor(sqrt(Long.MAX_VALUE))
 	private static final long SQRT_MAX_VALUE = 3037000499L;
 
+	//necessary (but not sufficient) condition that product fits in long
 	private static boolean doesProductFitInLong(long uDecimal1, long uDecimal2) {
-		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
-		return leadingZeros > Long.SIZE + 1;
+		if (-SQRT_MAX_VALUE <= uDecimal1 & uDecimal1 <= SQRT_MAX_VALUE & -SQRT_MAX_VALUE <= uDecimal2 & uDecimal2 <= SQRT_MAX_VALUE) {
+			return true;
+		}
+		return false;
+		//NOTE: not worth checking (too much overhead for too few special cases):
+//		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal1) + Long.numberOfLeadingZeros(~uDecimal1) + Long.numberOfLeadingZeros(uDecimal2) + Long.numberOfLeadingZeros(~uDecimal2);
+//		return leadingZeros > Long.SIZE + 1;
 	}
+	//necessary and sufficient condition that square fits in long
 	private static boolean doesSquareFitInLong(long uDecimal) {
 		return -SQRT_MAX_VALUE <= uDecimal & uDecimal <= SQRT_MAX_VALUE;
 	}
