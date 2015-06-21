@@ -37,7 +37,7 @@ final class Mul {
 	//floor(sqrt(Long.MAX_VALUE))
 	private static final long SQRT_MAX_VALUE = 3037000499L;
 
-	//necessary (but not sufficient) condition that product fits in long
+	//sufficient (but not necessary) condition that product fits in long
 	private static boolean doesProductFitInLong(long uDecimal1, long uDecimal2) {
 		if (-SQRT_MAX_VALUE <= uDecimal1 & uDecimal1 <= SQRT_MAX_VALUE & -SQRT_MAX_VALUE <= uDecimal2 & uDecimal2 <= SQRT_MAX_VALUE) {
 			return true;
@@ -223,15 +223,15 @@ final class Mul {
 				final long f1xf2d = scaleMetrics.divideByScaleFactor(f1xf2);
 				final long f1xf2r = f1xf2 - scaleMetrics.multiplyByScaleFactor(f1xf2d);
 				
-				final long i1xi2 = arith.multiplyByLong(i1, i2);//checked
+				final long i1xi2 = Checked.multiplyLong(i1, i2);//checked
 				final long i1xf2 = i1 * f2;//cannot overflow
 				final long i2xf1 = i2 * f1;//cannot overflow
 	
 				//add it all up now, every operation checked
 				long result = scaleMetrics.multiplyByScaleFactorExact(i1xi2);
-				result = arith.add(result, i1xf2);
-				result = arith.add(result, i2xf1);
-				result = arith.add(result, f1xf2d);
+				result = Checked.addLong(result, i1xf2);
+				result = Checked.addLong(result, i2xf1);
+				result = Checked.addLong(result, f1xf2d);
 				
 				return result + RoundingUtil.calculateRoundingIncrement(rounding, result, f1xf2r, scaleMetrics.getScaleFactor());
 			} else {
@@ -256,15 +256,15 @@ final class Mul {
 				final long h1xl2_h2xl1_l1xl1d = scaleDiff09.divideByScaleFactor(h1xl2_h2xl1_l1xl1); 
 				final long h1xl2_h2xl1_l1xl1r = h1xl2_h2xl1_l1xl1 - scaleDiff09.multiplyByScaleFactorExact(h1xl2_h2xl1_l1xl1d); 
 				
-				final long h1xh2 = arith.multiplyByLong(h1, h2);//checked
+				final long h1xh2 = Checked.multiplyLong(h1, h2);//checked
 				//add it all up now, every operation checked
 				long result = scaleDiff18.multiplyByScaleFactorExact(h1xh2);
-				result = arith.add(result, h1xl2d);
-				result = arith.add(result, h2xl1d);
-				result = arith.add(result, scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d));
+				result = Checked.addLong(result, h1xl2d);
+				result = Checked.addLong(result, h2xl1d);
+				result = Checked.addLong(result, scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d));//inner sum cannot overflow
 				
-				final long remainder = scale9f.multiplyByScaleFactorExact(h1xl2_h2xl1_l1xl1r) + l1xl2r;
-				return arith.add(result, RoundingUtil.calculateRoundingIncrement(rounding, result, remainder, scaleMetrics.getScaleFactor()));
+				final long remainder = scale9f.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;//cannot overflow
+				return Checked.addLong(result, RoundingUtil.calculateRoundingIncrement(rounding, result, remainder, scaleMetrics.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
 			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal1) + " * " + arith.toString(uDecimal2));
@@ -381,19 +381,21 @@ final class Mul {
 				final long i = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
 
-				// checked operations
-				final long ixi = arith.multiplyByLong(i, i);
-				final long ixiScaled = scaleMetrics.multiplyByScaleFactorExact(ixi);
-
-				// with this scale, the low order product f*f fits in a long
-				final long fxf = f * f;
+				final long ixi = Checked.multiplyLong(i, i);
+				final long fxf = f * f;// with this scale, the low order product f*f fits in a long
+				final long ixf = i * f;//cannot overflow
+				//check whether we can multiply ixf by 2
+				if (ixf < 0) throw new ArithmeticException("Overflow: " + ixf + "<<1");
+				final long ixfx2 = ixf << 1;
 
 				final long fxfd = scaleMetrics.divideByScaleFactor(fxf);
 				final long fxfr = fxf - scaleMetrics.multiplyByScaleFactor(fxfd);
 				
-				final long unrounded = ixiScaled + ((i * f) << 1) + fxfd;
-				return unrounded + RoundingUtil.calculateRoundingIncrement(rounding,
-								unrounded, fxfr, scaleMetrics.getScaleFactor());
+				//add it all up now, every operation checked
+				long unrounded = scaleMetrics.multiplyByScaleFactorExact(ixi);
+				unrounded = Checked.addLong(unrounded, ixfx2);
+				unrounded = Checked.addLong(unrounded, fxfd);
+				return Checked.addLong(unrounded, RoundingUtil.calculateRoundingIncrement(rounding, unrounded, fxfr, scaleMetrics.getScaleFactor()));
 			}
 			else {
 				// use scale9 to split into 2 parts: h (high) and l (low)
@@ -403,28 +405,27 @@ final class Mul {
 				final long h = scale9f.divideByScaleFactor(uDecimal);
 				final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 				
-				// checked operations
-				final long hxh = arith.multiplyByLong(h, h);
-				final long hxhScaled = scaleDiff18.multiplyByScaleFactorExact(hxh);
-				
-				final long hxl = h * l;
-				final long hxld = scaleDiff09.divideByScaleFactor(hxl);
+				final long hxh = Checked.multiplyLong(h, h);
+				final long hxl = h * l;//cannot overflow
 
-				final long lxl = l * l;
+				final long hxld = scaleDiff09.divideByScaleFactor(hxl);
+				final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
+				final long hxldx2 = hxld << 1;//cannot overflow
+
+				final long lxl = l * l;//cannot overflow
 				final long lxld = scale9f.divideByScaleFactor(lxl);
 				final long lxlr = lxl - scale9f.multiplyByScaleFactor(lxld);
 				
-				final long hxlr = hxl - scaleDiff09.multiplyByScaleFactor(hxld);
-				final long hxlx2_lxl = (hxlr << 1) + lxld;
+				final long hxlx2_lxl = (hxlr << 1) + lxld;//cannot overflow
 				final long hxlx2_lxld = scaleDiff09.divideByScaleFactor(hxlx2_lxl);
 				final long hxlx2_lxlr = hxlx2_lxl - scaleDiff09.multiplyByScaleFactor(hxlx2_lxld);
-				
-				final long unrounded = hxhScaled + (hxld << 1) + hxlx2_lxld;
-				final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;
-				
-				return unrounded + RoundingUtil.calculateRoundingIncrement(rounding,
-								unrounded, remainder,
-								scaleMetrics.getScaleFactor());
+
+				//add it all up now, every operation checked
+				long unrounded = scaleDiff18.multiplyByScaleFactorExact(hxh);
+				unrounded = Checked.addLong(unrounded, hxldx2);
+				unrounded = Checked.addLong(unrounded, hxlx2_lxld);
+				final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;//cannot overflow
+				return Checked.addLong(unrounded, RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
 			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal) + "^2");
@@ -454,15 +455,15 @@ final class Mul {
 				final long i2 = scaleMetrics.divideByScaleFactor(uDecimal2);
 				final long f1 = uDecimal1 - scaleMetrics.multiplyByScaleFactor(i1);
 				final long f2 = uDecimal2 - scaleMetrics.multiplyByScaleFactor(i2);
-				final long i1xi2 = arith.multiplyByLong(i1, i2);//checked
+				final long i1xi2 = Checked.multiplyLong(i1, i2);//checked
 				final long i1xf2 = i1 * f2;//cannot overflow
 				final long i2xf1 = i2 * f1;//cannot overflow
 				final long f1xf2 = scaleMetrics.divideByScaleFactor(f1 * f2);//product fits for this scale, hence unchecked
 				//add it all up now, every operation checked
 				long result = scaleMetrics.multiplyByScaleFactorExact(i1xi2);
-				result = arith.add(result, i1xf2);
-				result = arith.add(result, i2xf1);
-				result = arith.add(result, f1xf2);
+				result = Checked.addLong(result, i1xf2);
+				result = Checked.addLong(result, i2xf1);
+				result = Checked.addLong(result, f1xf2);
 				return result;
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
@@ -473,7 +474,7 @@ final class Mul {
 				final long h2 = scale9f.divideByScaleFactor(uDecimal2);
 				final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
 				final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
-				final long h1xh2 = arith.multiplyByLong(h1, h2);//checked
+				final long h1xh2 = Checked.multiplyLong(h1, h2);//checked
 				final long h1xl2 = h1 * l2;//cannot overflow
 				final long h2xl1 = h2 * l1;//cannot overflow
 				final long l1xl2d = scale9f.divideByScaleFactor(l1 * l2);//product fits for scale 9, hence unchecked
@@ -483,9 +484,9 @@ final class Mul {
 				final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
 				//add it all up now, every operation checked
 				long result = scaleDiff18.multiplyByScaleFactorExact(h1xh2);
-				result = arith.add(result, h1xl2d);
-				result = arith.add(result, h2xl1d);
-				result = arith.add(result, scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d));
+				result = Checked.addLong(result, h1xl2d);
+				result = Checked.addLong(result, h2xl1d);
+				result = Checked.addLong(result, scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d));
 				return result;
 			}
 		} catch (ArithmeticException e) {
@@ -508,7 +509,7 @@ final class Mul {
 				//with this scale, the low order product f*f fits in a long
 				final long i = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long f = uDecimal - scaleMetrics.multiplyByScaleFactor(i);
-				final long ixi = arith.multiplyByLong(i, i);//checked
+				final long ixi = Checked.multiplyLong(i, i);//checked
 				final long ixf = i * f;//cannot overflow
 				final long fxf = scaleMetrics.divideByScaleFactor(f * f);//product fits for this scale, hence unchecked
 				//check whether we can multiply ixf by 2
@@ -516,8 +517,8 @@ final class Mul {
 				final long ixfx2 = ixf << 1;
 				//add it all up now, every operation checked
 				long result = scaleMetrics.multiplyByScaleFactorExact(ixi);
-				result = arith.add(result, ixfx2);
-				result = arith.add(result, fxf);
+				result = Checked.addLong(result, ixfx2);
+				result = Checked.addLong(result, fxf);
 				return result;
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
@@ -527,7 +528,7 @@ final class Mul {
 				final long h = scale9f.divideByScaleFactor(uDecimal);
 				final long l = uDecimal - scale9f.multiplyByScaleFactor(h);
 				
-				final long hxh = arith.multiplyByLong(h, h);//checked
+				final long hxh = Checked.multiplyLong(h, h);//checked
 				final long hxl = h * l;//cannot overflow
 				final long lxld = scale9f.divideByScaleFactor(l * l);//product fits for scale 9, hence unchecked
 				final long hxld = scaleDiff09.divideByScaleFactor(hxl);
@@ -537,8 +538,8 @@ final class Mul {
 				final long hxldx2 = hxld << 1;
 				//add it all up now, every operation checked
 				long result = scaleDiff18.multiplyByScaleFactorExact(hxh);
-				result = arith.add(result, hxldx2);
-				result = arith.add(result, scaleDiff09.divideByScaleFactor((hxlr<<1) + lxld));
+				result = Checked.addLong(result, hxldx2);
+				result = Checked.addLong(result, scaleDiff09.divideByScaleFactor((hxlr<<1) + lxld));
 				return result;
 			}
 		} catch (ArithmeticException e) {
