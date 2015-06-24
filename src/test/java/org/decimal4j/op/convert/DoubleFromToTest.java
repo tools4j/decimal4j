@@ -93,7 +93,7 @@ public class DoubleFromToTest {
 			final double result = arithmetic.getScaleMetrics().getArithmetic(backRounding).toDouble(uDecimal);
 			final double tolerance = 2.0*max(Math.ulp(result), Math.ulp(d), 1.0/arithmetic.getScaleMetrics().getScaleFactor());
 			Assert.assertEquals(name + ": result after 2 conversions should be same as input with tolerance=<" + tolerance + ">, delta=<" + Math.abs(d-result) + ">",  d, result, tolerance);
-		} catch (NumberFormatException e) {
+		} catch (IllegalArgumentException e) {
 			//ignore, must be out of range, tested elsewhere
 		}
 	}

@@ -50,7 +50,7 @@ public class UnscaledFromToTest extends AbstractFromToTest<Long> {
 
 	@Override
 	protected Long randomValue(ScaleMetrics scaleMetrics) {
-		return randomLongOrInt();
+		return nextLongOrInt();
 	}
 
 	@Parameters(name = "{index}: {0}")

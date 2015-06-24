@@ -60,7 +60,7 @@ abstract public class AbstractBigDecimalToDecimalTest extends AbstractRandomAndS
 	protected BigDecimal randomBigDecimalOperand() {
 		final int scale = RND.nextInt(1 + Scales.MAX_SCALE);
 		if (RND.nextInt(10) != 0) {
-			return BigDecimal.valueOf(randomLongOrInt(), scale);
+			return BigDecimal.valueOf(nextLongOrInt(), scale);
 		}
 		// every tenth potentially an overflow
 		final byte[] bytes = new byte[1 + RND.nextInt(100)];

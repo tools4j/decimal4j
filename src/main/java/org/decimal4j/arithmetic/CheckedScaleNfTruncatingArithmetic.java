@@ -32,105 +32,119 @@ import org.decimal4j.truncate.DecimalRounding;
  * Arithmetic implementation without rounding but with overflow check for scales
  * other than zero. An exception is thrown if an operation leads to an overflow.
  */
-public final class CheckedScaleNfTruncatingArithmetic extends
-		AbstractCheckedScaleNfArithmetic {
+public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfArithmetic {
 
 	public CheckedScaleNfTruncatingArithmetic(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}
 
 	@Override
-	public RoundingMode getRoundingMode() {
+	public final RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
 	}
 
 	@Override
-	public long addLong(long uDecimal, long lValue) {
-		return Checked.addDecimalAndLong(this, uDecimal, lValue);
-	}
-
-	@Override
-	public long subtractLong(long uDecimal, long lValue) {
-		return Checked.subtractLongFromDecimal(this, uDecimal, lValue);
-	}
-
-	@Override
-	public long multiply(long uDecimal1, long uDecimal2) {
+	public final long multiply(long uDecimal1, long uDecimal2) {
 		return Mul.multiplyChecked(this, uDecimal1, uDecimal2);
 	}
 
 	@Override
-	public long square(long uDecimal) {
+	public final long square(long uDecimal) {
 		return Mul.squareChecked(this, uDecimal);
 	}
 
 	@Override
-	public long divide(long uDecimalDividend, long uDecimalDivisor) {
+	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideChecked(this, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
-	public long pow(long uDecimal, int exponent) {
+	public final long pow(long uDecimal, int exponent) {
 		return Pow.pow(this, DecimalRounding.DOWN, uDecimal, exponent);
 	}
 
 	@Override
-	public long avg(long a, long b) {
+	public final long avg(long a, long b) {
 		return Avg.avg(a, b);
 	}
 
 	@Override
-	public long sqrt(long uDecimal) {
+	public final long sqrt(long uDecimal) {
 		return Sqrt.sqrt(this, uDecimal);
 	}
 
 	@Override
-	public long divideByLong(long uDecimalDividend, long lDivisor) {
+	public final long divideByLong(long uDecimalDividend, long lDivisor) {
 		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
 	}
 
 	@Override
-	public long divideByPowerOf10(long uDecimal, int positions) {
+	public final long divideByPowerOf10(long uDecimal, int positions) {
 		return Pow10.divideByPowerOf10Checked(this, uDecimal, positions);
 	}
 
 	@Override
-	public long invert(long uDecimal) {
+	public final long invert(long uDecimal) {
 		return Invert.invert(this, uDecimal);
 	}
 
 	@Override
-	public long multiplyByPowerOf10(long uDecimal, int positions) {
+	public final long multiplyByPowerOf10(long uDecimal, int positions) {
 		return Pow10.multiplyByPowerOf10Checked(this, uDecimal, positions);
 	}
 
 	@Override
-	public long shiftLeft(long uDecimal, int positions) {
+	public final long shiftLeft(long uDecimal, int positions) {
 		return Shift.shiftLeftChecked(this, DecimalRounding.DOWN, uDecimal, positions);
 	}
 
 	@Override
-	public long shiftRight(long uDecimal, int positions) {
+	public final long shiftRight(long uDecimal, int positions) {
 		return Shift.shiftRightChecked(this, DecimalRounding.DOWN, uDecimal, positions);
 	}
 
 	@Override
-	public long round(long uDecimal, int precision) {
+	public final long round(long uDecimal, int precision) {
 		return Round.round(this, uDecimal, precision);
+	}
+	
+	@Override
+	public final long fromLong(long value) {
+		return LongConversion.longToUnscaled(getScaleMetrics(), value);
 	}
 
 	@Override
-	public long fromFloat(float value) {
+	public final long fromFloat(float value) {
 		return FloatConversion.floatToUnscaled(this, DecimalRounding.DOWN, value);
 	}
 
 	@Override
-	public long fromDouble(double value) {
+	public final long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, DecimalRounding.DOWN, value);
+	}
+	
+	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(this, unscaledValue, scale);
 	}
 
 	@Override
-	public long parse(String value) {
+	public final long toLong(long uDecimal) {
+		return LongConversion.unscaledToLong(getScaleMetrics(), uDecimal);
+	}
+
+	@Override
+	public final float toFloat(long uDecimal) {
+		return FloatConversion.unscaledToFloat(this, uDecimal);
+	}
+
+	@Override
+	public final double toDouble(long uDecimal) {
+		return DoubleConversion.unscaledToDouble(this, uDecimal);
+	}
+
+	@Override
+	public final long parse(String value) {
 		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
 	}
 

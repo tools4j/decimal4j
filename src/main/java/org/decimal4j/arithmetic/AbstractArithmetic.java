@@ -24,10 +24,10 @@
 package org.decimal4j.arithmetic;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -40,46 +40,39 @@ import org.decimal4j.truncate.TruncationPolicy;
 abstract public class AbstractArithmetic implements DecimalArithmetic {
 
 	@Override
-	public int getScale() {
-		return getScaleMetrics().getScale();
-	}
-
-	@Override
-	public long one() {
-		return getScaleMetrics().getScaleFactor();
-	}
-
-	@Override
-	public TruncationPolicy getTruncationPolicy() {
+	public final TruncationPolicy getTruncationPolicy() {
 		return getOverflowMode().getTruncationPolicyFor(getRoundingMode());
 	}
-	
+
 	@Override
-	public DecimalArithmetic deriveArithmetic(int scale) {
+	public final DecimalArithmetic deriveArithmetic(int scale) {
 		if (scale != getScale()) {
 			return Scales.getScaleMetrics(scale).getArithmetic(getTruncationPolicy());
 		}
 		return this;
 	}
-	
+
 	@Override
-	public DecimalArithmetic deriveArithmetic(RoundingMode roundingMode) {
-		return deriveArithmetic(getOverflowMode().getTruncationPolicyFor(roundingMode));
+	public final DecimalArithmetic deriveArithmetic(RoundingMode roundingMode) {
+		return deriveArithmetic(roundingMode, getOverflowMode());
 	}
-	
+
 	@Override
-	public DecimalArithmetic deriveArithmetic(RoundingMode roundingMode, OverflowMode overflowMode) {
-		return deriveArithmetic(overflowMode.getTruncationPolicyFor(roundingMode));
+	public final DecimalArithmetic deriveArithmetic(RoundingMode roundingMode, OverflowMode overflowMode) {
+		if (roundingMode != getRoundingMode() | overflowMode != getOverflowMode()) {
+			return overflowMode.isChecked() ? getScaleMetrics().getCheckedArithmetic(roundingMode) : getScaleMetrics().getArithmetic(roundingMode);
+		}
+		return this;
 	}
-	
+
 	@Override
-	public DecimalArithmetic deriveArithmetic(OverflowMode overflowMode) {
-		return deriveArithmetic(overflowMode.getTruncationPolicyFor(getRoundingMode()));
+	public final DecimalArithmetic deriveArithmetic(OverflowMode overflowMode) {
+		return deriveArithmetic(getRoundingMode(), overflowMode);
 	}
-	
+
 	@Override
-	public DecimalArithmetic deriveArithmetic(TruncationPolicy truncationPolicy) {
-		return getScaleMetrics().getArithmetic(truncationPolicy);
+	public final DecimalArithmetic deriveArithmetic(TruncationPolicy truncationPolicy) {
+		return deriveArithmetic(truncationPolicy.getRoundingMode(), truncationPolicy.getOverflowMode());
 	}
 
 	@Override
@@ -93,37 +86,23 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 	}
 
 	@Override
-	public BigDecimal toBigDecimal(long uDecimal) {
-		return BigDecimal.valueOf(uDecimal, getScale());
+	public final long fromBigInteger(BigInteger value) {
+		return BigIntegerConversion.bigIntegerToUnscaled(getScaleMetrics(), value);
 	}
 
 	@Override
-	public BigDecimal toBigDecimal(long uDecimal, int scale) {
-		final ScaleMetrics thisMetrics = getScaleMetrics();
-		final int thisScale = thisMetrics.getScale();
-		if (scale == thisScale) {
-			return toBigDecimal(uDecimal);
-		}
-		if (scale < thisScale) {
-			final int diff = thisScale - scale;
-			if (diff <= 18) {
-				final ScaleMetrics diffMetrics = Scales.getScaleMetrics(diff);
-				final long rescaled = diffMetrics.getArithmetic(getRoundingMode()).divideByPowerOf10(uDecimal, diff);
-				return BigDecimal.valueOf(rescaled, scale);
-			}
-		} else {
-			//does it fit in a long?
-			final int diff = scale - thisScale;
-			if (diff <= 18) {
-				final ScaleMetrics diffMetrics = Scales.getScaleMetrics(diff);
-				if (diffMetrics.isValidIntegerValue(uDecimal)) {
-					final long rescaled = diffMetrics.multiplyByScaleFactor(uDecimal);
-					return BigDecimal.valueOf(rescaled, scale);
-				}
-			}
-		}
-		//let the big decimal deal with such large numbers then
-		return BigDecimal.valueOf(uDecimal, thisScale).setScale(scale, getRoundingMode());
+	public long fromBigDecimal(BigDecimal value) {
+		return BigDecimalConversion.bigDecimalToUnscaled(getScaleMetrics(), getRoundingMode(), value);
+	}
+
+	@Override
+	public final BigDecimal toBigDecimal(long uDecimal) {
+		return BigDecimalConversion.unscaledToBigDecimal(getScaleMetrics(), uDecimal);
+	}
+
+	@Override
+	public final BigDecimal toBigDecimal(long uDecimal, int scale) {
+		return BigDecimalConversion.unscaledToBigDecimal(getScaleMetrics(), getRoundingMode(), uDecimal, scale);
 	}
 
 }

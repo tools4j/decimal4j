@@ -68,7 +68,7 @@ abstract public class AbstractDecimalUnknownDecimalToAnyTest<R> extends Abstract
 	}
 
 	protected long randomSecondUnscaled(long firstUnscaled) {
-		return randomLongOrInt();
+		return nextLongOrInt();
 	}
 
 	@Override

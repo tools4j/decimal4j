@@ -23,8 +23,6 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.math.BigInteger;
-
 import org.decimal4j.truncate.OverflowMode;
 
 /**
@@ -34,56 +32,32 @@ import org.decimal4j.truncate.OverflowMode;
 abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
 
 	@Override
-	public OverflowMode getOverflowMode() {
+	public final OverflowMode getOverflowMode() {
 		return OverflowMode.UNCHECKED;
 	}
 
 	@Override
-	public long abs(long uDecimal) {
+	public final long abs(long uDecimal) {
 		return Math.abs(uDecimal);
 	}
 
 	@Override
-	public long negate(long uDecimal) {
+	public final long negate(long uDecimal) {
 		return -uDecimal;
 	}
 
 	@Override
-	public long add(long uDecimal1, long uDecimal2) {
+	public final long add(long uDecimal1, long uDecimal2) {
 		return uDecimal1 + uDecimal2;
 	}
 	
 	@Override
-	public long addLong(long uDecimal, long lValue) {
-		return uDecimal + fromLong(lValue);
-	}
-
-	@Override
-	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
+	public final long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
 		return uDecimalMinuend - uDecimalSubtrahend;
 	}
 
 	@Override
-	public long subtractLong(long uDecimal, long lValue) {
-		return uDecimal - fromLong(lValue);
-	}
-
-	@Override
-	public long multiplyByLong(long uDecimal, long lValue) {
+	public final long multiplyByLong(long uDecimal, long lValue) {
 		return uDecimal * lValue;
-	}
-
-	@Override
-	public long fromLong(long value) {
-		return getScaleMetrics().multiplyByScaleFactor(value);
-	}
-
-	@Override
-	public long fromBigInteger(BigInteger value) {
-		if (value.bitLength() <= 63) {
-			return fromLong(value.longValue());
-		}
-		//NOTE: overflow case is not garbage free
-		return value.multiply(getScaleMetrics().getScaleFactorAsBigInteger()).longValue();
 	}
 }

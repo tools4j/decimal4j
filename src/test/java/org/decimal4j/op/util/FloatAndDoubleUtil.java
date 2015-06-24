@@ -31,7 +31,6 @@ import java.util.NavigableSet;
 import java.util.Random;
 import java.util.TreeSet;
 
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
 
@@ -152,7 +151,7 @@ public class FloatAndDoubleUtil {
 	public static BigDecimal doubleToBigDecimal(double d, int scale, RoundingMode roundingMode) {
 		final int exp = Math.getExponent(d);
 		if (exp >= Long.SIZE) {
-			throw new NumberFormatException("Overflow for conversion from double to long: " + d);
+			throw new IllegalArgumentException("Overflow for conversion from double to Decimal: " + d);
 		}
 		if (exp < Double.MIN_EXPONENT) {
 			return BigDecimal.valueOf(d);
@@ -166,14 +165,14 @@ public class FloatAndDoubleUtil {
 		} else {
 			converted = scaledBigDecimal.divide(new BigDecimal(BigInteger.valueOf(2).pow(-shift)), -shift, RoundingMode.UNNECESSARY);
 		}
-		try {
-			final BigDecimal rounded = converted.setScale(scale, roundingMode);
-			//check that the conversion does not overflow
-			JDKSupport.bigIntegerToLongValueExact(rounded.unscaledValue());
-			return converted;
-		} catch (ArithmeticException e) {
-			throw new ArithmeticException(e.toString() + ": " + converted);
+		//if rounding=UNNECESSARY, use round down first to trigger overflow exception before rounding unnecessary
+		final boolean isRoundingUnnecessary = roundingMode == RoundingMode.UNNECESSARY;
+		final BigDecimal rounded = converted.setScale(scale, isRoundingUnnecessary ? RoundingMode.DOWN : roundingMode);
+		//now check that the conversion does not overflow
+		if (rounded.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + rounded + ": " + converted);
 		}
+		return isRoundingUnnecessary ? converted.setScale(scale, roundingMode) : rounded;
 	}
 	
 	/**
@@ -189,7 +188,7 @@ public class FloatAndDoubleUtil {
 	public static BigDecimal floatToBigDecimal(float f, int scale, RoundingMode roundingMode) {
 		final int exp = Math.getExponent(f);
 		if (exp >= Long.SIZE) {
-			throw new NumberFormatException("Overflow for conversion from float to long: " + f);
+			throw new IllegalArgumentException("Overflow for conversion from float to long: " + f);
 		}
 		if (exp < Float.MIN_EXPONENT) {
 			return BigDecimal.valueOf(f);
@@ -203,14 +202,14 @@ public class FloatAndDoubleUtil {
 		} else {
 			converted = scaledBigDecimal.divide(new BigDecimal(BigInteger.valueOf(2).pow(-shift)), -shift, RoundingMode.UNNECESSARY);
 		}
-		try {
-			final BigDecimal rounded = converted.setScale(scale, roundingMode);
-			//check that the conversion does not overflow
-			JDKSupport.bigIntegerToLongValueExact(rounded.unscaledValue());
-			return converted;
-		} catch (ArithmeticException e) {
-			throw new ArithmeticException(e.toString() + ": " + converted);
+		//if rounding=UNNECESSARY, use round down first to trigger overflow exception before rounding unnecessary
+		final boolean isRoundingUnnecessary = roundingMode == RoundingMode.UNNECESSARY;
+		final BigDecimal rounded = converted.setScale(scale, isRoundingUnnecessary ? RoundingMode.DOWN : roundingMode);
+		//now check that the conversion does not overflow
+		if (rounded.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + rounded + ": " + converted);
 		}
+		return isRoundingUnnecessary ? converted.setScale(scale, roundingMode) : rounded;
 	}
 	
 	public static RoundingMode getOppositeRoundingMode(RoundingMode roundingMode) {

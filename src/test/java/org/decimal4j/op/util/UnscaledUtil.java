@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.test.TestSettings;
@@ -74,9 +73,8 @@ public class UnscaledUtil {
 		BigDecimal other = BigDecimal.valueOf(unscaled, scale);
 		if (scale != arith.getScale()) {
 			other = other.setScale(arith.getScale(), arith.getRoundingMode());
-			if (arith.getOverflowMode().isChecked()) {
-				// check for overflow
-				JDKSupport.bigIntegerToLongValueExact(other.unscaledValue());
+			if (other.unscaledValue().bitLength() > 63) {
+				throw new IllegalArgumentException("Overflow: " + other);
 			} else {
 				other = BigDecimal.valueOf(other.unscaledValue().longValue(), arith.getScale());
 			}

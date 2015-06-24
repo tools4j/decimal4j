@@ -55,7 +55,7 @@ public class BigIntegerFromToTest extends AbstractFromToTest<BigInteger> {
 	@Override
 	protected BigInteger randomValue(ScaleMetrics scaleMetrics) {
 		if (RND.nextInt(10) != 0) {
-			return BigInteger.valueOf(randomLongOrInt());
+			return BigInteger.valueOf(nextLongOrInt());
 		}
 		//every tenth potentially an overflow
 		final byte[] bytes = new byte[1 + RND.nextInt(100)];

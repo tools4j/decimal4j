@@ -93,7 +93,7 @@ public class FloatFromToTest {
 			final float result = arithmetic.getScaleMetrics().getArithmetic(backRounding).toFloat(uDecimal);
 			final float tolerance = 2.0f*max(Math.ulp(result), Math.ulp(f), 1.0f/arithmetic.getScaleMetrics().getScaleFactor());
 			Assert.assertEquals(name + ": result after 2 conversions should be same as input with tolerance=<" + tolerance + ">, delta=<" + Math.abs(f-result) + ">",  f, result, tolerance);
-		} catch (NumberFormatException e) {
+		} catch (IllegalArgumentException e) {
 			//ignore, must be out of range, tested elsewhere
 		}
 	}

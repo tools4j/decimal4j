@@ -52,15 +52,15 @@ abstract public class AbstractLongValueToDecimalTest extends AbstractRandomAndSp
 
 	abstract protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, long operand);
 	
-	protected long randomLongOperand() {
-		return randomLongOrInt();
+	protected long nextLongOperand() {
+		return nextLongOrInt();
 	}
 
 	abstract protected long[] getSpecialLongOperands();
 	
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
-		runTest(scaleMetrics, "[" + index + "]", randomLongOperand());
+		runTest(scaleMetrics, "[" + index + "]", nextLongOperand());
 	}
 
 	@Override

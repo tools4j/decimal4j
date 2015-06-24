@@ -803,7 +803,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 		final long uDividend = unscaledValue();
 		final long uDivisor = divisor.unscaledValue();
 		final long lIntegral = uDividend / uDivisor;
-		final long uIntegral = getDefaultArithmetic().fromLong(lIntegral);
+		final long uIntegral = getScaleMetrics().multiplyByScaleFactor(lIntegral);
 		final long uReminder = uDividend - uDivisor * lIntegral;
 		final D[] result = createArray(2);
 		result[0] = create(uIntegral);
@@ -813,12 +813,15 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D[] divideAndRemainder(Decimal<S> divisor, OverflowMode overflowMode) {
+		if (!overflowMode.isChecked()) {
+			return divideAndRemainder(divisor);
+		}
 		try {
-			final DecimalArithmetic arith = getArithmeticFor(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
+			final DecimalArithmetic arith = getArithmeticFor(DecimalRounding.DOWN.getCheckedTruncationPolicy());
 			final long uDividend = unscaledValue();
 			final long uDivisor = divisor.unscaledValue();
 			final long lIntegral = arith.divideByLong(uDividend, uDivisor);
-			final long uIntegral = arith.fromLong(lIntegral);
+			final long uIntegral = getScaleMetrics().multiplyByScaleFactorExact(lIntegral);
 			final long uReminder = uDividend - uDivisor * lIntegral;
 			final D[] result = createArray(2);
 			result[0] = create(uIntegral);

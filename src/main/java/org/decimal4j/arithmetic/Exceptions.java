@@ -23,62 +23,22 @@
  */
 package org.decimal4j.arithmetic;
 
-import org.decimal4j.scale.Scale0f;
-
 /**
- * Base class for arithmetic implementations with overflow check for the special
- * case with {@link Scale0f}, that is, for longs.
+ * Utility for exception conversion and re-throwing.
  */
-abstract public class AbstractCheckedScale0fArithmetic extends AbstractCheckedArithmetic {
+class Exceptions {
 
-	@Override
-	public final Scale0f getScaleMetrics() {
-		return Scale0f.INSTANCE;
+	public static ArithmeticException newArithmeticExceptionWithCause(String message, ArithmeticException cause) {
+		return (ArithmeticException)new ArithmeticException(message).initCause(cause);
 	}
-
-	@Override
-	public final int getScale() {
-		return 0;
+	public static void rethrowIfRoundingNecessary(ArithmeticException e) {
+		if (e.getMessage().equals("Rounding necessary")) {
+			throw e;
+		}
 	}
-
-	@Override
-	public final long one() {
-		return 1;
+	
+	//no instances
+	private Exceptions() {
+		super();
 	}
-
-	@Override
-	public final long addLong(long uDecimal, long lValue) {
-		return Checked.add(this, uDecimal, lValue);
-	}
-
-	@Override
-	public final long subtractLong(long uDecimal, long lValue) {
-		return Checked.subtract(this, uDecimal, lValue);
-	}
-
-	@Override
-	public final long multiply(long uDecimal1, long uDecimal2) {
-		return Checked.multiplyByLong(this, uDecimal1, uDecimal2);
-	}
-
-	@Override
-	public final long square(long uDecimal) {
-		return Checked.multiplyByLong(this, uDecimal, uDecimal);
-	}
-
-	@Override
-	public final long fromLong(long value) {
-		return value;
-	}
-
-	@Override
-	public final long toLong(long uDecimal) {
-		return uDecimal;
-	}
-
-	@Override
-	public final String toString(long uDecimal) {
-		return StringConversion.longToString(uDecimal);
-	}
-
 }

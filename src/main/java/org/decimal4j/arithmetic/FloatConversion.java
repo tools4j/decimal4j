@@ -67,22 +67,22 @@ final class FloatConversion {
 
 	public static long floatToLong(float value) {
 		if (Float.isNaN(value)) {
-			throw new NumberFormatException("Cannot convert float to decimal: " + value);
+			throw new IllegalArgumentException("Cannot convert float to decimal: " + value);
 		}
 		if (isInLongRange(value)) {
 			return (long) value;
 		}
-		throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+		throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 	}
 
 	public static long floatToLong(DecimalRounding rounding, float value) {
 		if (Float.isNaN(value)) {
-			throw new NumberFormatException("Cannot convert float to decimal: " + value);
+			throw new IllegalArgumentException("Cannot convert float to decimal: " + value);
 		}
 		if (isInLongRange(value)) {
 			return (long) roundIntermediate(value, rounding);
 		}
-		throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+		throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 	}
 
 	/*
@@ -150,7 +150,7 @@ final class FloatConversion {
 		}
 		final int exp = Math.getExponent(value);
 		if (exp >= Long.SIZE) {
-			throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 		}
 
 		//multiply significand by scale factor into a 128bit integer
@@ -186,17 +186,17 @@ final class FloatConversion {
 		if (shift > 0) {
 			//multiply: shift left
 			if (hScaled != 0) {
-				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+				throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 			}
 			final int zeros = Long.numberOfLeadingZeros(lScaled);
 			if (shift >= zeros) {
-				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+				throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 			}
 			final long absResult = lScaled << shift;
 			return value >= 0 ? absResult : -absResult;
 		} else if (shift == 0) {
 			if (hScaled != 0 | lScaled < 0) {
-				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+				throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 			}
 			return value >= 0 ? lScaled : -lScaled;
 		} else {//shift < 0
@@ -212,7 +212,7 @@ final class FloatConversion {
 		final long absResult;
 		if (shift < Long.SIZE) {
 			if ((hScaled >>> shift) != 0) {
-				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+				throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 			}
 			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
 		} else if (shift < 2 * Long.SIZE) {
@@ -221,7 +221,7 @@ final class FloatConversion {
 			return 0;//rounded down
 		}
 		if (absResult < 0) {
-			throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 		}
 		return value >= 0 ? absResult : -absResult;
 	}
@@ -231,7 +231,7 @@ final class FloatConversion {
 		final TruncatedPart truncatedPart;
 		if (shift < Long.SIZE) {
 			if ((hScaled >>> shift) != 0) {
-				throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+				throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 			}
 			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
 			final long rem = modPow2(lScaled, shift);
@@ -244,9 +244,9 @@ final class FloatConversion {
 			absResult = 0;//rounded down
 			truncatedPart = RoundingUtil.truncatedPartFor2powN(hScaled, lScaled, shift);
 		}
-		final int inc = rounding.calculateRoundingIncrement(value >= 0 ? 1 : -1, absResult, truncatedPart);
+		final int inc = absResult < 0 ? 0 : rounding.calculateRoundingIncrement(value >= 0 ? 1 : -1, absResult, truncatedPart);
 		if (absResult < 0 | (absResult == Long.MAX_VALUE & inc == 1)) {
-			throw new NumberFormatException("Overflow for conversion from float to decimal: " + value);
+			throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 		}
 		return (value >= 0 ? absResult : -absResult) + inc;
 	}

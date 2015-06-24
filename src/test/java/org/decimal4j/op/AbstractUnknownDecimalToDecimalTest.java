@@ -58,7 +58,7 @@ abstract public class AbstractUnknownDecimalToDecimalTest extends AbstractRandom
 
 	protected Decimal<?> randomDecimalOperand() {
 		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(RND.nextInt(1 + Scales.MAX_SCALE));
-		return newDecimal(scaleMetrics, randomLongOrInt());
+		return newDecimal(scaleMetrics, nextLongOrInt());
 	}
 
 	protected Decimal<?>[] getSpecialDecimalOperands() {

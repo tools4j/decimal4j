@@ -21,26 +21,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.arithmetic;
+package org.decimal4j.op.util;
 
-import org.decimal4j.api.DecimalArithmetic;
-
+import java.util.Random;
 
 /**
- * Contains static methods to convert between different scales.
+ * Extension of {@link Random} with ability to generate bounded random longs
+ * similar to {@link Random#nextInt(int)}.
  */
-final class Scale {
+public class LongRandom extends Random {
 
-	public static final long rescale(DecimalArithmetic arith, long unscaledValue, int scale, int targetScale) {
-		final long deltaScaleLong = (long)scale - targetScale;
-		final int deltaScale = (int)deltaScaleLong;
-		if (deltaScale == deltaScaleLong) {
-			return arith.divideByPowerOf10(unscaledValue, deltaScale);
-		}
-		throw new IllegalArgumentException("cannot convert from scale " + scale + " to + " + targetScale + " (scale difference " + deltaScaleLong + " is out of integer range)");
+	private static final long serialVersionUID = 1L;
+
+    /**
+     * Returns a pseudorandom, uniformly distributed {@code long} value
+     * between 0 (inclusive) and the specified value (exclusive), drawn from
+     * this random number generator's sequence.  
+     * 
+     * @param bound the upper bound (exclusive).  Must be positive.
+     * @return the next pseudorandom, uniformly distributed {@code long}
+     *         value between zero (inclusive) and {@code bound} (exclusive)
+     *         from this random number generator's sequence
+     * @throws IllegalArgumentException if bound is not positive
+     * @see #nextInt(int)
+     */
+	public long nextLong(long n) {
+        if (n <= 0)
+            throw new IllegalArgumentException("n must be positive, but was " + n);
+
+        long bits, val;
+        do {
+            bits = nextLong() >>> 1;
+            val = bits % n;
+        } while (bits - val + (n-1) < 0);
+        return val;
 	}
 
-	// no instances
-	private Scale() {
-	}
 }

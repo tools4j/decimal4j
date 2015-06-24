@@ -23,62 +23,36 @@
  */
 package org.decimal4j.arithmetic;
 
-import org.decimal4j.scale.Scale0f;
+import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.truncate.DecimalRounding;
+
 
 /**
- * Base class for arithmetic implementations with overflow check for the special
- * case with {@link Scale0f}, that is, for longs.
+ * Contains methods to convert from and to long.
  */
-abstract public class AbstractCheckedScale0fArithmetic extends AbstractCheckedArithmetic {
-
-	@Override
-	public final Scale0f getScaleMetrics() {
-		return Scale0f.INSTANCE;
+final class LongConversion {
+	
+	public static final long longToUnscaledUnchecked(ScaleMetrics scaleMetrics, long value) {
+		return scaleMetrics.multiplyByScaleFactor(value);
+	}
+	public static final long longToUnscaled(ScaleMetrics scaleMetrics, long value) {
+		if (scaleMetrics.isValidIntegerValue(value)) {
+			return scaleMetrics.multiplyByScaleFactor(value);
+		}
+		throw new IllegalArgumentException("Overflow: cannot convert " + value + " to Decimal with scale " + scaleMetrics.getScale());
 	}
 
-	@Override
-	public final int getScale() {
-		return 0;
+	public static final long unscaledToLong(ScaleMetrics scaleMetrics, long uDecimal) {
+		return scaleMetrics.divideByScaleFactor(uDecimal);
+	}
+	public static final long unscaledToLong(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
+		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
+		final long remainder = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
+		return truncated + RoundingUtil.calculateRoundingIncrement(rounding, truncated, remainder, scaleMetrics.getScaleFactor());
 	}
 
-	@Override
-	public final long one() {
-		return 1;
+	// no instances
+	private LongConversion() {
+		super();
 	}
-
-	@Override
-	public final long addLong(long uDecimal, long lValue) {
-		return Checked.add(this, uDecimal, lValue);
-	}
-
-	@Override
-	public final long subtractLong(long uDecimal, long lValue) {
-		return Checked.subtract(this, uDecimal, lValue);
-	}
-
-	@Override
-	public final long multiply(long uDecimal1, long uDecimal2) {
-		return Checked.multiplyByLong(this, uDecimal1, uDecimal2);
-	}
-
-	@Override
-	public final long square(long uDecimal) {
-		return Checked.multiplyByLong(this, uDecimal, uDecimal);
-	}
-
-	@Override
-	public final long fromLong(long value) {
-		return value;
-	}
-
-	@Override
-	public final long toLong(long uDecimal) {
-		return uDecimal;
-	}
-
-	@Override
-	public final String toString(long uDecimal) {
-		return StringConversion.longToString(uDecimal);
-	}
-
 }

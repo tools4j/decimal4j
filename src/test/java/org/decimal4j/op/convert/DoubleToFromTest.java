@@ -94,7 +94,7 @@ public class DoubleToFromTest {
 			final long result = arithmetic.getScaleMetrics().getArithmetic(backRounding).fromDouble(dbl);
 			final long tolerance = (long)(Math.ceil(Math.ulp(dbl) * arithmetic.getScaleMetrics().getScaleFactor()));
 			Assert.assertTrue(name + ": result after 2 conversions should be same as input: input=<" + value + ">, output=<" + result + ">, tolerance=<" + tolerance + ">, delta=<" + Math.abs(value - result) + ">", Math.abs(value - result) <= tolerance);
-		} catch (NumberFormatException e) {
+		} catch (IllegalArgumentException e) {
 			//ignore, must be out of range, tested elsewhere
 		}
 	}

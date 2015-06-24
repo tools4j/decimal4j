@@ -23,6 +23,7 @@
  */
 package org.decimal4j.generic;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -34,13 +35,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.factory.Factories;
+import org.decimal4j.op.util.LongRandom;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -48,12 +48,12 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Unit test for {@link GenericImmutableDecimal} and
- * {@link GenericMutableDecimal}
+ * {@link GenericMutableDecimal}.
  */
 @RunWith(Parameterized.class)
 public class GenericDecimalTest {
 
-	private static final Random RND = new Random();
+	private static final LongRandom RND = new LongRandom();
 
 	private final ScaleMetrics scaleMetrics;
 
@@ -104,17 +104,17 @@ public class GenericDecimalTest {
 	@Test
 	public void shouldCreateGenericValueArray() {
 		for (final ScaleMetrics sm : Scales.VALUES) {
-			//given
+			// given
 			final int len = RND.nextInt(100);
 
 			// when
 			final GenericImmutableDecimal<?>[] immutables = Factories.getGenericDecimalFactory(sm).newArray(len);
 			final GenericMutableDecimal<?>[] mutables = Factories.getGenericDecimalFactory(sm).newMutableArray(len);
-	
+
 			// then
 			assertEquals("immutable array should have length " + len, len, immutables.length);
 			assertEquals("mutable array should have length " + len, len, mutables.length);
-			
+
 			for (int i = 0; i < len; i++) {
 				assertNull("immutables[" + i + "' should be null", immutables[i]);
 				assertNull("mutables[" + i + "' should be null", mutables[i]);
@@ -155,23 +155,29 @@ public class GenericDecimalTest {
 	@Test
 	public void shouldScaleGenericValue() {
 		// given
-		final GenericImmutableDecimal<?> immutable = GenericImmutableDecimal.valueOfUnscaled(scaleMetrics,
-				RND.nextLong());
-		final GenericMutableDecimal<?> mutable = GenericMutableDecimal.valueOfUnscaled(scaleMetrics, RND.nextLong());
-		final int scaleI = RND.nextInt(Scales.MAX_SCALE + 1);
-		final int scaleM = RND.nextInt(Scales.MAX_SCALE + 1);
+		final int oldScale = scaleMetrics.getScale();
+		final int newScale = RND.nextInt(Scales.MAX_SCALE + 1);
+		final GenericImmutableDecimal<?> immutable;
+		final GenericMutableDecimal<?> mutable;
+		if (newScale > oldScale) {
+			final ScaleMetrics diffMetrics = Scales.getScaleMetrics(newScale - oldScale);
+			final long maxVal = diffMetrics.getMaxIntegerValue();
+			immutable = GenericImmutableDecimal.valueOfUnscaled(scaleMetrics, RND.nextLong(maxVal) - RND.nextLong(maxVal));
+			mutable = GenericMutableDecimal.valueOfUnscaled(scaleMetrics, RND.nextLong(maxVal) - RND.nextLong(maxVal));
+		} else {
+			immutable = GenericImmutableDecimal.valueOfUnscaled(scaleMetrics, RND.nextLong());
+			mutable = GenericMutableDecimal.valueOfUnscaled(scaleMetrics, RND.nextLong());
+		}
 
 		// when
-		final Decimal<?> scaledI = immutable.scale(scaleI);
-		final Decimal<?> scaledM = mutable.scale(scaleM);
+		final Decimal<?> scaledI = immutable.scale(newScale);
+		final Decimal<?> scaledM = mutable.scale(newScale);
 
 		// then
-		assertBase(Scales.getScaleMetrics(scaleI), scaledI);
-		assertBase(Scales.getScaleMetrics(scaleM), scaledM);
-		assertThat("should be instance of GenericImmutableDecimal", scaledI,
-				CoreMatchers.instanceOf(GenericImmutableDecimal.class));
-		assertThat("should be instance of GenericMutableDecimal", scaledM,
-				CoreMatchers.instanceOf(GenericMutableDecimal.class));
+		assertBase(Scales.getScaleMetrics(newScale), scaledI);
+		assertBase(Scales.getScaleMetrics(newScale), scaledM);
+		assertThat("should be instance of GenericImmutableDecimal", scaledI, instanceOf(GenericImmutableDecimal.class));
+		assertThat("should be instance of GenericMutableDecimal", scaledM, instanceOf(GenericMutableDecimal.class));
 	}
 
 	@Test
@@ -192,14 +198,14 @@ public class GenericDecimalTest {
 		// then
 		assertBase(Scales.getScaleMetrics(scaleMetrics.getScale() + scaleI), productI);
 		assertBase(Scales.getScaleMetrics(scaleMetrics.getScale() + scaleM), productM);
-		assertThat("should be instance of GenericImmutableDecimal", productI,
-				CoreMatchers.instanceOf(GenericImmutableDecimal.class));
-		assertThat("should be instance of GenericMutableDecimal", productM,
-				CoreMatchers.instanceOf(GenericMutableDecimal.class));
+		assertThat("should be instance of GenericImmutableDecimal", productI, instanceOf(GenericImmutableDecimal.class));
+		assertThat("should be instance of GenericMutableDecimal", productM, instanceOf(GenericMutableDecimal.class));
 		assertEquals("productI should be sum of factor scales", scaleMetrics.getScale() + scaleI, productI.getScale());
 		assertEquals("productM should be sum of factor scales", scaleMetrics.getScale() + scaleM, productM.getScale());
-		assertEquals("productI should be long product of factors", immutable.unscaledValue() * factorI.unscaledValue(), productI.unscaledValue());
-		assertEquals("productM should be long product of factors", mutable.unscaledValue() * factorM.unscaledValue(), productM.unscaledValue());
+		assertEquals("productI should be long product of factors", immutable.unscaledValue() * factorI.unscaledValue(),
+				productI.unscaledValue());
+		assertEquals("productM should be long product of factors", mutable.unscaledValue() * factorM.unscaledValue(),
+				productM.unscaledValue());
 	}
 
 	private void assertBase(Decimal<?> decimal) {

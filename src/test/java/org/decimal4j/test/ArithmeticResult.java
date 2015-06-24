@@ -101,8 +101,10 @@ public class ArithmeticResult<T> {
 			} else {
 		        throw (AssertionError)new AssertionError(messagePrefix + " = " + expected.resultString + " but lead to an exception: " + exception).initCause(exception);
 			}
-		} else if ((expected.exception != null) != (exception != null) && expected.exception.getClass() != expected.exception.getClass()) {
-	        throw (AssertionError)new AssertionError(messagePrefix + " exception lead to exception " + exception + " but expected was exception type: " + expected.exception).initCause(expected.exception);
+		} else if (expected.exception != null && exception != null) {
+			if (expected.exception.getClass() != exception.getClass()) {
+				throw (AssertionError)new AssertionError(messagePrefix + " exception lead to exception " + exception + " but expected was exception type: " + expected.exception).initCause(exception);
+			}
 		} else {
 			assertEquals(messagePrefix + " = " + expected.resultString, expected.compareValue, compareValue);
 		}

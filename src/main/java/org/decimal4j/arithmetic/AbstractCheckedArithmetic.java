@@ -23,9 +23,6 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import org.decimal4j.truncate.OverflowMode;
 
 /**
@@ -35,53 +32,33 @@ import org.decimal4j.truncate.OverflowMode;
 abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
 
 	@Override
-	public OverflowMode getOverflowMode() {
+	public final OverflowMode getOverflowMode() {
 		return OverflowMode.CHECKED;
 	}
 
 	@Override
-	public long add(long uDecimal1, long uDecimal2) {
+	public final long add(long uDecimal1, long uDecimal2) {
 		return Checked.add(this, uDecimal1, uDecimal2);
 	}
 
 	@Override
-	public long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
+	public final long subtract(long uDecimalMinuend, long uDecimalSubtrahend) {
 		return Checked.subtract(this, uDecimalMinuend, uDecimalSubtrahend);
 	}
 
 	@Override
-	public long multiplyByLong(long uDecimal, long lValue) {
+	public final long multiplyByLong(long uDecimal, long lValue) {
 		return Checked.multiplyByLong(this, uDecimal, lValue);
 	}
 
 	@Override
-	public long abs(long uDecimal) {
+	public final long abs(long uDecimal) {
 		return Checked.abs(this, uDecimal);
 	}
 
 	@Override
-	public long negate(long uDecimal) {
+	public final long negate(long uDecimal) {
 		return Checked.negate(this, uDecimal);
 	}
 
-	@Override
-	public long fromLong(long value) {
-		return getScaleMetrics().multiplyByScaleFactorExact(value);
-	}
-
-	@Override
-	public long fromBigInteger(BigInteger value) {
-		if (value.bitLength() <= 63) {
-			return fromLong(value.longValue());
-		}
-		throw new ArithmeticException("Overflow: cannot convert " + value + " to Decimal with scale " + getScale());
-	}
-
-	@Override
-	public long fromBigDecimal(BigDecimal value) {
-		//TODO any chance to make this garbage free? 
-		//Difficult as we cannot look inside the BigDecimal value
-		final BigDecimal scaled = value.multiply(getScaleMetrics().getScaleFactorAsBigDecimal()).setScale(0, getRoundingMode());
-		return JDKSupport.bigIntegerToLongValueExact(scaled.toBigInteger());
-	}
 }

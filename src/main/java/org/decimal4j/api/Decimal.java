@@ -808,7 +808,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param augend
 	 *            value to be added to this {@code Decimal}
 	 * @return {@code this + augend}
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code augend} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -837,7 +837,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            rounded when converted into a Decimal number of the same scale
 	 *            as {@code this} Decimal
 	 * @return {@code this + augend}
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code augend} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -1198,7 +1198,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param subtrahend
 	 *            value to be subtracted from this {@code Decimal}
 	 * @return {@code this - subtrahend}
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code subtrahend} is NaN or infinite or if the magnitude
 	 *             is too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -1227,7 +1227,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            be rounded when converted into a Decimal number of the same
 	 *            scale as {@code this} Decimal
 	 * @return {@code this - subtrahend}
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code subtrahend} is NaN or infinite or if the magnitude
 	 *             is too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -1672,7 +1672,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param multiplicand
 	 *            factor to multiply with this {@code Decimal}
 	 * @return <tt>round<sub>HALF_UP</sub>(this * multiplicand)</tt>
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code multiplicand} is NaN or infinite or if the
 	 *             magnitude is too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -1702,7 +1702,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the rounding mode to apply if the converted multiplicand or
 	 *            the resulting product needs to be rounded
 	 * @return {@code round(this * multiplicand)}
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code multiplicand} is NaN or infinite or if the
 	 *             magnitude is too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -2247,7 +2247,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * @param divisor
 	 *            divisor value by which this {@code Decimal} is to be divided
 	 * @return <tt>round<sub>HALF_UP</sub>(this / divisor)</tt>
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code divisor} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
 	 *             {@code Decimal}
@@ -2277,7 +2277,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the rounding mode to apply if the converted divisor or the
 	 *            resulting quotient needs to be rounded
 	 * @return {@code round(this / divisor)}
-	 * @throws NumberFormatException
+	 * @throws IllegalArgumentException
 	 *             if {@code divisor} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
 	 *             {@code Decimal}

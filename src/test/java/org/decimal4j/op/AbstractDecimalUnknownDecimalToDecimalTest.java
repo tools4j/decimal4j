@@ -52,7 +52,7 @@ abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends Abstrac
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		final Decimal<S> dOpA = randomDecimal(scaleMetrics);
-		final Decimal<?> dOpB = Factories.getDecimalFactory(unknownDecimalScale).valueOfUnscaled(randomLongOrInt());
+		final Decimal<?> dOpB = Factories.getDecimalFactory(unknownDecimalScale).valueOfUnscaled(nextLongOrInt());
 		runTest(scaleMetrics, "[" + index + "]", dOpA, dOpB);
 	}
 
@@ -86,6 +86,8 @@ abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends Abstrac
 			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOpA, bdOpB));
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
+		} catch (IllegalArgumentException e) {
+			expected = ArithmeticResult.forException(e);
 		}
 
 		// actual
@@ -93,6 +95,8 @@ abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends Abstrac
 		try {
 			actual = ArithmeticResult.forResult(actualResult(dOpA, dOpB));
 		} catch (ArithmeticException e) {
+			actual = ArithmeticResult.forException(e);
+		} catch (IllegalArgumentException e) {
 			actual = ArithmeticResult.forException(e);
 		}
 

@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
@@ -80,8 +79,8 @@ public class DivideByTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
 		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
-		if (!isUnchecked()) {
-			JDKSupport.bigIntegerToLongValueExact(bScaled.unscaledValue());
+		if (b.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + b);
 		}
 		return a.divide(bScaled, mathContextLong128);
 	}

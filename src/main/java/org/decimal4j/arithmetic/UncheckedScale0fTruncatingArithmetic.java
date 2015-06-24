@@ -73,7 +73,7 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 	}
 
 	@Override
-	public long invert(long uDecimal) {
+	public final long invert(long uDecimal) {
 		return Invert.invertLong(uDecimal);
 	}
 
@@ -83,12 +83,12 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 	}
 
 	@Override
-	public long shiftLeft(long uDecimal, int positions) {
+	public final long shiftLeft(long uDecimal, int positions) {
 		return Shift.shiftLeft(DecimalRounding.DOWN, uDecimal, positions);
 	}
 
 	@Override
-	public long shiftRight(long uDecimal, int positions) {
+	public final long shiftRight(long uDecimal, int positions) {
 		return Shift.shiftRight(DecimalRounding.DOWN, uDecimal, positions);
 	}
 
@@ -114,7 +114,7 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 
 	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
-		return Pow10.divideByPowerOf10(unscaledValue, scale);
+		return UnscaledConversion.unscaledToLong(this, unscaledValue, scale);
 	}
 
 	@Override
@@ -129,11 +129,11 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 
 	@Override
 	public final long fromBigDecimal(BigDecimal value) {
-		return value.longValue();
+		return BigDecimalConversion.bigDecimalToLong(RoundingMode.DOWN, value);
 	}
 
 	@Override
-	public long parse(String value) {
+	public final long parse(String value) {
 		return StringConversion.parseLong(this, DecimalRounding.DOWN, value);
 	}
 

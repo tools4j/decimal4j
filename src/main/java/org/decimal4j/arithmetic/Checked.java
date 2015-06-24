@@ -35,7 +35,7 @@ final class Checked {
 		return (long1 ^ long2) >= 0 & (long1 ^ result) < 0;
 	}
 
-	private static final boolean isSubtractOverflow(long minuend, long subtrahend, long result) {
+	static final boolean isSubtractOverflow(long minuend, long subtrahend, long result) {
 		return (minuend ^ subtrahend) < 0 & (minuend ^ result) < 0;
 	}
 

@@ -48,8 +48,7 @@ abstract public class AbstractDecimalLongToDecimalTest extends AbstractDecimalLo
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final OverflowMode om : OverflowMode.values()) {
-				final DecimalArithmetic arith = om.isChecked() ? s.getDefaultCheckedArithmetic() : s
-						.getDefaultArithmetic();
+				final DecimalArithmetic arith = om.isChecked() ? s.getDefaultCheckedArithmetic() : s.getDefaultArithmetic();
 				data.add(new Object[] { s, om, arith });
 			}
 		}

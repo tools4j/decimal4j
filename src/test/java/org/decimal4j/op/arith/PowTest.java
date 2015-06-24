@@ -84,8 +84,8 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
 		final long one = scaleMetrics.getScaleFactor();
-//		final long unscaled = one * (4 - RND.nextInt(9)) + one - randomLong(2*one + 1);
-		final long unscaled = one * (8 - RND.nextInt(17)) + one - randomLong(2*one + 1);
+//		final long unscaled = one * (4 - RND.nextInt(9)) + one - RND.nextLong(2*one + 1);
+		final long unscaled = one * (8 - RND.nextInt(17)) + one - RND.nextLong(2*one + 1);
 		return newDecimal(scaleMetrics, unscaled);
 	}
 

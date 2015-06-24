@@ -53,94 +53,92 @@ public final class UncheckedScale0fRoundingArithmetic extends
 	}
 
 	@Override
-	public long divideByLong(long uDecimalDividend, long lDivisor) {
+	public final long divideByLong(long uDecimalDividend, long lDivisor) {
 		return Div.divideByLong(rounding, uDecimalDividend, lDivisor);
 	}
 
 	@Override
-	public long divide(long uDecimalDividend, long uDecimalDivisor) {
+	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideByLong(rounding, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
-	public long avg(long uDecimal1, long uDecimal2) {
+	public final long avg(long uDecimal1, long uDecimal2) {
 		return Avg.avg(this, rounding, uDecimal1, uDecimal2);
 	}
 
 	@Override
-	public long invert(long uDecimal) {
+	public final long invert(long uDecimal) {
 		return Invert.invertLong(rounding, uDecimal);
 	}
 
 	@Override
-	public long shiftLeft(long uDecimal, int positions) {
+	public final long shiftLeft(long uDecimal, int positions) {
 		return Shift.shiftLeft(rounding, uDecimal, positions);
 	}
 
 	@Override
-	public long shiftRight(long uDecimal, int positions) {
+	public final long shiftRight(long uDecimal, int positions) {
 		return Shift.shiftRight(rounding, uDecimal, positions);
 	}
 
 	@Override
-	public long divideByPowerOf10(long uDecimal, int n) {
+	public final long divideByPowerOf10(long uDecimal, int n) {
 		return Pow10.divideByPowerOf10(rounding, uDecimal, n);
 	}
 
 	@Override
-	public long multiplyByPowerOf10(long uDecimal, int positions) {
+	public final long multiplyByPowerOf10(long uDecimal, int positions) {
 		return Pow10.multiplyByPowerOf10(rounding, uDecimal, positions);
 	}
 
 	@Override
-	public long sqrt(long uDecimal) {
+	public final long sqrt(long uDecimal) {
 		return Sqrt.sqrtLong(rounding, uDecimal);
 	}
 
 	@Override
-	public long pow(long uDecimal, int exponent) {
+	public final long pow(long uDecimal, int exponent) {
 		return Pow.powLong(this, rounding, uDecimal, exponent);
 	}
 
 	@Override
-	public long round(long uDecimal, int precision) {
+	public final long round(long uDecimal, int precision) {
 		return Round.round(this, rounding, uDecimal, precision);
 	}
 
 	@Override
-	public float toFloat(long uDecimal) {
+	public final float toFloat(long uDecimal) {
 		return FloatConversion.longToFloat(this, rounding, uDecimal);
 	}
 
 	@Override
-	public double toDouble(long uDecimal) {
+	public final double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, rounding, uDecimal);
 	}
 
 	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
-		return Pow10.divideByPowerOf10(rounding, unscaledValue, scale);
+		return UnscaledConversion.unscaledToLong(this, rounding, unscaledValue, scale);
 	}
 
 	@Override
-	public long fromFloat(float value) {
+	public final long fromFloat(float value) {
 		return FloatConversion.floatToLong(rounding, value);
 	}
 
 	@Override
-	public long fromDouble(double value) {
+	public final long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(rounding, value);
 	}
 
 	@Override
-	public long fromBigDecimal(BigDecimal value) {
-		//TODO any chance to make this garbage free? 
-		//Difficult as we cannot look inside the BigDecimal value
-		return value.setScale(0, getRoundingMode()).longValue();
+	public final long fromBigDecimal(BigDecimal value) {
+		return BigDecimalConversion.bigDecimalToLong(getRoundingMode(), value);
 	}
 
 	@Override
-	public long parse(String value) {
+	public final long parse(String value) {
 		return StringConversion.parseLong(this, rounding, value);
 	}
 }

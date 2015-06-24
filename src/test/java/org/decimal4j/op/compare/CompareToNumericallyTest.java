@@ -61,7 +61,7 @@ public class CompareToNumericallyTest extends AbstractDecimalUnknownDecimalToAny
 		if (RND.nextBoolean()) {
 			return arithmetic.multiplyByPowerOf10(firstUnscaled, unknownDecimalScale - getScale());
 		}
-		return randomLongOrInt();
+		return nextLongOrInt();
 	}
 
 	@Override

@@ -267,9 +267,8 @@ final class Mul {
 				return Checked.addLong(result, RoundingUtil.calculateRoundingIncrement(rounding, result, remainder, scaleMetrics.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
-			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal1) + " * " + arith.toString(uDecimal2));
-			ex.initCause(e);
-			throw ex;
+			Exceptions.rethrowIfRoundingNecessary(e);
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal1) + " * " + arith.toString(uDecimal2), e);
 		}
 	}
 	
@@ -428,9 +427,8 @@ final class Mul {
 				return Checked.addLong(unrounded, RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
-			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal) + "^2");
-			ex.initCause(e);
-			throw ex;
+			Exceptions.rethrowIfRoundingNecessary(e);
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal) + "^2", e);
 		}
 	}
 
@@ -490,9 +488,7 @@ final class Mul {
 				return result;
 			}
 		} catch (ArithmeticException e) {
-			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal1) + " * " + arith.toString(uDecimal2));
-			ex.initCause(e);
-			throw ex;
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal1) + " * " + arith.toString(uDecimal2), e);
 		}
 	}
 
@@ -543,9 +539,7 @@ final class Mul {
 				return result;
 			}
 		} catch (ArithmeticException e) {
-			final ArithmeticException ex = new ArithmeticException("Overflow: " + arith.toString(uDecimal) + "^2");
-			ex.initCause(e);
-			throw ex;
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal) + "^2", e);
 		}
 	}
 

@@ -25,7 +25,6 @@ package org.decimal4j.test;
 
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Random;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
@@ -33,6 +32,7 @@ import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.immutable.Decimal0f;
 import org.decimal4j.mutable.MutableDecimal0f;
+import org.decimal4j.op.util.LongRandom;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -42,7 +42,7 @@ import org.decimal4j.truncate.TruncationPolicy;
  */
 abstract public class AbstractDecimalTest {
 
-	protected static final Random RND = new Random();
+	protected static final LongRandom RND = new LongRandom();
 
 	protected final DecimalArithmetic arithmetic;
 	protected final MathContext mathContextLong64;
@@ -99,24 +99,12 @@ abstract public class AbstractDecimalTest {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> randomDecimal(S scaleMetrics) {
-		return newDecimal(scaleMetrics, randomLongOrInt());
+		return newDecimal(scaleMetrics, nextLongOrInt());
 	}
 
-	protected static long randomLongOrInt() {
+	protected static long nextLongOrInt() {
 		return RND.nextBoolean() ? RND.nextLong() : RND.nextInt();
 	}
-	protected static long randomLong(long n) {
-        if (n <= 0)
-            throw new IllegalArgumentException("n must be positive, but was " + n);
-
-        long bits, val;
-        do {
-            bits = RND.nextLong() >>> 1;
-            val = bits % n;
-        } while (bits - val + (n-1) < 0);
-        return val;
-	}
-
 	protected <S extends ScaleMetrics> Decimal<S> newDecimal(S scaleMetrics, long unscaled) {
 		switch (RND.nextInt(4)) {
 		case 0:

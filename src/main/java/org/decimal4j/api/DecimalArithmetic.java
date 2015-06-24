@@ -580,6 +580,9 @@ public interface DecimalArithmetic {
 	 *            the value to convert
 	 * @return the unscaled decimal representing the same value as the given
 	 *         long value
+	 * @throws IllegalArgumentException
+	 *             if the specified long value cannot be converted to an
+	 *             unscaled decimal because it would overflow
 	 */
 	long fromLong(long value);
 
@@ -590,12 +593,13 @@ public interface DecimalArithmetic {
 	 *            the value to convert
 	 * @return the unscaled decimal representing the same value as the given
 	 *         float value
-	 * @throws ArithmeticException
+	 * @throws IllegalArgumentException
 	 *             if value is {@link Float#NaN} or {@link Float#isInfinite()
-	 *             infinite}, if {@link #getRoundingMode() rounding mode} is
-	 *             UNNECESSARY and rounding is necessary or if an overflow
-	 *             occurs and the {@link #getOverflowMode() overflow mode} is
-	 *             set to throw an exception
+	 *             infinite} or if the floating point value cannot be converted
+	 *             to an unscaled decimal because it would overflow
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary
 	 */
 	long fromFloat(float value);
 
@@ -606,12 +610,13 @@ public interface DecimalArithmetic {
 	 *            the value to convert
 	 * @return the unscaled decimal representing the same value as the given
 	 *         double value
-	 * @throws ArithmeticException
+	 * @throws IllegalArgumentException
 	 *             if value is {@link Double#NaN} or {@link Double#isInfinite()
-	 *             infinite}, if {@link #getRoundingMode() rounding mode} is
-	 *             UNNECESSARY and rounding is necessary or if an overflow
-	 *             occurs and the {@link #getOverflowMode() overflow mode} is
-	 *             set to throw an exception
+	 *             infinite} or if the floating point value cannot be converted
+	 *             to an unscaled decimal because it would overflow
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary
 	 */
 	long fromDouble(double value);
 
@@ -639,11 +644,12 @@ public interface DecimalArithmetic {
 	 * 
 	 * @param value
 	 *            the value to convert
-	 * @return the unscaled decimal representing the same value as the given big
-	 *         decimal value, if {@link #getRoundingMode() rounding mode} is
-	 *         UNNECESSARY and rounding is necessary or if an overflow occurs
-	 *         and the {@link #getOverflowMode() overflow mode} is set to throw
-	 *         an exception
+	 * @throws IllegalArgumentException
+	 *             if the big decimal value cannot be converted to an unscaled
+	 *             decimal because it would overflow
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary
 	 */
 	long fromBigDecimal(BigDecimal value);
 
@@ -657,10 +663,14 @@ public interface DecimalArithmetic {
 	 *            the scale used for {@code unscaledValue}
 	 * @return the unscaled decimal representing the same value as the given
 	 *         unscaled decimal with the new scale defined by this arithmetic
-	 *         object, if {@link #getRoundingMode() rounding mode} is
-	 *         UNNECESSARY and rounding is necessary or if an overflow occurs
-	 *         and the {@link #getOverflowMode() overflow mode} is set to throw
-	 *         an exception
+	 *         object
+	 * @throws IllegalArgumentException
+	 *             if the unscaled value with the specified scale cannot be
+	 *             converted to an unscaled value of this arithmetic's scale
+	 *             decimal because it would overflow
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary
 	 */
 	long fromUnscaled(long unscaledValue, int scale);
 
@@ -677,7 +687,7 @@ public interface DecimalArithmetic {
 	 *            to be parsed
 	 * @return the decimal as unscaled {@code long} value
 	 * @throws NumberFormatException
-	 *             if the string does not contain a parsable decimal.
+	 *             if the string does not contain a parsable decimal
 	 */
 	long parse(String value);
 

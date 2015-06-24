@@ -26,43 +26,44 @@ package org.decimal4j.arithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
- * Base class for arithmetic implementations without overflow check for scales other than zero
+ * Base class for arithmetic implementations without overflow check for scales
+ * other than zero
  */
-abstract public class AbstractUncheckedScaleNfArithmetic extends
-		AbstractUncheckedArithmetic {
+abstract public class AbstractUncheckedScaleNfArithmetic extends AbstractUncheckedArithmetic {
 
 	private final ScaleMetrics scaleMetrics;
-	private final int scale;
-	private final long one;//10^scale
 
 	public AbstractUncheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
-		this.scale = scaleMetrics.getScale();
-		this.one = scaleMetrics.getScaleFactor();
 	}
 
 	@Override
-	public ScaleMetrics getScaleMetrics() {
+	public final ScaleMetrics getScaleMetrics() {
 		return scaleMetrics;
 	}
 
 	@Override
-	public int getScale() {
-		return scale;
+	public final int getScale() {
+		return scaleMetrics.getScale();
 	}
 
 	@Override
-	public long one() {
-		return one;
+	public final long one() {
+		return scaleMetrics.getScaleFactor();
 	}
 
 	@Override
-	public final long fromUnscaled(long unscaledValue, int scale) {
-		return Scale.rescale(this, unscaledValue, scale, getScale());
+	public final long addLong(long uDecimal, long lValue) {
+		return uDecimal + LongConversion.longToUnscaledUnchecked(getScaleMetrics(), lValue);
 	}
 
 	@Override
-	public String toString(long uDecimal) {
+	public final long subtractLong(long uDecimal, long lValue) {
+		return uDecimal - LongConversion.longToUnscaledUnchecked(getScaleMetrics(), lValue);
+	}
+
+	@Override
+	public final String toString(long uDecimal) {
 		return StringConversion.unscaledToString(this, uDecimal);
 	}
 }

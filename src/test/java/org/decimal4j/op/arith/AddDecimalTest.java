@@ -24,23 +24,22 @@
 package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#add(Decimal)} and {@link Decimal#add(Decimal, OverflowMode)}.
+ * Unit test for {@link Decimal#add(Decimal, RoundingMode)} and {@link Decimal#add(Decimal, TruncationPolicy)}.
  */
 @RunWith(Parameterized.class)
 public class AddDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
@@ -54,7 +53,7 @@ public class AddDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			for (final ScaleMetrics otherScale : TestSettings.SCALES) {
-				for (final TruncationPolicy tp : TruncationPolicy.VALUES) {
+				for (final TruncationPolicy tp : TestSettings.POLICIES) {
 					data.add(new Object[] {s, otherScale.getScale(), tp, s.getArithmetic(tp)});
 				}
 			}
@@ -70,8 +69,8 @@ public class AddDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
 		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
-		if (!isUnchecked()) {
-			JDKSupport.bigIntegerToLongValueExact(bScaled.unscaledValue());
+		if (bScaled.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("BigInteger out of long range: " + b);
 		}
 		return a.add(bScaled);
 	}

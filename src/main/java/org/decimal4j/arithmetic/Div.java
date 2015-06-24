@@ -76,7 +76,8 @@ final class Div {
 			final long inc = RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);;
 			return Checked.add(arith, quotient, inc);
 		} catch (ArithmeticException e) {
-			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + lDivisor);
+			Exceptions.rethrowIfRoundingNecessary(e);
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimalDividend) + " / " + lDivisor, e);
 		}
 	}
 
@@ -219,16 +220,15 @@ final class Div {
 				final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
 				
 				long result = arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
-				return arith.add(result,RoundingUtil.calculateRoundingIncrementForDivision(rounding, result, subFractionalPart, uDecimalDivisor));
+				return arith.add(result, RoundingUtil.calculateRoundingIncrementForDivision(rounding, result, subFractionalPart, uDecimalDivisor));
 			} 
 			else {
 				final long fractionalPart = Div.scaleTo128divBy64(scaleMetrics, rounding, remainder, uDecimalDivisor);
 				return arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
 			}
 		} catch (ArithmeticException e) {
-			final ArithmeticException ae = new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
-			ae.initCause(e);
-			throw ae;
+			Exceptions.rethrowIfRoundingNecessary(e); 
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor), e);
 		}
 	}
 				
@@ -279,9 +279,7 @@ final class Div {
 			}
 			return arith.add(scaleMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
 		} catch (ArithmeticException e) {
-			final ArithmeticException ae = new ArithmeticException("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor));
-			ae.initCause(e);
-			throw ae;
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimalDividend) + " / " + arith.toString(uDecimalDivisor), e);
 		}
 	}
 

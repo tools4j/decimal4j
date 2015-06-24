@@ -23,49 +23,25 @@
  */
 package org.decimal4j.arithmetic;
 
+import java.math.BigInteger;
+
 import org.decimal4j.scale.ScaleMetrics;
 
+
 /**
- * Base class for arithmetic implementations with overflow check for scales
- * other than zero.
+ * Contains methods to convert from and to {@link BigInteger}.
  */
-abstract public class AbstractCheckedScaleNfArithmetic extends
-		AbstractCheckedArithmetic {
-
-	private final ScaleMetrics scaleMetrics;
-
-	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
-		this.scaleMetrics = scaleMetrics;
+final class BigIntegerConversion {
+	
+	public static long bigIntegerToUnscaled(ScaleMetrics scaleMetrics, BigInteger value) {
+		if (value.bitLength() <= 63) {
+			return LongConversion.longToUnscaled(scaleMetrics, value.longValue());
+		}
+		throw new IllegalArgumentException("Overflow: cannot convert " + value + " to Decimal with scale " + scaleMetrics.getScale());
 	}
 
-	@Override
-	public final ScaleMetrics getScaleMetrics() {
-		return scaleMetrics;
+	// no instances
+	private BigIntegerConversion() {
+		super();
 	}
-
-	@Override
-	public final int getScale() {
-		return scaleMetrics.getScale();
-	}
-
-	@Override
-	public final long one() {
-		return scaleMetrics.getScaleFactor();
-	}
-
-	@Override
-	public final long addLong(long uDecimal, long lValue) {
-		return Checked.addDecimalAndLong(this, uDecimal, lValue);
-	}
-
-	@Override
-	public final long subtractLong(long uDecimal, long lValue) {
-		return Checked.subtractLongFromDecimal(this, uDecimal, lValue);
-	}
-
-	@Override
-	public String toString(long uDecimal) {
-		return StringConversion.unscaledToString(this, uDecimal);
-	}
-
 }

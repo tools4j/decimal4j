@@ -23,8 +23,6 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.math.BigInteger;
-
 import org.decimal4j.scale.Scale0f;
 import org.decimal4j.scale.ScaleMetrics;
 
@@ -50,6 +48,16 @@ abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheck
 	}
 
 	@Override
+	public final long addLong(long uDecimal, long lValue) {
+		return uDecimal + lValue;
+	}
+
+	@Override
+	public final long subtractLong(long uDecimal, long lValue) {
+		return uDecimal - lValue;
+	}
+
+	@Override
 	public final long multiply(long uDecimal1, long uDecimal2) {
 		return uDecimal1 * uDecimal2;
 	}
@@ -62,11 +70,6 @@ abstract public class AbstractUncheckedScale0fArithmetic extends AbstractUncheck
 	@Override
 	public final long fromLong(long value) {
 		return value;
-	}
-
-	@Override
-	public final long fromBigInteger(BigInteger value) {
-		return value.longValue();
 	}
 
 	@Override

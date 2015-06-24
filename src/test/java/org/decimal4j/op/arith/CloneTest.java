@@ -63,7 +63,7 @@ public class CloneTest extends AbstractDecimalTest {
 	public void testRandom() {
 		final int count = TestSettings.getRandomTestCount();
 		for (int i = 0; i < count; i++) {
-			final Decimal<?> value = newDecimal(getScaleMetrics(), randomLongOrInt());
+			final Decimal<?> value = newDecimal(getScaleMetrics(), nextLongOrInt());
 			runTest("random[" + i + "]: + value", value);
 		}
 	}

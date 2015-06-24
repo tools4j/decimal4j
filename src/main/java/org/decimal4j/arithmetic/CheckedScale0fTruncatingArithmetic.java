@@ -33,8 +33,7 @@ import org.decimal4j.truncate.DecimalRounding;
  * special case with {@link Scale0f}, that is, for longs. An exception is thrown
  * if an operation leads to an overflow.
  */
-public final class CheckedScale0fTruncatingArithmetic extends
-		AbstractCheckedScale0fArithmetic {
+public final class CheckedScale0fTruncatingArithmetic extends AbstractCheckedScale0fArithmetic {
 
 	/**
 	 * The singleton instance.
@@ -42,18 +41,8 @@ public final class CheckedScale0fTruncatingArithmetic extends
 	public static final CheckedScale0fTruncatingArithmetic INSTANCE = new CheckedScale0fTruncatingArithmetic();
 
 	@Override
-	public RoundingMode getRoundingMode() {
+	public final RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
-	}
-
-	@Override
-	public long addLong(long uDecimal, long lValue) {
-		return Checked.add(this, uDecimal, lValue);
-	}
-
-	@Override
-	public long subtractLong(long uDecimal, long lValue) {
-		return Checked.subtract(this, uDecimal, lValue);
 	}
 
 	@Override
@@ -62,77 +51,82 @@ public final class CheckedScale0fTruncatingArithmetic extends
 	}
 
 	@Override
-	public long invert(long uDecimal) {
+	public final long invert(long uDecimal) {
 		return Invert.invertLong(uDecimal);
 	}
 
 	@Override
-	public long pow(long uDecimalBase, int exponent) {
+	public final long pow(long uDecimalBase, int exponent) {
 		return Pow.powLongChecked(this, DecimalRounding.DOWN, uDecimalBase, exponent);
 	}
 
 	@Override
-	public long sqrt(long uDecimal) {
+	public final long sqrt(long uDecimal) {
 		return Sqrt.sqrtLong(uDecimal);
+	}
+	
+	@Override
+	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
+		return Checked.divideByLong(this, uDecimalDividend, uDecimalDivisor);
 	}
 
 	@Override
-	public long divideByLong(long uDecimalDividend, long lDivisor) {
+	public final long divideByLong(long uDecimalDividend, long lDivisor) {
 		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
 	}
 
 	@Override
-	public long divideByPowerOf10(long uDecimal, int n) {
+	public final long divideByPowerOf10(long uDecimal, int n) {
 		return Pow10.divideByPowerOf10Checked(this, uDecimal, n);
 	}
 
 	@Override
-	public long multiplyByPowerOf10(long uDecimal, int n) {
+	public final long multiplyByPowerOf10(long uDecimal, int n) {
 		return Pow10.multiplyByPowerOf10Checked(this, uDecimal, n);
 	}
 
 	@Override
-	public long shiftLeft(long uDecimal, int positions) {
+	public final long shiftLeft(long uDecimal, int positions) {
 		return Shift.shiftLeftChecked(this, DecimalRounding.DOWN, uDecimal, positions);
 	}
 
 	@Override
-	public long shiftRight(long uDecimal, int positions) {
+	public final long shiftRight(long uDecimal, int positions) {
 		return Shift.shiftRightChecked(this, DecimalRounding.DOWN, uDecimal, positions);
 	}
 
 	@Override
-	public long round(long uDecimal, int precision) {
+	public final long round(long uDecimal, int precision) {
 		return Round.round(this, uDecimal, precision);
 	}
 
 	@Override
-	public float toFloat(long uDecimal) {
+	public final float toFloat(long uDecimal) {
 		return FloatConversion.longToFloat(this, uDecimal);
 	}
 
 	@Override
-	public double toDouble(long uDecimal) {
+	public final double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, uDecimal);
 	}
 
 	@Override
-	public final long fromUnscaled(long unscaledValue, int scale) {
-		return Pow10.divideByPowerOf10Checked(this, unscaledValue, scale);
-	}
-
-	@Override
-	public long fromFloat(float value) {
+	public final long fromFloat(float value) {
 		return FloatConversion.floatToLong(value);
 	}
 
 	@Override
-	public long fromDouble(double value) {
+	public final long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(value);
+	}
+	
+	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return UnscaledConversion.unscaledToLong(this, unscaledValue, scale);
 	}
 
 	@Override
-	public long parse(String value) {
+	public final long parse(String value) {
 		return StringConversion.parseLong(this, DecimalRounding.DOWN, value);
 	}
 }
