@@ -32,7 +32,6 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
@@ -1054,36 +1053,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public int compareToNumerically(Decimal<?> other) {
-		final long unscaled = unscaledValue();
-		final long otherUnscaled = other.unscaledValue();
-		final int scale = getScale();
-		final int otherScale = other.getScale();
-		if (scale == otherScale) {
-			return getDefaultArithmetic().compare(unscaled, otherUnscaled);
-		}
-		if (scale < otherScale) {
-			final DecimalArithmetic arith = getDefaultArithmetic();
-			final ScaleMetrics diffMetrics = Scales.getScaleMetrics(otherScale - scale);
-			final long otherRescaled = diffMetrics.divideByScaleFactor(otherUnscaled);
-			final int cmp = arith.compare(unscaled, otherRescaled);
-			if (cmp != 0) {
-				return cmp;
-			}
-			// remainder must be zero for equality
-			final long otherRemainder = otherUnscaled - diffMetrics.multiplyByScaleFactor(otherRescaled);
-			return -arith.signum(otherRemainder);
-		} else {
-			final DecimalArithmetic arith = other.getScaleMetrics().getDefaultArithmetic();
-			final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scale - otherScale);
-			final long rescaled = diffMetrics.divideByScaleFactor(unscaled);
-			final int cmp = arith.compare(rescaled, otherUnscaled);
-			if (cmp != 0) {
-				return cmp;
-			}
-			// remainder must be zero for equality
-			final long remainder = unscaled - diffMetrics.multiplyByScaleFactor(rescaled);
-			return arith.signum(remainder);
-		}
+		return getDefaultArithmetic().compareToUnscaled(unscaledValue(), other.unscaledValue(), other.getScale());
 	}
 
 	@Override

@@ -34,8 +34,7 @@ import org.decimal4j.truncate.DecimalRounding;
  * {@link Scale0f}, that is, for longs. If an operation leads to an overflow the
  * result is silently truncated.
  */
-public final class UncheckedScale0fRoundingArithmetic extends
-		AbstractUncheckedScale0fArithmetic {
+public final class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedScale0fArithmetic {
 
 	private final DecimalRounding rounding;
 
@@ -53,13 +52,33 @@ public final class UncheckedScale0fRoundingArithmetic extends
 	}
 
 	@Override
-	public final long divideByLong(long uDecimalDividend, long lDivisor) {
-		return Div.divideByLong(rounding, uDecimalDividend, lDivisor);
+	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
+		return uDecimal + UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale);
+	}
+
+	@Override
+	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
+		return uDecimal + UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale);
+	}
+
+	@Override
+	public final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Mul.multiplyByUnscaled(rounding, uDecimal, unscaled, scale);
 	}
 
 	@Override
 	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
 		return Div.divideByLong(rounding, uDecimalDividend, uDecimalDivisor);
+	}
+
+	@Override
+	public final long divideByLong(long uDecimalDividend, long lDivisor) {
+		return Div.divideByLong(rounding, uDecimalDividend, lDivisor);
+	}
+	
+	@Override
+	public final long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Div.divideByUnscaled(rounding, uDecimal, unscaled, scale);
 	}
 
 	@Override
@@ -107,6 +126,11 @@ public final class UncheckedScale0fRoundingArithmetic extends
 		return Round.round(this, rounding, uDecimal, precision);
 	}
 
+	@Override
+	public long toUnscaled(long uDecimal, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(rounding, scale, this, uDecimal);
+	}
+	
 	@Override
 	public final float toFloat(long uDecimal) {
 		return FloatConversion.longToFloat(this, rounding, uDecimal);

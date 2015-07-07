@@ -46,6 +46,36 @@ public final class CheckedScale0fTruncatingArithmetic extends AbstractCheckedSca
 	}
 
 	@Override
+	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
+		return Checked.add(this, uDecimal, UnscaledConversion.unscaledToLong(this, unscaled, scale));
+	}
+
+	@Override
+	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
+		return Checked.subtract(this, uDecimal, UnscaledConversion.unscaledToLong(this, unscaled, scale));
+	}
+
+	@Override
+	public final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Mul.multiplyByUnscaledChecked(this, uDecimal, unscaled, scale);
+	}
+
+	@Override
+	public final long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Div.divideByUnscaledChecked(this, uDecimal, unscaled, scale);
+	}
+
+	@Override
+	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
+		return Checked.divideByLong(this, uDecimalDividend, uDecimalDivisor);
+	}
+
+	@Override
+	public final long divideByLong(long uDecimalDividend, long lDivisor) {
+		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
+	}
+
+	@Override
 	public final long avg(long a, long b) {
 		return Avg.avg(a, b);
 	}
@@ -65,16 +95,6 @@ public final class CheckedScale0fTruncatingArithmetic extends AbstractCheckedSca
 		return Sqrt.sqrtLong(uDecimal);
 	}
 	
-	@Override
-	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
-		return Checked.divideByLong(this, uDecimalDividend, uDecimalDivisor);
-	}
-
-	@Override
-	public final long divideByLong(long uDecimalDividend, long lDivisor) {
-		return Checked.divideByLong(this, uDecimalDividend, lDivisor);
-	}
-
 	@Override
 	public final long divideByPowerOf10(long uDecimal, int n) {
 		return Pow10.divideByPowerOf10Checked(this, uDecimal, n);
@@ -108,6 +128,11 @@ public final class CheckedScale0fTruncatingArithmetic extends AbstractCheckedSca
 	@Override
 	public final double toDouble(long uDecimal) {
 		return DoubleConversion.longToDouble(this, uDecimal);
+	}
+
+	@Override
+	public final long toUnscaled(long uDecimal, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(scale, this, uDecimal);
 	}
 
 	@Override

@@ -189,6 +189,16 @@ public interface ScaleMetrics {
 	 * @return {@code dividend % scaleFactor}
 	 */
 	long moduloByScaleFactor(long dividend);
+	
+	/**
+	 * Returns the string representation of the specified {@code value} applying
+	 * this metric's scale.
+	 * 
+	 * @param value the unscaled decimal to convert to a string
+	 * @return a fixed precision string representation of the specified value
+	 * @see DecimalArithmetic#toString(long)
+	 */
+	String toString(long value);
 
 	/**
 	 * Returns the default arithmetic for this scale performing unchecked

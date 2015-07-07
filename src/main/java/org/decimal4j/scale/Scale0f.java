@@ -158,6 +158,11 @@ public enum Scale0f implements ScaleMetrics {
 	public final long moduloByScaleFactor(long dividend) {
 		return 0;
 	}
+	
+	@Override
+	public String toString(long value) {
+		return DEFAULT_ARITHMETIC.toString(value);
+	}
 
 	@Override
 	public final DecimalArithmetic getDefaultArithmetic() {

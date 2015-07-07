@@ -59,13 +59,28 @@ public final class UncheckedScaleNfTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
+	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
+		return uDecimal + UnscaledConversion.unscaledToUnscaled(this, unscaled, scale);
+	}
+
+	@Override
+	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
+		return uDecimal - UnscaledConversion.unscaledToUnscaled(this, unscaled, scale);
+	}
+
+	@Override
 	public final long multiply(long uDecimal1, long uDecimal2) {
 		return Mul.multiply(this, uDecimal1, uDecimal2);
 	}
 
 	@Override
+	public long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Mul.multiplyByUnscaled(uDecimal, unscaled, scale);
+	}
+
+	@Override
 	public final long square(long uDecimal) {
-		return Mul.square(getScaleMetrics(), uDecimal);
+		return Square.square(getScaleMetrics(), uDecimal);
 	}
 
 	@Override
@@ -74,13 +89,18 @@ public final class UncheckedScaleNfTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
+	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
+		return Div.divide(this, uDecimalDividend, uDecimalDivisor);
+	}
+
+	@Override
 	public final long divideByLong(long uDecimalDividend, long lDivisor) {
 		return uDecimalDividend / lDivisor;
 	}
 
 	@Override
-	public final long divide(long uDecimalDividend, long uDecimalDivisor) {
-		return Div.divide(this, uDecimalDividend, uDecimalDivisor);
+	public long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Div.divideByUnscaled(uDecimal, unscaled, scale);
 	}
 
 	@Override
@@ -129,6 +149,11 @@ public final class UncheckedScaleNfTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
+	public final long fromUnscaled(long unscaledValue, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(this, unscaledValue, scale);
+	}
+
+	@Override
 	public final long fromBigDecimal(BigDecimal value) {
 		return BigDecimalConversion.bigDecimalToUnscaled(getScaleMetrics(), RoundingMode.DOWN, value);
 	}
@@ -144,13 +169,13 @@ public final class UncheckedScaleNfTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
-	public final long fromUnscaled(long unscaledValue, int scale) {
-		return UnscaledConversion.unscaledToUnscaled(this, unscaledValue, scale);
+	public final long toLong(long uDecimal) {
+		return getScaleMetrics().divideByScaleFactor(uDecimal);
 	}
 
 	@Override
-	public final long toLong(long uDecimal) {
-		return getScaleMetrics().divideByScaleFactor(uDecimal);
+	public long toUnscaled(long uDecimal, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(scale, this, uDecimal);
 	}
 
 	@Override

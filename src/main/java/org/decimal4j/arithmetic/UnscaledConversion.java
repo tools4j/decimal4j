@@ -27,20 +27,39 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 
-
 /**
  * Contains static methods to convert between different scales.
  */
 final class UnscaledConversion {
 
 	private static final int getScaleDiff(ScaleMetrics scaleMetrics, int scale) {
-		final int targetScale = scaleMetrics.getScale();
-		final int diffScale = targetScale - scale;
-		if (!Checked.isSubtractOverflow(targetScale, scale, diffScale)) {
+		return getScaleDiff(scaleMetrics.getScale(), scale);
+	}
+
+	private static final int getScaleDiff(int targetScale, int sourceScale) {
+		final int diffScale = targetScale - sourceScale;
+		if (!Checked.isSubtractOverflow(targetScale, sourceScale, diffScale)) {
 			return diffScale;
 		}
-		throw new IllegalArgumentException("Cannot convert from scale " + scale + " to " + targetScale + " (scale difference is out of integer range)");
+		throw new IllegalArgumentException("Cannot convert from scale " + sourceScale + " to " + targetScale
+				+ " (scale difference is out of integer range)");
 	}
+
+	/**
+	 * Converts the given {@code unscaledValue} with the specified {@code scale}
+	 * to a long value. The value is rounded DOWN if necessary. An exception is
+	 * thrown if the conversion is not possible.
+	 * 
+	 * @param arith
+	 *            arithmetic of the target value
+	 * @param unscaledValue
+	 *            the unscaled value to convert
+	 * @param scale
+	 *            the scale of {@code unscaledValue}
+	 * @return a long value rounded down if necessary
+	 * @throw IllegalArgumentException if the conversion cannot be performed due
+	 *        to overflow
+	 */
 	public static final long unscaledToLong(DecimalArithmetic arith, long unscaledValue, int scale) {
 		try {
 			return Pow10.divideByPowerOf10Checked(arith, unscaledValue, scale);
@@ -48,6 +67,27 @@ final class UnscaledConversion {
 			throw toIllegalArgumentExceptionOrRethrow(e, unscaledValue, scale, arith.getScale());
 		}
 	}
+
+	/**
+	 * Converts the given {@code unscaledValue} with the specified {@code scale}
+	 * to a long value. The value is rounded using the specified
+	 * {@code rounding} if necessary. An exception is thrown if the conversion
+	 * is not possible.
+	 * 
+	 * @param arith
+	 *            arithmetic of the target value
+	 * @param rounding
+	 *            the rounding to apply if rounding is necessary
+	 * @param unscaledValue
+	 *            the unscaled value to convert
+	 * @param scale
+	 *            the scale of {@code unscaledValue}
+	 * @return long value rounded with given rounding if necessary
+	 * @throw IllegalArgumentException if the conversion cannot be performed due
+	 *        to overflow
+	 * @throws ArithmeticException
+	 *             if rounding is necessary and {@code rounding==UNNECESSARY}
+	 */
 	public static final long unscaledToLong(DecimalArithmetic arith, DecimalRounding rounding, long unscaledValue, int scale) {
 		try {
 			return Pow10.divideByPowerOf10Checked(arith, rounding, unscaledValue, scale);
@@ -55,6 +95,22 @@ final class UnscaledConversion {
 			throw toIllegalArgumentExceptionOrRethrow(e, unscaledValue, scale, arith.getScale());
 		}
 	}
+
+	/**
+	 * Returns an unscaled value of the scale defined by {@code arith} given an
+	 * {@code unscaledValue} with its {@code scale}. The value is rounded DOWN
+	 * if necessary. An exception is thrown if the conversion is not possible.
+	 * 
+	 * @param arith
+	 *            arithmetic defining the target scale
+	 * @param unscaledValue
+	 *            the unscaled value to convert
+	 * @param scale
+	 *            the scale of {@code unscaledValue}
+	 * @return the unscaled value in the arithmetic's scale
+	 * @throw IllegalArgumentException if the conversion cannot be performed due
+	 *        to overflow
+	 */
 	public static final long unscaledToUnscaled(DecimalArithmetic arith, long unscaledValue, int scale) {
 		final int scaleDiff = getScaleDiff(arith.getScaleMetrics(), scale);
 		try {
@@ -63,6 +119,27 @@ final class UnscaledConversion {
 			throw toIllegalArgumentExceptionOrRethrow(e, unscaledValue, scale, arith.getScale());
 		}
 	}
+
+	/**
+	 * Returns an unscaled value of the scale defined by {@code arith} given an
+	 * {@code unscaledValue} with its {@code scale}. The value is rounded using
+	 * the specified {@code rounding} if necessary. An exception is thrown if
+	 * the conversion is not possible.
+	 * 
+	 * @param arith
+	 *            arithmetic defining the target scale
+	 * @param rounding
+	 *            the rounding to apply if rounding is necessary
+	 * @param unscaledValue
+	 *            the unscaled value to convert
+	 * @param scale
+	 *            the scale of {@code unscaledValue}
+	 * @return the unscaled value in the arithmetic's scale
+	 * @throw IllegalArgumentException if the conversion cannot be performed due
+	 *        to overflow
+	 * @throws ArithmeticException
+	 *             if rounding is necessary and {@code rounding==UNNECESSARY}
+	 */
 	public static final long unscaledToUnscaled(DecimalArithmetic arith, DecimalRounding rounding, long unscaledValue, int scale) {
 		final int scaleDiff = getScaleDiff(arith.getScaleMetrics(), scale);
 		try {
@@ -71,13 +148,69 @@ final class UnscaledConversion {
 			throw toIllegalArgumentExceptionOrRethrow(e, unscaledValue, scale, arith.getScale());
 		}
 	}
-	
+
+	/**
+	 * Converts an unscaled value {@code uDecimal} having the scale specified by
+	 * {@code arith} into another unscaled value of the provided
+	 * {@code targetScale}. The value is rounded DOWN if necessary. An exception
+	 * is thrown if the conversion is not possible.
+	 * 
+	 * @param targetScale
+	 *            the scale of the result value
+	 * @param arith
+	 *            arithmetic defining the source scale
+	 * @param uDecimal
+	 *            the unscaled value to convert
+	 * @return the unscaled value with {@code targetScale}
+	 * @throw IllegalArgumentException if the conversion cannot be performed due
+	 *        to overflow
+	 */
+	public static final long unscaledToUnscaled(int targetScale, DecimalArithmetic arith, long uDecimal) {
+		final int scaleDiff = getScaleDiff(targetScale, arith.getScale());
+		try {
+			return Pow10.multiplyByPowerOf10Checked(arith, uDecimal, scaleDiff);
+		} catch (ArithmeticException e) {
+			throw toIllegalArgumentExceptionOrRethrow(e, uDecimal, arith.getScale(), targetScale);
+		}
+	}
+
+	/**
+	 * Converts an unscaled value {@code uDecimal} having the scale specified by
+	 * {@code arith} into another unscaled value of the provided
+	 * {@code targetScale}. The value is rounded using the specified
+	 * {@code rounding} if necessary. An exception is thrown if the conversion
+	 * is not possible.
+	 * 
+	 * 
+	 * @param rounding
+	 *            the rounding to apply if rounding is necessary
+	 * @param targetScale
+	 *            the scale of the result value
+	 * @param arith
+	 *            arithmetic defining the source scale
+	 * @param uDecimal
+	 *            the unscaled value to convert
+	 * @return the unscaled value with {@code targetScale}
+	 * @throw IllegalArgumentException if the conversion cannot be performed due
+	 *        to overflow
+	 */
+	public static final long unscaledToUnscaled(DecimalRounding rounding, int targetScale, DecimalArithmetic arith, long uDecimal) {
+		final int scaleDiff = getScaleDiff(targetScale, arith.getScale());
+		try {
+			return Pow10.multiplyByPowerOf10Checked(arith, rounding, uDecimal, scaleDiff);
+		} catch (ArithmeticException e) {
+			throw toIllegalArgumentExceptionOrRethrow(e, uDecimal, arith.getScale(), targetScale);
+		}
+	}
+
 	private static IllegalArgumentException toIllegalArgumentExceptionOrRethrow(ArithmeticException e, long unscaledValue, int sourceScale, int targetScale) {
-		Exceptions.rethrowIfRoundingNecessary(e); 
+		Exceptions.rethrowIfRoundingNecessary(e);
 		if (targetScale > 0) {
-			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue + " from scale " + sourceScale + " to scale " + targetScale);
+			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue
+					+ " from scale " + sourceScale + " to scale " + targetScale);
 		} else {
-			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue + " from scale " + sourceScale + " to long");
+			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue
+					+ " from scale " + sourceScale + " to long");
 		}
 	}
 

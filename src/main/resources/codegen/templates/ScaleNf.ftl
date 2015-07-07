@@ -175,6 +175,11 @@ public enum Scale${scale}f implements ScaleMetrics {
 	}
 
 	@Override
+	public String toString(long value) {
+		return DEFAULT_ARITHMETIC.toString(value);
+	}
+
+	@Override
 	public final DecimalArithmetic getDefaultArithmetic() {
 		return DEFAULT_ARITHMETIC;
 	}

@@ -215,6 +215,22 @@ public interface DecimalArithmetic {
 	int compare(long uDecimal1, long uDecimal2);
 
 	/**
+	 * Compares two unscaled decimal values numerically. Note that scale of the
+	 * first operand is determined by this arithmetic's {@link #getScale()
+	 * scale} whereas the scale of the second {@code unscaled} value is
+	 * explicitly specified by the {@code scale} argument.
+	 * 
+	 * @param uDecimal
+	 *            the first unscaled decimal to compare
+	 * @param uDecimal2
+	 *            the second unscaled decimal to compare
+	 * @return the value {@code 0} if {@code unscaled1 == unscaled2}; a value
+	 *         less than {@code 0} if {@code unscaled1 < unscaled2}; and a value
+	 *         greater than {@code 0} if {@code unscaled1 > unscaled2}
+	 */
+	int compareToUnscaled(long uDecimal, long unscaled, int scale);
+
+	/**
 	 * Returns an unscaled decimal whose value is
 	 * {@code (uDecimal1 + uDecimal2)}.
 	 * 
@@ -243,6 +259,31 @@ public interface DecimalArithmetic {
 	 *             overflow mode} is set to throw an exception
 	 */
 	long addLong(long uDecimal, long lValue);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * <code>(uDecimal + unscaled * 10<sup>-scale</sup>)</code>. If rounding
+	 * must be performed, this arithmetic's {@link #getRoundingMode() rounding
+	 * mode} is applied. Note that scale of the first operand is determined by
+	 * this arithmetic's {@link #getScale() scale} whereas the scale of the
+	 * second {@code unscaled} value is explicitly specified by the
+	 * {@code scale} argument.
+	 * 
+	 * @param uDecimal
+	 *            unscaled decimal value to be added to
+	 * @param unscaled
+	 *            unscaled value to add
+	 * @param scale
+	 *            scale associated with the {@code unscaled} value
+	 * @return <code>(uDecimal + unscaled * 10<sup>-scale</sup>)</code> as
+	 *         unscaled decimal
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long addUnscaled(long uDecimal, long unscaled, int scale);
 
 	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimalMinuend -
@@ -276,6 +317,31 @@ public interface DecimalArithmetic {
 
 	/**
 	 * Returns an unscaled decimal whose value is
+	 * <code>(uDecimal - unscaled * 10<sup>-scale</sup>)</code>. If rounding
+	 * must be performed, this arithmetic's {@link #getRoundingMode() rounding
+	 * mode} is applied. Note that scale of the first operand is determined by
+	 * this arithmetic's {@link #getScale() scale} whereas the scale of the
+	 * second {@code unscaled} value is explicitly specified by the
+	 * {@code scale} argument.
+	 * 
+	 * @param uDecimal
+	 *            unscaled decimal value to be subtracted from
+	 * @param unscaled
+	 *            unscaled value to subtract
+	 * @param scale
+	 *            scale associated with the {@code unscaled} value
+	 * @return <code>(uDecimal - unscaled * 10<sup>-scale</sup>)</code> as
+	 *         unscaled decimal
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long subtractUnscaled(long uDecimal, long unscaled, int scale);
+
+	/**
+	 * Returns an unscaled decimal whose value is
 	 * {@code (uDecimal1 * uDecimal2)}.
 	 * 
 	 * @param uDecimal1
@@ -304,6 +370,31 @@ public interface DecimalArithmetic {
 	 *             overflow mode} is set to throw an exception
 	 */
 	long multiplyByLong(long uDecimal, long lValue);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * <code>(uDecimal * (unscaled * 10<sup>-scale</sup>))</code>. If rounding
+	 * must be performed, this arithmetic's {@link #getRoundingMode() rounding
+	 * mode} is applied. Note that scale of the first operand is determined by
+	 * this arithmetic's {@link #getScale() scale} whereas the scale of the
+	 * second {@code unscaled} value is explicitly specified by the
+	 * {@code scale} argument.
+	 * 
+	 * @param uDecimal
+	 *            unscaled decimal value to be multiplied
+	 * @param unscaled
+	 *            unscaled value to be multiplied
+	 * @param scale
+	 *            scale associated with the {@code unscaled} value
+	 * @return <code>(uDecimal * (unscaled * 10<sup>-scale</sup>))</code> as
+	 *         unscaled decimal
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary or if an overflow occurs and the
+	 *             {@link #getOverflowMode() overflow mode} is set to throw an
+	 *             exception
+	 */
+	long multiplyByUnscaled(long uDecimal, long unscaled, int scale);
 
 	/**
 	 * Returns an unscaled decimal whose value is
@@ -365,6 +456,31 @@ public interface DecimalArithmetic {
 	 *             exception
 	 */
 	long divideByLong(long uDecimalDividend, long lDivisor);
+
+	/**
+	 * Returns an unscaled decimal whose value is
+	 * <code>(uDecimal / (unscaled * 10<sup>-scale</sup>))</code>. If rounding
+	 * must be performed, this arithmetic's {@link #getRoundingMode() rounding
+	 * mode} is applied. Note that scale of the first operand is determined by
+	 * this arithmetic's {@link #getScale() scale} whereas the scale of the
+	 * second {@code unscaled} value is explicitly specified by the
+	 * {@code scale} argument.
+	 * 
+	 * @param uDecimal
+	 *            value to be divided.
+	 * @param unscaled
+	 *            unscaled value by which the dividend is to be divided.
+	 * @param scale
+	 *            scale associated with the {@code unscaled} value
+	 * @return <code>(uDecimal / (unscaled * 10<sup>-scale</sup>))</code> as
+	 *         unscaled decimal
+	 * @throws ArithmeticException
+	 *             if {@code uDecimal} is zero, if {@link #getRoundingMode()
+	 *             rounding mode} is UNNECESSARY and rounding is necessary or if
+	 *             an overflow occurs and the {@link #getOverflowMode() overflow
+	 *             mode} is set to throw an exception
+	 */
+	long divideByUnscaled(long uDecimal, long unscaled, int scale);
 
 	/**
 	 * Returns an unscaled decimal whose value is
@@ -697,11 +813,26 @@ public interface DecimalArithmetic {
 	 * rounding mode} is applied if rounding is necessary.
 	 * 
 	 * @param uDecimal
-	 *            the unscaled decimal value convert into a long value
+	 *            the unscaled decimal value to convert into a long value
 	 * @return the {@code uDecimal} value converted into a long value, possibly
 	 *         rounded or truncated
 	 */
 	long toLong(long uDecimal);
+
+	/**
+	 * Converts the specified unscaled decimal value {@code uDecimal} into an
+	 * unscaled value of the given scale. The arithmetic's
+	 * {@link #getRoundingMode() rounding mode} is applied if rounding is
+	 * necessary.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value to convert into a long value
+	 * @param scale
+	 *            the target scale for the result value
+	 * @return the {@code uDecimal} value converted into an unscaled value of
+	 *         the specified scale, possibly rounded or truncated
+	 */
+	long toUnscaled(long uDecimal, int scale);
 
 	/**
 	 * Converts the specified unscaled decimal value {@code uDecimal} into a
@@ -709,7 +840,7 @@ public interface DecimalArithmetic {
 	 * rounding mode} is applied if rounding is necessary.
 	 * 
 	 * @param uDecimal
-	 *            the unscaled decimal value convert into a float value
+	 *            the unscaled decimal value to convert into a float value
 	 * @return the {@code uDecimal} value converted into a float value, possibly
 	 *         rounded or truncated
 	 */
@@ -721,7 +852,7 @@ public interface DecimalArithmetic {
 	 * rounding mode} is applied if rounding is necessary.
 	 * 
 	 * @param uDecimal
-	 *            the unscaled decimal value convert into a double value
+	 *            the unscaled decimal value to convert into a double value
 	 * @return the {@code uDecimal} value converted into a double value,
 	 *         possibly rounded or truncated
 	 */
@@ -737,8 +868,8 @@ public interface DecimalArithmetic {
 	 * result are allocated during the conversion.
 	 * 
 	 * @param uDecimal
-	 *            the unscaled decimal value convert into a {@code BigDecimal}
-	 *            value
+	 *            the unscaled decimal value to convert into a
+	 *            {@code BigDecimal} value
 	 * @return the {@code uDecimal} value converted into a {@code BigDecimal}
 	 *         value
 	 */
@@ -755,8 +886,8 @@ public interface DecimalArithmetic {
 	 * conversion.
 	 * 
 	 * @param uDecimal
-	 *            the unscaled decimal value convert into a {@code BigDecimal}
-	 *            value
+	 *            the unscaled decimal value to convert into a
+	 *            {@code BigDecimal} value
 	 * @param scale
 	 *            the scale to use for the resulting {@code BigDecimal} value
 	 * @return the {@code uDecimal} value converted into a {@code BigDecimal}
@@ -778,7 +909,7 @@ public interface DecimalArithmetic {
 	 * may become garbage if the thread becomes garbage).
 	 * 
 	 * @param uDecimal
-	 *            the unscaled decimal value convert into a {@code String}
+	 *            the unscaled decimal value to convert into a {@code String}
 	 * @return the {@code uDecimal} value as into a {@code String}
 	 */
 	String toString(long uDecimal);

@@ -84,6 +84,11 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 	public final int compare(long uDecimal1, long uDecimal2) {
 		return Long.compare(uDecimal1, uDecimal2);
 	}
+	
+	@Override
+	public final int compareToUnscaled(long uDecimal, long unscaled, int scale) {
+		return Compare.compareUnscaled(uDecimal, getScale(), unscaled, scale);
+	}
 
 	@Override
 	public final long fromBigInteger(BigInteger value) {

@@ -44,13 +44,33 @@ public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedSca
 	}
 
 	@Override
+	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
+		return Checked.add(this, uDecimal, UnscaledConversion.unscaledToLong(this, unscaled, scale));
+	}
+
+	@Override
+	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
+		return Checked.subtract(this, uDecimal, UnscaledConversion.unscaledToLong(this, unscaled, scale));
+	}
+
+	@Override
+	public final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Mul.multiplyByUnscaledChecked(this, uDecimal, unscaled, scale);
+	}
+
+	@Override
+	public final long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Div.divideByUnscaledChecked(this, uDecimal, unscaled, scale);
+	}
+
+	@Override
 	public final long multiply(long uDecimal1, long uDecimal2) {
 		return Mul.multiplyChecked(this, uDecimal1, uDecimal2);
 	}
 
 	@Override
 	public final long square(long uDecimal) {
-		return Mul.squareChecked(this, uDecimal);
+		return Square.squareChecked(this, uDecimal);
 	}
 
 	@Override
@@ -143,6 +163,10 @@ public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedSca
 		return DoubleConversion.unscaledToDouble(this, uDecimal);
 	}
 
+	@Override
+	public final long toUnscaled(long uDecimal, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(scale, this, uDecimal);
+	}
 	@Override
 	public final long parse(String value) {
 		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);

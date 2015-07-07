@@ -70,6 +70,26 @@ public final class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScale
 	}
 
 	@Override
+	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
+		return Checked.add(this, uDecimal, UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale));
+	}
+
+	@Override
+	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
+		return Checked.subtract(this, uDecimal, UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale));
+	}
+
+	@Override
+	public final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Mul.multiplyByUnscaledChecked(this, rounding, uDecimal, unscaled, scale);
+	}
+
+	@Override
+	public final long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Div.divideByUnscaledChecked(this, rounding, uDecimal, unscaled, scale);
+	}
+
+	@Override
 	public final long avg(long uDecimal1, long uDecimal2) {
 		return Avg.avg(this, rounding, uDecimal1, uDecimal2);
 	}
@@ -106,7 +126,7 @@ public final class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScale
 
 	@Override
 	public final long square(long uDecimal) {
-		return Mul.squareChecked(this, rounding, uDecimal);
+		return Square.squareChecked(this, rounding, uDecimal);
 	}
 
 	@Override
@@ -167,6 +187,11 @@ public final class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScale
 	@Override
 	public final double toDouble(long uDecimal) {
 		return DoubleConversion.unscaledToDouble(this, rounding, uDecimal);
+	}
+
+	@Override
+	public final long toUnscaled(long uDecimal, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(rounding, scale, this, uDecimal);
 	}
 
 	@Override

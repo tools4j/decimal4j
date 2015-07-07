@@ -184,6 +184,13 @@ final class Checked {
 		return result;
 	}
 
+	public static final long divideLong(long lDividend, long lDivisor) {
+		if (lDivisor == -1 & lDividend == Long.MIN_VALUE) {
+			throw new ArithmeticException("Overflow: " + lDividend + " / " + lDivisor + " = " + Long.MIN_VALUE);
+		}
+		return lDividend / lDivisor;
+	}
+
 	public static final long divideByLong(DecimalArithmetic arith, long uDecimalDividend, long lDivisor) {
 		if (lDivisor == 0) {
 			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + lDivisor);

@@ -34,8 +34,7 @@ import org.decimal4j.truncate.DecimalRounding;
  * {@link Scale0f}, that is, for longs. If an operation leads to an overflow the
  * result is silently truncated.
  */
-public final class UncheckedScale0fTruncatingArithmetic extends
-		AbstractUncheckedScale0fArithmetic {
+public final class UncheckedScale0fTruncatingArithmetic extends AbstractUncheckedScale0fArithmetic {
 
 	/**
 	 * The singleton instance.
@@ -46,10 +45,20 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 	public final RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
 	}
+	
+	@Override
+	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
+		return uDecimal + UnscaledConversion.unscaledToLong(this, unscaled, scale);
+	}
 
 	@Override
-	public final long sqrt(long uDecimal) {
-		return Sqrt.sqrtLong(uDecimal);
+	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
+		return uDecimal + UnscaledConversion.unscaledToLong(this, unscaled, scale);
+	}
+
+	@Override
+	public final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Mul.multiplyByUnscaled(uDecimal, unscaled, scale);
 	}
 
 	@Override
@@ -60,6 +69,11 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 	@Override
 	public final long divideByLong(long uDecimalDividend, long lDivisor) {
 		return uDecimalDividend / lDivisor;
+	}
+	
+	@Override
+	public long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+		return Div.divideByUnscaled(uDecimal, unscaled, scale);
 	}
 
 	@Override
@@ -75,6 +89,11 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 	@Override
 	public final long invert(long uDecimal) {
 		return Invert.invertLong(uDecimal);
+	}
+
+	@Override
+	public final long sqrt(long uDecimal) {
+		return Sqrt.sqrtLong(uDecimal);
 	}
 
 	@Override
@@ -100,6 +119,11 @@ public final class UncheckedScale0fTruncatingArithmetic extends
 	@Override
 	public final long round(long uDecimal, int precision) {
 		return Round.round(this, uDecimal, precision);
+	}
+
+	@Override
+	public long toUnscaled(long uDecimal, int scale) {
+		return UnscaledConversion.unscaledToUnscaled(scale, this, uDecimal);
 	}
 
 	@Override
