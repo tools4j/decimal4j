@@ -26,8 +26,6 @@ package org.decimal4j.arithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
-
-
 /**
  * Contains static methods to compare unscaled decimals of different scales.
  */
@@ -36,11 +34,17 @@ final class Compare {
 	/**
 	 * Compares the two unscaled values with possibly different scales.
 	 * 
-	 * @param unscaled		the first unscaled value to compare
-	 * @param scale			the scale of the first value
-	 * @param otherUnscaled	the second unscaled value to compare
-	 * @param otherScale	the scale of the second value
-	 * @return 
+	 * @param unscaled
+	 *            the first unscaled value to compare
+	 * @param scale
+	 *            the scale of the first value
+	 * @param otherUnscaled
+	 *            the second unscaled value to compare
+	 * @param otherScale
+	 *            the scale of the second value
+	 * @return the value {@code 0} if {@code unscaled1 == unscaled2}; a value
+	 *         less than {@code 0} if {@code unscaled1 < unscaled2}; and a value
+	 *         greater than {@code 0} if {@code unscaled1 > unscaled2}
 	 */
 	public static final int compareUnscaled(long unscaled, int scale, long otherUnscaled, int otherScale) {
 		if (scale == otherScale) {

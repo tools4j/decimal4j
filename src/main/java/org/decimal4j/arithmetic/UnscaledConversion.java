@@ -57,8 +57,8 @@ final class UnscaledConversion {
 	 * @param scale
 	 *            the scale of {@code unscaledValue}
 	 * @return a long value rounded down if necessary
-	 * @throw IllegalArgumentException if the conversion cannot be performed due
-	 *        to overflow
+	 * @throws IllegalArgumentException
+	 *             if the conversion cannot be performed due to overflow
 	 */
 	public static final long unscaledToLong(DecimalArithmetic arith, long unscaledValue, int scale) {
 		try {
@@ -83,8 +83,8 @@ final class UnscaledConversion {
 	 * @param scale
 	 *            the scale of {@code unscaledValue}
 	 * @return long value rounded with given rounding if necessary
-	 * @throw IllegalArgumentException if the conversion cannot be performed due
-	 *        to overflow
+	 * @throws IllegalArgumentException
+	 *             if the conversion cannot be performed due to overflow
 	 * @throws ArithmeticException
 	 *             if rounding is necessary and {@code rounding==UNNECESSARY}
 	 */
@@ -108,8 +108,8 @@ final class UnscaledConversion {
 	 * @param scale
 	 *            the scale of {@code unscaledValue}
 	 * @return the unscaled value in the arithmetic's scale
-	 * @throw IllegalArgumentException if the conversion cannot be performed due
-	 *        to overflow
+	 * @throws IllegalArgumentException
+	 *             if the conversion cannot be performed due to overflow
 	 */
 	public static final long unscaledToUnscaled(DecimalArithmetic arith, long unscaledValue, int scale) {
 		final int scaleDiff = getScaleDiff(arith.getScaleMetrics(), scale);
@@ -135,8 +135,8 @@ final class UnscaledConversion {
 	 * @param scale
 	 *            the scale of {@code unscaledValue}
 	 * @return the unscaled value in the arithmetic's scale
-	 * @throw IllegalArgumentException if the conversion cannot be performed due
-	 *        to overflow
+	 * @throws IllegalArgumentException
+	 *             if the conversion cannot be performed due to overflow
 	 * @throws ArithmeticException
 	 *             if rounding is necessary and {@code rounding==UNNECESSARY}
 	 */
@@ -162,8 +162,8 @@ final class UnscaledConversion {
 	 * @param uDecimal
 	 *            the unscaled value to convert
 	 * @return the unscaled value with {@code targetScale}
-	 * @throw IllegalArgumentException if the conversion cannot be performed due
-	 *        to overflow
+	 * @throws IllegalArgumentException
+	 *             if the conversion cannot be performed due to overflow
 	 */
 	public static final long unscaledToUnscaled(int targetScale, DecimalArithmetic arith, long uDecimal) {
 		final int scaleDiff = getScaleDiff(targetScale, arith.getScale());
@@ -191,8 +191,8 @@ final class UnscaledConversion {
 	 * @param uDecimal
 	 *            the unscaled value to convert
 	 * @return the unscaled value with {@code targetScale}
-	 * @throw IllegalArgumentException if the conversion cannot be performed due
-	 *        to overflow
+	 * @throws IllegalArgumentException
+	 *             if the conversion cannot be performed due to overflow
 	 */
 	public static final long unscaledToUnscaled(DecimalRounding rounding, int targetScale, DecimalArithmetic arith, long uDecimal) {
 		final int scaleDiff = getScaleDiff(targetScale, arith.getScale());

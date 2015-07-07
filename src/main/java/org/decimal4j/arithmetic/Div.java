@@ -194,6 +194,8 @@ final class Div {
 	 * Calculates unchecked division by an unscaled value with the given scale
 	 * without rounding.
 	 * 
+	 * @param rounding
+	 *            the rounding to apply
 	 * @param uDecimalDividend
 	 *            the unscaled decimal dividend
 	 * @param unscaledDivisor

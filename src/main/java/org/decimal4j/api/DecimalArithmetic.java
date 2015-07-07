@@ -222,8 +222,10 @@ public interface DecimalArithmetic {
 	 * 
 	 * @param uDecimal
 	 *            the first unscaled decimal to compare
-	 * @param uDecimal2
+	 * @param unscaled
 	 *            the second unscaled decimal to compare
+	 * @param scale
+	 *            the scale of {@code unscaled}
 	 * @return the value {@code 0} if {@code unscaled1 == unscaled2}; a value
 	 *         less than {@code 0} if {@code unscaled1 < unscaled2}; and a value
 	 *         greater than {@code 0} if {@code unscaled1 > unscaled2}
@@ -746,9 +748,13 @@ public interface DecimalArithmetic {
 	 * @param value
 	 *            the value to convert
 	 * @return the unscaled decimal representing the same value as the given big
-	 *         integer value, or if an overflow occurs and the
-	 *         {@link #getOverflowMode() overflow mode} is set to throw an
-	 *         exception
+	 *         integer value
+	 * @throws IllegalArgumentException
+	 *             if the big decimal value cannot be converted to an unscaled
+	 *             decimal because it would overflow
+	 * @throws ArithmeticException
+	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY
+	 *             and rounding is necessary
 	 */
 	long fromBigInteger(BigInteger value);
 
@@ -760,6 +766,8 @@ public interface DecimalArithmetic {
 	 * 
 	 * @param value
 	 *            the value to convert
+	 * @return the unscaled decimal representing the same value as the given big
+	 *         decimal value
 	 * @throws IllegalArgumentException
 	 *             if the big decimal value cannot be converted to an unscaled
 	 *             decimal because it would overflow
