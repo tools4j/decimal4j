@@ -47,7 +47,7 @@ final class Div {
 	 *            the long divisor
 	 * @return the division result with rounding and no overflow checks
 	 */
-	public static long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
+	public static final long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
 		final long quotient = uDecimalDividend / lDivisor;
 		final long remainder = uDecimalDividend - quotient * lDivisor;
 		return quotient + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
@@ -66,7 +66,7 @@ final class Div {
 	 *            the long divisor
 	 * @return the division result with rounding and overflow checks
 	 */
-	public static long divideByLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
+	public static final long divideByLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
 		if (lDivisor == 0) {
 			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + lDivisor);
 		}
@@ -94,7 +94,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result without rounding and without overflow checks.
 	 */
-	public static long divide(DecimalArithmetic arith, long uDecimalDividend, long uDecimalDivisor) {
+	public static final long divide(DecimalArithmetic arith, long uDecimalDividend, long uDecimalDivisor) {
 		// special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
 		if (special != null) {
@@ -121,7 +121,7 @@ final class Div {
 	 *            the scale of the divisor
 	 * @return the division result without rounding and without overflow checks
 	 */
-	public static long divideByUnscaled(long uDecimalDividend, long unscaledDivisor, int scale) {
+	public static final long divideByUnscaled(long uDecimalDividend, long unscaledDivisor, int scale) {
 		if (unscaledDivisor == 0 | scale == 0) {
 			return uDecimalDividend / unscaledDivisor;
 		} else if (scale < 0) {
@@ -145,7 +145,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result without rounding and without overflow checks.
 	 */
-	private static long divide(long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
+	private static final long divide(long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
 		// WE WANT: uDecimalDividend * 10^scale / unscaledDivisor
 		if (divisorMetrics.isValidIntegerValue(uDecimalDividend)) {
 			// just do it, multiplication result fits in long
@@ -175,7 +175,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result with rounding and without overflow checks
 	 */
-	public static long divide(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	public static final long divide(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		// special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
 		if (special != null) {
@@ -204,7 +204,7 @@ final class Div {
 	 *            the scale of the divisor
 	 * @return the division result without rounding and without overflow checks
 	 */
-	public static long divideByUnscaled(DecimalRounding rounding, long uDecimalDividend, long unscaledDivisor, int scale) {
+	public static final long divideByUnscaled(DecimalRounding rounding, long uDecimalDividend, long unscaledDivisor, int scale) {
 		if (unscaledDivisor == 0 | scale == 0) {
 			return divideByLong(rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
@@ -255,7 +255,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result with rounding and without overflow checks
 	 */
-	private static long divide(DecimalRounding rounding, long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
+	private static final long divide(DecimalRounding rounding, long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
 		if (divisorMetrics.isValidIntegerValue(uDecimalDividend)) {
 			// just do it, multiplication result fits in long
 			final long scaledDividend = divisorMetrics.multiplyByScaleFactor(uDecimalDividend);
@@ -289,7 +289,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result without rounding and with overflow checks
 	 */
-	public static long divideChecked(DecimalArithmetic arith, long uDecimalDividend, long uDecimalDivisor) {
+	public static final long divideChecked(DecimalArithmetic arith, long uDecimalDividend, long uDecimalDivisor) {
 		// special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
 		if (special != null) {
@@ -318,7 +318,7 @@ final class Div {
 	 *            the scale of the divisor
 	 * @return the division result without rounding and with overflow checks
 	 */
-	public static long divideByUnscaledChecked(DecimalArithmetic arith, long uDecimalDividend, long unscaledDivisor, int scale) {
+	public static final long divideByUnscaledChecked(DecimalArithmetic arith, long uDecimalDividend, long unscaledDivisor, int scale) {
 		if (uDecimalDividend == 0 & unscaledDivisor != 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -347,7 +347,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result without rounding and with overflow checks
 	 */
-	private static long divideChecked(ScaleMetrics dividendMetrics, long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
+	private static final long divideChecked(ScaleMetrics dividendMetrics, long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
 		try {
 			// WE WANT: uDecimalDividend * 10^divisorScale / unscaledDivisor
 			if (divisorMetrics.isValidIntegerValue(uDecimalDividend)) {
@@ -387,7 +387,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result with rounding and with overflow checks
 	 */
-	public static long divideChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	public static final long divideChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		// special cases first
 		final SpecialDivisionResult special = SpecialDivisionResult.getFor(arith, uDecimalDividend, uDecimalDivisor);
 		if (special != null) {
@@ -418,7 +418,7 @@ final class Div {
 	 *            the scale of the divisor
 	 * @return the division result without rounding and with overflow checks
 	 */
-	public static long divideByUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long unscaledDivisor, int scale) {
+	public static final long divideByUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long unscaledDivisor, int scale) {
 		if (uDecimalDividend == 0 & unscaledDivisor != 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -473,7 +473,7 @@ final class Div {
 	 *            the unscaled decimal divisor
 	 * @return the division result with rounding and with overflow checks
 	 */
-	private static long divideChecked(DecimalRounding rounding, ScaleMetrics dividendMetrics, long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
+	private static final long divideChecked(DecimalRounding rounding, ScaleMetrics dividendMetrics, long uDecimalDividend, ScaleMetrics divisorMetrics, long uDecimalDivisor) {
 		try {
 			// WE WANT: uDecimalDividend * 10^divisorScale / unscaledDivisor
 			if (divisorMetrics.isValidIntegerValue(uDecimalDividend)) {
@@ -518,7 +518,7 @@ final class Div {
 	 * @param uDecimalDivisor	the divisor
 	 * @return the unscaled decimal result of the division, rounded if necessary and overflow checked if 
 	 */
-	private static long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
+	private static final long scaleTo128divBy64(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimalDividend, long uDecimalDivisor) {
 		final boolean negative = (uDecimalDividend ^ uDecimalDivisor) < 0;
 		final long absDividend = Math.abs(uDecimalDividend);
 		final long absDivisor = Math.abs(uDecimalDivisor);
@@ -580,7 +580,7 @@ final class Div {
 	 *            rounding to apply, or null to truncate result
 	 * @return the signed quotient, rounded if {@code rounding != null}
 	 */
-	static long div128by64(final DecimalRounding rounding, final boolean neg, final long u1, final long u0, final long v0) {
+	static final long div128by64(final DecimalRounding rounding, final boolean neg, final long u1, final long u0, final long v0) {
 		final long q, r;
 
 		final long un1, un0, vn1, vn0, un32, un21, un10;
@@ -614,7 +614,7 @@ final class Div {
 		return (neg ? -q : q) + inc;
 	}
 
-	private static long div128by64part(final long unCB, final long unA, final long vn1, final long vn0) {
+	private static final long div128by64part(final long unCB, final long unA, final long vn1, final long vn0) {
 		// quotient and reminder, first guess
 		long q = unsignedDiv64by32(unCB, vn1);
 		long rhat = unCB - q * vn1;
@@ -659,7 +659,7 @@ final class Div {
 	 *             if divisor is 0
 	 * 
 	 */
-	private static long unsignedDiv64by32(long dividend, long divisor) {
+	private static final long unsignedDiv64by32(long dividend, long divisor) {
 		// Optimization - use signed division if dividend < 2^63
 		if (dividend >= 0) {
 			return dividend / divisor;

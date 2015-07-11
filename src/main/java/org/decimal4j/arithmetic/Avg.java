@@ -31,12 +31,12 @@ import org.decimal4j.truncate.DecimalRounding;
  */
 final class Avg {
 
-	public static long avg(long a, long b) {
+	public static final long avg(long a, long b) {
 		final long xor = a ^ b;
 		final long floor = (a & b) + (xor >> 1);
 		return floor + ((floor >>> 63) & xor);
 	}
-	public static long avg(DecimalArithmetic arith, DecimalRounding rounding, long a, long b) {
+	public static final long avg(DecimalArithmetic arith, DecimalRounding rounding, long a, long b) {
 		final long xor = a ^ b;
 		switch (rounding) {
 		case FLOOR: {

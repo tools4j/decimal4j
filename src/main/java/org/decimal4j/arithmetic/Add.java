@@ -46,7 +46,7 @@ final class Add {
 	 *            the scale of the second value
 	 * @return the addition result without rounding and without overflow checks
 	 */
-	public static long addLongUnscaled(long lValue, long unscaled, int scale) {
+	public static final long addLongUnscaled(long lValue, long unscaled, int scale) {
 		return addUnscaledUnscaled(Scale0f.INSTANCE, lValue, unscaled, scale);
 	}
 
@@ -64,7 +64,7 @@ final class Add {
 	 *            the scale of the second value
 	 * @return the addition result with rounding but without overflow checks
 	 */
-	public static long addLongUnscaled(DecimalRounding rounding, long lValue, long unscaled, int scale) {
+	public static final long addLongUnscaled(DecimalRounding rounding, long lValue, long unscaled, int scale) {
 		return addUnscaledUnscaled(Scale0f.INSTANCE, rounding, lValue, unscaled, scale);
 	}
 
@@ -79,7 +79,7 @@ final class Add {
 	 *            the long value
 	 * @return the addition result without overflow checks
 	 */
-	public static long addUnscaledLong(DecimalArithmetic arith, long uDecimal, long lValue) {
+	public static final long addUnscaledLong(DecimalArithmetic arith, long uDecimal, long lValue) {
 		return uDecimal + Pow10.multiplyByPowerOf10(lValue, arith.getScale());
 	}
 
@@ -94,7 +94,7 @@ final class Add {
 	 *            the long value
 	 * @return the addition result performed with overflow checks
 	 */
-	public static long addUnscaledLongChecked(DecimalArithmetic arith, long uDecimal, long lValue) {
+	public static final long addUnscaledLongChecked(DecimalArithmetic arith, long uDecimal, long lValue) {
 		final int scale = arith.getScale();
 		if (lValue == 0 | scale == 0) {
 			return arith.add(uDecimal, lValue);
@@ -121,7 +121,7 @@ final class Add {
 	 *            the scale of the second value
 	 * @return the addition result without rounding and without overflow checks
 	 */
-	public static long addUnscaledUnscaled(ScaleMetrics scaleMetrics, long uDecimal, long unscaled, int scale) {
+	public static final long addUnscaledUnscaled(ScaleMetrics scaleMetrics, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal + unscaled;
@@ -150,7 +150,7 @@ final class Add {
 	 *            the scale of the second value
 	 * @return the addition result with rounding but without overflow checks
 	 */
-	public static long addUnscaledUnscaled(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+	public static final long addUnscaledUnscaled(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal + unscaled;
@@ -178,7 +178,7 @@ final class Add {
 	 *            the scale of the second value
 	 * @return the addition result without rounding but with overflow checks
 	 */
-	public static long addUnscaledUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
+	public static final long addUnscaledUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.add(uDecimal, unscaled);
@@ -215,7 +215,7 @@ final class Add {
 	 *            the scale of the second value
 	 * @return the addition result with rounding and overflow checks
 	 */
-	public static long addUnscaledUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+	public static final long addUnscaledUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.add(uDecimal, unscaled);
@@ -248,7 +248,7 @@ final class Add {
 	 * @return the addition result without rounding and without overflow checks
 	 */
 	//PRECONDITION: scaleDiff > 0
-	private static long addForPositiveScaleDiff(long uDecimal, long unscaled, int scaleDiff) {
+	private static final long addForPositiveScaleDiff(long uDecimal, long unscaled, int scaleDiff) {
 		//scaleDiff > 0
 		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scaleDiff);
 		final long trunc = diffMetrics.divideByScaleFactor(unscaled);
@@ -275,7 +275,7 @@ final class Add {
 	 * @return the addition result with rounding but without overflow checks
 	 */
 	//PRECONDITION: scaleDiff > 0
-	private static long addForPositiveScaleDiff(DecimalRounding rounding, long uDecimal, long unscaled, int scaleDiff) {
+	private static final long addForPositiveScaleDiff(DecimalRounding rounding, long uDecimal, long unscaled, int scaleDiff) {
 		//scaleDiff > 0
 		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scaleDiff);
 		final long trunc = diffMetrics.divideByScaleFactor(unscaled);

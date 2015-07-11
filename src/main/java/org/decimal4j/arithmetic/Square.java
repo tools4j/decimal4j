@@ -38,7 +38,7 @@ final class Square {
 	static final long SQRT_MAX_VALUE = 3037000499L;
 
 	//necessary and sufficient condition that square fits in long
-	private static boolean doesSquareFitInLong(long uDecimal) {
+	private static final boolean doesSquareFitInLong(long uDecimal) {
 		return -SQRT_MAX_VALUE <= uDecimal & uDecimal <= SQRT_MAX_VALUE;
 	}
 	
@@ -51,7 +51,7 @@ final class Square {
 	 *            the unscaled decimal value to square
 	 * @return the square result without rounding
 	 */
-	public static long square(ScaleMetrics scaleMetrics, long uDecimal) {
+	public static final long square(ScaleMetrics scaleMetrics, long uDecimal) {
 		if (doesSquareFitInLong(uDecimal)) {
 			//square fits in long, just do it
 			return scaleMetrics.divideByScaleFactor(uDecimal * uDecimal);
@@ -90,7 +90,7 @@ final class Square {
 	 *            the unscaled decimal value to square
 	 * @return the square result with rounding
 	 */
-	public static long square(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
+	public static final long square(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
 		if (doesSquareFitInLong(uDecimal)) {
 			//square fits in long, just do it
 			return square32(scaleMetrics, rounding, uDecimal);
@@ -129,7 +129,7 @@ final class Square {
 	}
 
 	//PRECONDITION: uDecimal <= SQRT_MAX_VALUE
-	private static long square32(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
+	private static final long square32(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
 		final long u2 = uDecimal * uDecimal;
 		final long u2d = scaleMetrics.divideByScaleFactor(u2);
 		final long u2r = u2 - scaleMetrics.multiplyByScaleFactor(u2d);
@@ -137,7 +137,7 @@ final class Square {
 	}
 	
 	// TODO merge with other versions
-	public static long squareChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
+	public static final long squareChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		if (doesSquareFitInLong(uDecimal)) {
 			//square fits in long, just do it
@@ -202,7 +202,7 @@ final class Square {
 		}
 	}
 
-	public static long squareChecked(DecimalArithmetic arith, long uDecimal) {
+	public static final long squareChecked(DecimalArithmetic arith, long uDecimal) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		if (doesSquareFitInLong(uDecimal)) {
 			//square fits in long, just do it

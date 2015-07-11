@@ -33,7 +33,7 @@ import org.decimal4j.truncate.TruncatedPart;
  */
 final class Shift {
 
-	public static long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
+	public static final long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
 		if (positions >= 0) {
 			return positions < Long.SIZE ? uDecimal << positions : 0; 
 		}
@@ -41,7 +41,7 @@ final class Shift {
 		return shiftRight(rounding, uDecimal, -positions > 0 ? -positions : Integer.MAX_VALUE);
 	}
 
-	public static long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
+	public static final long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
 			return uDecimal;
 		}
@@ -63,7 +63,7 @@ final class Shift {
 		return positions > -Long.SIZE ? uDecimal << -positions : 0; 
 	}
 
-	public static long shiftLeftChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int positions) {
+	public static final long shiftLeftChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int positions) {
 		if (positions >= 0) {
 			if (uDecimal == 0 | positions == 0) {
 				return uDecimal;
@@ -90,7 +90,7 @@ final class Shift {
 	}
 
 
-	public static long shiftRightChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int positions) {
+	public static final long shiftRightChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0) {
 			return 0;
 		}

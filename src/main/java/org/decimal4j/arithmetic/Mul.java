@@ -37,7 +37,7 @@ import org.decimal4j.truncate.DecimalRounding;
 final class Mul {
 
 	//sufficient (but not necessary) condition that product fits in long
-	private static boolean doesProductFitInLong(long uDecimal1, long uDecimal2) {
+	private static final boolean doesProductFitInLong(long uDecimal1, long uDecimal2) {
 		if (-SQRT_MAX_VALUE <= uDecimal1 & uDecimal1 <= SQRT_MAX_VALUE & -SQRT_MAX_VALUE <= uDecimal2 & uDecimal2 <= SQRT_MAX_VALUE) {
 			return true;
 		}
@@ -59,7 +59,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result without rounding
 	 */
-	public static long multiply(DecimalArithmetic arith, long uDecimal1, long uDecimal2) {
+	public static final long multiply(DecimalArithmetic arith, long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
@@ -79,7 +79,7 @@ final class Mul {
 	 *            the scale of the second factor
 	 * @return the multiplication result without rounding and without overflow checks
 	 */
-	public static long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+	public static final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -105,7 +105,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result without rounding
 	 */
-	private static long multiply(long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
+	private static final long multiply(long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
 		if (doesProductFitInLong(uDecimal1, uDecimal2)) {
 			//product fits in long, just do it
 			return scaleMetrics2.divideByScaleFactor(uDecimal1 * uDecimal2);
@@ -153,7 +153,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result with rounding
 	 */
-	public static long multiply(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
+	public static final long multiply(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
@@ -175,7 +175,7 @@ final class Mul {
 	 *            the scale of the second factor
 	 * @return the multiplication result with rounding and without overflow checks
 	 */
-	public static long multiplyByUnscaled(DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+	public static final long multiplyByUnscaled(DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -203,7 +203,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result with rounding and without overflow checks
 	 */
-	private static long multiply(DecimalRounding rounding, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
+	private static final long multiply(DecimalRounding rounding, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
 		if (doesProductFitInLong(uDecimal1, uDecimal2)) {
 			//product fits in long, just do it
 			return multiply32(rounding, uDecimal1, scaleMetrics2, uDecimal2);
@@ -263,7 +263,7 @@ final class Mul {
 	 *            the second factor
 	 * @return the product rounded if necessary
 	 */
-	private static long multiply32(DecimalRounding rounding, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
+	private static final long multiply32(DecimalRounding rounding, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
 		final long u1xu2 = uDecimal1 * uDecimal2;
 		final long u1xu2d = scaleMetrics2.divideByScaleFactor(u1xu2);
 		final long u1xu2r = u1xu2 - scaleMetrics2.multiplyByScaleFactor(u1xu2d);
@@ -282,7 +282,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result without rounding and with overflow checks
 	 */
-	public static long multiplyChecked(final DecimalArithmetic arith, final long uDecimal1, final long uDecimal2) {
+	public static final long multiplyChecked(final DecimalArithmetic arith, final long uDecimal1, final long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
@@ -305,7 +305,7 @@ final class Mul {
 	 *            the scale of the second factor
 	 * @return the multiplication result without rounding and with overflow checks
 	 */
-	public static long multiplyByUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
+	public static final long multiplyByUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -334,7 +334,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result without rounding and with overflow checks
 	 */
-	private static long multiplyChecked(ScaleMetrics scaleMetrics1, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
+	private static final long multiplyChecked(ScaleMetrics scaleMetrics1, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
 		try {
 			if (doesProductFitInLong(uDecimal1, uDecimal2)) {
 				return scaleMetrics2.divideByScaleFactor(uDecimal1 * uDecimal2);
@@ -402,7 +402,7 @@ final class Mul {
 	 *            
 	 * @return the multiplication result with rounding and overflow checking
 	 */
-	public static long multiplyChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
+	public static final long multiplyChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal1, long uDecimal2) {
 		final SpecialMultiplicationResult special = SpecialMultiplicationResult.getFor(arith, uDecimal1, uDecimal2);
 		if (special != null) {
 			return special.multiply(arith, uDecimal1, uDecimal2);
@@ -427,7 +427,7 @@ final class Mul {
 	 *            the scale of the second factor
 	 * @return the multiplication result with rounding and overflow checks
 	 */
-	public static long multiplyByUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+	public static final long multiplyByUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -458,7 +458,7 @@ final class Mul {
 	 *            the second unscaled decimal factor
 	 * @return the multiplication result with rounding and overflow checking
 	 */
-	private static long multiplyChecked(DecimalRounding rounding, ScaleMetrics scaleMetrics1, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
+	private static final long multiplyChecked(DecimalRounding rounding, ScaleMetrics scaleMetrics1, long uDecimal1, ScaleMetrics scaleMetrics2, long uDecimal2) {
 		try {
 			if (doesProductFitInLong(uDecimal1, uDecimal2)) {
 				//product fits in long, just do it

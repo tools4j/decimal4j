@@ -48,11 +48,11 @@ final class StringConversion {
 		IntegralPart;
 	}
 
-	final static long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
+	static final long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
         return parseUnscaledDecimal(arith, rounding, s);
 	}
 
-	final static long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
+	static final long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
         if (s == null) {
             throw new NumberFormatException("null");
         }
@@ -101,7 +101,7 @@ final class StringConversion {
 		}
 	}
 
-	private static long parseFractionalPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
+	private static final long parseFractionalPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
 		final int len = end - start;
 		if (len > 0) {
 			int i = start;
@@ -125,7 +125,7 @@ final class StringConversion {
 		}
 		return 0;
 	}
-	private static TruncatedPart parseTruncatedPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
+	private static final TruncatedPart parseTruncatedPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
 		if (start < end) {
 			final char firstChar = s.charAt(start);
 			TruncatedPart truncatedPart;
@@ -158,7 +158,7 @@ final class StringConversion {
 		return TruncatedPart.ZERO;
 	}
 
-	private static int indexOfDecimalPoint(CharSequence s) {
+	private static final int indexOfDecimalPoint(CharSequence s) {
 		final int len = s.length();
 		for (int i = 0; i < len; i++) {
 			if (s.charAt(i) == '.') {
@@ -169,7 +169,7 @@ final class StringConversion {
 	}
 
 	//copied from Long.parseLong(String, int) but for fixed radix 10
-    private static long parseIntegralPart(DecimalArithmetic arith, CharSequence s, int start, int end, ParseMode mode) {
+    private static final long parseIntegralPart(DecimalArithmetic arith, CharSequence s, int start, int end, ParseMode mode) {
         long result = 0;
         boolean negative = false;
         int i = start;
@@ -231,7 +231,7 @@ final class StringConversion {
      * @param   value   a {@code long} to be converted.
      * @return  a string representation of the argument in base&nbsp;10.
      */
-    final static String longToString(long value) {
+    static final String longToString(long value) {
     	return Long.toString(value);
     }
     /**
@@ -244,7 +244,7 @@ final class StringConversion {
      * @param arith the decimal arithmetics providing the scale to apply
      * @return  a string representation of the argument
      */
-    final static String unscaledToString(DecimalArithmetic arith, long uDecimal) {
+    static final String unscaledToString(DecimalArithmetic arith, long uDecimal) {
 		final int scale = arith.getScale();
 		final StringBuilder sb = STRING_BUILDER_THREAD_LOCAL.get();
 		sb.setLength(0);

@@ -127,7 +127,7 @@ public final class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedS
 	}
 
 	@Override
-	public long toUnscaled(long uDecimal, int scale) {
+	public final long toUnscaled(long uDecimal, int scale) {
 		return UnscaledConversion.unscaledToUnscaled(rounding, scale, this, uDecimal);
 	}
 	

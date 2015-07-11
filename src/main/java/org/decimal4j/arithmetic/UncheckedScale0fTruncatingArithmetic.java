@@ -72,7 +72,7 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	}
 	
 	@Override
-	public long divideByUnscaled(long uDecimal, long unscaled, int scale) {
+	public final long divideByUnscaled(long uDecimal, long unscaled, int scale) {
 		return Div.divideByUnscaled(uDecimal, unscaled, scale);
 	}
 
@@ -122,7 +122,7 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	}
 
 	@Override
-	public long toUnscaled(long uDecimal, int scale) {
+	public final long toUnscaled(long uDecimal, int scale) {
 		return UnscaledConversion.unscaledToUnscaled(scale, this, uDecimal);
 	}
 

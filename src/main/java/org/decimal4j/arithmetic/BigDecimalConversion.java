@@ -36,7 +36,7 @@ import org.decimal4j.scale.Scales;
  */
 final class BigDecimalConversion {
 	
-	public static long bigDecimalToLong(RoundingMode roundingMode, BigDecimal value) {
+	public static final long bigDecimalToLong(RoundingMode roundingMode, BigDecimal value) {
 		// TODO any chance to make this garbage free?
 		// Difficult as we cannot look inside the BigDecimal value
 		final BigInteger scaled = value//
@@ -47,7 +47,7 @@ final class BigDecimalConversion {
 		}
 		throw new IllegalArgumentException("Overflow: cannot convert " + value + " to long");
 	}
-	public static long bigDecimalToUnscaled(ScaleMetrics scaleMetrics, RoundingMode roundingMode, BigDecimal value) {
+	public static final long bigDecimalToUnscaled(ScaleMetrics scaleMetrics, RoundingMode roundingMode, BigDecimal value) {
 		// TODO any chance to make this garbage free?
 		// Difficult as we cannot look inside the BigDecimal value
 		final BigInteger scaled = value//

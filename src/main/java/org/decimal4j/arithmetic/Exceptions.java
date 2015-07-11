@@ -26,12 +26,12 @@ package org.decimal4j.arithmetic;
 /**
  * Utility for exception conversion and re-throwing.
  */
-class Exceptions {
+final class Exceptions {
 
-	public static ArithmeticException newArithmeticExceptionWithCause(String message, ArithmeticException cause) {
+	public static final ArithmeticException newArithmeticExceptionWithCause(String message, ArithmeticException cause) {
 		return (ArithmeticException)new ArithmeticException(message).initCause(cause);
 	}
-	public static void rethrowIfRoundingNecessary(ArithmeticException e) {
+	public static final void rethrowIfRoundingNecessary(ArithmeticException e) {
 		if ("Rounding necessary".equals(e.getMessage())) {
 			throw e;
 		}

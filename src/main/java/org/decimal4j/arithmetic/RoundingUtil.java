@@ -53,7 +53,7 @@ final class RoundingUtil {
 	 * @return the value to add to {@code truncatedValue} to get the rounded
 	 *         result, one of -1, 0 or 1
 	 */
-	public static int calculateRoundingIncrement(DecimalRounding rounding, int sign, long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
+	public static final int calculateRoundingIncrement(DecimalRounding rounding, int sign, long truncatedValue, int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
 		return rounding.calculateRoundingIncrement(sign, truncatedValue, TruncatedPart.valueOf(firstTruncatedDigit, zeroAfterFirstTruncatedDigit));
 	}
 
@@ -75,7 +75,7 @@ final class RoundingUtil {
 	 * @return the value to add to {@code truncatedValue} to get the rounded
 	 *         result, one of -1, 0 or 1
 	 */
-	public static int calculateRoundingIncrementForDivision(DecimalRounding rounding, long truncatedValue, long truncatedDigits, long divisor) {
+	public static final int calculateRoundingIncrementForDivision(DecimalRounding rounding, long truncatedValue, long truncatedDigits, long divisor) {
 		if (truncatedDigits == 0) {
 			return 0;
 		}

@@ -203,7 +203,7 @@ final class UnscaledConversion {
 		}
 	}
 
-	private static IllegalArgumentException toIllegalArgumentExceptionOrRethrow(ArithmeticException e, long unscaledValue, int sourceScale, int targetScale) {
+	private static final IllegalArgumentException toIllegalArgumentExceptionOrRethrow(ArithmeticException e, long unscaledValue, int sourceScale, int targetScale) {
 		Exceptions.rethrowIfRoundingNecessary(e);
 		if (targetScale > 0) {
 			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue

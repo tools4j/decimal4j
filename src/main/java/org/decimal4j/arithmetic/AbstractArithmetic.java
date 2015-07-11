@@ -96,11 +96,6 @@ abstract public class AbstractArithmetic implements DecimalArithmetic {
 	}
 
 	@Override
-	public long fromBigDecimal(BigDecimal value) {
-		return BigDecimalConversion.bigDecimalToUnscaled(getScaleMetrics(), getRoundingMode(), value);
-	}
-
-	@Override
 	public final BigDecimal toBigDecimal(long uDecimal) {
 		return BigDecimalConversion.unscaledToBigDecimal(getScaleMetrics(), uDecimal);
 	}

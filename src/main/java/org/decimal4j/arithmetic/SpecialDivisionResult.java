@@ -34,7 +34,7 @@ enum SpecialDivisionResult {
 	 */
 	DIVIDEND_IS_ZERO {
 		@Override
-		long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 			return 0;
 		}
 	},
@@ -43,7 +43,7 @@ enum SpecialDivisionResult {
 	 */
 	DIVISOR_IS_ZERO {
 		@Override
-		long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 			throw new ArithmeticException("Division by zero: " + arithmetic.toString(uDecimalDividend) + " / " + arithmetic.toString(uDecimalDivisor));
 		}
 	},
@@ -52,7 +52,7 @@ enum SpecialDivisionResult {
 	 */
 	DIVISOR_IS_ONE {
 		@Override
-		long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 			return uDecimalDividend;
 		}
 	},
@@ -61,7 +61,7 @@ enum SpecialDivisionResult {
 	 */
 	DIVISOR_IS_MINUS_ONE {
 		@Override
-		long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 			return arithmetic.negate(uDecimalDividend);//we must go through arithmetic because overflow is possible
 		}
 	},
@@ -70,7 +70,7 @@ enum SpecialDivisionResult {
 	 */
 	DIVISOR_EQUALS_DIVIDEND {
 		@Override
-		long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 			return arithmetic.one();
 		}
 	},
@@ -79,7 +79,7 @@ enum SpecialDivisionResult {
 	 */
 	DIVISOR_EQUALS_MINUS_DIVIDEND {
 		@Override
-		long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 			return -arithmetic.one();
 		}
 	};
@@ -96,7 +96,7 @@ enum SpecialDivisionResult {
 	 *            the divisor
 	 * @return the special case if it is one and null otherwise
 	 */
-	static SpecialDivisionResult getFor(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
+	static final SpecialDivisionResult getFor(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
 		//NOTE: this must be the first case because 0/0 must also throw an exception!
 		if (uDecimalDivisor == 0) {
 			return DIVISOR_IS_ZERO;

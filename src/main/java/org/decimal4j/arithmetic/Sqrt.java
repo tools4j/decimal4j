@@ -37,7 +37,7 @@ final class Sqrt {
 	 */
 	private static final long LONG_MASK = 0xffffffffL;
 
-	public static long sqrtLong(long lValue) {
+	public static final long sqrtLong(long lValue) {
 		if (lValue < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + lValue);
 		}
@@ -49,7 +49,7 @@ final class Sqrt {
 		return result * result - lValue > 0L ? result - 1 : result;
 	}
 
-	public static long sqrtLong(DecimalRounding rounding, long lValue) {
+	public static final long sqrtLong(DecimalRounding rounding, long lValue) {
 		if (lValue < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + lValue);
 		}
@@ -78,11 +78,11 @@ final class Sqrt {
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
-	public static long sqrt(DecimalArithmetic arith, long uDecimal) {
+	public static final long sqrt(DecimalArithmetic arith, long uDecimal) {
 		return sqrt(arith, DecimalRounding.DOWN, uDecimal);
 	}
 
-	public static long sqrt(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
+	public static final long sqrt(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		if (uDecimal < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + arith.toString(uDecimal));
 		}
@@ -163,7 +163,7 @@ final class Sqrt {
 
 	//PRECONDITION: rem != 0
 	//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
-	private static int getRoundingIncrement(DecimalRounding rounding, long truncated, long rem) {
+	private static final int getRoundingIncrement(DecimalRounding rounding, long truncated, long rem) {
 		if (truncated < rem) {
 			return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.GREATER_THAN_HALF);
 		}

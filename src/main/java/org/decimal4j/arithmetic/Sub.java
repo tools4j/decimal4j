@@ -46,7 +46,7 @@ final class Sub {
 	 *            the scale of the second value
 	 * @return the subtraction result without rounding and without overflow checks
 	 */
-	public static long subtractLongUnscaled(long lValue, long unscaled, int scale) {
+	public static final long subtractLongUnscaled(long lValue, long unscaled, int scale) {
 		return subtractUnscaledUnscaled(Scale0f.INSTANCE, lValue, unscaled, scale);
 	}
 
@@ -64,7 +64,7 @@ final class Sub {
 	 *            the scale of the second value
 	 * @return the subtraction result with rounding but without overflow checks
 	 */
-	public static long subtractLongUnscaled(DecimalRounding rounding, long lValue, long unscaled, int scale) {
+	public static final long subtractLongUnscaled(DecimalRounding rounding, long lValue, long unscaled, int scale) {
 		return subtractUnscaledUnscaled(Scale0f.INSTANCE, rounding, lValue, unscaled, scale);
 	}
 
@@ -79,7 +79,7 @@ final class Sub {
 	 *            the long value
 	 * @return the subtraction result without overflow checks
 	 */
-	public static long subtractUnscaledLong(DecimalArithmetic arith, long uDecimal, long lValue) {
+	public static final long subtractUnscaledLong(DecimalArithmetic arith, long uDecimal, long lValue) {
 		return uDecimal - Pow10.multiplyByPowerOf10(lValue, arith.getScale());
 	}
 
@@ -94,7 +94,7 @@ final class Sub {
 	 *            the long value
 	 * @return the subtraction result performed with overflow checks
 	 */
-	public static long subtractUnscaledLongChecked(DecimalArithmetic arith, long uDecimal, long lValue) {
+	public static final long subtractUnscaledLongChecked(DecimalArithmetic arith, long uDecimal, long lValue) {
 		final int scale = arith.getScale();
 		if (lValue == 0 | scale == 0) {
 			return arith.subtract(uDecimal, lValue);
@@ -121,7 +121,7 @@ final class Sub {
 	 *            the scale of the second value
 	 * @return the subtraction result without rounding and without overflow checks
 	 */
-	public static long subtractUnscaledUnscaled(ScaleMetrics scaleMetrics, long uDecimal, long unscaled, int scale) {
+	public static final long subtractUnscaledUnscaled(ScaleMetrics scaleMetrics, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal - unscaled;
@@ -150,7 +150,7 @@ final class Sub {
 	 *            the scale of the second value
 	 * @return the subtraction result with rounding but without overflow checks
 	 */
-	public static long subtractUnscaledUnscaled(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+	public static final long subtractUnscaledUnscaled(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal - unscaled;
@@ -178,7 +178,7 @@ final class Sub {
 	 *            the scale of the second value
 	 * @return the subtraction result without rounding but with overflow checks
 	 */
-	public static long subtractUnscaledUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
+	public static final long subtractUnscaledUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.subtract(uDecimal, unscaled);
@@ -215,7 +215,7 @@ final class Sub {
 	 *            the scale of the second value
 	 * @return the subtraction result with rounding and overflow checks
 	 */
-	public static long subtractUnscaledUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+	public static final long subtractUnscaledUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.subtract(uDecimal, unscaled);
@@ -248,7 +248,7 @@ final class Sub {
 	 * @return the subtraction result without rounding and without overflow checks
 	 */
 	//PRECONDITION: scaleDiff > 0
-	private static long subtractForPositiveScaleDiff(long uDecimal, long unscaled, int scaleDiff) {
+	private static final long subtractForPositiveScaleDiff(long uDecimal, long unscaled, int scaleDiff) {
 		//scaleDiff > 0
 		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scaleDiff);
 		final long trunc = diffMetrics.divideByScaleFactor(unscaled);
@@ -275,7 +275,7 @@ final class Sub {
 	 * @return the subtraction result with rounding but without overflow checks
 	 */
 	//PRECONDITION: scaleDiff > 0
-	private static long subtractForPositiveScaleDiff(DecimalRounding rounding, long uDecimal, long unscaled, int scaleDiff) {
+	private static final long subtractForPositiveScaleDiff(DecimalRounding rounding, long uDecimal, long unscaled, int scaleDiff) {
 		//scaleDiff > 0
 		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scaleDiff);
 		final long trunc = diffMetrics.divideByScaleFactor(unscaled);

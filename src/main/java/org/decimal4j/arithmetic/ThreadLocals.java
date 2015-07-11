@@ -27,7 +27,7 @@ package org.decimal4j.arithmetic;
  * Helper class to remove all values held by {@link ThreadLocal} variables. This 
  * may be useful if the library is used in a web service or servlet container.
  */
-public class ThreadLocals {
+public final class ThreadLocals {
 	
 	/**
 	 * Removes all values held by {@link ThreadLocal} variables that are used by 
@@ -35,7 +35,7 @@ public class ThreadLocals {
 	 * variable to make objects held by those variables available for garbage 
 	 * collection.
 	 */
-	public static void removeAll() {
+	public static final void removeAll() {
 		StringConversion.STRING_BUILDER_THREAD_LOCAL.remove();
 		UnsignedDecimal9i36f.THREAD_LOCAL_1.remove();
 		UnsignedDecimal9i36f.THREAD_LOCAL_2.remove();

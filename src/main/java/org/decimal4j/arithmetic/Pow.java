@@ -42,14 +42,14 @@ final class Pow {
 	 */
 	private static final long FLOOR_SQRT_MAX_LONG = 3037000499L;
 
-	public static long powLong(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
+	public static final long powLong(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, lBase, exponent);
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
 		}
 		return powLong(rounding, lBase, exponent);
 	}
-	private static long powLong(DecimalRounding rounding, long lBase, int exponent) {
+	private static final long powLong(DecimalRounding rounding, long lBase, int exponent) {
 		if (exponent >= 0) {
 			return powLongWithPositiveExponent(lBase, exponent);
 		} else {
@@ -61,14 +61,14 @@ final class Pow {
 		}
 	}
 
-	public static long powLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
+	public static final long powLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, lBase, exponent);
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
 		}
 		return powLongChecked(rounding, lBase, exponent);
 	}
-	private static long powLongChecked(DecimalRounding rounding, long lBase, int exponent) {
+	private static final long powLongChecked(DecimalRounding rounding, long lBase, int exponent) {
 		if (exponent >= 0) {
 			return powLongCheckedWithPositiveExponent(lBase, exponent);
 		} else {
@@ -80,7 +80,7 @@ final class Pow {
 		}
 	}
 	
-	private static long powLongCheckedOrUnchecked(OverflowMode overflowMode, DecimalRounding rounding, long longBase, int exponent) {
+	private static final long powLongCheckedOrUnchecked(OverflowMode overflowMode, DecimalRounding rounding, long longBase, int exponent) {
 		return overflowMode == OverflowMode.UNCHECKED ? powLong(rounding, longBase, exponent) : powLongChecked(rounding, longBase, exponent);
 	}
 
@@ -93,7 +93,7 @@ final class Pow {
 	 * @param exponent		the exponent
 	 * @return {@code uDecimalbase ^ exponent}
 	 */
-	public static long pow(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
+	public static final long pow(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
 		if (exponent < -999999999 || exponent > 999999999) {
 			throw new ArithmeticException("Exponent must be in [-999999999,999999999] but was: " + exponent);
 		}
@@ -178,7 +178,7 @@ final class Pow {
 	 * @since 1.5
 	 */
 	//PRECONDITION: n != 0 and n in [-999999999,999999999]
-	private static long powWithPrecision18(DecimalArithmetic arith, DecimalRounding rounding, long ival, long fval, int n) {
+	private static final long powWithPrecision18(DecimalArithmetic arith, DecimalRounding rounding, long ival, long fval, int n) {
 		//eliminate sign
 		final int sgn = ((n & 0x1) != 0) ? Long.signum(ival | fval) : 1;
 		final long absInt = Math.abs(ival);
@@ -219,7 +219,7 @@ final class Pow {
         return acc.getDecimal(sgn, arith, rounding);
 	}
 
-	private static long powLongWithPositiveExponent(long lBase, int exponent) {
+	private static final long powLongWithPositiveExponent(long lBase, int exponent) {
 		assert (exponent > 0);
 
 		long accum = 1;
@@ -241,7 +241,7 @@ final class Pow {
 		}
 	}
 
-	private static long powLongCheckedWithPositiveExponent(long lBase, int exponent) {
+	private static final long powLongCheckedWithPositiveExponent(long lBase, int exponent) {
 		assert (exponent > 0);
 		if (lBase >= -2 & lBase <= 2) {
 			switch ((int) lBase) {
@@ -287,7 +287,7 @@ final class Pow {
 		}
 	}
 
-	private static DecimalRounding getOppositeRoundingMode(DecimalRounding roundingMode) {
+	private static final DecimalRounding getOppositeRoundingMode(DecimalRounding roundingMode) {
 		switch (roundingMode) {
 		case UP:
 			return DecimalRounding.DOWN;

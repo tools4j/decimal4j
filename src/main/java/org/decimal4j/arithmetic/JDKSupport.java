@@ -44,7 +44,7 @@ public final class JDKSupport {
 	 *             if the {@code value} will not exactly fit in a {@code long}.
 	 * @since JDK 1.8
 	 */
-	public static long bigIntegerToLongValueExact(BigInteger value) {
+	public static final long bigIntegerToLongValueExact(BigInteger value) {
 		if (value.bitLength() <= 63) return value.longValue();
 		else throw new ArithmeticException("BigInteger out of long range: " + value);
 	}

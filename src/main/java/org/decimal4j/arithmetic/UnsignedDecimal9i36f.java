@@ -78,7 +78,7 @@ final class UnsignedDecimal9i36f {
 	private UnsignedDecimal9i36f() {
 		super();
 	}
-	public UnsignedDecimal9i36f initOne() {
+	public final UnsignedDecimal9i36f initOne() {
 		this.norm = Norm.NORMALIZED_18;
 		this.pow10 = 0;
 		this.ival = 1;
@@ -88,7 +88,7 @@ final class UnsignedDecimal9i36f {
 		this.val0 = 0;
 		return this;
 	}
-	public UnsignedDecimal9i36f init(UnsignedDecimal9i36f copy) {
+	public final UnsignedDecimal9i36f init(UnsignedDecimal9i36f copy) {
 		this.norm = copy.norm;
 		this.pow10 = copy.pow10;
 		this.ival = copy.ival;
@@ -98,15 +98,15 @@ final class UnsignedDecimal9i36f {
 		this.val0 = copy.val0;
 		return this;
 	}
-	public UnsignedDecimal9i36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
+	public final UnsignedDecimal9i36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
 		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(18 - scaleMetrics.getScale());
 		normalizeAndRound(1, 0, ival, diffMetrics.multiplyByScaleFactor(fval), 0, 0, 0, DecimalRounding.UNNECESSARY);
 		return this;
 	}
-	public int getPow10() {
+	public final int getPow10() {
 		return pow10;
 	}
-	private void normalizeAndRound(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, DecimalRounding rounding) {
+	private final void normalizeAndRound(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, DecimalRounding rounding) {
 		while (ival == 0) {
 			ival = val3;
 			val3 = val2;
@@ -162,7 +162,7 @@ final class UnsignedDecimal9i36f {
 			roundToVal2(sgn, pow10, ival, val3, val2, val1, val0 != 0, rounding);
 		}
 	}
-	private void roundToVal2(int sgn, int pow10, long ival, long val3, long val2, long val1, boolean nonZeroAfterVal1, DecimalRounding rounding) {
+	private final void roundToVal2(int sgn, int pow10, long ival, long val3, long val2, long val1, boolean nonZeroAfterVal1, DecimalRounding rounding) {
 		//(ival|val3|val2) += round(val1|val0|carry) 
 		final int inc = getRoundingIncrement(sgn, val2, Scale18f.INSTANCE, val1, nonZeroAfterVal1, rounding);
 		if (inc > 0) {
@@ -188,7 +188,7 @@ final class UnsignedDecimal9i36f {
 		this.val1 = 0;
 		this.val0 = 0;
 	}
-	private void normalize09() {
+	private final void normalize09() {
 		final long val3 = this.val3;
 		final long val2 = this.val2;
 		final long v3 = val3 / Scale9f.SCALE_FACTOR;
@@ -208,7 +208,7 @@ final class UnsignedDecimal9i36f {
 		multiply(sgn, val3, val2, factor, rounding);
 	}
 	//PRECONDITION: this and factor normalized, i.e. ival < Scale9f.SCALE_FACTOR
-	private void multiply(int sgn, long val3, long val2, UnsignedDecimal9i36f factor, DecimalRounding rounding) {
+	private final void multiply(int sgn, long val3, long val2, UnsignedDecimal9i36f factor, DecimalRounding rounding) {
 		//split each factor into 9 digit parts
 		if (this.norm != Norm.NORMALIZED_09) {
 			this.normalize09();
@@ -294,7 +294,7 @@ final class UnsignedDecimal9i36f {
 		this.val0 = val72;
 	}
 	
-	private static int getRoundingIncrement(int sgn, long truncated, ScaleMetrics scaleMetrics, long remainder, boolean nonZeroAfterRemainder, DecimalRounding rounding) {
+	private static final int getRoundingIncrement(int sgn, long truncated, ScaleMetrics scaleMetrics, long remainder, boolean nonZeroAfterRemainder, DecimalRounding rounding) {
 		if (rounding != DecimalRounding.DOWN & (remainder != 0 | nonZeroAfterRemainder)) {
 			TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(remainder, scaleMetrics.getScaleFactor());
 			if (nonZeroAfterRemainder) {
@@ -312,7 +312,7 @@ final class UnsignedDecimal9i36f {
 			return rounding.calculateRoundingIncrement(1, absValue, truncatedPart); 
 		}
 	}
-	private int getInvNormPow10() {
+	private final int getInvNormPow10() {
 		final int log10 = log10(ival);
 		return (ival >= Scales.getScaleMetrics(log10 - 1).getScaleFactor()*3) ? log10 : log10 - 1;//we want to normalize the ival part to be between 1 and 5
 	}
@@ -323,7 +323,7 @@ final class UnsignedDecimal9i36f {
 		}
 		return getDecimal(sgn, pow10 + 18, 0, ival, val3, val2, val1, val0, 0, 0, 0, arith, rounding);
 	}
-	public long getInverted(int sgn, DecimalArithmetic arith, DecimalRounding rounding, DecimalRounding powRounding, UnsignedDecimal9i36f acc) {
+	public final long getInverted(int sgn, DecimalArithmetic arith, DecimalRounding rounding, DecimalRounding powRounding, UnsignedDecimal9i36f acc) {
 		//1) get scale18 value normalized to 0.3 <= x < 3 (i.e. make it invertible without overflow for uninverted and inverted value)
 		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getArithmetic(rounding.getRoundingMode());//unchecked is fine, see comments below
 		final long divisor = acc.getInvNorm(sgn, arith18, powRounding);
@@ -412,7 +412,7 @@ final class UnsignedDecimal9i36f {
 		}
 	}
 	//PRECONDITION: 0 <= pow10 <= 18
-	private static long getDecimal(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, long rem1, long rem2, long rem3, long rem4, DecimalArithmetic arith, DecimalRounding rounding) {
+	private static final long getDecimal(int sgn, int pow10, long ival, long val3, long val2, long val1, long val0, long rem1, long rem2, long rem3, long rem4, DecimalArithmetic arith, DecimalRounding rounding) {
 		final OverflowMode overflowMode = arith.getOverflowMode();
 		
 		//apply pow10 first and convert to intVal and fra18 (with scale 18, w/o rounding)
@@ -480,7 +480,7 @@ final class UnsignedDecimal9i36f {
      * @param absVal the {@code long}
      * @return the length of the unscaled value, in deciaml digits.
      */
-    private static int log10(long absVal) {
+    private static final int log10(long absVal) {
         /*
          * As described in "Bit Twiddling Hacks" by Sean Anderson,
          * (http://graphics.stanford.edu/~seander/bithacks.html)
@@ -502,7 +502,7 @@ final class UnsignedDecimal9i36f {
         return (r >= tab.length || absVal < tab[r]) ? r : r + 1;
     }
 	@Override
-	public String toString() {
+	public final String toString() {
 		int len;
 		final StringBuilder sb = new StringBuilder(64);//9-18 integral digits + 1 decimal point + 2*18 fractional digits + some extra for pow10 etc
 		sb.append(ival);

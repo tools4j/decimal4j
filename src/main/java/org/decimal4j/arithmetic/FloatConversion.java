@@ -65,7 +65,7 @@ final class FloatConversion {
 	 */
 	private static final float MAX_LONG_AS_FLOAT_PLUS_ONE = 0x1p63f;
 
-	public static long floatToLong(float value) {
+	public static final long floatToLong(float value) {
 		if (Float.isNaN(value)) {
 			throw new IllegalArgumentException("Cannot convert float to decimal: " + value);
 		}
@@ -75,7 +75,7 @@ final class FloatConversion {
 		throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 	}
 
-	public static long floatToLong(DecimalRounding rounding, float value) {
+	public static final long floatToLong(DecimalRounding rounding, float value) {
 		if (Float.isNaN(value)) {
 			throw new IllegalArgumentException("Cannot convert float to decimal: " + value);
 		}
@@ -90,7 +90,7 @@ final class FloatConversion {
 	 * DOWN (towards zero) gives the same result as rounding x according to the
 	 * specified mode. PRECONDITION: isFinite(x)
 	 */
-	private static float roundIntermediate(float x, DecimalRounding mode) {
+	private static final float roundIntermediate(float x, DecimalRounding mode) {
 		switch (mode) {
 		case UNNECESSARY:
 			if (!isMathematicalInteger(x)) {
@@ -251,19 +251,19 @@ final class FloatConversion {
 		return (value >= 0 ? absResult : -absResult) + inc;
 	}
 
-	public static float longToFloat(DecimalArithmetic arith, long value) {
+	public static final float longToFloat(DecimalArithmetic arith, long value) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, value);
 	}
-	public static float longToFloat(DecimalArithmetic arith, DecimalRounding rounding, long value) {
+	public static final float longToFloat(DecimalArithmetic arith, DecimalRounding rounding, long value) {
 		if (rounding == DecimalRounding.HALF_EVEN) {
 			return value;
 		}
 		return unscaledToFloat(arith, rounding, value);
 	}
-	public static float unscaledToFloat(DecimalArithmetic arith, long unscaled) {
+	public static final float unscaledToFloat(DecimalArithmetic arith, long unscaled) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, unscaled);
 	}
-	public static float unscaledToFloat(DecimalArithmetic arith, DecimalRounding rounding, long unscaled) {
+	public static final float unscaledToFloat(DecimalArithmetic arith, DecimalRounding rounding, long unscaled) {
 		if (unscaled == 0) {
 			return 0;
 		}
@@ -327,7 +327,7 @@ final class FloatConversion {
 		return unscaledToFloatShiftAndDivideByScaleFactor(scaleMetrics, rounding, unscaled, exp + pow2, mantissaShift, valModFactor);
 	}
 		
-	private static float unscaledToFloatWithFloatDivisionRoundHalfEven(ScaleMetrics scaleMetrics, long unscaled, int pow2, long absVal) {
+	private static final float unscaledToFloatWithFloatDivisionRoundHalfEven(ScaleMetrics scaleMetrics, long unscaled, int pow2, long absVal) {
 		final int scale = scaleMetrics.getScale();
 		final float dividend = absVal;
 		final float divisor = scaleMetrics.getScaleFactor() >> scale;
@@ -339,7 +339,7 @@ final class FloatConversion {
 		return Float.intBitsToFloat(raw);
 	}
 
-	private static float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, long unscaled, int exp, int mantissaShift, long valModFactor) {
+	private static final float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, long unscaled, int exp, int mantissaShift, long valModFactor) {
 		final long quot;
 		if (mantissaShift >= 0) {
 			final long hValModFactor = (valModFactor >>> (Long.SIZE - mantissaShift)) & (-mantissaShift >> 63);
@@ -357,7 +357,7 @@ final class FloatConversion {
 		return Float.intBitsToFloat(raw);
 	}
 
-	private static float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, DecimalRounding rounding, long unscaled, int exp, int mantissaShift, long valModFactor) {
+	private static final float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, DecimalRounding rounding, long unscaled, int exp, int mantissaShift, long valModFactor) {
 		final long quotient;
 		final long scaleFactor = scaleMetrics.getScaleFactor();
 		if (mantissaShift >= 0) {
@@ -395,20 +395,20 @@ final class FloatConversion {
 		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);//last bracket is for case n=0
 	}
 
-	private static boolean isInLongRange(float value) {
+	private static final boolean isInLongRange(float value) {
 		return MIN_LONG_AS_FLOAT - value < 1.0f & value < MAX_LONG_AS_FLOAT_PLUS_ONE;
 	}
 
-	private static boolean isMathematicalInteger(float x) {
+	private static final boolean isMathematicalInteger(float x) {
 		return isFinite(x) && (x == 0.0f || SIGNIFICAND_BITS - Long.numberOfTrailingZeros(getSignificand(x)) <= Math.getExponent(x));
 	}
 
-	private static boolean isFinite(float d) {
+	private static final boolean isFinite(float d) {
 		return Math.getExponent(d) <= Float.MAX_EXPONENT;
 	}
 
 	//PRECONDITION: isFinite(d)
-	private static int getSignificand(float f) {
+	private static final int getSignificand(float f) {
 		final int exponent = Math.getExponent(f);
 		int bits = Float.floatToRawIntBits(f);
 		bits &= SIGNIFICAND_MASK;
@@ -431,7 +431,7 @@ final class FloatConversion {
      *          equal to a mathematical integer.
      * @author Joseph D. Darcy
      */
-    private static float rint(float a) {
+    private static final float rint(float a) {
         /*
          * If the absolute value of a is not less than 2^23, it
          * is either a finite integer (the float format does not have

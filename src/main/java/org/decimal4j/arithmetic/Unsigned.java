@@ -37,7 +37,7 @@ public final class Unsigned {
 	 * "http://docs.guava-libraries.googlecode.com/git/javadoc/src-html/com/google/common/primitives/UnsignedLongs.html"
 	 * >UnsignedLongs</a>.
 	 */
-	private static long flip(long a) {
+	private static final long flip(long a) {
 		return a ^ Long.MIN_VALUE;
 	}
 
@@ -57,7 +57,7 @@ public final class Unsigned {
 	 *         value if {@code a} is greater than {@code b}; or zero if they are
 	 *         equal
 	 */
-	public static int compare(long a, long b) {
+	public static final int compare(long a, long b) {
 		return Long.compare(flip(a), flip(b));
 	}
 
@@ -71,7 +71,7 @@ public final class Unsigned {
 	 *            the second unsigned {@code long} to compare
 	 * @return true if {@code one > two}
 	 */
-	public static boolean isGreater(long one, long two) {
+	public static final boolean isGreater(long one, long two) {
 		return flip(one) > flip(two);
 	}
 
@@ -85,7 +85,7 @@ public final class Unsigned {
 	 *            the second unsigned {@code long} to compare
 	 * @return true if {@code one < two}
 	 */
-	public static boolean isLess(long one, long two) {
+	public static final boolean isLess(long one, long two) {
 		return flip(one) < flip(two);
 	}
 
@@ -99,7 +99,7 @@ public final class Unsigned {
 	 *            the second unsigned {@code long} to compare
 	 * @return true if {@code one <= two}
 	 */
-	public static boolean isLessOrEqual(long one, long two) {
+	public static final boolean isLessOrEqual(long one, long two) {
 		return flip(one) <= flip(two);
 	}
 
@@ -115,7 +115,7 @@ public final class Unsigned {
 	 * @throws ArithmeticException
 	 *             if divisor is 0
 	 */
-	public static long divide(long dividend, long divisor) {
+	public static final long divide(long dividend, long divisor) {
 		if (divisor < 0) { // i.e., divisor >= 2^63:
 			return compare(dividend, divisor) < 0 ? 0 : 1;
 		}

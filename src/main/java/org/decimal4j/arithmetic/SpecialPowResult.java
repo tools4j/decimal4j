@@ -34,7 +34,7 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_ZERO {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return arithmetic.one();//yes 0^0 is also 1
 		}
 	},
@@ -43,7 +43,7 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_ONE {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return uDecimal;
 		}
 	},
@@ -53,7 +53,7 @@ enum SpecialPowResult {
 	 */
 	BASE_IS_ZERO {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			if (exponent >= 0) {
 				//uDecimal == 0 should never happen (0^0 is usually defined as 1)
 				return 0;
@@ -66,7 +66,7 @@ enum SpecialPowResult {
 	 */
 	BASE_IS_ONE {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return uDecimal;//uDecimal is 1
 		}
 	},
@@ -76,7 +76,7 @@ enum SpecialPowResult {
 	 */
 	BASE_IS_MINUS_ONE {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return ((exponent & 0x1) == 0) ? -uDecimal : uDecimal;//uDecimal is one and it's negation cannot overflow
 		}
 	},
@@ -85,7 +85,7 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_MINUS_ONE {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return arithmetic.invert(uDecimal);
 		}
 	},
@@ -94,7 +94,7 @@ enum SpecialPowResult {
 	 */
 	EXPONENT_IS_TWO {
 		@Override
-		long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
+		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			return arithmetic.square(uDecimal);
 		}
 	};
@@ -112,7 +112,7 @@ enum SpecialPowResult {
 	 *            the exponent
 	 * @return the special case if it is one and null otherwise
 	 */
-	static SpecialPowResult getFor(DecimalArithmetic arithmetic, long uDecimal, long n) {
+	static final SpecialPowResult getFor(DecimalArithmetic arithmetic, long uDecimal, long n) {
 		if (n == 0) {
 			return EXPONENT_IS_ZERO;
 		}

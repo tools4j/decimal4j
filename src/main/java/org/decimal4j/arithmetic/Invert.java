@@ -31,7 +31,7 @@ import org.decimal4j.truncate.DecimalRounding;
  */
 final class Invert {
 
-	public static long invertLong(long uDecimal) {
+	public static final long invertLong(long uDecimal) {
 		if (uDecimal == 0) {
 			throw new ArithmeticException("Division by zero: " + uDecimal + "^-1");
 		}
@@ -44,7 +44,7 @@ final class Invert {
 		return 0;
 	}
 
-	public static long invertLong(DecimalRounding rounding, long uDecimal) {
+	public static final long invertLong(DecimalRounding rounding, long uDecimal) {
 		//special cases first
 		if (uDecimal == 0) {
 			throw new ArithmeticException("Division by zero: " + uDecimal + "^-1");
@@ -58,12 +58,12 @@ final class Invert {
 		return RoundingUtil.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
 	}
 	
-	public static long invert(DecimalArithmetic arith, long uDecimal) {
+	public static final long invert(DecimalArithmetic arith, long uDecimal) {
 		//special cases are handled by divide
 		return arith.divide(arith.one(), uDecimal);
 	}
 
-	public static long invert(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
+	public static final long invert(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		//special cases are handled by divide
 		return arith.divide(arith.one(), uDecimal);
 	}

@@ -34,7 +34,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_IS_ZERO {
 		@Override
-		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return 0;
 		}
 	},
@@ -43,7 +43,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_1_IS_ONE {
 		@Override
-		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return uDecimal2;
 		}
 	},
@@ -52,7 +52,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_2_IS_ONE {
 		@Override
-		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return uDecimal1;
 		}
 	},
@@ -61,7 +61,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_1_IS_MINUS_ONE {
 		@Override
-		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return arithmetic.negate(uDecimal2);//we must go through arithmetic because overflow is possible
 		}
 	},
@@ -70,7 +70,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTOR_2_IS_MINUS_ONE {
 		@Override
-		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return arithmetic.negate(uDecimal1);//we must go through arithmetic because overflow is possible
 		}
 	},
@@ -79,7 +79,7 @@ enum SpecialMultiplicationResult {
 	 */
 	FACTORS_ARE_EQUAL {
 		@Override
-		long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 			return arithmetic.square(uDecimal1);
 		}
 	};
@@ -96,7 +96,7 @@ enum SpecialMultiplicationResult {
 	 *            the second factor
 	 * @return special case if found one and null otherwise
 	 */
-	static SpecialMultiplicationResult getFor(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
+	static final SpecialMultiplicationResult getFor(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
 		if (uDecimal1 == 0 | uDecimal2 == 0) {
 			return FACTOR_IS_ZERO;
 		}

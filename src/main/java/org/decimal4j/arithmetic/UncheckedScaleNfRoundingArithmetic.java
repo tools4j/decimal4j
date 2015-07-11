@@ -170,11 +170,6 @@ public final class UncheckedScaleNfRoundingArithmetic extends AbstractUncheckedS
 	}
 
 	@Override
-	public final long fromBigDecimal(BigDecimal value) {
-		return BigDecimalConversion.bigDecimalToUnscaled(getScaleMetrics(), getRoundingMode(), value);
-	}
-
-	@Override
 	public final long fromFloat(float value) {
 		return FloatConversion.floatToUnscaled(this, rounding, value);
 	}
@@ -185,22 +180,27 @@ public final class UncheckedScaleNfRoundingArithmetic extends AbstractUncheckedS
 	}
 
 	@Override
+	public final long fromBigDecimal(BigDecimal value) {
+		return BigDecimalConversion.bigDecimalToUnscaled(getScaleMetrics(), getRoundingMode(), value);
+	}
+
+	@Override
 	public final long toLong(long uDecimal) {
 		return LongConversion.unscaledToLong(getScaleMetrics(), rounding, uDecimal);
 	}
 	
 	@Override
-	public long toUnscaled(long uDecimal, int scale) {
+	public final long toUnscaled(long uDecimal, int scale) {
 		return UnscaledConversion.unscaledToUnscaled(rounding, scale, this, uDecimal);
 	}
 
 	@Override
-	public float toFloat(long uDecimal) {
+	public final float toFloat(long uDecimal) {
 		return FloatConversion.unscaledToFloat(this, rounding, uDecimal);
 	}
 
 	@Override
-	public double toDouble(long uDecimal) {
+	public final double toDouble(long uDecimal) {
 		return DoubleConversion.unscaledToDouble(this, rounding, uDecimal);
 	}
 

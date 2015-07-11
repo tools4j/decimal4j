@@ -64,7 +64,7 @@ abstract public class AbstractCheckedScaleNfArithmetic extends
 	}
 
 	@Override
-	public String toString(long uDecimal) {
+	public final String toString(long uDecimal) {
 		return StringConversion.unscaledToString(this, uDecimal);
 	}
 

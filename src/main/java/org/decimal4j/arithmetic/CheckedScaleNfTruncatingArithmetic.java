@@ -23,6 +23,7 @@
  */
 package org.decimal4j.arithmetic;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.decimal4j.scale.ScaleMetrics;
@@ -146,6 +147,11 @@ public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedSca
 	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
 		return UnscaledConversion.unscaledToUnscaled(this, unscaledValue, scale);
+	}
+
+	@Override
+	public final long fromBigDecimal(BigDecimal value) {
+		return BigDecimalConversion.bigDecimalToUnscaled(getScaleMetrics(), RoundingMode.DOWN, value);
 	}
 
 	@Override

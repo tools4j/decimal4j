@@ -31,9 +31,9 @@ import org.decimal4j.truncate.DecimalRounding;
 /**
  * Contains static helper methods to round Decimal values.
  */
-class Round {
+final class Round {
 
-	public static long round(DecimalArithmetic arith, long uDecimal, int precision) {
+	public static final long round(DecimalArithmetic arith, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		final ScaleMetrics deltaMetrics;
@@ -53,7 +53,7 @@ class Round {
 		return uDecimal - deltaMetrics.moduloByScaleFactor(uDecimal);
 	}
 	
-	public static long round(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int precision) {
+	public static final long round(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		final int deltaScale = scale - precision;
@@ -82,7 +82,7 @@ class Round {
 
 	// no instances
 	private Round() {
-		
+		super();
 	}
 	
 }

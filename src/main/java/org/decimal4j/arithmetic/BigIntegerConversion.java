@@ -33,7 +33,7 @@ import org.decimal4j.scale.ScaleMetrics;
  */
 final class BigIntegerConversion {
 	
-	public static long bigIntegerToUnscaled(ScaleMetrics scaleMetrics, BigInteger value) {
+	public static final long bigIntegerToUnscaled(ScaleMetrics scaleMetrics, BigInteger value) {
 		if (value.bitLength() <= 63) {
 			return LongConversion.longToUnscaled(scaleMetrics, value.longValue());
 		}
