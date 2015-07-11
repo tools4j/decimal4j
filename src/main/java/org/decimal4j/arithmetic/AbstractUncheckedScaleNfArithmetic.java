@@ -54,12 +54,12 @@ abstract public class AbstractUncheckedScaleNfArithmetic extends AbstractUncheck
 
 	@Override
 	public final long addLong(long uDecimal, long lValue) {
-		return uDecimal + LongConversion.longToUnscaledUnchecked(getScaleMetrics(), lValue);
+		return Add.addUnscaledLong(this, uDecimal, lValue);
 	}
 
 	@Override
 	public final long subtractLong(long uDecimal, long lValue) {
-		return uDecimal - LongConversion.longToUnscaledUnchecked(getScaleMetrics(), lValue);
+		return Sub.subtractUnscaledLong(this, uDecimal, lValue);
 	}
 
 	@Override

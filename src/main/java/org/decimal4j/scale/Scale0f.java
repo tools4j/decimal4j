@@ -161,7 +161,7 @@ public enum Scale0f implements ScaleMetrics {
 	
 	@Override
 	public String toString(long value) {
-		return DEFAULT_ARITHMETIC.toString(value);
+		return Long.toString(value);
 	}
 
 	@Override

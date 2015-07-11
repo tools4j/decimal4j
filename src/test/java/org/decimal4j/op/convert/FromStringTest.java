@@ -167,6 +167,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, String operand) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + operation() + " " + operand;
 
 		// expected
 		ArithmeticResult<Long> expected;
@@ -193,7 +194,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 
 	protected BigDecimal expectedResult(String operand) {

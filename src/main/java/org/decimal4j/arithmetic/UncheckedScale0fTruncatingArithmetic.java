@@ -48,12 +48,12 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 	
 	@Override
 	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
-		return uDecimal + UnscaledConversion.unscaledToLong(this, unscaled, scale);
+		return Add.addLongUnscaled(uDecimal, unscaled, scale);
 	}
 
 	@Override
 	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
-		return uDecimal + UnscaledConversion.unscaledToLong(this, unscaled, scale);
+		return Sub.subtractLongUnscaled(uDecimal, unscaled, scale);
 	}
 
 	@Override

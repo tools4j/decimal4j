@@ -80,6 +80,8 @@ abstract public class AbstractDecimalDoubleValueToDecimalTest extends AbstractRa
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, double b) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b;
+		
 		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 
 		//expected
@@ -103,6 +105,6 @@ abstract public class AbstractDecimalDoubleValueToDecimalTest extends AbstractRa
 		}
 		
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

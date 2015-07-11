@@ -77,6 +77,8 @@ abstract public class AbstractDecimalLongValueToDecimalTest extends AbstractRand
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, long b) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b;
+
 		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 
 		//expected
@@ -100,6 +102,6 @@ abstract public class AbstractDecimalLongValueToDecimalTest extends AbstractRand
 		}
 		
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

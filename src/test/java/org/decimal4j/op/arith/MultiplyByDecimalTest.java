@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
@@ -42,9 +41,9 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#multiplyBy(Decimal)} etc.
  */
 @RunWith(Parameterized.class)
-public class MultiplyByTest extends AbstractDecimalUnknownDecimalToDecimalTest {
+public class MultiplyByDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 	
-	public MultiplyByTest(ScaleMetrics scaleMetrics, int scale, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+	public MultiplyByDecimalTest(ScaleMetrics scaleMetrics, int scale, TruncationPolicy tp, DecimalArithmetic arithmetic) {
 		super(arithmetic, scale);
 	}
 
@@ -66,24 +65,9 @@ public class MultiplyByTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 		return "*";
 	}
 	
-	protected boolean isAssertable(BigDecimal a, BigDecimal b) {
-		if (isUnchecked()) {
-			try {
-				return b.setScale(getScale(), getRoundingMode()).unscaledValue().bitLength() <= 63;
-			} catch (ArithmeticException e) {
-				return true;//RoundingMode.UNNECESSARY but rounding is necessary
-			}
-		}
-		return true;
-	}
-
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
-		if (!isUnchecked()) {
-			JDKSupport.bigIntegerToLongValueExact(bScaled.unscaledValue());
-		}
-		return a.multiply(bScaled);
+		return a.multiply(b);
 	}
 	
 	@Override

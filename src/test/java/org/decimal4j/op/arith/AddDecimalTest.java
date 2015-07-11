@@ -68,11 +68,11 @@ public class AddDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
-		if (bScaled.unscaledValue().bitLength() > 63) {
-			throw new IllegalArgumentException("BigInteger out of long range: " + b);
+		final BigDecimal c = a.add(b);
+		if (c.signum() < 0 & a.signum() > 0 & b.signum() > 0) {
+			throw new RuntimeException(a + " + " + b + " = " + c);
 		}
-		return a.add(bScaled);
+		return c;
 	}
 	
 	@Override

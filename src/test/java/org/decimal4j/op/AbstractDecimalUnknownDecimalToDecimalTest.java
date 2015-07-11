@@ -68,17 +68,11 @@ abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends Abstrac
 		}
 	}
 	
-	protected boolean isAssertable(BigDecimal a, BigDecimal b) {
-		return true;
-	}
-
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<?> dOpB) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " " + dOpB;
+
 		final BigDecimal bdOpA = toBigDecimal(dOpA);
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
-		
-		if (!isAssertable(bdOpA, bdOpB)) {
-			return;
-		}
 		
 		// expected
 		ArithmeticResult<Long> expected;
@@ -101,7 +95,6 @@ abstract public class AbstractDecimalUnknownDecimalToDecimalTest extends Abstrac
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " "
-				+ dOpB);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

@@ -93,6 +93,7 @@ abstract public class AbstractBigDecimalToDecimalTest extends AbstractRandomAndS
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, BigDecimal operand) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + operation() + " " + operand;
 
 		// expected
 		ArithmeticResult<Long> expected;
@@ -115,6 +116,6 @@ abstract public class AbstractBigDecimalToDecimalTest extends AbstractRandomAndS
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

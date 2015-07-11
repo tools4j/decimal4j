@@ -158,6 +158,9 @@ public class SqrtTest extends AbstractRandomAndSpecialValueTest {
 			assertTrue("[" + index + "] sqrt(x)^2 must be <= x. " + msg, xSquared.compareTo(x) <= 0);
 			assertTrue("[" + index + "] sqrt(x+ULP)^2 must be > x. " + msg, xPlusUlpSquared.compareTo(x) > 0);
 		} else {
+			final String name = "[" + index + "]";
+			final String messagePrefix = getClass().getSimpleName() + name + ": " + operand + " " + operation();
+
 			//expected
 			ArithmeticResult<Long> expected;
 			try {
@@ -175,8 +178,7 @@ public class SqrtTest extends AbstractRandomAndSpecialValueTest {
 			}
 
 			//assert
-			final String name = "[" + index + "]";
-			actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operand + " " + operation());
+			actual.assertEquivalentTo(expected, messagePrefix);
 		}
 	}
 	private <S extends ScaleMetrics> void runNegativeTest(Decimal<S> operand) {

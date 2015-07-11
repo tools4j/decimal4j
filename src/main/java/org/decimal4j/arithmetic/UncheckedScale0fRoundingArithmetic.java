@@ -53,12 +53,12 @@ public final class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedS
 
 	@Override
 	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
-		return uDecimal + UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale);
+		return Add.addLongUnscaled(rounding, uDecimal, unscaled, scale);
 	}
 
 	@Override
 	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
-		return uDecimal + UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale);
+		return Sub.subtractLongUnscaled(rounding, uDecimal, unscaled, scale);
 	}
 
 	@Override

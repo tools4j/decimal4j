@@ -47,8 +47,8 @@ import org.decimal4j.truncate.TruncationPolicy;
  *            the concrete class implementing this decimal
  */
 @SuppressWarnings("serial")
-abstract public class AbstractDecimal<S extends ScaleMetrics, D extends AbstractDecimal<S, D>> extends Number implements
-		Decimal<S> {
+abstract public class AbstractDecimal<S extends ScaleMetrics, D extends AbstractDecimal<S, D>> 
+		extends Number implements Decimal<S> {
 
 	/**
 	 * Returns this or a new {@code Decimal} whose value is
@@ -412,19 +412,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D addUnscaled(long unscaledAugend, int scale) {
 		final DecimalArithmetic arith = getDefaultArithmetic();
-		return createOrAssign(arith.add(unscaledValue(), arith.fromUnscaled(unscaledAugend, scale)));
+		return createOrAssign(arith.addUnscaled(unscaledValue(), unscaledAugend, scale));
 	}
 
 	@Override
 	public D addUnscaled(long unscaledAugend, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetic arith = getArithmeticFor(roundingMode);
-		return createOrAssign(arith.add(unscaledValue(), arith.fromUnscaled(unscaledAugend, scale)));
+		return createOrAssign(arith.addUnscaled(unscaledValue(), unscaledAugend, scale));
 	}
 
 	@Override
 	public D addUnscaled(long unscaledAugend, int scale, TruncationPolicy truncationPolicy) {
 		final DecimalArithmetic arith = getArithmeticFor(truncationPolicy);
-		return createOrAssign(arith.add(unscaledValue(), arith.fromUnscaled(unscaledAugend, scale)));
+		return createOrAssign(arith.addUnscaled(unscaledValue(), unscaledAugend, scale));
 	}
 
 	@Override
@@ -504,19 +504,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D subtractUnscaled(long unscaledSubtrahend, int scale) {
 		final DecimalArithmetic arith = getDefaultArithmetic();
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromUnscaled(unscaledSubtrahend, scale)));
+		return createOrAssign(arith.subtractUnscaled(unscaledValue(), unscaledSubtrahend, scale));
 	}
 
 	@Override
 	public D subtractUnscaled(long unscaledSubtrahend, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetic arith = getArithmeticFor(roundingMode);
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromUnscaled(unscaledSubtrahend, scale)));
+		return createOrAssign(arith.subtractUnscaled(unscaledValue(), unscaledSubtrahend, scale));
 	}
 
 	@Override
 	public D subtractUnscaled(long unscaledSubtrahend, int scale, TruncationPolicy truncationPolicy) {
 		final DecimalArithmetic arith = getArithmeticFor(truncationPolicy);
-		return createOrAssign(arith.subtract(unscaledValue(), arith.fromUnscaled(unscaledSubtrahend, scale)));
+		return createOrAssign(arith.subtractUnscaled(unscaledValue(), unscaledSubtrahend, scale));
 	}
 
 	@Override
@@ -614,19 +614,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D multiplyUnscaled(long unscaledMultiplicand, int scale) {
 		final DecimalArithmetic arith = getDefaultArithmetic();
-		return createOrAssign(arith.multiply(unscaledValue(), arith.fromUnscaled(unscaledMultiplicand, scale)));
+		return createOrAssign(arith.multiplyByUnscaled(unscaledValue(), unscaledMultiplicand, scale));
 	}
 
 	@Override
 	public D multiplyUnscaled(long unscaledMultiplicand, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetic arith = getArithmeticFor(roundingMode);
-		return createOrAssign(arith.multiply(unscaledValue(), arith.fromUnscaled(unscaledMultiplicand, scale)));
+		return createOrAssign(arith.multiplyByUnscaled(unscaledValue(), unscaledMultiplicand, scale));
 	}
 
 	@Override
 	public D multiplyUnscaled(long unscaledMultiplicand, int scale, TruncationPolicy truncationPolicy) {
 		final DecimalArithmetic arith = getArithmeticFor(truncationPolicy);
-		return createOrAssign(arith.multiply(unscaledValue(), arith.fromUnscaled(unscaledMultiplicand, scale)));
+		return createOrAssign(arith.multiplyByUnscaled(unscaledValue(), unscaledMultiplicand, scale));
 	}
 
 	@Override
@@ -727,19 +727,19 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D divideUnscaled(long unscaledDivisor, int scale) {
 		final DecimalArithmetic arith = getDefaultArithmetic();
-		return createOrAssign(arith.divide(unscaledValue(), arith.fromUnscaled(unscaledDivisor, scale)));
+		return createOrAssign(arith.divideByUnscaled(unscaledValue(), unscaledDivisor, scale));
 	}
 
 	@Override
 	public D divideUnscaled(long unscaledDivisor, int scale, RoundingMode roundingMode) {
 		final DecimalArithmetic arith = getArithmeticFor(roundingMode);
-		return createOrAssign(arith.divide(unscaledValue(), arith.fromUnscaled(unscaledDivisor, scale)));
+		return createOrAssign(arith.divideByUnscaled(unscaledValue(), unscaledDivisor, scale));
 	}
 
 	@Override
 	public D divideUnscaled(long unscaledDivisor, int scale, TruncationPolicy truncationPolicy) {
 		final DecimalArithmetic arith = getArithmeticFor(truncationPolicy);
-		return createOrAssign(arith.divide(unscaledValue(), arith.fromUnscaled(unscaledDivisor, scale)));
+		return createOrAssign(arith.divideByUnscaled(unscaledValue(), unscaledDivisor, scale));
 	}
 
 	@Override

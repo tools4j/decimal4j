@@ -98,6 +98,8 @@ public class MultiplyExactTest extends AbstractRandomAndSpecialValueTest {
 	}
 	
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<?> dOpB) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " " + dOpB;
+
 		final int sumOfScales = dOpA.getScale() + dOpB.getScale();
 		final BigDecimal bdOpA = toBigDecimal(dOpA);
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
@@ -132,8 +134,7 @@ public class MultiplyExactTest extends AbstractRandomAndSpecialValueTest {
 		if (!actual.isException()) {
 			assertEquals("result scale should be sum of scales", sumOfScales, act.getScale());
 		}
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + " "
-				+ dOpB);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 
 }

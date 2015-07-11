@@ -71,12 +71,12 @@ public final class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScale
 
 	@Override
 	public final long addUnscaled(long uDecimal, long unscaled, int scale) {
-		return Checked.add(this, uDecimal, UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale));
+		return Add.addUnscaledUnscaledChecked(this, rounding, uDecimal, unscaled, scale);
 	}
 
 	@Override
 	public final long subtractUnscaled(long uDecimal, long unscaled, int scale) {
-		return Checked.subtract(this, uDecimal, UnscaledConversion.unscaledToLong(this, rounding, unscaled, scale));
+		return Sub.subtractUnscaledUnscaledChecked(this, rounding, uDecimal, unscaled, scale);
 	}
 
 	@Override

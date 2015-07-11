@@ -55,12 +55,12 @@ abstract public class AbstractCheckedScaleNfArithmetic extends
 
 	@Override
 	public final long addLong(long uDecimal, long lValue) {
-		return Checked.addDecimalAndLong(this, uDecimal, lValue);
+		return Add.addUnscaledLongChecked(this, uDecimal, lValue);
 	}
 
 	@Override
 	public final long subtractLong(long uDecimal, long lValue) {
-		return Checked.subtractLongFromDecimal(this, uDecimal, lValue);
+		return Sub.subtractUnscaledLongChecked(this, uDecimal, lValue);
 	}
 
 	@Override

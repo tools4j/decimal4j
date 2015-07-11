@@ -219,6 +219,8 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, int b) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b;
+		
 		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 
 		//expected
@@ -239,7 +241,7 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 		
 		//assert
 		try {
-			actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + b);
+			actual.assertEquivalentTo(expected, messagePrefix);
 		} catch (AssertionError e) {
 			if (isUnchecked() && expected.isOverflow() ) {
 				//overflown results without CHECKED mode don't match

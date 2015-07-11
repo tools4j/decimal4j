@@ -81,6 +81,9 @@ public class DivideAndRemainderTest extends AbstractDecimalDecimalToAnyTest<Obje
 	}
 	@Override
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOpA, Decimal<S> dOpB) {
+		final String messagePrefix0 = getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + "[0] " + dOpB;
+		final String messagePrefix1 = getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + "[1] " + dOpB;
+		
 		final BigDecimal bdOpA = toBigDecimal(dOpA);
 		final BigDecimal bdOpB = toBigDecimal(dOpB);
 
@@ -109,7 +112,7 @@ public class DivideAndRemainderTest extends AbstractDecimalDecimalToAnyTest<Obje
 		}
 
 		//assert
-		actual0.assertEquivalentTo(expected0, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + "[0] " + dOpB);
-		actual1.assertEquivalentTo(expected1, getClass().getSimpleName() + name + ": " + dOpA + " " + operation() + "[1] " + dOpB);
+		actual0.assertEquivalentTo(expected0, messagePrefix0);
+		actual1.assertEquivalentTo(expected1, messagePrefix1);
 	}
 }

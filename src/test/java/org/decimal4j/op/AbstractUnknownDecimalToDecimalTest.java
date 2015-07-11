@@ -86,6 +86,7 @@ abstract public class AbstractUnknownDecimalToDecimalTest extends AbstractRandom
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<?> operand) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + operation() + " " + operand;
 
 		// expected
 		ArithmeticResult<Long> expected;
@@ -108,6 +109,6 @@ abstract public class AbstractUnknownDecimalToDecimalTest extends AbstractRandom
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

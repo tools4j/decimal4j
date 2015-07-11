@@ -76,6 +76,7 @@ abstract public class AbstractFloatToDecimalTest extends AbstractRandomAndSpecia
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, float operand) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + operation() + " " + operand;
 
 		// expected
 		ArithmeticResult<Long> expected;
@@ -98,6 +99,6 @@ abstract public class AbstractFloatToDecimalTest extends AbstractRandomAndSpecia
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + operation() + " " + operand);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

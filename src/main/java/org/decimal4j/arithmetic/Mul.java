@@ -89,7 +89,7 @@ final class Mul {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics scaleMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scale);
 		return multiply(uDecimal, scaleMetrics, unscaled);
 	}
 	
@@ -185,7 +185,7 @@ final class Mul {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics scaleMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scale);
 		return multiply(rounding, uDecimal, scaleMetrics, unscaled);
 	}
 
@@ -316,7 +316,7 @@ final class Mul {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics scaleMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scale);
 		return multiplyChecked(arith.getScaleMetrics(), uDecimal, scaleMetrics, unscaled);
 	}
 	
@@ -438,7 +438,7 @@ final class Mul {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics scaleMetrics2 = Scales.findByScaleFactor(scale);
+		final ScaleMetrics scaleMetrics2 = Scales.getScaleMetrics(scale);
 		return multiplyChecked(rounding, arith.getScaleMetrics(), uDecimal, scaleMetrics2, unscaled);
 	}
 

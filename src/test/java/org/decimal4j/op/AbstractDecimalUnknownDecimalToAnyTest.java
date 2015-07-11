@@ -84,6 +84,8 @@ abstract public class AbstractDecimalUnknownDecimalToAnyTest<R> extends Abstract
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> a, Decimal<?> b) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + a + " " + operation() + " " + b;
+
 		final BigDecimal bdA = toBigDecimal(a);
 		final BigDecimal bdB = toBigDecimal(b);
 
@@ -106,6 +108,6 @@ abstract public class AbstractDecimalUnknownDecimalToAnyTest<R> extends Abstract
 		}
 		
 		//assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + a + " " + operation() + " " + b);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

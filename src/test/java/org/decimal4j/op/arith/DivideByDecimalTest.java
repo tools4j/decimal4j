@@ -31,8 +31,10 @@ import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -41,9 +43,9 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link Decimal#divideBy(Decimal)} etc.
  */
 @RunWith(Parameterized.class)
-public class DivideByTest extends AbstractDecimalUnknownDecimalToDecimalTest {
+public class DivideByDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 	
-	public DivideByTest(ScaleMetrics scaleMetrics, int scale, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+	public DivideByDecimalTest(ScaleMetrics scaleMetrics, int scale, TruncationPolicy tp, DecimalArithmetic arithmetic) {
 		super(arithmetic, scale);
 	}
 
@@ -65,24 +67,44 @@ public class DivideByTest extends AbstractDecimalUnknownDecimalToDecimalTest {
 		return "/";
 	}
 	
-	protected boolean isAssertable(BigDecimal a, BigDecimal b) {
-		if (isUnchecked()) {
-			try {
-				return b.setScale(getScale(), getRoundingMode()).unscaledValue().bitLength() <= 63;
-			} catch (ArithmeticException e) {
-				return true;//RoundingMode.UNNECESSARY but rounding is necessary
-			}
+	@Test
+	public void testProblem1() {
+		final long a = -2147483648L;
+		final long b = 100000000000001L;
+		if (getScale() == 0 & unknownDecimalScale == 18) {
+			final Decimal<?> da = newDecimal(getScaleMetrics(), a);
+			final Decimal<?> db = newDecimal(Scales.getScaleMetrics(unknownDecimalScale), b);
+			runTest(getScaleMetrics(), "testProblem1: " + da + "/" + db, newDecimal(getScaleMetrics(), a), db);
 		}
-		return true;
+	}
+	
+	@Test
+	public void testProblem2() {
+		final long a = -9223372036854775807L;
+		final long b = -8000000000000000000L;
+		if (getScale() == 18 & unknownDecimalScale == 18) {
+			final Decimal<?> da = newDecimal(getScaleMetrics(), a);
+			final Decimal<?> db = newDecimal(Scales.getScaleMetrics(unknownDecimalScale), b);
+			runTest(getScaleMetrics(), "testProblem2: " + da + "/" + db, newDecimal(getScaleMetrics(), a), db);
+		}
+	}
+
+	@Test
+	public void testProblem3() {
+		final long a =  1152921504606846975L;
+		final long b = -8000000000000000000L;
+		if (getScale() == 18 & unknownDecimalScale == 18) {
+			final Decimal<?> da = newDecimal(getScaleMetrics(), a);
+			final Decimal<?> db = newDecimal(Scales.getScaleMetrics(unknownDecimalScale), b);
+			runTest(getScaleMetrics(), "testProblem3: " + da + "/" + db, newDecimal(getScaleMetrics(), a), db);
+		}
 	}
 
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
-		if (b.unscaledValue().bitLength() > 63) {
-			throw new IllegalArgumentException("Overflow: " + b);
-		}
-		return a.divide(bScaled, mathContextLong128);
+		return a.divide(b, mathContextLong128);//works
+//		return a.divide(b, getScale(), getRoundingMode());//does not work (JDK bug?)
+//		return a.divide(b, Math.max(getScale(), unknownDecimalScale), getRoundingMode());//works
 	}
 	
 	@Override

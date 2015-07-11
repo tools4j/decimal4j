@@ -129,7 +129,7 @@ final class Div {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics divisorMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divide(uDecimalDividend, divisorMetrics, unscaledDivisor);
 	}
 
@@ -237,7 +237,7 @@ final class Div {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics divisorMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divide(rounding, uDecimalDividend, divisorMetrics, unscaledDivisor);
 	}
 
@@ -329,7 +329,7 @@ final class Div {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics divisorMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divideChecked(arith.getScaleMetrics(), uDecimalDividend, divisorMetrics, unscaledDivisor);
 	}
 
@@ -453,7 +453,7 @@ final class Div {
 		} else if (scale > Scales.MAX_SCALE) {
 			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
-		final ScaleMetrics divisorMetrics = Scales.findByScaleFactor(scale);
+		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divideChecked(rounding, arith.getScaleMetrics(), uDecimalDividend, divisorMetrics, unscaledDivisor);
 	}
 

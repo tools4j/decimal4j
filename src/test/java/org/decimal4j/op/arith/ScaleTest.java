@@ -133,6 +133,8 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, int targetScale) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + targetScale;
+
 		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 		final DecimalArithmetic resultArithmetic = arithmetic.deriveArithmetic(targetScale);
 
@@ -153,7 +155,6 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + dOperandA + " " + operation()
-				+ " " + targetScale);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 }

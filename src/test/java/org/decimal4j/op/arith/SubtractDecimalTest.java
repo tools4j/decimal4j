@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
@@ -69,11 +68,7 @@ public class SubtractDecimalTest extends AbstractDecimalUnknownDecimalToDecimalT
 	
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		final BigDecimal bScaled = b.setScale(getScale(), getRoundingMode());
-		if (!isUnchecked()) {
-			JDKSupport.bigIntegerToLongValueExact(bScaled.unscaledValue());
-		}
-		return a.subtract(bScaled);
+		return a.subtract(b);
 	}
 	
 	@Override

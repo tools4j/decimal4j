@@ -32,7 +32,7 @@ class Exceptions {
 		return (ArithmeticException)new ArithmeticException(message).initCause(cause);
 	}
 	public static void rethrowIfRoundingNecessary(ArithmeticException e) {
-		if (e.getMessage().equals("Rounding necessary")) {
+		if ("Rounding necessary".equals(e.getMessage())) {
 			throw e;
 		}
 	}

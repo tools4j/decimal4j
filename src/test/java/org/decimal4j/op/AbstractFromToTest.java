@@ -85,6 +85,8 @@ abstract public class AbstractFromToTest<V> extends AbstractDecimalTest {
 	}
 
 	private <S extends ScaleMetrics> void runTest(DecimalFactory<S> decimalFactory, String name, V value) {
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + value;
+
 		// expected
 		ArithmeticResult<V> expected;
 		try {
@@ -104,7 +106,7 @@ abstract public class AbstractFromToTest<V> extends AbstractDecimalTest {
 		}
 
 		// assert
-		actual.assertEquivalentTo(expected, getClass().getSimpleName() + name + ": " + value);
+		actual.assertEquivalentTo(expected, messagePrefix);
 	}
 
 }
