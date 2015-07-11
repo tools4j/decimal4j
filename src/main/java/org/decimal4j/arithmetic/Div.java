@@ -122,12 +122,16 @@ final class Div {
 	 * @return the division result without rounding and without overflow checks
 	 */
 	public static final long divideByUnscaled(long uDecimalDividend, long unscaledDivisor, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (unscaledDivisor == 0 | scale == 0) {
 			return uDecimalDividend / unscaledDivisor;
 		} else if (scale < 0) {
+			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
+				return -Pow10.multiplyByPowerOf10(uDecimalDividend, scale);
+			}
 			return Pow10.multiplyByPowerOf10(uDecimalDividend / unscaledDivisor, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divide(uDecimalDividend, divisorMetrics, unscaledDivisor);
@@ -205,9 +209,15 @@ final class Div {
 	 * @return the division result without rounding and without overflow checks
 	 */
 	public static final long divideByUnscaled(DecimalRounding rounding, long uDecimalDividend, long unscaledDivisor, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (unscaledDivisor == 0 | scale == 0) {
 			return divideByLong(rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
+			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
+				return -Pow10.multiplyByPowerOf10(rounding, uDecimalDividend, scale);
+			}
 			//NOTE: rounding twice could be a problem here, e.g. consider HALF_UP with 10.51 and 10.49
 			final long quot;
 			switch (rounding) {
@@ -220,13 +230,14 @@ final class Div {
 			case HALF_EVEN: {
 				//try HALF_UP first
 				final long quotD = uDecimalDividend / unscaledDivisor;//DOWN
-				final long powHU = Pow10.divideByPowerOf10(DecimalRounding.HALF_UP, quotD, scale);
+				final long powHU = Pow10.multiplyByPowerOf10(DecimalRounding.HALF_UP, quotD, scale);
 				if (0 == (powHU & 0x1)) {
 					//even, we're done
+					return powHU;
 				}
 				//odd, HALF_DOWN may be even in which case it should win
 				final long quotU = divideByLong(DecimalRounding.UP, uDecimalDividend, unscaledDivisor);
-				final long powHD = Pow10.divideByPowerOf10(DecimalRounding.HALF_DOWN, quotU, scale);
+				final long powHD = Pow10.multiplyByPowerOf10(DecimalRounding.HALF_DOWN, quotU, scale);
 				return powHD;//either even or the same as powHU
 			}
 			default:
@@ -234,8 +245,6 @@ final class Div {
 				break;
 			}
 			return Pow10.multiplyByPowerOf10(rounding, quot, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divide(rounding, uDecimalDividend, divisorMetrics, unscaledDivisor);
@@ -319,15 +328,18 @@ final class Div {
 	 * @return the division result without rounding and with overflow checks
 	 */
 	public static final long divideByUnscaledChecked(DecimalArithmetic arith, long uDecimalDividend, long unscaledDivisor, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (uDecimalDividend == 0 & unscaledDivisor != 0) {
 			return 0;
 		} else if (scale == 0) {
 			return Checked.divideByLong(arith, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
-			final long unscaledResult = Checked.divideByLong(arith, uDecimalDividend, unscaledDivisor);
-			return Pow10.multiplyByPowerOf10Checked(arith, unscaledResult, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
+				return -Pow10.multiplyByPowerOf10Checked(arith, uDecimalDividend, scale);
+			}
+			return Pow10.multiplyByPowerOf10Checked(arith, uDecimalDividend / unscaledDivisor, scale);
 		}
 		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divideChecked(arith.getScaleMetrics(), uDecimalDividend, divisorMetrics, unscaledDivisor);
@@ -419,11 +431,17 @@ final class Div {
 	 * @return the division result without rounding and with overflow checks
 	 */
 	public static final long divideByUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalDividend, long unscaledDivisor, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (uDecimalDividend == 0 & unscaledDivisor != 0) {
 			return 0;
 		} else if (scale == 0) {
 			return divideByLongChecked(arith, rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
+			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
+				return -Pow10.multiplyByPowerOf10Checked(arith, rounding, uDecimalDividend, scale);
+			}
 			//NOTE: rounding twice could be a problem here, e.g. consider HALF_UP with 10.51 and 10.49
 			final long quot;
 			switch (rounding) {
@@ -436,13 +454,14 @@ final class Div {
 			case HALF_EVEN: {
 				//try HALF_UP first
 				final long quotD = divideByLongChecked(arith, DecimalRounding.DOWN, uDecimalDividend, unscaledDivisor);
-				final long powHU = Pow10.divideByPowerOf10Checked(arith, DecimalRounding.HALF_UP, quotD, scale);
+				final long powHU = Pow10.multiplyByPowerOf10Checked(arith, DecimalRounding.HALF_UP, quotD, scale);
 				if (0 == (powHU & 0x1)) {
 					//even, we're done
+					return powHU;
 				}
 				//odd, HALF_DOWN may be even in which case it should win
 				final long quotU = divideByLongChecked(arith, DecimalRounding.UP, uDecimalDividend, unscaledDivisor);
-				final long powHD = Pow10.divideByPowerOf10Checked(arith, DecimalRounding.HALF_DOWN, quotU, scale);
+				final long powHD = Pow10.multiplyByPowerOf10Checked(arith, DecimalRounding.HALF_DOWN, quotU, scale);
 				return powHD;//either even or the same as powHU
 			}
 			default:
@@ -450,8 +469,6 @@ final class Div {
 				break;
 			}
 			return Pow10.multiplyByPowerOf10Checked(arith, rounding, quot, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics divisorMetrics = Scales.getScaleMetrics(scale);
 		return divideChecked(rounding, arith.getScaleMetrics(), uDecimalDividend, divisorMetrics, unscaledDivisor);

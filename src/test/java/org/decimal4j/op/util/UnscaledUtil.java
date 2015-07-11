@@ -68,17 +68,4 @@ public class UnscaledUtil {
 	private UnscaledUtil() {
 		super();
 	}
-
-	public static BigDecimal toBigDecimal(DecimalArithmetic arith, long unscaled, int scale) {
-		BigDecimal other = BigDecimal.valueOf(unscaled, scale);
-		if (scale != arith.getScale()) {
-			other = other.setScale(arith.getScale(), arith.getRoundingMode());
-			if (other.unscaledValue().bitLength() > 63) {
-				throw new IllegalArgumentException("Overflow: " + other);
-			} else {
-				other = BigDecimal.valueOf(other.unscaledValue().longValue(), arith.getScale());
-			}
-		}
-		return other;
-	}
 }

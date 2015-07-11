@@ -80,14 +80,15 @@ final class Mul {
 	 * @return the multiplication result without rounding and without overflow checks
 	 */
 	public static final long multiplyByUnscaled(long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
 			return uDecimal * unscaled;
 		} else if (scale < 0) {
 			return Pow10.divideByPowerOf10(uDecimal * unscaled, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scale);
 		return multiply(uDecimal, scaleMetrics, unscaled);
@@ -176,14 +177,15 @@ final class Mul {
 	 * @return the multiplication result with rounding and without overflow checks
 	 */
 	public static final long multiplyByUnscaled(DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
 			return uDecimal * unscaled;
 		} else if (scale < 0) {
 			return Pow10.divideByPowerOf10(rounding, uDecimal * unscaled, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scale);
 		return multiply(rounding, uDecimal, scaleMetrics, unscaled);
@@ -306,6 +308,9 @@ final class Mul {
 	 * @return the multiplication result without rounding and with overflow checks
 	 */
 	public static final long multiplyByUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -313,8 +318,6 @@ final class Mul {
 		} else if (scale < 0) {
 			final long unscaledResult = Checked.multiplyLong(uDecimal, unscaled);
 			return Pow10.divideByPowerOf10Checked(arith, unscaledResult, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scale);
 		return multiplyChecked(arith.getScaleMetrics(), uDecimal, scaleMetrics, unscaled);
@@ -428,6 +431,9 @@ final class Mul {
 	 * @return the multiplication result with rounding and overflow checks
 	 */
 	public static final long multiplyByUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		if (uDecimal == 0 | unscaled == 0) {
 			return 0;
 		} else if (scale == 0) {
@@ -435,8 +441,6 @@ final class Mul {
 		} else if (scale < 0) {
 			final long unscaledResult = Checked.multiplyLong(uDecimal, unscaled);
 			return Pow10.divideByPowerOf10Checked(arith, rounding, unscaledResult, scale);
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final ScaleMetrics scaleMetrics2 = Scales.getScaleMetrics(scale);
 		return multiplyChecked(rounding, arith.getScaleMetrics(), uDecimal, scaleMetrics2, unscaled);

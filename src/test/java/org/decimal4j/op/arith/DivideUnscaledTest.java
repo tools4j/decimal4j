@@ -24,6 +24,7 @@
 package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
@@ -60,6 +61,19 @@ public class DivideUnscaledTest extends AbstractDecimalUnscaledToDecimalTest {
 	public void testProblem2() {
 		if (getScale() == 17 && isUnchecked() && scale == 17) {
 			runTest(getScaleMetrics(), "problem2", newDecimal(getScaleMetrics(), -9223372036854775807L), 100000000000000000L);
+		}
+	}
+
+	@Test
+	public void testDivisionOverflow() {
+		//test division overflow
+		runTest(getScaleMetrics(), "DivisionOverflow", newDecimal(getScaleMetrics(), Long.MIN_VALUE), -1);
+	}
+
+	@Test
+	public void testHalfEven() {
+		if (getRoundingMode() == RoundingMode.HALF_EVEN) {
+			runTest(getScaleMetrics(), "HalfEven", newDecimal(getScaleMetrics(), Long.MIN_VALUE), Long.MIN_VALUE);
 		}
 	}
 

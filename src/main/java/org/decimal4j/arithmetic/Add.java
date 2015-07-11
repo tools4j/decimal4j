@@ -122,13 +122,14 @@ final class Add {
 	 * @return the addition result without rounding and without overflow checks
 	 */
 	public static final long addUnscaledUnscaled(ScaleMetrics scaleMetrics, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal + unscaled;
 		} else if (scaleDiff < 0) {
 			return uDecimal + Pow10.divideByPowerOf10(unscaled, scaleDiff);//multiplication
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		return addForPositiveScaleDiff(uDecimal, unscaled, scaleDiff);
 	}
@@ -151,13 +152,14 @@ final class Add {
 	 * @return the addition result with rounding but without overflow checks
 	 */
 	public static final long addUnscaledUnscaled(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal + unscaled;
 		} else if (scaleDiff < 0) {
 			return uDecimal + Pow10.divideByPowerOf10(unscaled, scaleDiff);//multiplication
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		//scale > 0
 		return addForPositiveScaleDiff(rounding, uDecimal, unscaled, scaleDiff);
@@ -179,6 +181,9 @@ final class Add {
 	 * @return the addition result without rounding but with overflow checks
 	 */
 	public static final long addUnscaledUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.add(uDecimal, unscaled);
@@ -188,8 +193,6 @@ final class Add {
 			} catch (ArithmeticException e) {
 				throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal) + " + " + unscaled + "*10^" + (-scale), e);
 			}
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final long sum = addForPositiveScaleDiff(uDecimal, unscaled, scaleDiff);
 		if (!Checked.isAddOverflow(uDecimal, unscaled, sum)) {
@@ -216,6 +219,9 @@ final class Add {
 	 * @return the addition result with rounding and overflow checks
 	 */
 	public static final long addUnscaledUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.add(uDecimal, unscaled);
@@ -225,8 +231,6 @@ final class Add {
 			} catch (ArithmeticException e) {
 				throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal) + " + " + unscaled + "*10^" + (-scale), e);
 			}
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final long sum = addForPositiveScaleDiff(rounding, uDecimal, unscaled, scaleDiff);
 		if (!Checked.isAddOverflow(uDecimal, unscaled, sum)) {
@@ -306,10 +310,15 @@ final class Add {
 	private static final long addForNegativeScaleDiff(DecimalArithmetic arith, long uDecimal, long unscaled, int scaleDiff) {
 		//NOTE: multiplication by power of 10 may lead to an overflow but the result may still be valid if signs are opposite
 		//		--> therefore we multiply only half of the value with pow10 and add it twice
-		//		--> then we add the remainder 1 (x pow10) if the value was odd
+		//		--> then we add the remainder 1 (x pow10) if the value was odd (again in halves to avoid overflow)
 		final long half = Pow10.divideByPowerOf10Checked(arith, unscaled / 2, scaleDiff);//multiplication;
-		final long rem = ((unscaled & 0x1) == 0) ? 0 : Pow10.divideByPowerOf10Checked(arith, unscaled - ((unscaled / 2) * 2), scaleDiff);
-		return arith.add(arith.add(arith.add(uDecimal, half), half), rem);
+		final long halfReminder = ((unscaled & 0x1) == 0) ? 0 : Pow10.divideByPowerOf10Checked(arith, unscaled > 0 ? 5 : -5, scaleDiff + 1);
+		long result = uDecimal;
+		result = arith.add(result, half);
+		result = arith.add(result, half);
+		result = arith.add(result, halfReminder);
+		result = arith.add(result, halfReminder);
+		return result;
 	}
 
 	static final DecimalRounding getSignRevertedRoundingMode(DecimalRounding rounding) {

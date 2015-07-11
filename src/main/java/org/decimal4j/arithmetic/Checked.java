@@ -38,6 +38,10 @@ final class Checked {
 		return (minuend ^ subtrahend) < 0 & (minuend ^ result) < 0;
 	}
 
+	static final boolean isDivideOverflow(long dividend, long divisor) {
+		return dividend == Long.MIN_VALUE & divisor == -1; 
+	}
+
 	public static final long addLong(long long1, long long2) {
 		final long result = long1 + long2;
 		if (isAddOverflow(long1, long2, result)) {

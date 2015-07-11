@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.util.UnscaledUtil;
+import org.decimal4j.scale.Scales;
 
 /**
  * Base class for unit tests with an unscaled decimal operand.
@@ -51,7 +52,10 @@ abstract public class AbstractUnscaledToDecimalTest extends AbstractLongValueToD
 	}
 	
 	protected BigDecimal toBigDecimal(long unscaled) {
-		return UnscaledUtil.toBigDecimal(arithmetic, unscaled, scale);
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("illegal scale: " + scale);
+		}
+		return BigDecimal.valueOf(unscaled, scale);
 	}
 
 }

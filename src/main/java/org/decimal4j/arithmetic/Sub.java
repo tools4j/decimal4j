@@ -122,13 +122,14 @@ final class Sub {
 	 * @return the subtraction result without rounding and without overflow checks
 	 */
 	public static final long subtractUnscaledUnscaled(ScaleMetrics scaleMetrics, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal - unscaled;
 		} else if (scaleDiff < 0) {
 			return uDecimal - Pow10.divideByPowerOf10(unscaled, scaleDiff);//multiplication
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		return subtractForPositiveScaleDiff(uDecimal, unscaled, scaleDiff);
 	}
@@ -151,13 +152,14 @@ final class Sub {
 	 * @return the subtraction result with rounding but without overflow checks
 	 */
 	public static final long subtractUnscaledUnscaled(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - scaleMetrics.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return uDecimal - unscaled;
 		} else if (scaleDiff < 0) {
 			return uDecimal - Pow10.divideByPowerOf10(unscaled, scaleDiff);//multiplication
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		//scale > 0
 		return subtractForPositiveScaleDiff(rounding, uDecimal, unscaled, scaleDiff);
@@ -179,6 +181,9 @@ final class Sub {
 	 * @return the subtraction result without rounding but with overflow checks
 	 */
 	public static final long subtractUnscaledUnscaledChecked(DecimalArithmetic arith, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.subtract(uDecimal, unscaled);
@@ -188,8 +193,6 @@ final class Sub {
 			} catch (ArithmeticException e) {
 				throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal) + " - " + unscaled + "*10^" + (-scale), e);
 			}
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final long diff = subtractForPositiveScaleDiff(uDecimal, unscaled, scaleDiff);
 		if (!Checked.isSubtractOverflow(uDecimal, unscaled, diff)) {
@@ -216,6 +219,9 @@ final class Sub {
 	 * @return the subtraction result with rounding and overflow checks
 	 */
 	public static final long subtractUnscaledUnscaledChecked(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, long unscaled, int scale) {
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
+		}
 		final int scaleDiff = scale - arith.getScale();
 		if (unscaled == 0 | scaleDiff == 0) {
 			return arith.subtract(uDecimal, unscaled);
@@ -225,8 +231,6 @@ final class Sub {
 			} catch (ArithmeticException e) {
 				throw Exceptions.newArithmeticExceptionWithCause("Overflow: " + arith.toString(uDecimal) + " - " + unscaled + "*10^" + (-scale), e);
 			}
-		} else if (scale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("Illegal scale, must be <=" + Scales.MAX_SCALE + " but was " + scale);
 		}
 		final long diff = subtractForPositiveScaleDiff(rounding, uDecimal, unscaled, scaleDiff);
 		if (!Checked.isSubtractOverflow(uDecimal, unscaled, diff)) {
@@ -306,10 +310,15 @@ final class Sub {
 	private static final long subtractForNegativeScaleDiff(DecimalArithmetic arith, long uDecimal, long unscaled, int scaleDiff) {
 		//NOTE: multiplication by power of 10 may lead to an overflow but the result may still be valid if signs are same
 		//		--> therefore we multiply only half of the value with pow10 and subtract it twice
-		//		--> then we subtract the remainder 1 (x pow10) if the value was odd
+		//		--> then we subtract the remainder 1 (x pow10) if the value was odd (again in halves to avoid overflow)
 		final long half = Pow10.divideByPowerOf10Checked(arith, unscaled / 2, scaleDiff);//multiplication;
-		final long rem = ((unscaled & 0x1) == 0) ? 0 : Pow10.divideByPowerOf10Checked(arith, unscaled - ((unscaled / 2) * 2), scaleDiff);
-		return arith.subtract(arith.subtract(arith.subtract(uDecimal, half), half), rem);
+		final long halfReminder = ((unscaled & 0x1) == 0) ? 0 : Pow10.divideByPowerOf10Checked(arith, unscaled > 0 ? 5 : -5, scaleDiff + 1);
+		long result = uDecimal;
+		result = arith.subtract(result, half);
+		result = arith.subtract(result, half);
+		result = arith.subtract(result, halfReminder);
+		result = arith.subtract(result, halfReminder);
+		return result;
 	}
 
 	// no instances

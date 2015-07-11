@@ -30,6 +30,7 @@ import java.util.List;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.util.UnscaledUtil;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runners.Parameterized.Parameters;
@@ -71,7 +72,10 @@ abstract public class AbstractDecimalUnscaledToDecimalTest extends AbstractDecim
 	}
 
 	protected BigDecimal toBigDecimal(long unscaled) {
-		return UnscaledUtil.toBigDecimal(arithmetic, unscaled, scale);
+		if (scale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("illegal scale: " + scale);
+		}
+		return BigDecimal.valueOf(unscaled, scale);
 	}
 
 }
