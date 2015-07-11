@@ -25,117 +25,117 @@ public enum Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	INSTANCE;
 
 	@Override
-	public Scale${scale}f getScaleMetrics() {
+	public final Scale${scale}f getScaleMetrics() {
 		return Scale${scale}f.INSTANCE;
 	}
 	
 	@Override
-	public Class<Decimal${scale}f> immutableType() {
+	public final Class<Decimal${scale}f> immutableType() {
 		return Decimal${scale}f.class;
 	}
 
 	@Override
-	public Class<MutableDecimal${scale}f> mutableType() {
+	public final Class<MutableDecimal${scale}f> mutableType() {
 		return MutableDecimal${scale}f.class;
 	}
 
 	@Override
-	public DecimalFactory<?> deriveFactory(int scale) {
+	public final DecimalFactory<?> deriveFactory(int scale) {
 		return Factories.getDecimalFactory(scale);
 	}
 	
 	@Override
-	public <S extends ScaleMetrics> DecimalFactory<S> deriveFactory(S scaleMetrics) {
+	public final <S extends ScaleMetrics> DecimalFactory<S> deriveFactory(S scaleMetrics) {
 		return Factories.getDecimalFactory(scaleMetrics);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(long value) {
+	public final Decimal${scale}f valueOf(long value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(float value) {
+	public final Decimal${scale}f valueOf(float value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
+	public final Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(double value) {
+	public final Decimal${scale}f valueOf(double value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
+	public final Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(BigInteger value) {
+	public final Decimal${scale}f valueOf(BigInteger value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(BigDecimal value) {
+	public final Decimal${scale}f valueOf(BigDecimal value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(BigDecimal value, RoundingMode roundingMode) {
+	public final Decimal${scale}f valueOf(BigDecimal value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(Decimal<?> value) {
+	public final Decimal${scale}f valueOf(Decimal<?> value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f valueOf(Decimal<?> value, RoundingMode roundingMode) {
+	public final Decimal${scale}f valueOf(Decimal<?> value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
 	}
 
 	@Override
-	public Decimal${scale}f parse(String value) {
+	public final Decimal${scale}f parse(String value) {
 		return Decimal${scale}f.valueOf(value);
 	}
 
 	@Override
-	public Decimal${scale}f parse(String value, RoundingMode roundingMode) {
+	public final Decimal${scale}f parse(String value, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOf(value, roundingMode);
 	}
 
 	@Override
-	public Decimal${scale}f valueOfUnscaled(long unscaledValue) {
+	public final Decimal${scale}f valueOfUnscaled(long unscaledValue) {
 		return Decimal${scale}f.valueOfUnscaled(unscaledValue);
 	}
 
 	@Override
-	public Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
+	public final Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
 		return Decimal${scale}f.valueOfUnscaled(unscaledValue, scale);
 	}
 
 	@Override
-	public Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
+	public final Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
 		return Decimal${scale}f.valueOfUnscaled(unscaledValue, scale, roundingMode);
 	}
 
 	@Override
-	public Decimal${scale}f[] newArray(int length) {
+	public final Decimal${scale}f[] newArray(int length) {
 		return new Decimal${scale}f[length];
 	}
 
 	@Override
-	public MutableDecimal${scale}f newMutable() {
+	public final MutableDecimal${scale}f newMutable() {
 		return new MutableDecimal${scale}f();
 	}
 
 	@Override
-	public MutableDecimal${scale}f[] newMutableArray(int length) {
+	public final MutableDecimal${scale}f[] newMutableArray(int length) {
 		return new MutableDecimal${scale}f[length];
 	}
 }

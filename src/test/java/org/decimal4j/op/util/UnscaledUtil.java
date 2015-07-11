@@ -23,12 +23,10 @@
  */
 package org.decimal4j.op.util;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.test.TestSettings;

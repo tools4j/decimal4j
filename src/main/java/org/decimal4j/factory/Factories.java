@@ -80,7 +80,7 @@ public final class Factories {
 	
 	private static final GenericDecimalFactory<?>[] GENERIC_FACTORIES = initGenericFactories();
 
-	private static GenericDecimalFactory<?>[] initGenericFactories() {
+	private static final GenericDecimalFactory<?>[] initGenericFactories() {
 		final GenericDecimalFactory<?>[] genericFactories = new GenericDecimalFactory<?>[FACTORIES.length];
 		for (int i = 0; i < FACTORIES.length; i++) {
 			genericFactories[i] = new GenericDecimalFactory<ScaleMetrics>(FACTORIES[i].getScaleMetrics());
@@ -93,7 +93,7 @@ public final class Factories {
 	 * <p>
 	 * {@code VALUES=[Factory0f.INSTANCE, Factory1f.INSTANCE, ..., Factory18f.INSTANCE]}
 	 */
-	public static List<DecimalFactory<?>> VALUES = Collections.unmodifiableList(Arrays.asList(FACTORIES));
+	public static final List<DecimalFactory<?>> VALUES = Collections.unmodifiableList(Arrays.asList(FACTORIES));
 
 	/**
 	 * Returns the {@code DecimalFactory} constant based on a given scale.

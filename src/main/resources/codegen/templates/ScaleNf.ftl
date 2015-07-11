@@ -70,7 +70,7 @@ public enum Scale${scale}f implements ScaleMetrics {
 	private static final DecimalArithmetic ROUNDING_HALF_EVEN_ARITHMETIC = UNCHECKED_ARITHMETIC[HALF_EVEN.ordinal()];
 	private static final DecimalArithmetic ROUNDING_UNNECESSARY_ARITHMETIC = UNCHECKED_ARITHMETIC[UNNECESSARY.ordinal()];
 
-	private static DecimalArithmetic[] initArithmetic(OverflowMode overflowMode) {
+	private static final DecimalArithmetic[] initArithmetic(OverflowMode overflowMode) {
 		final boolean checked = overflowMode == CHECKED;
 		final DecimalArithmetic[] arith = new DecimalArithmetic[DecimalRounding.VALUES.size()];
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
@@ -175,7 +175,7 @@ public enum Scale${scale}f implements ScaleMetrics {
 	}
 
 	@Override
-	public String toString(long value) {
+	public final String toString(long value) {
 		return DEFAULT_ARITHMETIC.toString(value);
 	}
 

@@ -24,12 +24,12 @@
 package org.decimal4j.arithmetic;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.decimal4j.test.AbstractFinalTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +40,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test enforcing that all methods and fields of certain classes are final.
  */
 @RunWith(Parameterized.class)
-public class FinalClassTest {
+public class FinalClassTest extends AbstractFinalTest {
 	
 	private final Class<?> clazz;
 	
@@ -108,75 +108,23 @@ public class FinalClassTest {
 
 	@Test
 	public void allMethodsShouldBeFinal() {
-		//all methods of a class should be final
-		for (final Method method : clazz.getDeclaredMethods()) {
-			assertMethodFinal(method);
-		}
-		//all methods of an enum constant should also be final
-		if (clazz.isEnum()) {
-			for (final Object constValue : clazz.getEnumConstants()) {
-				for (final Method method : constValue.getClass().getDeclaredMethods()) {
-					assertMethodFinal(method);
-				}
-			}
-		}
+		assertAllMethodsAreFinal(clazz);
 	}
 
 	@Test
 	public void allFieldsShouldBeFinal() {
-		//all methods of a class should be final
-		for (final Field field : clazz.getDeclaredFields()) {
-			assertFieldFinal(field);
-		}
-		//all fields of an enum constant should also be final
-		if (clazz.isEnum()) {
-			for (final Object constValue : clazz.getEnumConstants()) {
-				for (final Field field : constValue.getClass().getDeclaredFields()) {
-					assertFieldFinal(field);
-				}
-			}
-		}
+		assertAllFieldsAreFinal(clazz);
 	}
 	
-	private void assertMethodFinal(Method method) {
-		final int mod = method.getModifiers();
-		if (!method.isSynthetic() && !isSyntheticEnumMethod(method)) {
-			Assert.assertTrue("method should be abstract or final: " + method, Modifier.isAbstract(mod) || Modifier.isFinal(mod));
-		}
-	}
-	private void assertFieldFinal(Field field) {
-		final int mod = field.getModifiers();
-		if (!field.isSynthetic()) {
-			if (isAllowedNonFinalField(field)) {
-				Assert.assertFalse("field should be non-static: " + field, Modifier.isStatic(mod));
-				Assert.assertTrue("field should be private: " + field, Modifier.isPrivate(mod));
-			} else {
-				if (!isAllowedNonStaticField()) { 
-					Assert.assertTrue("field should be static: " + field, Modifier.isStatic(mod));
-				}
-				Assert.assertTrue("field should be final: " + field, Modifier.isFinal(mod));
-			}
-		}
-	}
-	
-	private boolean isAllowedNonStaticField() {
+	@Override
+	protected boolean isAllowedNonStaticField(Field field) {
 		return AbstractArithmetic.class.isAssignableFrom(clazz);
 	}
-	private boolean isAllowedNonFinalField(Field field) {
+	
+	@Override
+	protected boolean isAllowedNonFinalField(Field field) {
 		if (UnsignedDecimal9i36f.class.equals(clazz)) {
 			return Arrays.asList("norm", "pow10", "ival", "val3", "val2", "val1", "val0").contains(field.getName());
-		}
-		return false;
-	}
-
-	private boolean isSyntheticEnumMethod(Method method) {
-		if (clazz.isEnum()) {
-			if ("values".equals(method.getName()) && method.getParameterCount() == 0) {
-				return true;
-			};
-			if ("valueOf".equals(method.getName()) && method.getParameterCount() == 1 && method.getParameterTypes()[0].equals(String.class)) {
-				return true;
-			};
 		}
 		return false;
 	}

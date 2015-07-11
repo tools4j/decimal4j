@@ -52,7 +52,7 @@ import org.decimal4j.scale.Scale9f;
 public final class Scales {
 
 	//@formatter:off
-	private static ScaleMetrics[] SCALES = {
+	private static final ScaleMetrics[] SCALES = {
 		Scale0f.INSTANCE,
 		Scale1f.INSTANCE,
 		Scale2f.INSTANCE,
@@ -80,7 +80,7 @@ public final class Scales {
 	 * <p>
 	 * {@code VALUES=[Scale0f.INSTANCE, Scale1f.INSTANCE, ..., Scale18f.INSTANCE]}
 	 */
-	public static List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(SCALES));
+	public static final List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(SCALES));
 	
 	/**
 	 * The minimum scale that can be passed to {@link #getScaleMetrics(int)} without causing an
@@ -129,7 +129,7 @@ public final class Scales {
 	 * @see #MIN_SCALE
 	 * @see #MAX_SCALE
 	 */
-	public static ScaleMetrics getScaleMetrics(int scale) {
+	public static final ScaleMetrics getScaleMetrics(int scale) {
 		if (MIN_SCALE <= scale & scale <= MAX_SCALE) {
 			return SCALES[scale];
 		}
@@ -147,7 +147,7 @@ public final class Scales {
 	 *         {@code scaleFactor} if it exists and null otherwise
 	 * @see ScaleMetrics#getScaleFactor()
 	 */
-	public static ScaleMetrics findByScaleFactor(long scaleFactor) {
+	public static final ScaleMetrics findByScaleFactor(long scaleFactor) {
 		final int index = Arrays.binarySearch(SCALE_FACTORS, scaleFactor);
 		return index < 0 ? null : VALUES.get(index);
 	}
