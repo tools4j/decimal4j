@@ -401,13 +401,6 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	<S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
 
 	@Override
-	MutableDecimal<?> scale(int scale, TruncationPolicy truncationPolicy);
-
-	@SuppressWarnings("hiding")
-	@Override
-	<S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy);
-
-	@Override
 	MutableDecimal<S> add(Decimal<S> augend);
 
 	@Override

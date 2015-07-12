@@ -102,13 +102,6 @@ public interface ImmutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	<S extends ScaleMetrics> ImmutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode);
 
 	@Override
-	ImmutableDecimal<?> scale(int scale, TruncationPolicy truncationPolicy);
-
-	@SuppressWarnings("hiding")
-	@Override
-	<S extends ScaleMetrics> ImmutableDecimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy);
-
-	@Override
 	ImmutableDecimal<S> add(Decimal<S> augend);
 
 	@Override

@@ -26,9 +26,9 @@ package org.decimal4j.arithmetic;
 /**
  * Utility for exception conversion and re-throwing.
  */
-final class Exceptions {
+public final class Exceptions {
 
-	public static final ArithmeticException newArithmeticExceptionWithCause(String message, ArithmeticException cause) {
+	public static final ArithmeticException newArithmeticExceptionWithCause(String message, Exception cause) {
 		return (ArithmeticException)new ArithmeticException(message).initCause(cause);
 	}
 	public static final void rethrowIfRoundingNecessary(ArithmeticException e) {

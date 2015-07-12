@@ -83,6 +83,8 @@ abstract public class AbstractDecimalDecimalToDecimalTest extends AbstractRandom
 		ArithmeticResult<Long> expected;
 		try {
 			expected = ArithmeticResult.forResult(arithmetic, expectedResult(bdOpA, bdOpB));
+		} catch (IllegalArgumentException e) {
+			expected = ArithmeticResult.forException(e);
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}
@@ -91,6 +93,8 @@ abstract public class AbstractDecimalDecimalToDecimalTest extends AbstractRandom
 		ArithmeticResult<Long> actual;
 		try {
 			actual = ArithmeticResult.forResult(actualResult(dOpA, dOpB));
+		} catch (IllegalArgumentException e) {
+			actual = ArithmeticResult.forException(e);
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		}

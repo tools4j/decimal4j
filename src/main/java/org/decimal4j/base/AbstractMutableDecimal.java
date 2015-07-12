@@ -29,11 +29,9 @@ import java.math.RoundingMode;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.MutableDecimal;
+import org.decimal4j.arithmetic.Exceptions;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
-import org.decimal4j.truncate.DecimalRounding;
-import org.decimal4j.truncate.OverflowMode;
-import org.decimal4j.truncate.TruncationPolicy;
 
 /**
  * Base class for mutable {@link Decimal} classes of different scales.
@@ -83,53 +81,53 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 
 	@Override
 	public MutableDecimal<?> scale(int scale) {
-		return scale(scale, DecimalRounding.HALF_UP.getUncheckedTruncationPolicy());
+		return scale(scale, RoundingMode.HALF_UP);
 	}
 
 	@Override
 	@SuppressWarnings("hiding")
 	public <S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics) {
-		return scale(scaleMetrics, DecimalRounding.HALF_UP.getUncheckedTruncationPolicy());
+		return scale(scaleMetrics, RoundingMode.HALF_UP);
 	}
 
 	@Override
 	public MutableDecimal<?> scale(int scale, RoundingMode roundingMode) {
-		return scale(scale, OverflowMode.UNCHECKED.getTruncationPolicyFor(roundingMode));
-	}
-
-	@Override
-	@SuppressWarnings("hiding")
-	public <S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode) {
-		return scale(scaleMetrics, OverflowMode.UNCHECKED.getTruncationPolicyFor(roundingMode));
-	}
-
-	@Override
-	public MutableDecimal<?> scale(int scale, TruncationPolicy truncationPolicy) {
 		final int myScale = getScale();
 		if (scale == myScale) {
 			return this;
 		}
 		final ScaleMetrics targetMetrics = Scales.getScaleMetrics(scale);
-		final long targetUnscaled = targetMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, myScale);
-		return getFactory().deriveFactory(scale).newMutable().setUnscaled(targetUnscaled);
+		try {
+			final long targetUnscaled = targetMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, myScale);
+			return getFactory().deriveFactory(scale).newMutable().setUnscaled(targetUnscaled);
+		} catch (IllegalArgumentException e) {
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: cannot convert " + this + " to scale " + scale, e);
+		}
 	}
 
 	@Override
 	@SuppressWarnings("hiding")
-	public <S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, TruncationPolicy truncationPolicy) {
+	public <S extends ScaleMetrics> MutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode) {
 		if (scaleMetrics == getScaleMetrics()) {
 			@SuppressWarnings("unchecked")
 			//safe: we know it is the same scale metrics
 			final MutableDecimal<S> self = (MutableDecimal<S>) this;
 			return self;
 		}
-		final long targetUnscaled = scaleMetrics.getArithmetic(truncationPolicy).fromUnscaled(unscaled, getScale());
-		return getFactory().deriveFactory(scaleMetrics).newMutable().setUnscaled(targetUnscaled);
+		try {
+			final long targetUnscaled = scaleMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, getScale());
+			return getFactory().deriveFactory(scaleMetrics).newMutable().setUnscaled(targetUnscaled);
+		} catch (IllegalArgumentException e) {
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: cannot convert " + this + " to scale " + scaleMetrics.getScale(), e);
+		}
 	}
 
 	@Override
 	public MutableDecimal<?> multiplyExact(Decimal<?> multiplicand) {
 		final int targetScale = getScale() + multiplicand.getScale();
+		if (targetScale > Scales.MAX_SCALE) {
+			throw new IllegalArgumentException("sum of scales exceeds max scale: " + targetScale + " > " + Scales.MAX_SCALE);
+		}
 		try {
 			final long unscaledProduct = getCheckedArithmeticFor(RoundingMode.DOWN).multiplyByLong(unscaled, multiplicand.unscaledValue());
 			return getFactory().deriveFactory(targetScale).newMutable().setUnscaled(unscaledProduct);

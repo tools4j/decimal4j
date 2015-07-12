@@ -35,7 +35,6 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -51,15 +50,17 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 
 	/**
 	 * Constructor for parameterized test.
-	 * 
-	 * @param arithmetic
-	 *            the arithmetic object passed to the constructor
-	 * @param tp
-	 *            the truncation policy to apply
+	 *
+	 * @param sourceScale
+	 *            the source scale metrics
+	 * @param rm
+	 *            the rounding mode to apply
 	 * @param targetScale
 	 *            the target scale
+	 * @param arithmetic
+	 *            the arithmetic object passed to the constructor
 	 */
-	public ScaleTest(ScaleMetrics sourceScale, TruncationPolicy tp, int targetScale, DecimalArithmetic arithmetic) {
+	public ScaleTest(ScaleMetrics sourceScale, RoundingMode rm, int targetScale, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 		this.targetScale = targetScale;
 	}
@@ -68,16 +69,16 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
+			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
 				for (int targetScale = 0; targetScale < Scales.MAX_SCALE; targetScale++) {
-					final DecimalArithmetic arith = s.getArithmetic(tp);
-					data.add(new Object[] { s, tp, targetScale, arith });
+					final DecimalArithmetic arith = s.getArithmetic(rm);
+					data.add(new Object[] { s, rm, targetScale, arith });
 				}
 			}
 		}
 		return data;
 	}
-	
+
 	@Override
 	protected int getRandomTestCount() {
 		switch (TestSettings.TEST_CASES) {
@@ -95,27 +96,30 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 			throw new RuntimeException("unsupported: " + TestSettings.TEST_CASES);
 		}
 	}
-	
+
 	@Override
 	protected String operation() {
 		return "scale";
 	}
 
 	private BigDecimal expectedResult(BigDecimal a, int targetScale) {
-		return a.setScale(targetScale, getRoundingMode());
+		if (Scales.MIN_SCALE <= targetScale & targetScale <= Scales.MAX_SCALE) {
+			final BigDecimal result = a.setScale(targetScale, getRoundingMode());
+			if (result.unscaledValue().bitLength() > 63) {
+				throw new ArithmeticException("Overflow: " + result);
+			}
+			return result;
+		}
+		throw new IllegalArgumentException("Illegal target scale: " + targetScale);
 	}
 
 	private <S extends ScaleMetrics> Decimal<?> actualResult(Decimal<S> a, int targetScale) {
 		final ScaleMetrics metrics = Scales.getScaleMetrics(targetScale);
 		final RoundingMode mode = getRoundingMode();
-		final TruncationPolicy policy = getTruncationPolicy();
 		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
 			return RND.nextBoolean() ? a.scale(targetScale) : a.scale(metrics);
 		}
-		if (isUnchecked() && RND.nextBoolean()) {
-			return RND.nextBoolean() ? a.scale(targetScale, mode) : a.scale(metrics, mode);
-		}
-		return RND.nextBoolean() ? a.scale(targetScale, policy) : a.scale(metrics, policy);
+		return RND.nextBoolean() ? a.scale(targetScale, mode) : a.scale(metrics, mode);
 	}
 
 	@Override
@@ -133,7 +137,8 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	protected <S extends ScaleMetrics> void runTest(S scaleMetrics, String name, Decimal<S> dOperandA, int targetScale) {
-		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " " + targetScale;
+		final String messagePrefix = getClass().getSimpleName() + name + ": " + dOperandA + " " + operation() + " "
+				+ targetScale;
 
 		final BigDecimal bdOperandA = toBigDecimal(dOperandA);
 		final DecimalArithmetic resultArithmetic = arithmetic.deriveArithmetic(targetScale);
@@ -142,6 +147,8 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 		ArithmeticResult<Long> expected;
 		try {
 			expected = ArithmeticResult.forResult(resultArithmetic, expectedResult(bdOperandA, targetScale));
+		} catch (IllegalArgumentException e) {
+			expected = ArithmeticResult.forException(e);
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}
@@ -150,6 +157,8 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 		ArithmeticResult<Long> actual;
 		try {
 			actual = ArithmeticResult.forResult(actualResult(dOperandA, targetScale));
+		} catch (IllegalArgumentException e) {
+			actual = ArithmeticResult.forException(e);
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		}

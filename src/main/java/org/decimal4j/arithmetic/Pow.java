@@ -110,18 +110,21 @@ final class Pow {
 		if (exponent >= 0 & fraVal == 0) {
 			//integer
 			final long result = powLongCheckedOrUnchecked(arith.getOverflowMode(), rounding, intVal, exponent);
-			return arith.fromLong(result);
+			return longToUnscaledCheckedOrUnchecekd(arith, uDecimalBase, exponent, result);
 		}
 		if (exponent < 0 & intVal == 0) {
 			final long one = scaleMetrics.getScaleFactor();
 			if ((one % fraVal) == 0) {
 				//inverted value is an integer
 				final long result = powLongCheckedOrUnchecked(arith.getOverflowMode(), rounding, one / fraVal, -exponent);
-				return arith.fromLong(result);
+				return longToUnscaledCheckedOrUnchecekd(arith, uDecimalBase, exponent, result);
 			}
 		}
-
-		return powWithPrecision18(arith, rounding, intVal, fraVal, exponent);
+        try {
+    		return powWithPrecision18(arith, rounding, intVal, fraVal, exponent);
+        } catch (IllegalArgumentException e) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uDecimalBase) + "^" + exponent);
+        }
 	}
 	
 	/**
@@ -216,7 +219,7 @@ final class Pow {
         if (n < 0) {
     		return acc.getInverted(sgn, arith, rounding, powRounding, acc);
         }
-        return acc.getDecimal(sgn, arith, rounding);
+    	return acc.getDecimal(sgn, arith, rounding);
 	}
 
 	private static final long powLongWithPositiveExponent(long lBase, int exponent) {
@@ -307,6 +310,17 @@ final class Pow {
 			return DecimalRounding.UNNECESSARY;
 		default:
 			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
+		}
+	}
+
+	private static final long longToUnscaledCheckedOrUnchecekd(DecimalArithmetic arith, long uBase, int exponent, long longResult) {
+		if (!arith.getOverflowMode().isChecked()) {
+			return LongConversion.longToUnscaledUnchecked(arith.getScaleMetrics(), longResult);
+		}
+		try {
+			return LongConversion.longToUnscaled(arith.getScaleMetrics(), longResult);
+		} catch (IllegalArgumentException e) {
+			throw new ArithmeticException("Overflow: " + arith.toString(uBase) + "^" + exponent + "=" + longResult);
 		}
 	}
 

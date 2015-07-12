@@ -770,13 +770,16 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	@Override
 	public D divideToIntegralValue(Decimal<S> divisor) {
 		final long longValue = unscaledValue() / divisor.unscaledValue();
-		return createOrAssign(getDefaultArithmetic().fromLong(longValue));
+		return createOrAssign(getScaleMetrics().multiplyByScaleFactor(longValue));
 	}
 
 	@Override
 	public D divideToIntegralValue(Decimal<S> divisor, OverflowMode overflowMode) {
+		if (!overflowMode.isChecked()) {
+			return divideToIntegralValue(divisor);
+		}
 		final long longValue = divideToLongValue(divisor, overflowMode);
-		return createOrAssign(getArithmeticFor(overflowMode).fromLong(longValue));
+		return createOrAssign(getScaleMetrics().multiplyByScaleFactorExact(longValue));
 	}
 
 	@Override
