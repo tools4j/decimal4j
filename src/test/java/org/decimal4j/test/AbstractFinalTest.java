@@ -104,10 +104,10 @@ abstract public class AbstractFinalTest {
 
 	private boolean isSyntheticEnumMethod(Method method) {
 		if (method.getDeclaringClass().isEnum()) {
-			if ("values".equals(method.getName()) && method.getParameterCount() == 0) {
+			if ("values".equals(method.getName()) && method.getParameterTypes().length == 0) {
 				return true;
 			};
-			if ("valueOf".equals(method.getName()) && method.getParameterCount() == 1 && method.getParameterTypes()[0].equals(String.class)) {
+			if ("valueOf".equals(method.getName()) && method.getParameterTypes().length == 1 && method.getParameterTypes()[0].equals(String.class)) {
 				return true;
 			};
 		}
