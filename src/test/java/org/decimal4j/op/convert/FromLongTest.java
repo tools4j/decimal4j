@@ -74,7 +74,11 @@ public class FromLongTest extends AbstractLongValueToDecimalTest {
 
 	@Override
 	protected BigDecimal expectedResult(long operand) {
-		return BigDecimal.valueOf(operand);
+		final BigDecimal result = BigDecimal.valueOf(operand).setScale(getScale());
+		if (result.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + result);
+		}
+		return result;
 	}
 
 	@Override

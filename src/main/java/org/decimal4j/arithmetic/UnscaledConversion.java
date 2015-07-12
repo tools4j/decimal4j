@@ -207,10 +207,10 @@ final class UnscaledConversion {
 		Exceptions.rethrowIfRoundingNecessary(e);
 		if (targetScale > 0) {
 			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue
-					+ " from scale " + sourceScale + " to scale " + targetScale);
+					+ " from scale " + sourceScale + " to scale " + targetScale, e);
 		} else {
 			return new IllegalArgumentException("Overflow: Cannot convert unscaled value " + unscaledValue
-					+ " from scale " + sourceScale + " to long");
+					+ " from scale " + sourceScale + " to long", e);
 		}
 	}
 

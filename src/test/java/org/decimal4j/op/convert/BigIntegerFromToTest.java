@@ -87,11 +87,14 @@ public class BigIntegerFromToTest extends AbstractFromToTest<BigInteger> {
 
 	@Override
 	protected <S extends ScaleMetrics> BigInteger expectedResult(S scaleMetrics, BigInteger value) {
+		if (value.bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + value);
+		}
 		final long lvalue = JDKSupport.bigIntegerToLongValueExact(value);
 		if (scaleMetrics.isValidIntegerValue(lvalue)) {
 			return value;
 		}
-		throw new ArithmeticException("overflow for " + scaleMetrics + " with value " + value);
+		throw new IllegalArgumentException("Overflow for " + scaleMetrics + " with value " + value);
 	}
 	@Override
 	protected <S extends ScaleMetrics> BigInteger actualResult(DecimalFactory<S> factory, BigInteger value) {

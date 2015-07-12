@@ -53,9 +53,6 @@ final class StringConversion {
 	}
 
 	static final long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
-        if (s == null) {
-            throw new NumberFormatException("null");
-        }
 		final int len = s.length();
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
@@ -90,9 +87,9 @@ final class StringConversion {
 				negative = integralPart < 0 | (integralPart == 0 && s.charAt(0) == '-');
 			}
 		}
-		final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
-		final long unscaledFractional = negative ? -fractionalPart : fractionalPart;//negation cannot overflow because it is < Scale18.SCALE_FACTOR
 		try {
+			final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
+			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;//negation cannot overflow because it is < Scale18.SCALE_FACTOR
 			final long truncatedValue = Checked.add(arith, unscaledIntegeral, unscaledFractional);
 			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue, truncatedPart);
 			return roundingIncrement == 0 ? truncatedValue : Checked.add(arith, truncatedValue, roundingIncrement);

@@ -36,7 +36,6 @@ import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.op.AbstractBigDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -50,7 +49,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 
-	public FromBigDecimalTest(ScaleMetrics s, TruncationPolicy tp, DecimalArithmetic arithmetic) {
+	public FromBigDecimalTest(ScaleMetrics s, RoundingMode rm, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
@@ -58,8 +57,8 @@ public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final TruncationPolicy tp : TestSettings.POLICIES) {
-				data.add(new Object[] { s, tp, s.getArithmetic(tp) });
+			for (final RoundingMode rm: TestSettings.UNCHECKED_ROUNDING_MODES) {
+				data.add(new Object[] { s, rm, s.getArithmetic(rm) });
 			}
 		}
 		return data;
@@ -72,31 +71,36 @@ public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 
 	@Override
 	protected BigDecimal expectedResult(BigDecimal operand) {
-		return operand.setScale(getScale(), getRoundingMode());
+		final BigDecimal result = operand.setScale(getScale(), getRoundingMode());
+		if (result.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + result);
+		}
+		return result;
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, BigDecimal operand) {
-		if (isUnchecked()) {
-			return newDecimal(scaleMetrics, arithmetic.fromBigDecimal(operand));
-		}
-		if (RND.nextBoolean()) {
+		switch(RND.nextInt(4)) {
+		case 0:
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).valueOf(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).valueOf(operand, getRoundingMode());
 			}
-		} else if (RND.nextBoolean()) {
+		case 1:
 			//Factory, mutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
-		} else {
+		case 2:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
+		case 3://fallthrough
+		default:
+			return newDecimal(scaleMetrics, arithmetic.fromBigDecimal(operand));
 		}
 	}
 

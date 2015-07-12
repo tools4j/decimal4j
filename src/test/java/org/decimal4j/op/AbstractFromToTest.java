@@ -92,6 +92,8 @@ abstract public class AbstractFromToTest<V> extends AbstractDecimalTest {
 		try {
 			expectedResult(decimalFactory.getScaleMetrics(), value);
 			expected = ArithmeticResult.forResult(value.toString(), value);
+		} catch (IllegalArgumentException e) {
+			expected = ArithmeticResult.forException(e);
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		}
@@ -101,6 +103,8 @@ abstract public class AbstractFromToTest<V> extends AbstractDecimalTest {
 		try {
 			final V act = actualResult(decimalFactory, value);
 			actual = ArithmeticResult.forResult(act.toString(), act);
+		} catch (IllegalArgumentException e) {
+			actual = ArithmeticResult.forException(e);
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		}

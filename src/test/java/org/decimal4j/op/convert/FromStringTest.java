@@ -34,7 +34,6 @@ import java.util.Set;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
-import org.decimal4j.arithmetic.JDKSupport;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
@@ -198,10 +197,11 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	protected BigDecimal expectedResult(String operand) {
-		final BigDecimal value = new BigDecimal(operand).setScale(getScale(), getRoundingMode());
-		// check that the conversion does not overflow
-		JDKSupport.bigIntegerToLongValueExact(value.unscaledValue());
-		return value;
+		final BigDecimal result = new BigDecimal(operand).setScale(getScale(), getRoundingMode());
+		if (result.unscaledValue().bitLength() > 63) {
+			throw new NumberFormatException("Overflow: " + result);
+		}
+		return result;
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, String operand) {

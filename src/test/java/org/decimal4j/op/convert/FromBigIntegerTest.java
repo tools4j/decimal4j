@@ -58,7 +58,6 @@ public class FromBigIntegerTest extends AbstractBigIntegerToDecimalTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			data.add(new Object[] { s, s.getDefaultArithmetic() });
-			data.add(new Object[] { s, s.getDefaultCheckedArithmetic() });
 		}
 		return data;
 	}
@@ -70,23 +69,28 @@ public class FromBigIntegerTest extends AbstractBigIntegerToDecimalTest {
 
 	@Override
 	protected BigDecimal expectedResult(BigInteger operand) {
-		return new BigDecimal(operand);
+		final BigDecimal result = new BigDecimal(operand).setScale(getScale(), getRoundingMode());
+		if (result.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + result);
+		}
+		return result;
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, BigInteger operand) {
-		if (isUnchecked()) {
-			return newDecimal(scaleMetrics, arithmetic.fromBigInteger(operand));
-		}
-		if (RND.nextBoolean()) {
+		switch(RND.nextInt(4)) {
+		case 0:
 			//Factory, immutable
 			return getDecimalFactory(scaleMetrics).valueOf(operand);
-		} else if (RND.nextBoolean()) {
+		case 1:
 			//Factory, mutable
 			return getDecimalFactory(scaleMetrics).newMutable().set(operand);
-		} else {
+		case 2:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
+		case 3://fallthrough
+		default:
+			return newDecimal(scaleMetrics, arithmetic.fromBigInteger(operand));
 		}
 	}
 

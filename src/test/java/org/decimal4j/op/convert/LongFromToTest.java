@@ -77,7 +77,7 @@ public class LongFromToTest extends AbstractFromToTest<Long> {
 		if (scaleMetrics.isValidIntegerValue(value)) {
 			return value;
 		}
-		throw new ArithmeticException("overflow for " + scaleMetrics + " with value " + value);
+		throw new IllegalArgumentException("Overflow for " + scaleMetrics + " with value " + value);
 	}
 	@Override
 	protected <S extends ScaleMetrics> Long actualResult(DecimalFactory<S> factory, Long value) {

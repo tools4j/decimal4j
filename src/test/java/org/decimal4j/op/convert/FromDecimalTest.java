@@ -57,9 +57,8 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final RoundingMode mode : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				final DecimalArithmetic arith = s.getCheckedArithmetic(mode);
-				data.add(new Object[] { s, mode, arith });
+			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
+				data.add(new Object[] { s, rm, s.getArithmetic(rm) });
 			}
 		}
 		return data;
@@ -72,19 +71,24 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 
 	@Override
 	protected BigDecimal expectedResult(Decimal<?> operand) {
-		return operand.toBigDecimal().setScale(getScale(), getRoundingMode());
+		final BigDecimal result = operand.toBigDecimal().setScale(getScale(), getRoundingMode());
+		if (result.unscaledValue().bitLength() > 63) {
+			throw new IllegalArgumentException("Overflow: " + result);
+		}
+		return result;
 	}
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, Decimal<?> operand) {
-		if (RND.nextBoolean()) {
+		switch(RND.nextInt(3)) {
+		case 0:
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).valueOf(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).valueOf(operand, getRoundingMode());
 			}
-		} else if (RND.nextBoolean()) {
+		case 1:
 			//Factory, mutable
 			if (operand.getScale() == scaleMetrics.getScale() && RND.nextBoolean()) {
 				final Decimal<S> val = operand.scale(scaleMetrics);//won't change, acts like a cast
@@ -92,7 +96,8 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 			} else {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
-		} else {
+		case 2://fallthrough
+		default:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
 		}
