@@ -87,6 +87,9 @@ final class StringConversion {
 				negative = integralPart < 0 | (integralPart == 0 && s.charAt(0) == '-');
 			}
 		}
+		if (truncatedPart.isGreaterThanZero() & rounding == DecimalRounding.UNNECESSARY) {
+			throw Exceptions.newRoundingNecessaryArithmeticException();
+		}
 		try {
 			final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
 			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;//negation cannot overflow because it is < Scale18.SCALE_FACTOR
@@ -94,7 +97,7 @@ final class StringConversion {
 			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue, truncatedPart);
 			return roundingIncrement == 0 ? truncatedValue : Checked.add(arith, truncatedValue, roundingIncrement);
 		} catch (ArithmeticException e) {
-			throw newNumberFormatExceptionFor(arith, s);
+			throw newNumberFormatExceptionFor(arith, s, e);
 		}
 	}
 
@@ -260,6 +263,11 @@ final class StringConversion {
 
     private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {
         return new NumberFormatException("Cannot parse Decimal value with scale " + arith.getScale() + " for input string: \"" + s + "\"");
+    }
+    private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s, Exception cause) {
+        final NumberFormatException ex = newNumberFormatExceptionFor(arith, s);
+    	ex.initCause(cause);
+        return ex;
 	}
 
 	// no instances

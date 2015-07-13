@@ -34,22 +34,22 @@ public enum TruncatedPart {
 	 */
 	ZERO {
 		@Override
-		public boolean isGreaterThanZero() {
+		public final boolean isGreaterThanZero() {
 			return false;
 		}
 
 		@Override
-		public boolean isEqualToHalf() {
+		public final boolean isEqualToHalf() {
 			return false;
 		}
 
 		@Override
-		public boolean isGreaterEqualHalf() {
+		public final boolean isGreaterEqualHalf() {
 			return false;
 		}
 
 		@Override
-		public boolean isGreaterThanHalf() {
+		public final boolean isGreaterThanHalf() {
 			return false;
 		}
 	},
@@ -58,22 +58,22 @@ public enum TruncatedPart {
 	 */
 	LESS_THAN_HALF_BUT_NOT_ZERO {
 		@Override
-		public boolean isGreaterThanZero() {
+		public final boolean isGreaterThanZero() {
 			return true;
 		}
 
 		@Override
-		public boolean isEqualToHalf() {
+		public final boolean isEqualToHalf() {
 			return false;
 		}
 
 		@Override
-		public boolean isGreaterEqualHalf() {
+		public final boolean isGreaterEqualHalf() {
 			return false;
 		}
 
 		@Override
-		public boolean isGreaterThanHalf() {
+		public final boolean isGreaterThanHalf() {
 			return false;
 		}
 	},
@@ -82,22 +82,22 @@ public enum TruncatedPart {
 	 */
 	EQUAL_TO_HALF {
 		@Override
-		public boolean isGreaterThanZero() {
+		public final boolean isGreaterThanZero() {
 			return true;
 		}
 
 		@Override
-		public boolean isEqualToHalf() {
+		public final boolean isEqualToHalf() {
 			return true;
 		}
 
 		@Override
-		public boolean isGreaterEqualHalf() {
+		public final boolean isGreaterEqualHalf() {
 			return true;
 		}
 
 		@Override
-		public boolean isGreaterThanHalf() {
+		public final boolean isGreaterThanHalf() {
 			return false;
 		}
 	},
@@ -106,22 +106,22 @@ public enum TruncatedPart {
 	 */
 	GREATER_THAN_HALF {
 		@Override
-		public boolean isGreaterThanZero() {
+		public final boolean isGreaterThanZero() {
 			return true;
 		}
 
 		@Override
-		public boolean isEqualToHalf() {
+		public final boolean isEqualToHalf() {
 			return false;
 		}
 
 		@Override
-		public boolean isGreaterEqualHalf() {
+		public final boolean isGreaterEqualHalf() {
 			return true;
 		}
 
 		@Override
-		public boolean isGreaterThanHalf() {
+		public final boolean isGreaterThanHalf() {
 			return true;
 		}
 	};
@@ -165,7 +165,7 @@ public enum TruncatedPart {
 	 *            are zero, and false otherwise
 	 * @return the truncated part constant equivalent to the given arguments
 	 */
-	public static TruncatedPart valueOf(int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
+	public static final TruncatedPart valueOf(int firstTruncatedDigit, boolean zeroAfterFirstTruncatedDigit) {
 		if (firstTruncatedDigit > 5) {
 			return GREATER_THAN_HALF;
 		}

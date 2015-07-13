@@ -43,7 +43,7 @@ public enum DecimalRounding {
 	 */
 	UP(RoundingMode.UP) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
 				return sgn;
 			}
@@ -60,7 +60,7 @@ public enum DecimalRounding {
 	 */
 	DOWN(RoundingMode.DOWN) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			return 0;
 		}
 	},
@@ -75,7 +75,7 @@ public enum DecimalRounding {
 	 */
 	CEILING(RoundingMode.CEILING) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (sgn > 0) {
 				if (truncatedPart.isGreaterThanZero()) {
 					return 1;
@@ -95,7 +95,7 @@ public enum DecimalRounding {
 	 */
 	FLOOR(RoundingMode.FLOOR) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (sgn < 0) {
 				if (truncatedPart.isGreaterThanZero()) {
 					return -1;
@@ -116,7 +116,7 @@ public enum DecimalRounding {
 	 */
 	HALF_UP(RoundingMode.HALF_UP) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
 				return sgn;
 			}
@@ -134,7 +134,7 @@ public enum DecimalRounding {
 	 */
 	HALF_DOWN(RoundingMode.HALF_DOWN) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanHalf()) {
 				return sgn;
 			}
@@ -158,7 +158,7 @@ public enum DecimalRounding {
 	 */
 	HALF_EVEN(RoundingMode.HALF_EVEN) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
 				if (truncatedPart.isGreaterThanHalf() | ((truncatedValue & 0x1) != 0)) {
 					return sgn;
@@ -178,7 +178,7 @@ public enum DecimalRounding {
 	 */
 	UNNECESSARY(RoundingMode.UNNECESSARY) {
 		@Override
-		public int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
+		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
 				throw new ArithmeticException("Rounding necessary");
 			}
@@ -265,11 +265,11 @@ public enum DecimalRounding {
 	 *            the rounding mode
 	 * @return the constant corresponding to the given rounding mode
 	 */
-	public static DecimalRounding valueOf(RoundingMode roundingMode) {
+	public static final DecimalRounding valueOf(RoundingMode roundingMode) {
 		return VALUES_BY_ROUNDING_MODE_ORDINAL[roundingMode.ordinal()];
 	}
 
-	private static DecimalRounding[] sortByRoundingModeOrdinal() {
+	private static final DecimalRounding[] sortByRoundingModeOrdinal() {
 		final DecimalRounding[] sorted = new DecimalRounding[VALUES.size()];
 		for (final DecimalRounding dr : VALUES) {
 			sorted[dr.getRoundingMode().ordinal()] = dr;

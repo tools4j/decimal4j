@@ -23,21 +23,55 @@
  */
 package org.decimal4j.arithmetic;
 
+import java.math.RoundingMode;
+
 /**
  * Utility for exception conversion and re-throwing.
  */
 public final class Exceptions {
 
+	private static final String ROUNDING_NECESSARY = "Rounding necessary";
+
+	/**
+	 * Returns a new {@link ArithmeticException} with the given {@code message}
+	 * and nested {@code cause}.
+	 * 
+	 * @param message
+	 *            the exception message
+	 * @param cause
+	 *            the causing exception
+	 * @return an arithmetic exception with the given message and cause
+	 */
 	public static final ArithmeticException newArithmeticExceptionWithCause(String message, Exception cause) {
-		return (ArithmeticException)new ArithmeticException(message).initCause(cause);
+		return (ArithmeticException) new ArithmeticException(message).initCause(cause);
 	}
+
+	/**
+	 * Returns new {@link ArithmeticException} indicating that rounding was
+	 * necessary when attempting to apply rounding with
+	 * {@link RoundingMode#UNNECESSARY}.
+	 * 
+	 * @return an arithmetic exception with the message "Rounding necessary"
+	 */
+	public static final ArithmeticException newRoundingNecessaryArithmeticException() {
+		return new ArithmeticException(ROUNDING_NECESSARY);
+	}
+
+	/**
+	 * Rethrows the given arithmetic exception if its message equals
+	 * "Rounding necessary". Otherwise the method does nothing.
+	 * 
+	 * @throws ArithmeticException
+	 *             rethrows the given exception {@code e} if its message equals
+	 *             "Rounding necessary"
+	 */
 	public static final void rethrowIfRoundingNecessary(ArithmeticException e) {
-		if ("Rounding necessary".equals(e.getMessage())) {
+		if (ROUNDING_NECESSARY.equals(e.getMessage())) {
 			throw e;
 		}
 	}
-	
-	//no instances
+
+	// no instances
 	private Exceptions() {
 		super();
 	}

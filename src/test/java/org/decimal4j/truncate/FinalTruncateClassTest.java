@@ -21,61 +21,67 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.decimal4j.op.arith;
+package org.decimal4j.truncate;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.decimal4j.api.Decimal;
-import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.op.AbstractDecimalUnknownDecimalToDecimalTest;
-import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.TruncationPolicy;
+import org.decimal4j.test.AbstractFinalTest;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#add(Decimal, RoundingMode)} and {@link Decimal#add(Decimal, TruncationPolicy)}.
+ * Unit test enforcing that all methods and fields of enums and classes in this package are final.
  */
 @RunWith(Parameterized.class)
-public class AddDecimalTest extends AbstractDecimalUnknownDecimalToDecimalTest {
+public class FinalTruncateClassTest extends AbstractFinalTest {
 	
-	public AddDecimalTest(ScaleMetrics scaleMetrics, int scale, TruncationPolicy tp, DecimalArithmetic arithmetic) {
-		super(arithmetic, scale);
+	private final Class<?> clazz;
+	
+	public FinalTruncateClassTest(Class<?> clazz) {
+		this.clazz = clazz;
 	}
 
-	@Parameters(name = "{index}: {0}, scale={1}, {2}")
+	@Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
-		for (final ScaleMetrics s : TestSettings.SCALES) {
-			for (final ScaleMetrics otherScale : TestSettings.SCALES) {
-				for (final TruncationPolicy tp : TestSettings.POLICIES) {
-					data.add(new Object[] {s, otherScale.getScale(), tp, s.getArithmetic(tp)});
-				}
-			}
-		}
+		data.add(new Object[] {DecimalRounding.class});
+		data.add(new Object[] {OverflowMode.class});
+		data.add(new Object[] {TruncatedPart.class});
+		data.add(new Object[] {DefaultTruncationPolicy.class});
 		return data;
 	}
+	
+	@Test
+	public void classShouldBeFinal() {
+		final int mod = clazz.getModifiers();
+		Assert.assertTrue("class should be abstract or final: " + clazz, Modifier.isAbstract(mod) || Modifier.isFinal(mod));
+	}
 
-	@Override
-	protected String operation() {
-		return "+";
+	@Test
+	public void allMethodsShouldBeFinal() {
+		assertAllMethodsAreFinal(clazz);
+	}
+
+	@Test
+	public void allFieldsShouldBeFinal() {
+		assertAllFieldsAreFinal(clazz);
 	}
 	
 	@Override
-	protected BigDecimal expectedResult(BigDecimal a, BigDecimal b) {
-		return a.add(b);
-	}
-	
-	@Override
-	protected <S extends ScaleMetrics> Decimal<S> actualResult(Decimal<S> a, Decimal<?> b) {
-		if (isUnchecked() && RND.nextBoolean()) {
-			return a.add(b, getRoundingMode());
+	protected boolean isAllowedNonStaticField(Field field) {
+		if (field.getDeclaringClass().equals(DecimalRounding.class)) {
+			return Arrays.asList("roundingMode", "uncheckedPolicy", "checkedPolicy").contains(field.getName());
 		}
-		return a.add(b, getTruncationPolicy());
+		if (field.getDeclaringClass().equals(DefaultTruncationPolicy.class)) {
+			return Arrays.asList("overflowMode", "roundingMode").contains(field.getName());
+		}
+		return false;
 	}
 }

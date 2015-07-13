@@ -48,7 +48,7 @@ final class DefaultTruncationPolicy implements TruncationPolicy {
 		this.roundingMode = decimalRounding.getRoundingMode();
 	}
 
-	static Set<TruncationPolicy> values() {
+	static final Set<TruncationPolicy> values() {
 		final Set<TruncationPolicy> values = new LinkedHashSet<TruncationPolicy>(2*DecimalRounding.VALUES.size());
 		for (final DecimalRounding dr : DecimalRounding.VALUES) {
 			values.add(dr.getUncheckedTruncationPolicy());

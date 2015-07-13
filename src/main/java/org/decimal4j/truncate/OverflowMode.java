@@ -35,7 +35,7 @@ public enum OverflowMode {
 	 */
 	UNCHECKED {
 		@Override
-		public TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode) {
+		public final TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode) {
 			return DecimalRounding.valueOf(roundingMode).getUncheckedTruncationPolicy();
 		}
 	},
@@ -44,7 +44,7 @@ public enum OverflowMode {
 	 */
 	CHECKED {
 		@Override
-		public TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode) {
+		public final TruncationPolicy getTruncationPolicyFor(RoundingMode roundingMode) {
 			return DecimalRounding.valueOf(roundingMode).getCheckedTruncationPolicy();
 		}
 	};
@@ -54,7 +54,7 @@ public enum OverflowMode {
 	 * 
 	 * @return true if {@code this == CHECKED}
 	 */
-	public boolean isChecked() {
+	public final boolean isChecked() {
 		return this == CHECKED;
 	}
 
