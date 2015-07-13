@@ -216,7 +216,7 @@ final class Div {
 			return divideByLong(rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
 			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
-				return -Pow10.multiplyByPowerOf10(rounding, uDecimalDividend, scale);
+				return -Pow10.multiplyByPowerOf10(getSignRevertedRoundingMode(rounding), uDecimalDividend, scale);
 			}
 			//NOTE: rounding twice could be a problem here, e.g. consider HALF_UP with 10.51 and 10.49
 			final long quot;
@@ -440,7 +440,7 @@ final class Div {
 			return divideByLongChecked(arith, rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
 			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
-				return -Pow10.multiplyByPowerOf10Checked(arith, rounding, uDecimalDividend, scale);
+				return -Pow10.multiplyByPowerOf10Checked(arith, getSignRevertedRoundingMode(rounding), uDecimalDividend, scale);
 			}
 			//NOTE: rounding twice could be a problem here, e.g. consider HALF_UP with 10.51 and 10.49
 			final long quot;
@@ -696,6 +696,23 @@ final class Div {
 		final long quotient = ((dividend >>> 1) / divisor) << 1;
 		final long rem = dividend - quotient * divisor;
 		return quotient + (((rem >= divisor) | (rem < 0)) ? 1 : 0);
+	}
+
+	private static final DecimalRounding getSignRevertedRoundingMode(DecimalRounding rounding) {
+		switch(rounding) {
+		case FLOOR: return DecimalRounding.CEILING;
+		case CEILING: return DecimalRounding.FLOOR;
+		case DOWN: return DecimalRounding.DOWN;
+		case HALF_DOWN: return DecimalRounding.HALF_DOWN;
+		case UP: return DecimalRounding.UP;
+		case HALF_UP: return DecimalRounding.HALF_UP;
+		case HALF_EVEN: return DecimalRounding.HALF_EVEN;
+		case UNNECESSARY: return DecimalRounding.UNNECESSARY;
+		default: {
+			// should not get here
+			throw new IllegalArgumentException("Unsupported rounding mode: " + rounding);
+		}
+		}
 	}
 
 	// no instances
