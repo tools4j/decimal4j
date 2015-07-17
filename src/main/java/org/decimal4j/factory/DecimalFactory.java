@@ -33,8 +33,8 @@ import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
- * Factory for {@link Decimal} values and Decimal arrays of the scale defined by
- * {@code <S>}.
+ * Factory for {@link Decimal} values and Decimal arrays of the
+ * {@link #getScale() scale} defined by {@code <S>}.
  *
  * @param <S>
  *            the {@link #getScaleMetrics() scale metrics} type associated with
@@ -49,6 +49,13 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *         by this factory
 	 */
 	S getScaleMetrics();
+
+	/**
+	 * Returns the scale of values created by this factory.
+	 * 
+	 * @return the scale for Decimal values created by this factory
+	 */
+	int getScale();
 
 	/**
 	 * Returns the implementing class for immutable values.
@@ -91,7 +98,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * Returns a new immutable Decimal value whose value is numerically equal to
 	 * that of the specified {@code long} value. An exception is thrown if the
 	 * specified value is too large to be represented as a Decimal of this
-	 * factory's scale.
+	 * factory's {@link #getScale() scale}.
 	 *
 	 * @param value
 	 *            long value to convert into an immutable Decimal value
@@ -105,10 +112,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@code float} argument to the scale of this
-	 * factory using {@link RoundingMode#HALF_UP} rounding. An exception is
-	 * thrown if the specified value is too large to be represented as a Decimal
-	 * of this factory's scale.
+	 * rounding the specified {@code float} argument to the {@link #getScale()
+	 * scale} of this factory using {@link RoundingMode#HALF_UP} rounding. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            float value to convert into an immutable Decimal value
@@ -122,10 +129,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@code float} argument to the scale of this
-	 * factory using the specified {@code roundingMode}. An exception is thrown
-	 * if the specified value is too large to be represented as a Decimal of
-	 * this factory's scale.
+	 * rounding the specified {@code float} argument to the {@link #getScale()
+	 * scale} of this factory using the specified {@code roundingMode}. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            float value to convert into an immutable Decimal value
@@ -144,10 +151,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@code double} argument to the scale of this
-	 * factory using {@link RoundingMode#HALF_UP} rounding. An exception is
-	 * thrown if the specified value is too large to be represented as a Decimal
-	 * of this factory's scale.
+	 * rounding the specified {@code double} argument to the {@link #getScale()
+	 * scale} of this factory using {@link RoundingMode#HALF_UP} rounding. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            double value to convert into an immutable Decimal value
@@ -161,10 +168,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@code double} argument to the scale of this
-	 * factory using the specified {@code roundingMode}. An exception is thrown
-	 * if the specified value is too large to be represented as a Decimal of
-	 * this factory's scale.
+	 * rounding the specified {@code double} argument to the {@link #getScale()
+	 * scale} of this factory using the specified {@code roundingMode}. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            double value to convert into an immutable Decimal value
@@ -185,7 +192,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * Returns a new immutable Decimal value whose value is numerically equal to
 	 * that of the specified {@link BigInteger} value. An exception is thrown if
 	 * the specified value is too large to be represented as a Decimal of this
-	 * factory's scale.
+	 * factory's {@link #getScale() scale}.
 	 *
 	 * @param value
 	 *            {@code BigInteger} value to convert into an immutable Decimal
@@ -200,10 +207,11 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@link BigDecimal} argument to the scale of this
-	 * factory using {@link RoundingMode#HALF_UP} rounding. An exception is
-	 * thrown if the specified value is too large to be represented as a Decimal
-	 * of this factory's scale.
+	 * rounding the specified {@link BigDecimal} argument to the
+	 * {@link #getScale() scale} of this factory using
+	 * {@link RoundingMode#HALF_UP} rounding. An exception is thrown if the
+	 * specified value is too large to be represented as a Decimal of this
+	 * factory's scale.
 	 *
 	 * @param value
 	 *            {@code BigDecimal} value to convert into an immutable Decimal
@@ -217,10 +225,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@link BigDecimal} argument to the scale of this
-	 * factory using the specified {@code roundingMode}. An exception is thrown
-	 * if the specified value is too large to be represented as a Decimal of
-	 * this factory's scale.
+	 * rounding the specified {@link BigDecimal} argument to the
+	 * {@link #getScale() scale} of this factory using the specified
+	 * {@code roundingMode}. An exception is thrown if the specified value is
+	 * too large to be represented as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            {@code BigDecimal} value to convert into an immutable Decimal
@@ -239,10 +247,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@link Decimal} argument to the scale of this
-	 * factory using {@link RoundingMode#HALF_UP} rounding. An exception is
-	 * thrown if the specified value is too large to be represented as a Decimal
-	 * of this factory's scale.
+	 * rounding the specified {@link Decimal} argument to the {@link #getScale()
+	 * scale} of this factory using {@link RoundingMode#HALF_UP} rounding. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            Decimal value to convert into an immutable Decimal value of
@@ -256,10 +264,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal value whose value is calculated by
-	 * rounding the specified {@link Decimal} argument to the scale of this
-	 * factory using the specified {@code roundingMode}. An exception is thrown
-	 * if the specified value is too large to be represented as a Decimal of
-	 * this factory's scale.
+	 * rounding the specified {@link Decimal} argument to the {@link #getScale()
+	 * scale} of this factory using the specified {@code roundingMode}. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            Decimal value to convert into an immutable Decimal value of
@@ -279,16 +287,17 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	/**
 	 * Translates the string representation of a {@code Decimal} into an
 	 * immutable {@code Decimal}. The string representation consists of an
-	 * optional sign, {@code '+'} (<tt> '&#92;u002B'</tt>) or {@code '-'} (
-	 * <tt>'&#92;u002D'</tt>), followed by a sequence of zero or more decimal
-	 * digits ("the integer"), optionally followed by a fraction.
+	 * optional sign, {@code '+'} or {@code '-'} , followed by a sequence of
+	 * zero or more decimal digits ("the integer"), optionally followed by a
+	 * fraction.
 	 * <p>
 	 * The fraction consists of a decimal point followed by zero or more decimal
 	 * digits. The string must contain at least one digit in either the integer
 	 * or the fraction. If the fraction contains more digits than this factory's
-	 * scale, the value is rounded using {@link RoundingMode#HALF_UP HALF_UP}
-	 * rounding. An exception is thrown if the value is too large to be
-	 * represented as a Decimal of this factory's scale.
+	 * {@link #getScale() scale}, the value is rounded using
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if
+	 * the value is too large to be represented as a Decimal of this factory's
+	 * scale.
 	 *
 	 * @param value
 	 *            String value to convert into an immutable Decimal value of
@@ -304,16 +313,16 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	/**
 	 * Translates the string representation of a {@code Decimal} into an
 	 * immutable {@code Decimal}. The string representation consists of an
-	 * optional sign, {@code '+'} (<tt> '&#92;u002B'</tt>) or {@code '-'} (
-	 * <tt>'&#92;u002D'</tt>), followed by a sequence of zero or more decimal
-	 * digits ("the integer"), optionally followed by a fraction.
+	 * optional sign, {@code '+'} or {@code '-'} , followed by a sequence of
+	 * zero or more decimal digits ("the integer"), optionally followed by a
+	 * fraction.
 	 * <p>
 	 * The fraction consists of a decimal point followed by zero or more decimal
 	 * digits. The string must contain at least one digit in either the integer
 	 * or the fraction. If the fraction contains more digits than this factory's
-	 * scale, the value is rounded using the specified {@code roundingMode}. An
-	 * exception is thrown if the value is too large to be represented as a
-	 * Decimal of this factory's scale.
+	 * {@link #getScale() scale}, the value is rounded using the specified
+	 * {@code roundingMode}. An exception is thrown if the value is too large to
+	 * be represented as a Decimal of this factory's scale.
 	 *
 	 * @param value
 	 *            String value to convert into an immutable Decimal value of
@@ -335,7 +344,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	/**
 	 * Returns a new immutable Decimal value whose value is numerically equal to
 	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt> where {@code scale}
-	 * refers to this factory's scale.
+	 * refers to this factory's {@link #getScale() scale}.
 	 *
 	 * @param unscaled
 	 *            unscaled value to convert into an immutable Decimal value
@@ -347,9 +356,10 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	/**
 	 * Returns a new immutable Decimal value whose value is numerically equal to
 	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>. The result is rounded to
-	 * the scale of this factory using {@link RoundingMode#HALF_UP HALF_UP}
-	 * rounding. An exception is thrown if the specified value is too large to
-	 * be represented as a Decimal of this factory's scale.
+	 * the {@link #getScale() scale} of this factory using
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if
+	 * the specified value is too large to be represented as a Decimal of this
+	 * factory's scale.
 	 *
 	 * @param unscaled
 	 *            unscaled value to convert into an immutable Decimal value
@@ -358,17 +368,17 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @return a Decimal calculated as:
 	 *         <tt>round<sub>HALF_UP</sub>(unscaled &times; 10<sup>-scale</sup>)</tt>
 	 * @throws IllegalArgumentException
-	 *             if {@code value} too large to be represented as a Decimal
-	 *             of this factory's scale
+	 *             if {@code value} too large to be represented as a Decimal of
+	 *             this factory's scale
 	 */
 	ImmutableDecimal<S> valueOfUnscaled(long unscaled, int scale);
 
 	/**
 	 * Returns a new immutable Decimal value whose value is numerically equal to
 	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>. The result is rounded to
-	 * the scale of this factory using the specified {@code roundingMode}. An
-	 * exception is thrown if the specified value is too large to be represented
-	 * as a Decimal of this factory's scale.
+	 * the {@link #getScale() scale} of this factory using the specified
+	 * {@code roundingMode}. An exception is thrown if the specified value is
+	 * too large to be represented as a Decimal of this factory's scale.
 	 *
 	 * @param unscaled
 	 *            unscaled value to convert into an immutable Decimal value
@@ -379,8 +389,8 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @return a Decimal calculated as:
 	 *         <tt>round(unscaled &times; 10<sup>-scale</sup>)</tt>
 	 * @throws IllegalArgumentException
-	 *             if {@code value} too large to be represented as a Decimal
-	 *             of this factory's scale
+	 *             if {@code value} too large to be represented as a Decimal of
+	 *             this factory's scale
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is
 	 *             necessary

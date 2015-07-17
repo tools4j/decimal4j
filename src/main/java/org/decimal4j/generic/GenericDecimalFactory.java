@@ -67,6 +67,11 @@ public final class GenericDecimalFactory<S extends ScaleMetrics> implements Deci
 	public S getScaleMetrics() {
 		return scaleMetrics;
 	}
+	
+	@Override
+	public int getScale() {
+		return getScaleMetrics().getScale();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

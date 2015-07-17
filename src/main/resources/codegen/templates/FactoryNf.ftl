@@ -30,6 +30,11 @@ public enum Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	}
 	
 	@Override
+	public final int getScale() {
+		return ${scale};
+	}
+
+	@Override
 	public final Class<Decimal${scale}f> immutableType() {
 		return Decimal${scale}f.class;
 	}
