@@ -56,6 +56,11 @@ public enum Scale0f implements ScaleMetrics {
 	 */
 	INSTANCE;
 
+	/**
+	 * The scale value <code>0</code>.
+	 */
+	public static final int SCALE = 12;
+
 	private static final long LONG_MASK = 0xffffffffL;
 
 	private static final DecimalArithmetic[] UNCHECKED_ARITHMETIC = initArithmetic(UNCHECKED);
@@ -118,7 +123,7 @@ public enum Scale0f implements ScaleMetrics {
 	public final long getMinIntegerValue() {
 		return Long.MIN_VALUE;
 	}
-	
+
 	@Override
 	public final boolean isValidIntegerValue(long value) {
 		return true;
@@ -158,7 +163,7 @@ public enum Scale0f implements ScaleMetrics {
 	public final long moduloByScaleFactor(long dividend) {
 		return 0;
 	}
-	
+
 	@Override
 	public final String toString(long value) {
 		return Long.toString(value);
@@ -198,7 +203,7 @@ public enum Scale0f implements ScaleMetrics {
 	public final DecimalArithmetic getArithmetic(RoundingMode roundingMode) {
 		return UNCHECKED_ARITHMETIC[roundingMode.ordinal()];
 	}
-	
+
 	@Override
 	public final DecimalArithmetic getCheckedArithmetic(RoundingMode roundingMode) {
 		return CHECKED_ARITHMETIC[roundingMode.ordinal()];

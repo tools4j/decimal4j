@@ -31,7 +31,7 @@ public enum Factory${scale}f implements DecimalFactory<Scale${scale}f> {
 	
 	@Override
 	public final int getScale() {
-		return ${scale};
+		return Scale${scale}f.SCALE;
 	}
 
 	@Override
