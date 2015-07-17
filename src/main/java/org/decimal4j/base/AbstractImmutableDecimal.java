@@ -40,7 +40,7 @@ import org.decimal4j.scale.Scales;
  * @param <S>
  *            the scale metrics type associated with this decimal
  * @param <D>
- *            the concrete class implementing this mutable decimal
+ *            the concrete class implementing this immutable decimal
  */
 @SuppressWarnings("serial")
 abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends AbstractImmutableDecimal<S, D>>
