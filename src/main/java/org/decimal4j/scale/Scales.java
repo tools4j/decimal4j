@@ -77,7 +77,7 @@ public final class Scales {
 
 	/**
 	 * All scale metric constants in an immutable ordered list:
-	 * <p>
+	 * <br>
 	 * {@code VALUES=[Scale0f.INSTANCE, Scale1f.INSTANCE, ..., Scale18f.INSTANCE]}
 	 */
 	public static final List<ScaleMetrics> VALUES = Collections.unmodifiableList(Arrays.asList(SCALES));

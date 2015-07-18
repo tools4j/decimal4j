@@ -40,7 +40,7 @@ import org.decimal4j.truncate.TruncationPolicy;
  * Immutable Decimals are thread safe.
  * 
  * @param <S>
- *            the scale metrics type associated with this decimal
+ *            the scale metrics type associated with this Decimal
  */
 public interface ImmutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 

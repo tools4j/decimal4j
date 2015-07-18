@@ -90,7 +90,7 @@ public final class Factories {
 
 	/**
 	 * All decimal factory constants in an immutable ordered list:
-	 * <p>
+	 * <br>
 	 * {@code VALUES=[Factory0f.INSTANCE, Factory1f.INSTANCE, ..., Factory18f.INSTANCE]}
 	 */
 	public static final List<DecimalFactory<?>> VALUES = Collections.unmodifiableList(Arrays.asList(FACTORIES));

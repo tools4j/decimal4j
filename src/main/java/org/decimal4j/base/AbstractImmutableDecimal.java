@@ -33,21 +33,24 @@ import org.decimal4j.scale.Scales;
 
 /**
  * Base class for immutable {@link Decimal} classes of different scales.
- * Arithmetic operations of immutable decimals return a new decimal instance as
- * result value hence {@link AbstractMutableDecimal mutable} decimals may be a
- * better choice for chained operations.
  * 
  * @param <S>
  *            the scale metrics type associated with this decimal
  * @param <D>
- *            the concrete class implementing this immutable decimal
+ *            the concrete class implementing this {@code ImmutableDecimal}
  */
 @SuppressWarnings("serial")
 abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends AbstractImmutableDecimal<S, D>>
-		extends AbstractDecimal<S, D> implements ImmutableDecimal<S> {
+		extends AbstractDecimal<S, D>implements ImmutableDecimal<S> {
 
 	private final long unscaled;
 
+	/**
+	 * Constructor with unscaled value.
+	 * 
+	 * @param unscaled
+	 *            the unscaled value
+	 */
 	public AbstractImmutableDecimal(long unscaled) {
 		this.unscaled = unscaled;
 	}
@@ -79,7 +82,8 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			final long targetUnscaled = targetMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, myScale);
 			return getFactory().deriveFactory(targetMetrics).valueOfUnscaled(targetUnscaled);
 		} catch (IllegalArgumentException e) {
-			throw Exceptions.newArithmeticExceptionWithCause("Overflow: cannot convert " + this + " to scale " + scale, e);
+			throw Exceptions.newArithmeticExceptionWithCause("Overflow: cannot convert " + this + " to scale " + scale,
+					e);
 		}
 	}
 
@@ -88,7 +92,7 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	public <S extends ScaleMetrics> ImmutableDecimal<S> scale(S scaleMetrics, RoundingMode roundingMode) {
 		if (scaleMetrics == getScaleMetrics()) {
 			@SuppressWarnings("unchecked")
-			//safe: we know it is the same scale metrics
+			// safe: we know it is the same scale metrics
 			final ImmutableDecimal<S> self = (ImmutableDecimal<S>) this;
 			return self;
 		}
@@ -96,7 +100,8 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 			final long targetUnscaled = scaleMetrics.getArithmetic(roundingMode).fromUnscaled(unscaled, getScale());
 			return getFactory().deriveFactory(scaleMetrics).valueOfUnscaled(targetUnscaled);
 		} catch (IllegalArgumentException e) {
-			throw Exceptions.newArithmeticExceptionWithCause("Overflow: cannot convert " + this + " to scale " + scaleMetrics.getScale(), e);
+			throw Exceptions.newArithmeticExceptionWithCause(
+					"Overflow: cannot convert " + this + " to scale " + scaleMetrics.getScale(), e);
 		}
 	}
 
@@ -104,11 +109,12 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	public ImmutableDecimal<?> multiplyExact(Decimal<?> multiplicand) {
 		final int targetScale = getScale() + multiplicand.getScale();
 		if (targetScale > Scales.MAX_SCALE) {
-			throw new IllegalArgumentException("sum of scales in exact multiplication exceeds max scale " 
+			throw new IllegalArgumentException("sum of scales in exact multiplication exceeds max scale "
 					+ Scales.MAX_SCALE + ": " + this + " * " + multiplicand);
 		}
 		try {
-			final long unscaledProduct = getDefaultCheckedArithmetic().multiplyByLong(unscaled, multiplicand.unscaledValue());
+			final long unscaledProduct = getDefaultCheckedArithmetic().multiplyByLong(unscaled,
+					multiplicand.unscaledValue());
 			return getFactory().deriveFactory(targetScale).valueOfUnscaled(unscaledProduct);
 		} catch (ArithmeticException e) {
 			throw new ArithmeticException("Overflow: " + this + " * " + multiplicand);

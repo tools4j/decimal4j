@@ -35,13 +35,11 @@ import org.decimal4j.scale.Scales;
 
 /**
  * Base class for mutable {@link Decimal} classes of different scales.
- * Arithmetic operations of mutable decimals modify the state of {@code this}
- * {@code Decimal} and return {@code this} as result value.
  * 
  * @param <S>
- *            the scale metrics type associated with this decimal
+ *            the scale metrics type associated with this Decimal
  * @param <D>
- *            the concrete class implementing this mutable decimal
+ *            the concrete class implementing this {@code MutableDecimal}
  */
 @SuppressWarnings("serial")
 abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends AbstractMutableDecimal<S, D>>
@@ -50,10 +48,10 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 	private long unscaled;
 
 	/**
-	 * Constructor with specified unscaled value.
+	 * Constructor with unscaled value.
 	 * 
 	 * @param unscaled
-	 *            the unscaled decimal value
+	 *            the unscaled value
 	 */
 	public AbstractMutableDecimal(long unscaled) {
 		this.unscaled = unscaled;

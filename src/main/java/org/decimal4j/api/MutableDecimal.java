@@ -35,7 +35,7 @@ import org.decimal4j.truncate.TruncationPolicy;
  * Interface implemented by mutable {@link Decimal} classes of different scales.
  * Mutable Decimals modify their state when performing arithmetic operations;
  * they represent the result after the operation. Arithmetic operations
- * therefore return {@code this} as return value. Note however that the the
+ * therefore return {@code this} as return value. Note however that the
  * {@link #getScale() scale} of a Mutable Decimal does not change and remains
  * constant throughout the lifetime of a {@code MutableDecimal} instance.
  * <p>
@@ -54,7 +54,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * Sets {@code this} Decimal to 0 and returns {@code this} now representing
 	 * zero.
 	 * 
-	 * @return {@code this} Decimal after assigning {@code this = 0}
+	 * @return {@code this} Decimal after assigning the value {@code 0}
 	 */
 	MutableDecimal<S> setZero();
 
@@ -62,7 +62,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * Sets {@code this} Decimal to 1 and returns {@code this} now representing
 	 * one.
 	 * 
-	 * @return {@code this} Decimal after assigning {@code this = 1}
+	 * @return {@code this} Decimal after assigning the value {@code 1}
 	 */
 	MutableDecimal<S> setOne();
 
@@ -70,7 +70,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * Sets {@code this} Decimal to -1 and returns {@code this} now representing
 	 * minus one.
 	 * 
-	 * @return {@code this} Decimal after assigning {@code this = -1}
+	 * @return {@code this} Decimal after assigning the value {@code -1}
 	 */
 	MutableDecimal<S> setMinusOne();
 
@@ -78,7 +78,8 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * Sets {@code this} Decimal to the smallest positive value representable by
 	 * this Mutable Decimal and returns {@code this} now representing one ULP.
 	 * 
-	 * @return {@code this} Decimal after assigning {@code this = ULP}
+	 * @return {@code this} Decimal after assigning the value
+	 *         <tt>ULP=10<sup>-scale</sup></tt>
 	 */
 	MutableDecimal<S> setUlp();
 
@@ -94,17 +95,21 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified
+	 * {@link Decimal} argument is rounded to the {@link #getScale() scale} of
+	 * this mutable Decimal using {@link RoundingMode#HALF_UP} rounding. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
 	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted to the appropriate scale
-	 * @return {@code this} Decimal after assigning the given {@code value}
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
@@ -114,55 +119,69 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
 	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * the specified value is too large to be represented as a Decimal of this
+	 * mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning the given {@code value}
-	 * @throws ArithmeticException
-	 *             if the value cannot be converted into a Decimal
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal
 	 */
 	MutableDecimal<S> set(long value);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
 	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * the specified value is too large to be represented as a Decimal of this
+	 * mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning the given {@code value}
-	 * @throws ArithmeticException
-	 *             if the value cannot be converted into a Decimal
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal
 	 */
 	MutableDecimal<S> set(BigInteger value);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified {@code float}
+	 * argument is rounded to the {@link #getScale() scale} of this mutable
+	 * Decimal using {@link RoundingMode#HALF_UP} rounding. An exception is
+	 * thrown if the specified value is too large to be represented as a Decimal
+	 * of this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
-	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a Decimal with
+	 *             the scale of this mutable Decimal
 	 */
 	MutableDecimal<S> set(float value);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified {@code float}
+	 * argument is rounded to the {@link #getScale() scale} of this mutable
+	 * Decimal using the specified {@code roundingMode}. An exception is thrown
+	 * if the specified value is too large to be represented as a Decimal of
+	 * this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
 	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a Decimal number
-	 * @return {@code this} decimal after assigning the given {@code value}
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a Decimal with
+	 *             the scale of this mutable Decimal
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
@@ -171,30 +190,40 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified {@code double}
+	 * argument is rounded to the {@link #getScale() scale} of this mutable
+	 * Decimal using {@link RoundingMode#HALF_UP} rounding. An exception is
+	 * thrown if the specified value is too large to be represented as a Decimal
+	 * of this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
-	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a Decimal with
+	 *             the scale of this mutable Decimal
 	 */
 	MutableDecimal<S> set(double value);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified {@code double}
+	 * argument is rounded to the {@link #getScale() scale} of this mutable
+	 * Decimal using the specified {@code roundingMode}. An exception is thrown
+	 * if the specified value is too large to be represented as a Decimal of
+	 * this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
 	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a Decimal number
-	 * @return {@code this} Decimal after assigning the given {@code value}
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a Decimal with
+	 *             the scale of this mutable Decimal
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
@@ -203,30 +232,36 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified
+	 * {@link BigDecimal} argument is rounded to the {@link #getScale() scale}
+	 * of this mutable Decimal using {@link RoundingMode#HALF_UP} rounding. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
-	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal
 	 */
 	MutableDecimal<S> set(BigDecimal value);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code value} and returns
-	 * {@code this} now representing {@code value}. An exception is thrown if
-	 * the value cannot be represented as a Decimal.
+	 * {@code this} now representing {@code value}. The specified
+	 * {@link BigDecimal} argument is rounded to the {@link #getScale() scale}
+	 * of this mutable Decimal using the specified {@code roundingMode}. An
+	 * exception is thrown if the specified value is too large to be represented
+	 * as a Decimal of this mutable Decimal's scale.
 	 * 
 	 * @param value
 	 *            value to be set
-	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a Decimal number
-	 * @return {@code this} Decimal after assigning the given {@code value}
+	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal
+	 *             if {@code value} is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
@@ -235,67 +270,58 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} and
-	 * returns {@code this} now representing
-	 * <code>this = unscaledValue * 10<sup>-scale</sup></code> where scale is
-	 * the scale factor of this Mutable Decimal.
+	 * returns {@code this} now representing tt>(unscaledValue * 10
+	 * <sup>-scale</sup>)</tt> where scale refers to the {@link #getScale()
+	 * scale} of this mutable Decimal.
 	 * 
 	 * @param unscaledValue
 	 *            value to be set
-	 * @return {@code this} Decimal after assigning
-	 *         <code>this = unscaledValue * 10<sup>-scale</sup></code>.
-	 * @see #getScaleMetrics()
-	 * @see ScaleMetrics#getScaleFactor()
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>unscaledValue * 10<sup>-scale</sup></tt>.
 	 */
 	MutableDecimal<S> setUnscaled(long unscaledValue);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} with the
 	 * given {@code scale} and returns {@code this} now representing
-	 * <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>. Note that
-	 * the conversion may involve rounding if the specified {@code scale} is
-	 * larger than {@link #getScale()}; the default rounding mode is applied in
-	 * this case.
-	 * <p>
-	 * An exception is thrown if the value cannot be represented as a Decimal
-	 * with this Mutable Decimal's {@link #getScale() scale} for instance
-	 * because it would cause an overflow.
+	 * <tt>(unscaledValue * 10<sup>-scale</sup>)</tt>. The value is rounded to
+	 * the {@link #getScale() scale} of this mutable Decimal using
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if
+	 * the specified value is too large to be represented as a Decimal of this
+	 * of this mutable Decimal's scale.
 	 * 
 	 * @param unscaledValue
 	 *            value to be set
 	 * @param scale
 	 *            the scale used for {@code unscaledValue}
-	 * @return {@code this} Decimal after assigning
-	 *         <code>this = round(unscaledValue * 10<sup>-scale)</sup></code>.
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>round<sub>HALF_UP</sub>(unscaledValue * 10<sup>-scale</sup>)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal with this
-	 *             Mutable Decimal's {@code scale}
+	 *             if the value is too large to be represented as a Decimal with
+	 *             the scale of this mutable Decimal
 	 */
 	MutableDecimal<S> setUnscaled(long unscaledValue, int scale);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} with the
 	 * given {@code scale} and returns {@code this} now representing
-	 * <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>. Note that
-	 * the conversion may involve rounding if the specified {@code scale} is
-	 * larger than {@link #getScale()}; the specified {@code roundingMode} is
-	 * applied in this case.
-	 * <p>
-	 * An exception is thrown if the value cannot be represented as a Decimal
-	 * with this Mutable Decimal's {@link #getScale() scale} for instance
-	 * because it would cause an overflow.
+	 * <tt>(unscaledValue * 10<sup>-scale</sup>)</tt>. The value is rounded to
+	 * the {@link #getScale() scale} of this mutable Decimal using the specified
+	 * {@code roundingMode}. An exception is thrown if the specified value is
+	 * too large to be represented as a Decimal of this of this mutable
+	 * Decimal's scale.
 	 * 
 	 * @param unscaledValue
 	 *            value to be set
 	 * @param scale
 	 *            the scale used for {@code unscaledValue}
 	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted to this Decimal's scale
-	 * @return {@code this} Decimal after assigning
-	 *         <code>this = round(unscaledValue * 10<sup>-scale</sup>)</code>.
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return {@code this} Decimal after assigning:
+	 *         <tt>round(unscaledValue * 10<sup>-scale</sup>)</tt>
 	 * @throws IllegalArgumentException
-	 *             if the value cannot be converted into a Decimal with this
-	 *             Mutable Decimal's {@code scale}
+	 *             if the value is too large to be represented as a Decimal with
+	 *             the scale of this mutable Decimal
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
 	 *             UNNESSESSARY} and rounding is necessary
@@ -304,31 +330,59 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Parses the given string value and sets {@code this} Decimal to the parsed
-	 * {@code value}. An exception is thrown if the value cannot be parsed.
+	 * {@code value}.
+	 * <p>
+	 * The string representation of a {@code Decimal} consists of an optional
+	 * sign, {@code '+'} or {@code '-'} , followed by a sequence of zero or more
+	 * decimal digits ("the integer"), optionally followed by a fraction.
+	 * <p>
+	 * The fraction consists of a decimal point followed by zero or more decimal
+	 * digits. The string must contain at least one digit in either the integer
+	 * or the fraction. If the fraction contains more digits than this mutable
+	 * Decimal's {@link #getScale() scale}, the value is rounded using
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if
+	 * the value is too large to be represented as a Decimal of this mutable
+	 * Decimals's scale.
 	 * 
 	 * @param value
-	 *            the string value to parse and set
+	 *            the string value to parse and assign
 	 * @return {@code this} Decimal after assigning the parsed value
 	 * @throws NumberFormatException
-	 *             if the value cannot be parsed
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal's scale
 	 */
 	MutableDecimal<S> set(String value);
 
 	/**
 	 * Parses the given string value and sets {@code this} Decimal to the parsed
-	 * {@code value}. An exception is thrown if the value cannot be parsed.
+	 * {@code value}.
+	 * <p>
+	 * The string representation of a {@code Decimal} consists of an optional
+	 * sign, {@code '+'} or {@code '-'} , followed by a sequence of zero or more
+	 * decimal digits ("the integer"), optionally followed by a fraction.
+	 * <p>
+	 * The fraction consists of a decimal point followed by zero or more decimal
+	 * digits. The string must contain at least one digit in either the integer
+	 * or the fraction. If the fraction contains more digits than this mutable
+	 * Decimal's {@link #getScale() scale}, the value is rounded using the
+	 * specified {@code roundingMode}. An exception is thrown if the value is
+	 * too large to be represented as a Decimal of this mutable Decimals's
+	 * scale.
 	 * 
 	 * @param value
-	 *            the string value to parse and set
+	 *            the string value to parse and assign
 	 * @param roundingMode
-	 *            the rounding mode to apply if the value argument needs to be
-	 *            truncated when converted into a decimal number
+	 *            the rounding mode to apply if the fraction contains more
+	 *            digits than the scale of this mutable Decimal
 	 * @return {@code this} Decimal after assigning the parsed value
 	 * @throws NumberFormatException
-	 *             if the value cannot be parsed
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a Decimal
+	 *             with the scale of this mutable Decimal's scale
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode} is {@link RoundingMode#UNNECESSARY
-	 *             UNNESSESSARY} and rounding is necessary
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
 	 */
 	MutableDecimal<S> set(String value, RoundingMode roundingMode);
 
@@ -357,7 +411,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @see #compareTo(Decimal)
 	 */
 	MutableDecimal<S> max(MutableDecimal<S> val);
-	
+
 	/**
 	 * Returns a clone of this mutable Decimal numerically identical to this
 	 * value.
@@ -366,7 +420,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 */
 	MutableDecimal<S> clone();
 
-	//override some methods with specialized return type
+	// override some methods with specialized return type
 
 	@Override
 	MutableDecimal<S> integralPart();
