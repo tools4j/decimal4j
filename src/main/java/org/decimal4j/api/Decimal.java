@@ -3100,7 +3100,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * Properties of the X3.274-1996 algorithm are:
 	 * <ul>
-	 * <li>An {@code ArithmeticException} exception is thrown if
+	 * <li>An {@code IllegalArgumentException} is thrown if
 	 * {@code abs(n) > 999999999}</li>
 	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
 	 * otherwise
@@ -3124,9 +3124,10 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            power to raise this {@code Decimal} to
 	 * @return <tt>this<sup>n</sup></tt> using the ANSI standard X3.274-1996
 	 *         algorithm
+	 * @throws IllegalArgumentException
+	 *             if {@code abs(n) > 999999999}
 	 * @throws ArithmeticException
-	 *             if {@code abs(n) > 999999999} or if {@code n} is negative and
-	 *             {@code this} equals zero
+	 *             if {@code n} is negative and {@code this} equals zero
 	 */
 	Decimal<S> pow(int n);
 
@@ -3143,7 +3144,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * Properties of the X3.274-1996 algorithm are:
 	 * <ul>
-	 * <li>An {@code ArithmeticException} exception is thrown if
+	 * <li>An {@code IllegalArgumentException} is thrown if
 	 * {@code abs(n) > 999999999}</li>
 	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
 	 * otherwise
@@ -3169,10 +3170,12 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            the rounding mode to apply if rounding is necessary
 	 * @return <tt>this<sup>n</sup></tt> using the ANSI standard X3.274-1996
 	 *         algorithm
+	 * @throws IllegalArgumentException
+	 *             if {@code abs(n) > 999999999}
 	 * @throws ArithmeticException
-	 *             if {@code abs(n) > 999999999}; if {@code n} is negative and
-	 *             {@code this} equals zero or if {@code roundingMode} equals
-	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary
+	 *             if {@code n} is negative and {@code this} equals zero or if
+	 *             {@code roundingMode} equals {@link RoundingMode#UNNECESSARY}
+	 *             and rounding is necessary
 	 */
 	Decimal<S> pow(int n, RoundingMode roundingMode);
 
@@ -3192,7 +3195,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * Properties of the X3.274-1996 algorithm are:
 	 * <ul>
-	 * <li>An {@code ArithmeticException} exception is thrown if
+	 * <li>An {@code IllegalArgumentException} is thrown if
 	 * {@code abs(n) > 999999999}</li>
 	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero,
 	 * otherwise
@@ -3221,9 +3224,11 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 *            an overflow occurs
 	 * @return <tt>this<sup>n</sup></tt> using the ANSI standard X3.274-1996
 	 *         algorithm
+	 * @throws IllegalArgumentException
+	 *             if {@code abs(n) > 999999999}
 	 * @throws ArithmeticException
-	 *             if {@code abs(n) > 999999999}; if {@code n} is negative and
-	 *             {@code this} equals zero; if {@code truncationPolicy} defines
+	 *             if {@code n} is negative and {@code this} equals zero; if
+	 *             {@code truncationPolicy} defines
 	 *             {@link RoundingMode#UNNECESSARY} and rounding is necessary or
 	 *             if an overflow occurs and the policy declares
 	 *             {@link OverflowMode#CHECKED}

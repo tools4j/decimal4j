@@ -201,6 +201,14 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 		exp.add(-100);
 		//zero
 		exp.add(0);
+		//extremes
+//		exp.add(-999999999);
+//		exp.add(999999999);
+		//illegal exponents
+		exp.add(-999999999-1);
+		exp.add(999999999+1);
+		exp.add(Integer.MIN_VALUE);
+		exp.add(Integer.MAX_VALUE);
 
 		//convert to array
 		final int[] result = new int[exp.size()];
@@ -295,6 +303,9 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, int b) {
+		if (b < -999999999 | b > 999999999) {
+			throw new IllegalArgumentException("exponent out of range: " + b);
+		}
 		final BigDecimal result = a.pow(Math.abs(b));
 		return b >= 0 ? result.setScale(getScale(), getRoundingMode()) : BigDecimal.ONE.divide(result, getScale(), getRoundingMode());
 	}

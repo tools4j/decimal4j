@@ -80,9 +80,9 @@ public interface ScaleMetrics {
 
 	/**
 	 * Returns the {@link #getScaleFactor() scale factor} as a
-	 * {@link BigDecimal} value.
+	 * {@link BigDecimal} value with scale zero.
 	 * 
-	 * @return the scale factor as big decimal
+	 * @return the scale factor as big decimal with scale zero.
 	 */
 	BigDecimal getScaleFactorAsBigDecimal();
 

@@ -42,7 +42,13 @@ final class Pow {
 	 */
 	private static final long FLOOR_SQRT_MAX_LONG = 3037000499L;
 
+	private static final void checkExponent(int exponent) {
+		if (exponent < -999999999 || exponent > 999999999) {
+			throw new IllegalArgumentException("Exponent must be in [-999999999,999999999] but was: " + exponent);
+		}
+	}
 	public static final long powLong(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
+		checkExponent(exponent);
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, lBase, exponent);
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
@@ -62,6 +68,7 @@ final class Pow {
 	}
 
 	public static final long powLongChecked(DecimalArithmetic arith, DecimalRounding rounding, long lBase, int exponent) {
+		checkExponent(exponent);
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, lBase, exponent);
 		if (special != null) {
 			return special.pow(arith, lBase, exponent);
@@ -94,9 +101,7 @@ final class Pow {
 	 * @return {@code uDecimalbase ^ exponent}
 	 */
 	public static final long pow(DecimalArithmetic arith, DecimalRounding rounding, long uDecimalBase, int exponent) {
-		if (exponent < -999999999 || exponent > 999999999) {
-			throw new ArithmeticException("Exponent must be in [-999999999,999999999] but was: " + exponent);
-		}
+		checkExponent(exponent);
 		final SpecialPowResult special = SpecialPowResult.getFor(arith, uDecimalBase, exponent);
 		if (special != null) {
 			return special.pow(arith, uDecimalBase, exponent);
