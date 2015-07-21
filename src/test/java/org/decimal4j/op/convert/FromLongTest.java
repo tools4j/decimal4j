@@ -31,6 +31,7 @@ import java.util.List;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
+import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.op.AbstractLongValueToDecimalTest;
 import org.decimal4j.scale.Scale0f;
 import org.decimal4j.scale.ScaleMetrics;
@@ -40,8 +41,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test {@link DecimalArithmetic#fromLong(long) via {
- * @link DecimalFactory#valueOf(long)} etc., {@link MutableDecimal#set(long)}
+ * Test {@link DecimalArithmetic#fromLong(long)},
+ * {@link DecimalFactory#valueOf(long)} etc., {@link MutableDecimal#set(long)}
  * etc. and the static {@code valueOf(long)} method of the Immutable Decimal
  * implementations.
  */

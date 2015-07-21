@@ -33,27 +33,29 @@ public class LongRandom extends Random {
 
 	private static final long serialVersionUID = 1L;
 
-    /**
-     * Returns a pseudorandom, uniformly distributed {@code long} value
-     * between 0 (inclusive) and the specified value (exclusive), drawn from
-     * this random number generator's sequence.  
-     * 
-     * @param bound the upper bound (exclusive).  Must be positive.
-     * @return the next pseudorandom, uniformly distributed {@code long}
-     *         value between zero (inclusive) and {@code bound} (exclusive)
-     *         from this random number generator's sequence
-     * @throws IllegalArgumentException if bound is not positive
-     * @see #nextInt(int)
-     */
-	public long nextLong(long n) {
-        if (n <= 0)
-            throw new IllegalArgumentException("n must be positive, but was " + n);
+	/**
+	 * Returns a pseudorandom, uniformly distributed {@code long} value between
+	 * 0 (inclusive) and the specified value (exclusive), drawn from this random
+	 * number generator's sequence.
+	 * 
+	 * @param bound
+	 *            the upper bound (exclusive). Must be positive.
+	 * @return the next pseudorandom, uniformly distributed {@code long} value
+	 *         between zero (inclusive) and {@code bound} (exclusive) from this
+	 *         random number generator's sequence
+	 * @throws IllegalArgumentException
+	 *             if bound is not positive
+	 * @see #nextInt(int)
+	 */
+	public long nextLong(long bound) {
+        if (bound <= 0)
+            throw new IllegalArgumentException("n must be positive, but was " + bound);
 
         long bits, val;
         do {
             bits = nextLong() >>> 1;
-            val = bits % n;
-        } while (bits - val + (n-1) < 0);
+            val = bits % bound;
+        } while (bits - val + (bound-1) < 0);
         return val;
 	}
 

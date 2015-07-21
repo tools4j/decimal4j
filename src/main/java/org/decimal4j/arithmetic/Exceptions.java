@@ -61,6 +61,9 @@ public final class Exceptions {
 	 * Rethrows the given arithmetic exception if its message equals
 	 * "Rounding necessary". Otherwise the method does nothing.
 	 * 
+	 * @param e
+	 *            the exception to rethrow if it is of the "Rounding necessary"
+	 *            type
 	 * @throws ArithmeticException
 	 *             rethrows the given exception {@code e} if its message equals
 	 *             "Rounding necessary"

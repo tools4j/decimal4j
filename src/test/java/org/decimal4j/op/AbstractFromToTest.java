@@ -36,8 +36,12 @@ import org.junit.Test;
  * Base class for unit converting a value to a Decimal and back to the original
  * value. This type of factory test is only possible for exact conversions, i.e.
  * if no information is lost.
+ * 
+ * @param <V>
+ *            the generic type of the source (and target) value
  */
 abstract public class AbstractFromToTest<V> extends AbstractDecimalTest {
+
 	public AbstractFromToTest(DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}

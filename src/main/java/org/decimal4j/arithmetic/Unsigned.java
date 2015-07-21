@@ -36,6 +36,9 @@ public final class Unsigned {
 	 * From Guava's <a href=
 	 * "http://docs.guava-libraries.googlecode.com/git/javadoc/src-html/com/google/common/primitives/UnsignedLongs.html"
 	 * >UnsignedLongs</a>.
+	 * 
+	 * @param a the unsigned long value to flip
+	 * @return the flipped value
 	 */
 	private static final long flip(long a) {
 		return a ^ Long.MIN_VALUE;

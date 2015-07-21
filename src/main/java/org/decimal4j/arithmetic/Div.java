@@ -660,7 +660,6 @@ final class Div {
 	}
 
 	/**
-	 * 
 	 * Returns dividend / divisor, where the dividend and divisor are treated as
 	 * unsigned 64-bit quantities.
 	 * <p>
@@ -672,9 +671,9 @@ final class Div {
 	 *            the dividend (numerator)
 	 * @param divisor
 	 *            the divisor (denominator)
+	 * @return the unsigned quotient {@code dividend / divisor}
 	 * @throws ArithmeticException
 	 *             if divisor is 0
-	 * 
 	 */
 	private static final long unsignedDiv64by32(long dividend, long divisor) {
 		// Optimization - use signed division if dividend < 2^63

@@ -58,6 +58,8 @@ public class ObjectMethodsOnDecimalsTest {
 	/**
 	 * Checks the reflexivity requirement of {@link Object#equals(Object)} in
 	 * case of different {@link Decimal} implementations.
+	 * 
+	 * @param first the first argument of the equality comparison with itself
 	 */
 	@Test
 	@Parameters(source = UnaryDecimalArgumentProvider.class)
@@ -69,6 +71,9 @@ public class ObjectMethodsOnDecimalsTest {
 	/**
 	 * Checks the symmetry requirement of {@link Object#equals(Object)} in case
 	 * of different {@link Decimal} implementations.
+	 * 
+	 * @param first the first argument of the equality comparison
+	 * @param second the second argument of the equality comparison
 	 */
 	@Test
 	@Parameters(source = BinaryDecimalArgumentProvider.class)
@@ -85,6 +90,10 @@ public class ObjectMethodsOnDecimalsTest {
 	/**
 	 * Checks the transitivity requirement of {@link Object#equals(Object)} in
 	 * case of different {@link Decimal} implementations.
+	 * 
+	 * @param first the first argument of the equality comparison
+	 * @param second the second argument of the equality comparison
+	 * @param third the third argument of the equality comparison
 	 */
 	@Test
 	@Parameters(source = TernaryDecimalArgumentProvider.class)

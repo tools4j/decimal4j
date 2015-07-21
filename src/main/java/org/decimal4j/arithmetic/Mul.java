@@ -331,7 +331,7 @@ final class Mul {
 	 *            the scale matrics associated with the first factor
 	 * @param uDecimal1
 	 *            the first unscaled decimal factor
-	 * @param scaleMetrics1
+	 * @param scaleMetrics2
 	 *            the scale matrics associated with the second factor
 	 * @param uDecimal2
 	 *            the second unscaled decimal factor

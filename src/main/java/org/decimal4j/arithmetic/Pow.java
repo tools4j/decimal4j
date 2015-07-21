@@ -23,9 +23,6 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
@@ -132,59 +129,6 @@ final class Pow {
         }
 	}
 	
-	/**
-	 * From {@link BigDecimal#pow(int, MathContext)}.
-	 * <p>
-	 * Returns an unscaled decimal whose value is <tt>(this<sup>n</sup>)</tt>.
-	 * The current implementation uses the core algorithm defined in ANSI
-	 * standard X3.274-1996 with rounding according to the context settings. In
-	 * general, the returned numerical value is within two ulps of the exact
-	 * numerical value for the chosen precision. Note that future releases may
-	 * use a different algorithm with a decreased allowable error bound and
-	 * increased allowable exponent range.
-	 *
-	 * <p>
-	 * The X3.274-1996 algorithm is:
-	 *
-	 * <ul>
-	 * <li>An {@code ArithmeticException} exception is thrown if
-	 * <ul>
-	 * <li>{@code abs(n) > 999999999}
-	 * <li>{@code mc.precision == 0} and {@code n < 0}
-	 * <li>{@code mc.precision > 0} and {@code n} has more than
-	 * {@code mc.precision} decimal digits
-	 * </ul>
-	 *
-	 * <li>if {@code n} is zero, {@link #ONE} is returned even if {@code this}
-	 * is zero, otherwise
-	 * <ul>
-	 * <li>if {@code n} is positive, the result is calculated via the repeated
-	 * squaring technique into a single accumulator. The individual
-	 * multiplications with the accumulator use the same math context settings
-	 * as in {@code mc} except for a precision increased to
-	 * {@code mc.precision + elength + 1} where {@code elength} is the number of
-	 * decimal digits in {@code n}.
-	 *
-	 * <li>if {@code n} is negative, the result is calculated as if {@code n}
-	 * were positive; this value is then divided into one using the working
-	 * precision specified above.
-	 *
-	 * <li>The final value from either the positive or negative case is then
-	 * rounded to the destination precision.
-	 * </ul>
-	 * </ul>
-	 *
-	 * @param n
-	 *            power to raise this {@code BigDecimal} to.
-	 * @param mc
-	 *            the context to use.
-	 * @return <tt>this<sup>n</sup></tt> using the ANSI standard X3.274-1996
-	 *         algorithm
-	 * @throws ArithmeticException
-	 *             if the result is inexact but the rounding mode is
-	 *             {@code UNNECESSARY}, or {@code n} is out of range.
-	 * @since 1.5
-	 */
 	//PRECONDITION: n != 0 and n in [-999999999,999999999]
 	private static final long powWithPrecision18(DecimalArithmetic arith, DecimalRounding rounding, long ival, long fval, int n) {
 		//eliminate sign

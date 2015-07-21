@@ -41,7 +41,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test {@link DecimalArithmetic#fromBigDecimal(Decimal)} via
+ * Tests from-Decimal conversion via
  * {@link DecimalFactory#valueOf(Decimal)}, {@link MutableDecimal#set(Decimal)}
  * and the static {@code valueOf(Decimal)} methods of the Immutable Decimal
  * implementations.

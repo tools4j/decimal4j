@@ -37,9 +37,12 @@ import org.decimal4j.scale.Scales;
  * generic way, that is, different instances can have different scales. In
  * contrast the classes defined in the {@code mutable} package have have no
  * generic parameter as they have a fixed scale per class.
+ * 
+ * @param <S>
+ *            the scale metrics type associated with this Decimal
  */
-public final class GenericMutableDecimal<S extends ScaleMetrics> extends
-		AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable {
+public final class GenericMutableDecimal<S extends ScaleMetrics>
+		extends AbstractMutableDecimal<S, GenericMutableDecimal<S>> implements Cloneable {
 
 	private static final long serialVersionUID = 1L;
 

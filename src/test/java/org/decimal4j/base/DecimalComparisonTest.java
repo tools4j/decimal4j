@@ -50,6 +50,9 @@ public class DecimalComparisonTest {
 	 * consistent with <code>equals<code>.
 	 * 
 	 * Note: (x.compareTo(y)==0) == (x.equals(y) is not strictly required by the contract, but {@link Decimal} implementations fulfill it
+	 * 
+	 * @param first the first argument of the comparison
+	 * @param second the second argument of the comparison
 	 */
 	@Test
 	@Parameters(source = BinaryDecimalArgumentProvider.class)

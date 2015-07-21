@@ -258,6 +258,8 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * 
 	 * @param value
 	 *            value to be set
+	 * @param roundingMode
+	 *            the rounding mode to apply if rounding is necessary
 	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a Decimal
@@ -270,7 +272,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} and
-	 * returns {@code this} now representing tt>(unscaledValue * 10
+	 * returns {@code this} now representing <tt>(unscaledValue * 10
 	 * <sup>-scale</sup>)</tt> where scale refers to the {@link #getScale()
 	 * scale} of this mutable Decimal.
 	 * 

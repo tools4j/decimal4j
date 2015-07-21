@@ -43,6 +43,8 @@ import org.decimal4j.scale.ScaleMetrics;
  * The recommended way to create a generic factory is via
  * {@link Factories#getGenericDecimalFactory(ScaleMetrics)}.
  * 
+ * @param <S>
+ *            the scale metrics type associated with this decimal
  * @see GenericImmutableDecimal
  * @see GenericMutableDecimal
  */
