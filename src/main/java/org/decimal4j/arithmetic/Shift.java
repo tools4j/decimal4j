@@ -52,11 +52,11 @@ final class Shift {
 			if (positions < Long.SIZE) {
 				final long truncated = uDecimal >= 0 ? (uDecimal >>> positions) : -(-uDecimal >>> positions);
 				final long remainder = uDecimal - (truncated << positions);
-				final TruncatedPart truncatedPart = positions == 63 ? RoundingUtil.truncatedPartFor2pow63(remainder) : RoundingUtil.truncatedPartFor(Math.abs(remainder), 1L << positions);
+				final TruncatedPart truncatedPart = positions == 63 ? Rounding.truncatedPartFor2pow63(remainder) : Rounding.truncatedPartFor(Math.abs(remainder), 1L << positions);
 				return truncated + rounding.calculateRoundingIncrement(Long.signum(uDecimal), truncated, truncatedPart);
 			}
 			if (positions == Long.SIZE) {
-				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartFor2pow64(Math.abs(uDecimal)));
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, Rounding.truncatedPartFor2pow64(Math.abs(uDecimal)));
 			}
 			return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 		}

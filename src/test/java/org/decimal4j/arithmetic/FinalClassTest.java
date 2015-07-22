@@ -44,10 +44,20 @@ public class FinalClassTest extends AbstractFinalTest {
 	
 	private final Class<?> clazz;
 	
+	/**
+	 * Constructor with tested class parameter.
+	 * 
+	 * @param clazz the class under test
+	 */
 	public FinalClassTest(Class<?> clazz) {
 		this.clazz = clazz;
 	}
 
+	/**
+	 * Returns a list with single-element object arrays containing the class under
+	 * test.
+	 * @return the parameter data
+	 */
 	@Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
@@ -79,7 +89,8 @@ public class FinalClassTest extends AbstractFinalTest {
 		data.add(new Object[] {Pow.class});
 		data.add(new Object[] {Pow10.class});
 		data.add(new Object[] {Round.class});
-		data.add(new Object[] {RoundingUtil.class});
+		data.add(new Object[] {Rounding.class});
+		data.add(new Object[] {RoundingInverse.class});
 		data.add(new Object[] {Shift.class});
 		data.add(new Object[] {SpecialDivisionResult.class});
 		data.add(new Object[] {SpecialMultiplicationResult.class});

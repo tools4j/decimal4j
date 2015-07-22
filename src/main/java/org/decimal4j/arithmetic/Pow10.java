@@ -86,10 +86,10 @@ final class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(-n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+				final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
 			} else if (n == -19) {
-				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, Rounding.truncatedPartForScale19(uDecimal));
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
@@ -140,10 +140,10 @@ final class Pow10 {
 				final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(-n);
 				final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 				final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-				final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+				final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 				return truncated + inc;
 			} else if (n == -19) {
-				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, Rounding.truncatedPartForScale19(uDecimal));
 			}
 			//truncated part is always larger 0 (see first if) 
 			//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
@@ -195,13 +195,13 @@ final class Pow10 {
 				//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
 				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 			} else if (n == 19) {
-				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, Rounding.truncatedPartForScale19(uDecimal));
 			} 
 			
 			final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(n);
 			final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 			final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-			final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+			final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 			return truncated + inc;
 		} else {
 			int pos = n;
@@ -256,13 +256,13 @@ final class Pow10 {
 				//and less than 0.5 because abs(Long.MIN_VALUE) / 10^20 < 0.5
 				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 			} else if (n == 19) {
-				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, RoundingUtil.truncatedPartForScale19(uDecimal));
+				return rounding.calculateRoundingIncrement(Long.signum(uDecimal), 0, Rounding.truncatedPartForScale19(uDecimal));
 			}
 			
 			final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(n);
 			final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 			final long rem = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-			final long inc = RoundingUtil.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
+			final long inc = Rounding.calculateRoundingIncrement(rounding, truncated, rem, scaleMetrics.getScaleFactor());
 			return truncated + inc;
 		} else {
 			if (n < -18) {
@@ -298,9 +298,9 @@ final class Pow10 {
 			final long truncatedValue = scaler.divideByScaleFactor(uDecimalDividend);
 			final long truncatedDigits = uDecimalDividend - scaler.multiplyByScaleFactor(truncatedValue);
 			if (pow10divisorIsPositive) {
-				return truncatedValue + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncatedValue, truncatedDigits, scaler.getScaleFactor());
+				return truncatedValue + Rounding.calculateRoundingIncrementForDivision(rounding, truncatedValue, truncatedDigits, scaler.getScaleFactor());
 			}
-			return -truncatedValue + RoundingUtil.calculateRoundingIncrementForDivision(rounding, -truncatedValue, -truncatedDigits, scaler.getScaleFactor());
+			return -truncatedValue + Rounding.calculateRoundingIncrementForDivision(rounding, -truncatedValue, -truncatedDigits, scaler.getScaleFactor());
 		} else {
 			//multiply
 			final ScaleMetrics scaler = Scales.getScaleMetrics(scaleDiff);
@@ -333,9 +333,9 @@ final class Pow10 {
 
 			final long truncatedDigits = uDecimalDividend - scaleMetrics.multiplyByScaleFactor(quot);
 			if (pow10divisorIsPositive) {
-				return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, truncatedDigits, scaleMetrics.getScaleFactor());
+				return quot + Rounding.calculateRoundingIncrementForDivision(rounding, quot, truncatedDigits, scaleMetrics.getScaleFactor());
 			}
-			return -quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, -quot, -truncatedDigits, scaleMetrics.getScaleFactor());
+			return -quot + Rounding.calculateRoundingIncrementForDivision(rounding, -quot, -truncatedDigits, scaleMetrics.getScaleFactor());
 		} else {
 			//multiply
 			final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(scaleDiff);

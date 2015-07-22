@@ -105,7 +105,7 @@ final class Square {
 			final long fxfd = scaleMetrics.divideByScaleFactor(fxf);
 			final long fxfr = fxf - scaleMetrics.multiplyByScaleFactor(fxfd);
 			final long unrounded = scaleMetrics.multiplyByScaleFactor(i * i) + ((i * f) << 1) + fxfd;
-			return unrounded + RoundingUtil.calculateRoundingIncrement(rounding, unrounded, fxfr, scaleMetrics.getScaleFactor());
+			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, fxfr, scaleMetrics.getScaleFactor());
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scale9f = Scale9f.INSTANCE;
@@ -124,7 +124,7 @@ final class Square {
 			final long hxlx2_lxlr = hxlx2_lxl - scaleDiff09.multiplyByScaleFactor(hxlx2_lxld); 
 			final long unrounded = scaleDiff18.multiplyByScaleFactor(h * h) + (hxld<<1) + hxlx2_lxld;
 			final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;
-			return unrounded + RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
+			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor());
 		}
 	}
 
@@ -133,7 +133,7 @@ final class Square {
 		final long u2 = uDecimal * uDecimal;
 		final long u2d = scaleMetrics.divideByScaleFactor(u2);
 		final long u2r = u2 - scaleMetrics.multiplyByScaleFactor(u2d);
-		return u2d + RoundingUtil.calculateRoundingIncrement(rounding, u2d, u2r, scaleMetrics.getScaleFactor());
+		return u2d + Rounding.calculateRoundingIncrement(rounding, u2d, u2r, scaleMetrics.getScaleFactor());
 	}
 	
 	// TODO merge with other versions
@@ -164,7 +164,7 @@ final class Square {
 				long unrounded = scaleMetrics.multiplyByScaleFactorExact(ixi);
 				unrounded = Checked.addLong(unrounded, ixfx2);
 				unrounded = Checked.addLong(unrounded, fxfd);
-				return Checked.addLong(unrounded, RoundingUtil.calculateRoundingIncrement(rounding, unrounded, fxfr, scaleMetrics.getScaleFactor()));
+				return Checked.addLong(unrounded, Rounding.calculateRoundingIncrement(rounding, unrounded, fxfr, scaleMetrics.getScaleFactor()));
 			}
 			else {
 				// use scale9 to split into 2 parts: h (high) and l (low)
@@ -194,7 +194,7 @@ final class Square {
 				unrounded = Checked.addLong(unrounded, hxldx2);
 				unrounded = Checked.addLong(unrounded, hxlx2_lxld);
 				final long remainder = scale9f.multiplyByScaleFactor(hxlx2_lxlr) + lxlr;//cannot overflow
-				return Checked.addLong(unrounded, RoundingUtil.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor()));
+				return Checked.addLong(unrounded, Rounding.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
 			Exceptions.rethrowIfRoundingNecessary(e);

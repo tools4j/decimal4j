@@ -135,7 +135,7 @@ final class Pow {
 		final int sgn = ((n & 0x1) != 0) ? Long.signum(ival | fval) : 1;
 		final long absInt = Math.abs(ival);
 		final long absFra = Math.abs(fval);
-		final DecimalRounding powRounding = n >= 0 ? rounding : getOppositeRoundingMode(rounding);
+		final DecimalRounding powRounding = n >= 0 ? rounding : RoundingInverse.RECIPROCAL.invert(rounding);
 		
 		//36 digit left hand side, initialized with base value
 		final UnsignedDecimal9i36f lhs = UnsignedDecimal9i36f.THREAD_LOCAL_1.get().init(absInt, absFra, arith.getScaleMetrics());
@@ -236,29 +236,6 @@ final class Pow {
 					lBase *= lBase;
 				}
 			}
-		}
-	}
-
-	private static final DecimalRounding getOppositeRoundingMode(DecimalRounding roundingMode) {
-		switch (roundingMode) {
-		case UP:
-			return DecimalRounding.DOWN;
-		case DOWN:
-			return DecimalRounding.UP;
-		case CEILING:
-			return DecimalRounding.FLOOR;
-		case FLOOR:
-			return DecimalRounding.CEILING;
-		case HALF_UP:
-			return DecimalRounding.HALF_DOWN;
-		case HALF_DOWN:
-			return DecimalRounding.HALF_UP;
-		case HALF_EVEN:
-			return DecimalRounding.HALF_EVEN;//HALF_UNEVEN?
-		case UNNECESSARY:
-			return DecimalRounding.UNNECESSARY;
-		default:
-			throw new IllegalArgumentException("unsupported rounding mode: " + roundingMode);
 		}
 	}
 

@@ -296,7 +296,7 @@ final class UnsignedDecimal9i36f {
 	
 	private static final int getRoundingIncrement(int sgn, long truncated, ScaleMetrics scaleMetrics, long remainder, boolean nonZeroAfterRemainder, DecimalRounding rounding) {
 		if (rounding != DecimalRounding.DOWN & (remainder != 0 | nonZeroAfterRemainder)) {
-			TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(remainder, scaleMetrics.getScaleFactor());
+			TruncatedPart truncatedPart = Rounding.truncatedPartFor(remainder, scaleMetrics.getScaleFactor());
 			if (nonZeroAfterRemainder) {
 				if (truncatedPart == TruncatedPart.ZERO) truncatedPart = TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
 				else if (truncatedPart == TruncatedPart.EQUAL_TO_HALF) truncatedPart = TruncatedPart.GREATER_THAN_HALF;

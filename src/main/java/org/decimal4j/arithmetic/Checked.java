@@ -30,18 +30,64 @@ import org.decimal4j.api.DecimalArithmetic;
  */
 final class Checked {
 
+	/**
+	 * Returns true if the addition {@code long1 + long2 = result} has resulted
+	 * in an overflow.
+	 * 
+	 * @param long1
+	 *            the first summand
+	 * @param long2
+	 *            the second summand
+	 * @param result
+	 *            the sum
+	 * @return true if the calculation resulted in an overflow
+	 */
 	static final boolean isAddOverflow(long long1, long long2, long result) {
 		return (long1 ^ long2) >= 0 & (long1 ^ result) < 0;
 	}
 
+	/**
+	 * Returns true if the subtraction {@code minuend - subtrahend = result} has
+	 * resulted in an overflow.
+	 * 
+	 * @param minuend
+	 *            the minuend to subtract from
+	 * @param subtrahend
+	 *            the subtrahend to subtract
+	 * @param result
+	 *            the difference
+	 * @return true if the calculation resulted in an overflow
+	 */
 	static final boolean isSubtractOverflow(long minuend, long subtrahend, long result) {
 		return (minuend ^ subtrahend) < 0 & (minuend ^ result) < 0;
 	}
 
+	/**
+	 * Returns true if the quotient {@code dividend / divisor} will result in an
+	 * overflow.
+	 * 
+	 * @param dividend
+	 *            the dividend
+	 * @param divisor
+	 *            the divisor
+	 * @return true if the calculation will result in an overflow
+	 */
 	static final boolean isDivideOverflow(long dividend, long divisor) {
-		return dividend == Long.MIN_VALUE & divisor == -1; 
+		return dividend == Long.MIN_VALUE & divisor == -1;
 	}
 
+	/**
+	 * Returns the sum {@code (long1 + long2)} of the two {@code long} values
+	 * throwing an exception if an overflow occurs.
+	 * 
+	 * @param long1
+	 *            the first summand
+	 * @param long2
+	 *            the second summand
+	 * @return the sum of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long addLong(long long1, long long2) {
 		final long result = long1 + long2;
 		if (isAddOverflow(long1, long2, result)) {
@@ -50,6 +96,20 @@ final class Checked {
 		return result;
 	}
 
+	/**
+	 * Returns the sum {@code (uDecimal1 + uDecimal2)} of the two unsigned
+	 * decimal values throwing an exception if an overflow occurs.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the two unsigned decimals
+	 * @param uDecimal1
+	 *            the first summand
+	 * @param uDecimal2
+	 *            the second summand
+	 * @return the sum of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long add(DecimalArithmetic arith, long uDecimal1, long uDecimal2) {
 		final long result = uDecimal1 + uDecimal2;
 		if ((uDecimal1 ^ uDecimal2) >= 0 & (uDecimal1 ^ result) < 0) {
@@ -59,6 +119,18 @@ final class Checked {
 		return result;
 	}
 
+	/**
+	 * Returns the difference {@code (lMinuend - lSubtrahend)} of the two
+	 * {@code long} values throwing an exception if an overflow occurs.
+	 * 
+	 * @param lMinuend
+	 *            the minuend
+	 * @param lSubtrahend
+	 *            the subtrahend
+	 * @return the difference of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long subtractLong(long lMinuend, long lSubtrahend) {
 		final long result = lMinuend - lSubtrahend;
 		if (isSubtractOverflow(lMinuend, lSubtrahend, result)) {
@@ -67,6 +139,21 @@ final class Checked {
 		return result;
 	}
 
+	/**
+	 * Returns the difference {@code (uDecimalMinuend - uDecimalSubtrahend)} of
+	 * the two unscaled decimal values throwing an exception if an overflow
+	 * occurs.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the two unsigned decimals
+	 * @param uDecimalMinuend
+	 *            the minuend
+	 * @param uDecimalSubtrahend
+	 *            the subtrahend
+	 * @return the difference of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long subtract(DecimalArithmetic arith, long uDecimalMinuend, long uDecimalSubtrahend) {
 		final long result = uDecimalMinuend - uDecimalSubtrahend;
 		if (isSubtractOverflow(uDecimalMinuend, uDecimalSubtrahend, result)) {
@@ -76,6 +163,18 @@ final class Checked {
 		return result;
 	}
 
+	/**
+	 * Returns the product {@code (lValue1 * lValue2)} of the two {@code long}
+	 * values throwing an exception if an overflow occurs.
+	 * 
+	 * @param lValue1
+	 *            the first factor
+	 * @param lValue2
+	 *            the second factor
+	 * @return the product of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long multiplyLong(long lValue1, long lValue2) {
 		// Hacker's Delight, Section 2-12
 		final int leadingZeros = Long.numberOfLeadingZeros(lValue1) + Long.numberOfLeadingZeros(~lValue1)
@@ -104,6 +203,22 @@ final class Checked {
 		return result;
 	}
 
+	/**
+	 * Returns the product {@code (uDecimal * lValue)} of an unsigned decimal
+	 * value and a {@code long} value throwing an exception if an overflow
+	 * occurs.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the first unsigned decimal
+	 *            argument
+	 * @param uDecimal
+	 *            the first factor
+	 * @param lValue
+	 *            the second factor
+	 * @return the product of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long multiplyByLong(DecimalArithmetic arith, long uDecimal, long lValue) {
 		// Hacker's Delight, Section 2-12
 		final int leadingZeros = Long.numberOfLeadingZeros(uDecimal) + Long.numberOfLeadingZeros(~uDecimal)
@@ -127,12 +242,24 @@ final class Checked {
 		}
 		if (leadingZeros < Long.SIZE || (uDecimal < 0 & lValue == Long.MIN_VALUE)
 				|| (uDecimal != 0 && (result / uDecimal) != lValue)) {
-			throw new ArithmeticException("Overflow: " + arith.toString(uDecimal) + " * " + lValue + " = "
-					+ arith.toString(result));
+			throw new ArithmeticException(
+					"Overflow: " + arith.toString(uDecimal) + " * " + lValue + " = " + arith.toString(result));
 		}
 		return result;
 	}
 
+	/**
+	 * Returns the quotient {@code (lDividend / lDivisor)} of the two
+	 * {@code long} values throwing an exception if an overflow occurs.
+	 * 
+	 * @param lDividend
+	 *            the dividend to divide
+	 * @param lDivisor
+	 *            the divisor to divide by
+	 * @return the quotient of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long divideLong(long lDividend, long lDivisor) {
 		if (lDivisor == -1 & lDividend == Long.MIN_VALUE) {
 			throw new ArithmeticException("Overflow: " + lDividend + " / " + lDivisor + " = " + Long.MIN_VALUE);
@@ -140,6 +267,22 @@ final class Checked {
 		return lDividend / lDivisor;
 	}
 
+	/**
+	 * Returns the quotient {@code (uDecimalDividend / lDivisor)} of an unscaled
+	 * decimal value and a {@code long} value throwing an exception if an
+	 * overflow occurs.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the first unsigned decimal
+	 *            argument
+	 * @param uDecimalDividend
+	 *            the dividend to divide
+	 * @param lDivisor
+	 *            the divisor to divide by
+	 * @return the quotient of the two values
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long divideByLong(DecimalArithmetic arith, long uDecimalDividend, long lDivisor) {
 		if (lDivisor == 0) {
 			throw new ArithmeticException("Division by zero: " + arith.toString(uDecimalDividend) + " / " + lDivisor);
@@ -151,6 +294,18 @@ final class Checked {
 		return uDecimalDividend / lDivisor;
 	}
 
+	/**
+	 * Returns the absolute value {@code |value|} throwing an exception if an
+	 * overflow occurs.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param value
+	 *            the number whose absolute value to return
+	 * @return the absolute of the specified value
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long abs(DecimalArithmetic arith, long value) {
 		final long abs = Math.abs(value);
 		if (abs < 0) {
@@ -159,6 +314,18 @@ final class Checked {
 		return abs;
 	}
 
+	/**
+	 * Returns the negation {@code (-value)} throwing an exception if an
+	 * overflow occurs.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param value
+	 *            the number to negate
+	 * @return the negation of the specified value
+	 * @throws ArithmeticException
+	 *             if the calculation results in an overflow
+	 */
 	public static final long negate(DecimalArithmetic arith, long value) {
 		final long neg = -value;
 		if (value != 0 & (value ^ neg) >= 0) {

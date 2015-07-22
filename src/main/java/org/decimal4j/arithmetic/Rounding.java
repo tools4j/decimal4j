@@ -31,7 +31,7 @@ import org.decimal4j.truncate.TruncatedPart;
  * utilizes functionality provided by {@link DecimalRounding} and
  * {@link TruncatedPart}.
  */
-final class RoundingUtil {
+final class Rounding {
 
 	/**
 	 * Returns the rounding increment appropriate for the specified
@@ -255,7 +255,7 @@ final class RoundingUtil {
 	}
 
 	// no instances
-	private RoundingUtil() {
+	private Rounding() {
 		super();
 	}
 }

@@ -154,9 +154,9 @@ public class DecimalRoundingTest {
 		if (Double.isNaN(expected)) {
 			thrown.expect(ArithmeticException.class);
 			thrown.expectMessage("necessary");
-			RoundingUtil.calculateRoundingIncrement(rounding, Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
+			Rounding.calculateRoundingIncrement(rounding, Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
 		} else {
-			final int increment = RoundingUtil.calculateRoundingIncrement(rounding, Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
+			final int increment = Rounding.calculateRoundingIncrement(rounding, Long.signum(reminder), truncated, firstTruncDigit, anyAfterFirstTruncDigit);
 			final double actual = ((long)input) + increment;
 			assertEquals("wrong rounding for " + input + " " + rounding, expected, actual, 0);
 		}

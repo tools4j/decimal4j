@@ -286,9 +286,9 @@ final class Add {
 		final long remainder = unscaled - diffMetrics.multiplyByScaleFactor(trunc);
 		final long sum = uDecimal + trunc;
 		if (uDecimal == 0 | sum == 0 | (uDecimal ^ unscaled) >= 0 | (sum ^ unscaled) >= 0) { 
-			return sum + RoundingUtil.calculateRoundingIncrement(rounding, sum, remainder, diffMetrics.getScaleFactor());
+			return sum + Rounding.calculateRoundingIncrement(rounding, sum, remainder, diffMetrics.getScaleFactor());
 		}
-		return sum + RoundingUtil.calculateRoundingIncrement(getSignRevertedRoundingMode(rounding), sum, remainder, diffMetrics.getScaleFactor());
+		return sum + Rounding.calculateRoundingIncrement(RoundingInverse.ADDITIVE_REVERSION.invert(rounding), sum, remainder, diffMetrics.getScaleFactor());
 	}
 
 	/**
@@ -319,23 +319,6 @@ final class Add {
 		result = arith.add(result, halfReminder);
 		result = arith.add(result, halfReminder);
 		return result;
-	}
-
-	static final DecimalRounding getSignRevertedRoundingMode(DecimalRounding rounding) {
-		switch(rounding) {
-		case FLOOR: return DecimalRounding.FLOOR;
-		case CEILING: return DecimalRounding.CEILING;
-		case DOWN: return DecimalRounding.UP;
-		case HALF_DOWN: return DecimalRounding.HALF_UP;
-		case UP: return DecimalRounding.DOWN;
-		case HALF_UP: return DecimalRounding.HALF_DOWN;
-		case HALF_EVEN: return DecimalRounding.HALF_EVEN;
-		case UNNECESSARY: return DecimalRounding.UNNECESSARY;
-		default: {
-			// should not get here
-			throw new IllegalArgumentException("Unsupported rounding mode: " + rounding);
-		}
-		}
 	}
 
 	// no instances

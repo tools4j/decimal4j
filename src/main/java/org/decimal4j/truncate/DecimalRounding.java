@@ -41,7 +41,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#UP
 	 */
-	UP(RoundingMode.UP) {
+	UP {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.UP;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
@@ -58,7 +62,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#DOWN
 	 */
-	DOWN(RoundingMode.DOWN) {
+	DOWN {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.DOWN;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			return 0;
@@ -73,7 +81,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#CEILING
 	 */
-	CEILING(RoundingMode.CEILING) {
+	CEILING {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.CEILING;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (sgn > 0) {
@@ -93,7 +105,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#FLOOR
 	 */
-	FLOOR(RoundingMode.FLOOR) {
+	FLOOR {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.FLOOR;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (sgn < 0) {
@@ -114,7 +130,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#HALF_UP
 	 */
-	HALF_UP(RoundingMode.HALF_UP) {
+	HALF_UP {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.HALF_UP;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
@@ -132,7 +152,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#HALF_DOWN
 	 */
-	HALF_DOWN(RoundingMode.HALF_DOWN) {
+	HALF_DOWN {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.HALF_DOWN;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanHalf()) {
@@ -156,7 +180,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#HALF_EVEN
 	 */
-	HALF_EVEN(RoundingMode.HALF_EVEN) {
+	HALF_EVEN {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.HALF_EVEN;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterEqualHalf()) {
@@ -176,7 +204,11 @@ public enum DecimalRounding {
 	 * 
 	 * @see RoundingMode#UNNECESSARY
 	 */
-	UNNECESSARY(RoundingMode.UNNECESSARY) {
+	UNNECESSARY {
+		@Override
+		public final RoundingMode getRoundingMode() {
+			return RoundingMode.UNNECESSARY;
+		}
 		@Override
 		public final int calculateRoundingIncrement(int sgn, long truncatedValue, TruncatedPart truncatedPart) {
 			if (truncatedPart.isGreaterThanZero()) {
@@ -198,13 +230,11 @@ public enum DecimalRounding {
 	 * @param roundingMode
 	 *            the rounding mode corresponding to this decimal rounding
 	 */
-	private DecimalRounding(RoundingMode roundingMode) {
-		this.roundingMode = roundingMode;
+	private DecimalRounding() {
 		this.uncheckedPolicy = new DefaultTruncationPolicy(OverflowMode.UNCHECKED, this);
 		this.checkedPolicy = new DefaultTruncationPolicy(OverflowMode.CHECKED, this);
 	}
 
-	private final RoundingMode roundingMode;
 	private final DefaultTruncationPolicy uncheckedPolicy;
 	private final DefaultTruncationPolicy checkedPolicy;
 
@@ -214,9 +244,7 @@ public enum DecimalRounding {
 	 * 
 	 * @return the corresponding rounding mode
 	 */
-	public final RoundingMode getRoundingMode() {
-		return roundingMode;
-	}
+	abstract public RoundingMode getRoundingMode();
 
 	/**
 	 * Returns the truncation policy defined by {@link #getRoundingMode()} and

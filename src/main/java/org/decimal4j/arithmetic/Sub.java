@@ -286,9 +286,9 @@ final class Sub {
 		final long remainder = unscaled - diffMetrics.multiplyByScaleFactor(trunc);
 		final long diff = uDecimal - trunc;
 		if (uDecimal == 0 | diff == 0 | (uDecimal ^ unscaled) < 0 | (diff ^ unscaled) < 0) { 
-			return diff + RoundingUtil.calculateRoundingIncrement(rounding, diff, -remainder, diffMetrics.getScaleFactor());
+			return diff + Rounding.calculateRoundingIncrement(rounding, diff, -remainder, diffMetrics.getScaleFactor());
 		}
-		return diff + RoundingUtil.calculateRoundingIncrement(Add.getSignRevertedRoundingMode(rounding), diff, -remainder, diffMetrics.getScaleFactor());
+		return diff + Rounding.calculateRoundingIncrement(RoundingInverse.ADDITIVE_REVERSION.invert(rounding), diff, -remainder, diffMetrics.getScaleFactor());
 	}
 
 	/**

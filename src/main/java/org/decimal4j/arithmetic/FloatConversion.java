@@ -235,14 +235,14 @@ final class FloatConversion {
 			}
 			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
 			final long rem = modPow2(lScaled, shift);
-			truncatedPart = RoundingUtil.truncatedPartFor2powN(rem, shift);
+			truncatedPart = Rounding.truncatedPartFor2powN(rem, shift);
 		} else if (shift < 2 * Long.SIZE) {
 			absResult = (hScaled >>> (shift - Long.SIZE));
 			final long rem = modPow2(hScaled, shift - Long.SIZE);
-			truncatedPart = RoundingUtil.truncatedPartFor2powN(rem, lScaled, shift);
+			truncatedPart = Rounding.truncatedPartFor2powN(rem, lScaled, shift);
 		} else {
 			absResult = 0;//rounded down
-			truncatedPart = RoundingUtil.truncatedPartFor2powN(hScaled, lScaled, shift);
+			truncatedPart = Rounding.truncatedPartFor2powN(hScaled, lScaled, shift);
 		}
 		final int inc = absResult < 0 ? 0 : rounding.calculateRoundingIncrement(value >= 0 ? 1 : -1, absResult, truncatedPart);
 		if (absResult < 0 | (absResult == Long.MAX_VALUE & inc == 1)) {
@@ -366,7 +366,7 @@ final class FloatConversion {
 			if (hValModFactor == 0) {
 				final long truncated = scaleMetrics.divideUnsignedByScaleFactor(lValModFactor);
 				final long remainder = lValModFactor - scaleMetrics.multiplyByScaleFactor(truncated);
-				quotient = truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor);
+				quotient = truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor);
 			} else {
 				quotient = Math.abs(Div.div128by64(rounding, unscaled < 0, hValModFactor, lValModFactor, scaleFactor));
 				//rounding already done by div128by64
@@ -376,7 +376,7 @@ final class FloatConversion {
 			final long truncated = scaleMetrics.divideByScaleFactor(scaledVal);
 			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift) | (valModFactor & (-1L >>> (Long.SIZE + mantissaShift)));
 			final long shiftedScaleFactor = scaleFactor << -mantissaShift;//this cannot overflow as min(mantissaShift)=-9 for scale=1, -8 for scale=10, ..., -1 for scale=10^8
-			quotient = truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, remainder, shiftedScaleFactor);
+			quotient = truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder, shiftedScaleFactor);
 		}
 		final int raw;
 		final int signBit = (int)((unscaled >>> 32) & SIGN_MASK);

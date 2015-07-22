@@ -55,7 +55,7 @@ final class Invert {
 		if (uDecimal == -1) {
 			return -1;
 		}
-		return RoundingUtil.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
+		return Rounding.calculateRoundingIncrementForDivision(rounding, 0, 1, uDecimal);
 	}
 	
 	public static final long invert(DecimalArithmetic arith, long uDecimal) {

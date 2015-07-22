@@ -50,7 +50,7 @@ final class Div {
 	public static final long divideByLong(DecimalRounding rounding, long uDecimalDividend, long lDivisor) {
 		final long quotient = uDecimalDividend / lDivisor;
 		final long remainder = uDecimalDividend - quotient * lDivisor;
-		return quotient + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
+		return quotient + Rounding.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
 	}
 
 	/**
@@ -73,7 +73,7 @@ final class Div {
 		try {
 			final long quotient = Checked.divideByLong(arith, uDecimalDividend, lDivisor);
 			final long remainder = uDecimalDividend - quotient * lDivisor;
-			final long inc = RoundingUtil.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
+			final long inc = Rounding.calculateRoundingIncrementForDivision(rounding, quotient, remainder, lDivisor);
 			return Checked.add(arith, quotient, inc);
 		} catch (ArithmeticException e) {
 			Exceptions.rethrowIfRoundingNecessary(e);
@@ -216,7 +216,7 @@ final class Div {
 			return divideByLong(rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
 			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
-				return -Pow10.multiplyByPowerOf10(getSignRevertedRoundingMode(rounding), uDecimalDividend, scale);
+				return -Pow10.multiplyByPowerOf10(RoundingInverse.SIGN_REVERSION.invert(rounding), uDecimalDividend, scale);
 			}
 			//NOTE: rounding twice could be a problem here, e.g. consider HALF_UP with 10.51 and 10.49
 			final long quot;
@@ -270,7 +270,7 @@ final class Div {
 			final long scaledDividend = divisorMetrics.multiplyByScaleFactor(uDecimalDividend);
 			final long quot = scaledDividend / uDecimalDivisor;
 			final long rem = scaledDividend - quot * uDecimalDivisor;
-			return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
+			return quot + Rounding.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
 		}
 		if (divisorMetrics.isValidIntegerValue(uDecimalDivisor)) {
 			// perform component wise division (reminder fits in long after
@@ -281,7 +281,7 @@ final class Div {
 			final long fractionalPart = scaledReminder / uDecimalDivisor;
 			final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
 			final long truncated = divisorMetrics.multiplyByScaleFactor(integralPart) + fractionalPart;
-			return truncated + RoundingUtil.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
+			return truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, subFractionalPart, uDecimalDivisor);
 		}
 		return Div.scaleTo128divBy64(divisorMetrics, rounding, uDecimalDividend, uDecimalDivisor);
 	}
@@ -440,7 +440,7 @@ final class Div {
 			return divideByLongChecked(arith, rounding, uDecimalDividend, unscaledDivisor);
 		} else if (scale < 0) {
 			if (Checked.isDivideOverflow(uDecimalDividend, unscaledDivisor)) {
-				return -Pow10.multiplyByPowerOf10Checked(arith, getSignRevertedRoundingMode(rounding), uDecimalDividend, scale);
+				return -Pow10.multiplyByPowerOf10Checked(arith, RoundingInverse.SIGN_REVERSION.invert(rounding), uDecimalDividend, scale);
 			}
 			//NOTE: rounding twice could be a problem here, e.g. consider HALF_UP with 10.51 and 10.49
 			final long quot;
@@ -500,7 +500,7 @@ final class Div {
 				final long rem = scaledDividend - quot * uDecimalDivisor;
 
 				//cannot overflow for scale > 1 because of quot
-				return quot + RoundingUtil.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
+				return quot + Rounding.calculateRoundingIncrementForDivision(rounding, quot, rem, uDecimalDivisor);
 			}
 
 			// perform component wise division
@@ -513,7 +513,7 @@ final class Div {
 				final long subFractionalPart = scaledReminder - fractionalPart * uDecimalDivisor;
 
 				final long result = Checked.addLong(divisorMetrics.multiplyByScaleFactorExact(integralPart), fractionalPart);
-				final long inc = RoundingUtil.calculateRoundingIncrementForDivision(rounding, result, subFractionalPart, uDecimalDivisor);
+				final long inc = Rounding.calculateRoundingIncrementForDivision(rounding, result, subFractionalPart, uDecimalDivisor);
 				return Checked.addLong(result, inc);
 			} else {
 				final long fractionalPart = Div.scaleTo128divBy64(divisorMetrics, rounding, remainder, uDecimalDivisor);
@@ -626,7 +626,7 @@ final class Div {
 		}
 
 		r = ((un21 << 32) + un0 - q0 * v) >>> s;
-		final TruncatedPart truncatedPart = RoundingUtil.truncatedPartFor(Math.abs(r), v0);
+		final TruncatedPart truncatedPart = Rounding.truncatedPartFor(Math.abs(r), v0);
 		final int inc = rounding.calculateRoundingIncrement(neg ? -1 : 1, q, truncatedPart);
 		return (neg ? -q : q) + inc;
 	}
@@ -695,23 +695,6 @@ final class Div {
 		final long quotient = ((dividend >>> 1) / divisor) << 1;
 		final long rem = dividend - quotient * divisor;
 		return quotient + (((rem >= divisor) | (rem < 0)) ? 1 : 0);
-	}
-
-	private static final DecimalRounding getSignRevertedRoundingMode(DecimalRounding rounding) {
-		switch(rounding) {
-		case FLOOR: return DecimalRounding.CEILING;
-		case CEILING: return DecimalRounding.FLOOR;
-		case DOWN: return DecimalRounding.DOWN;
-		case HALF_DOWN: return DecimalRounding.HALF_DOWN;
-		case UP: return DecimalRounding.UP;
-		case HALF_UP: return DecimalRounding.HALF_UP;
-		case HALF_EVEN: return DecimalRounding.HALF_EVEN;
-		case UNNECESSARY: return DecimalRounding.UNNECESSARY;
-		default: {
-			// should not get here
-			throw new IllegalArgumentException("Unsupported rounding mode: " + rounding);
-		}
-		}
 	}
 
 	// no instances

@@ -48,7 +48,7 @@ final class LongConversion {
 	public static final long unscaledToLong(ScaleMetrics scaleMetrics, DecimalRounding rounding, long uDecimal) {
 		final long truncated = scaleMetrics.divideByScaleFactor(uDecimal);
 		final long remainder = uDecimal - scaleMetrics.multiplyByScaleFactor(truncated);
-		return truncated + RoundingUtil.calculateRoundingIncrement(rounding, truncated, remainder, scaleMetrics.getScaleFactor());
+		return truncated + Rounding.calculateRoundingIncrement(rounding, truncated, remainder, scaleMetrics.getScaleFactor());
 	}
 
 	// no instances
