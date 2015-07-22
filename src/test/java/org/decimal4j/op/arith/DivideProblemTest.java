@@ -34,8 +34,9 @@ import org.decimal4j.scale.Scale17f;
 import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.Scale6f;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.TruncationPolicy;
+import org.decimal4j.truncate.UncheckedRounding;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 
@@ -53,23 +54,23 @@ public class DivideProblemTest extends DivideTest {
 		TruncationPolicy tp;
 		
 		s = Scale6f.INSTANCE;
-		tp = DecimalRounding.DOWN.getCheckedTruncationPolicy();
+		tp = CheckedRounding.DOWN;
 		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 		
 		s = Scale0f.INSTANCE;
-		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
+		tp = UncheckedRounding.HALF_EVEN;
 		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 		
 		s = Scale6f.INSTANCE;
-		tp = DecimalRounding.HALF_EVEN.getUncheckedTruncationPolicy();
+		tp = UncheckedRounding.HALF_EVEN;
 		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 
 		s = Scale6f.INSTANCE;
-		tp = DecimalRounding.UNNECESSARY.getUncheckedTruncationPolicy();
+		tp = UncheckedRounding.UNNECESSARY;
 		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 
 		s = Scale17f.INSTANCE;
-		tp = DecimalRounding.DOWN.getUncheckedTruncationPolicy();
+		tp = UncheckedRounding.DOWN;
 		data.add(new Object[] {s, tp, s.getArithmetic(tp)});
 
 		return data;

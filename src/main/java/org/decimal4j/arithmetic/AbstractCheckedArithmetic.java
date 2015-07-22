@@ -23,6 +23,7 @@
  */
 package org.decimal4j.arithmetic;
 
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.OverflowMode;
 
 /**
@@ -30,6 +31,10 @@ import org.decimal4j.truncate.OverflowMode;
  * CHECKED} overflow mode.
  */
 abstract public class AbstractCheckedArithmetic extends AbstractArithmetic {
+	
+	//override to refine return type
+	@Override
+	abstract public CheckedRounding getTruncationPolicy();
 
 	@Override
 	public final OverflowMode getOverflowMode() {

@@ -32,7 +32,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -53,7 +53,7 @@ public class DivideToIntegralValueTest extends AbstractDecimalDecimalToDecimalTe
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getRoundingDownArithmetic()});
-			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(DecimalRounding.DOWN.getCheckedTruncationPolicy())});
+			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(CheckedRounding.DOWN)});
 		}
 		return data;
 	}

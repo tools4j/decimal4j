@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
@@ -42,6 +43,11 @@ public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedSca
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
+	}
+
+	@Override
+	public final CheckedRounding getTruncationPolicy() {
+		return CheckedRounding.DOWN;
 	}
 
 	@Override

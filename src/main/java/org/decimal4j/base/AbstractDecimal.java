@@ -32,9 +32,10 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.ImmutableDecimal;
 import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
+import org.decimal4j.truncate.UncheckedRounding;
 
 /**
  * Common base class for {@link AbstractImmutableDecimal immutable} and
@@ -126,7 +127,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 	 *         rounding and the given {@code overflowMode}
 	 */
 	protected DecimalArithmetic getArithmeticFor(OverflowMode overflowMode) {
-		return getScaleMetrics().getArithmetic(overflowMode.getTruncationPolicyFor(RoundingMode.HALF_UP));
+		return getScaleMetrics().getArithmetic(overflowMode == OverflowMode.CHECKED ? CheckedRounding.HALF_UP : UncheckedRounding.HALF_UP);
 	}
 
 	/**
@@ -744,7 +745,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public D divideExact(Decimal<S> divisor) {
-		return divide(divisor, DecimalRounding.UNNECESSARY.getCheckedTruncationPolicy());
+		return divide(divisor, CheckedRounding.UNNECESSARY);
 	}
 
 	@Override
@@ -789,7 +790,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	@Override
 	public long divideToLongValue(Decimal<S> divisor, OverflowMode overflowMode) {
-		final DecimalArithmetic arith = getArithmeticFor(overflowMode.getTruncationPolicyFor(RoundingMode.DOWN));
+		final DecimalArithmetic arith = getArithmeticFor(overflowMode == OverflowMode.CHECKED ? CheckedRounding.DOWN : UncheckedRounding.DOWN);
 		try {
 			return arith.divideByLong(unscaledValue(), divisor.unscaledValue());
 		} catch (ArithmeticException e) {
@@ -819,7 +820,7 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 			return divideAndRemainder(divisor);
 		}
 		try {
-			final DecimalArithmetic arith = getArithmeticFor(DecimalRounding.DOWN.getCheckedTruncationPolicy());
+			final DecimalArithmetic arith = getArithmeticFor(CheckedRounding.DOWN);
 			final long uDividend = unscaledValue();
 			final long uDivisor = divisor.unscaledValue();
 			final long lIntegral = arith.divideByLong(uDividend, uDivisor);

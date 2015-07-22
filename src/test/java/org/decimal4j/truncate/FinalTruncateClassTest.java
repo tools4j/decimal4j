@@ -23,10 +23,8 @@
  */
 package org.decimal4j.truncate;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.decimal4j.test.AbstractFinalTest;
@@ -51,10 +49,11 @@ public class FinalTruncateClassTest extends AbstractFinalTest {
 	@Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
+		data.add(new Object[] {CheckedRounding.class});
 		data.add(new Object[] {DecimalRounding.class});
 		data.add(new Object[] {OverflowMode.class});
 		data.add(new Object[] {TruncatedPart.class});
-		data.add(new Object[] {DefaultTruncationPolicy.class});
+		data.add(new Object[] {UncheckedRounding.class});
 		return data;
 	}
 	
@@ -74,14 +73,4 @@ public class FinalTruncateClassTest extends AbstractFinalTest {
 		assertAllFieldsAreFinal(clazz);
 	}
 	
-	@Override
-	protected boolean isAllowedNonStaticField(Field field) {
-		if (field.getDeclaringClass().equals(DecimalRounding.class)) {
-			return Arrays.asList("roundingMode", "uncheckedPolicy", "checkedPolicy").contains(field.getName());
-		}
-		if (field.getDeclaringClass().equals(DefaultTruncationPolicy.class)) {
-			return Arrays.asList("overflowMode", "roundingMode").contains(field.getName());
-		}
-		return false;
-	}
 }

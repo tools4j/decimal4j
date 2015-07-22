@@ -30,6 +30,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.UncheckedRounding;
 
 /**
  * Arithmetic implementation without rounding for scales other than zero. If an
@@ -56,6 +57,11 @@ public final class UncheckedScaleNfTruncatingArithmetic extends AbstractUnchecke
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return RoundingMode.DOWN;
+	}
+
+	@Override
+	public final UncheckedRounding getTruncationPolicy() {
+		return UncheckedRounding.DOWN;
 	}
 
 	@Override

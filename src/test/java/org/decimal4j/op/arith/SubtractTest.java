@@ -24,7 +24,6 @@
 package org.decimal4j.op.arith;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +32,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -53,7 +53,7 @@ public class SubtractTest extends AbstractDecimalDecimalToDecimalTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
 			data.add(new Object[] {s, OverflowMode.UNCHECKED, s.getRoundingDownArithmetic()});
-			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.DOWN))});
+			data.add(new Object[] {s, OverflowMode.CHECKED, s.getArithmetic(CheckedRounding.DOWN)});
 		}
 		return data;
 	}

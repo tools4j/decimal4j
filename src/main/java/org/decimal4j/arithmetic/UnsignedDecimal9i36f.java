@@ -23,17 +23,17 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.math.RoundingMode;
-
 import org.decimal4j.api.DecimalArithmetic;
-import org.decimal4j.scale.ScaleMetrics;
-import org.decimal4j.scale.Scales;
-import org.decimal4j.truncate.DecimalRounding;
-import org.decimal4j.truncate.OverflowMode;
-import org.decimal4j.truncate.TruncatedPart;
 import org.decimal4j.scale.Scale18f;
 import org.decimal4j.scale.Scale8f;
 import org.decimal4j.scale.Scale9f;
+import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
+import org.decimal4j.truncate.CheckedRounding;
+import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.TruncatedPart;
+import org.decimal4j.truncate.UncheckedRounding;
 
 /**
  * Helper class for an unsigned decimal value with 9 integral digits and 38 decimal
@@ -372,7 +372,7 @@ final class UnsignedDecimal9i36f {
 		return 0;//overflow, everything was shifted out to the left
 	}
 	private final long checkedMultiplyByPowerOf10AndRound(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
-		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getArithmetic(arith.getOverflowMode().getTruncationPolicyFor(RoundingMode.DOWN));
+		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getArithmetic(arith.getOverflowMode() == OverflowMode.CHECKED ? CheckedRounding.DOWN : UncheckedRounding.DOWN);
 		long iv = arith18.add(arith18.fromLong(ival), val3);//ival * 10^18 + val3
 		if (pow10 <= 36) {
 			return getDecimal(sgn, pow10 - 18, iv, val2, val1, val0, 0, 0, 0, 0, 0, arith, rounding);

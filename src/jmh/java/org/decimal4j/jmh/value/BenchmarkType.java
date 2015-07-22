@@ -24,14 +24,13 @@
 package org.decimal4j.jmh.value;
 
 import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.Random;
 
 import org.decimal4j.jmh.state.AbstractValueBenchmarkState;
 import org.decimal4j.jmh.state.PowBenchmarkState;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
-import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.CheckedRounding;
 
 /**
  * Describes the type of benchmark. This information is used when the benchmark
@@ -141,7 +140,7 @@ public enum BenchmarkType {
 			final ScaleMetrics scaleMetrics = Scales.getScaleMetrics(benchmarkState.scale);
 			final double maxBase = Math.pow(scaleMetrics.getMaxIntegerValue(), 1.0/powState.exponent);
 			final double doubleValue = maxBase * Math.random() * Math.signum(Math.random());
-			return scaleMetrics.getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(RoundingMode.DOWN)).fromDouble(doubleValue);
+			return scaleMetrics.getArithmetic(CheckedRounding.DOWN).fromDouble(doubleValue);
 		}
 		@Override
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {

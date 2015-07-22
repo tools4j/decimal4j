@@ -29,6 +29,7 @@ import java.math.RoundingMode;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.UncheckedRounding;
 
 /**
  * Arithmetic implementation with rounding for scales other than zero. If an
@@ -65,13 +66,14 @@ public final class UncheckedScaleNfRoundingArithmetic extends AbstractUncheckedS
 		this.rounding = rounding;
 	}
 
-	public final DecimalRounding getDecimalRounding() {
-		return rounding;
+	@Override
+	public final RoundingMode getRoundingMode() {
+		return rounding.getRoundingMode();
 	}
 
 	@Override
-	public final RoundingMode getRoundingMode() {
-		return getDecimalRounding().getRoundingMode();
+	public final UncheckedRounding getTruncationPolicy() {
+		return UncheckedRounding.valueOf(getRoundingMode());
 	}
 
 	@Override

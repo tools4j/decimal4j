@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.OverflowMode;
 
@@ -68,6 +69,11 @@ public final class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScale
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return rounding.getRoundingMode();
+	}
+
+	@Override
+	public final CheckedRounding getTruncationPolicy() {
+		return CheckedRounding.valueOf(getRoundingMode());
 	}
 
 	@Override

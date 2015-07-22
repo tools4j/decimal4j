@@ -28,6 +28,7 @@ import java.math.RoundingMode;
 
 import org.decimal4j.scale.Scale0f;
 import org.decimal4j.truncate.DecimalRounding;
+import org.decimal4j.truncate.UncheckedRounding;
 
 /**
  * Arithmetic implementation with rounding for the special case with
@@ -49,6 +50,11 @@ public final class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedS
 	@Override
 	public final RoundingMode getRoundingMode() {
 		return rounding.getRoundingMode();
+	}
+
+	@Override
+	public final UncheckedRounding getTruncationPolicy() {
+		return UncheckedRounding.valueOf(getRoundingMode());
 	}
 
 	@Override

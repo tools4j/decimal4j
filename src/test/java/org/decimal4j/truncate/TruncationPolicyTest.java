@@ -35,33 +35,32 @@ import org.junit.Test;
 public class TruncationPolicyTest {
 
 	@Test
-	public void testUncheckedPoliciesByRoundingMode() {
-		for (final DecimalRounding rounding : DecimalRounding.VALUES) {
-			final RoundingMode roundingMode = rounding.getRoundingMode();
-			//when
-			final TruncationPolicy policy1 = OverflowMode.UNCHECKED.getTruncationPolicyFor(roundingMode);
+	public void testUncheckedPolicies() {
+		for (final UncheckedRounding policy : UncheckedRounding.VALUES) {
 			//then
-			assertSame("overflow mode should be UNCHECKED", OverflowMode.UNCHECKED, policy1.getOverflowMode());
-			assertSame("rounding mode should be " + roundingMode, roundingMode, policy1.getRoundingMode());
-			//when
-			final TruncationPolicy policy2 = rounding.getUncheckedTruncationPolicy();
-			//then
-			assertSame("overflow mode should be UNCHECKED", OverflowMode.UNCHECKED, policy2.getOverflowMode());
-			assertSame("rounding mode should be " + roundingMode, roundingMode, policy2.getRoundingMode());
+			assertSame("overflow mode should be UNCHECKED", OverflowMode.UNCHECKED, policy.getOverflowMode());
 		}
 	}
 
 	@Test
-	public void testCheckedPoliciesByRoundingMode() {
+	public void testCheckedPolicies() {
+		for (final CheckedRounding policy : CheckedRounding.VALUES) {
+			//then
+			assertSame("overflow mode should be CHECKED", OverflowMode.CHECKED, policy.getOverflowMode());
+		}
+	}
+	
+	@Test
+	public void testPoliciesByRoundingMode() {
 		for (final DecimalRounding rounding : DecimalRounding.VALUES) {
 			final RoundingMode roundingMode = rounding.getRoundingMode();
 			//when
-			final TruncationPolicy policy1 = OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode);
+			final TruncationPolicy policy1 = UncheckedRounding.valueOf(roundingMode);
 			//then
-			assertSame("overflow mode should be CHECKED", OverflowMode.CHECKED, policy1.getOverflowMode());
+			assertSame("overflow mode should be UNCHECKED", OverflowMode.UNCHECKED, policy1.getOverflowMode());
 			assertSame("rounding mode should be " + roundingMode, roundingMode, policy1.getRoundingMode());
 			//when
-			final TruncationPolicy policy2 = rounding.getCheckedTruncationPolicy();
+			final TruncationPolicy policy2 = CheckedRounding.valueOf(roundingMode);
 			//then
 			assertSame("overflow mode should be CHECKED", OverflowMode.CHECKED, policy2.getOverflowMode());
 			assertSame("rounding mode should be " + roundingMode, roundingMode, policy2.getRoundingMode());

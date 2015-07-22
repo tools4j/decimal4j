@@ -25,6 +25,7 @@ package org.decimal4j.truncate;
 
 import java.math.RoundingMode;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -33,26 +34,31 @@ import java.util.Set;
  * {@link #getOverflowMode overflow mode} and {@link #getRoundingMode() rounding
  * mode}.
  * <p>
- * Truncation policies can be accessed as follows:
+ * Truncation policies are are defined by {@link UncheckedRounding} and {@link CheckedRounding}.
+ * Some special truncation policies are also defined by
  * <ul>
  * <li>{@link #DEFAULT}</li>
  * <li>{@link #VALUES}</li>
- * <li>{@link OverflowMode#getTruncationPolicyFor(RoundingMode)}</li>
- * <li>{@link DecimalRounding#getUncheckedTruncationPolicy()}</li>
- * <li>{@link DecimalRounding#getCheckedTruncationPolicy()}</li>
+ * <li>{@link UncheckedRounding#VALUES}</li>
+ * <li>{@link CheckedRounding#VALUES}</li>
  * </ul>
  */
 public interface TruncationPolicy {
 	/**
-	 * Default truncation policy using {@link OverflowMode#UNCHECKED} and
-	 * {@link RoundingMode#HALF_UP}.
+	 * Default truncation policy: {@link UncheckedRounding#HALF_UP}.
 	 */
-	TruncationPolicy DEFAULT = DecimalRounding.HALF_UP.getUncheckedTruncationPolicy();
+	TruncationPolicy DEFAULT = UncheckedRounding.HALF_UP;
 
 	/**
 	 * Unmodifiable set with all possible truncation policies.
 	 */
-	Set<TruncationPolicy> VALUES = Collections.unmodifiableSet(DefaultTruncationPolicy.values());
+	Set<TruncationPolicy> VALUES = Collections.unmodifiableSet(new LinkedHashSet<TruncationPolicy>(UncheckedRounding.VALUES.size(), 2f) {
+		private static final long serialVersionUID = 1L;
+		{
+			addAll(UncheckedRounding.VALUES);
+			addAll(CheckedRounding.VALUES);
+		}
+	});
 
 	/**
 	 * Returns the overflow mode which defines how to deal the situation when an

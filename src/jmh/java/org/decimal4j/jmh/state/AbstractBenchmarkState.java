@@ -30,7 +30,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.factory.Factories;
 import org.decimal4j.scale.Scales;
-import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.CheckedRounding;
 import org.decimal4j.truncate.TruncationPolicy;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
@@ -57,7 +57,7 @@ abstract public class AbstractBenchmarkState {
 		this.roundingMode = roundingMode;
 		this.arithmetic = Scales.getScaleMetrics(scale).getArithmetic(roundingMode);
 		this.factory = Factories.getDecimalFactory(scale);
-		this.checkedTruncationPolicy = OverflowMode.CHECKED.getTruncationPolicyFor(roundingMode);
+		this.checkedTruncationPolicy = CheckedRounding.valueOf(roundingMode);
 		this.checkedArithmetic = Scales.getScaleMetrics(scale).getArithmetic(checkedTruncationPolicy);
 		this.mcLong64 = new MathContext(19, roundingMode);
 		this.mcLong128 = new MathContext(39, roundingMode);

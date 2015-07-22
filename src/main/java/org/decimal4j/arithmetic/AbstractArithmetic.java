@@ -40,11 +40,6 @@ import org.decimal4j.truncate.TruncationPolicy;
 abstract public class AbstractArithmetic implements DecimalArithmetic {
 
 	@Override
-	public final TruncationPolicy getTruncationPolicy() {
-		return getOverflowMode().getTruncationPolicyFor(getRoundingMode());
-	}
-
-	@Override
 	public final DecimalArithmetic deriveArithmetic(int scale) {
 		if (scale != getScale()) {
 			return Scales.getScaleMetrics(scale).getArithmetic(getTruncationPolicy());

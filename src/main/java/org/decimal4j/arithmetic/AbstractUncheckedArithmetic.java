@@ -24,12 +24,17 @@
 package org.decimal4j.arithmetic;
 
 import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.UncheckedRounding;
 
 /**
  * Base class for arithmetic implementations with {@link OverflowMode#UNCHECKED
  * UNCHECKED} overflow mode.
  */
 abstract public class AbstractUncheckedArithmetic extends AbstractArithmetic {
+
+	//override to refine return type
+	@Override
+	abstract public UncheckedRounding getTruncationPolicy();
 
 	@Override
 	public final OverflowMode getOverflowMode() {

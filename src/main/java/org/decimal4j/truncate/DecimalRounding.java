@@ -225,48 +225,12 @@ public enum DecimalRounding {
 	public static final Set<DecimalRounding> VALUES = Collections.unmodifiableSet(EnumSet.allOf(DecimalRounding.class));
 
 	/**
-	 * Constructor with {@link RoundingMode}.
-	 * 
-	 * @param roundingMode
-	 *            the rounding mode corresponding to this decimal rounding
-	 */
-	private DecimalRounding() {
-		this.uncheckedPolicy = new DefaultTruncationPolicy(OverflowMode.UNCHECKED, this);
-		this.checkedPolicy = new DefaultTruncationPolicy(OverflowMode.CHECKED, this);
-	}
-
-	private final DefaultTruncationPolicy uncheckedPolicy;
-	private final DefaultTruncationPolicy checkedPolicy;
-
-	/**
 	 * Returns the {@link RoundingMode} associated with this decimal rounding
 	 * constant.
 	 * 
 	 * @return the corresponding rounding mode
 	 */
 	abstract public RoundingMode getRoundingMode();
-
-	/**
-	 * Returns the truncation policy defined by {@link #getRoundingMode()} and
-	 * {@link OverflowMode#CHECKED}.
-	 * 
-	 * @return the truncation policy defined by this decimal rounding and the
-	 *         checked overflow mode
-	 */
-	public final TruncationPolicy getCheckedTruncationPolicy() {
-		return checkedPolicy;
-	}
-
-	/**
-	 * Returns the truncation policy defined by {@link #getRoundingMode()} and
-	 * {@link OverflowMode#UNCHECKED}.
-	 * 
-	 * @return the truncation policy defined by this decimal rounding and the
-	 *         unchecked overflow mode
-	 */
-	public final TruncationPolicy getUncheckedTruncationPolicy() {
-		return uncheckedPolicy;
-	}
 
 	/**
 	 * Returns the rounding increment appropriate for this decimal rounding. The
@@ -284,8 +248,6 @@ public enum DecimalRounding {
 	 */
 	abstract public int calculateRoundingIncrement(int sign, long truncatedValue, TruncatedPart truncatedPart);
 
-	private static final DecimalRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();
-
 	/**
 	 * Returns the decimal rounding constant for the given rounding mode.
 	 * 
@@ -294,14 +256,18 @@ public enum DecimalRounding {
 	 * @return the constant corresponding to the given rounding mode
 	 */
 	public static final DecimalRounding valueOf(RoundingMode roundingMode) {
-		return VALUES_BY_ROUNDING_MODE_ORDINAL[roundingMode.ordinal()];
+		return ByRoundingMode.VALUES_BY_ROUNDING_MODE_ORDINAL[roundingMode.ordinal()];
 	}
 
-	private static final DecimalRounding[] sortByRoundingModeOrdinal() {
-		final DecimalRounding[] sorted = new DecimalRounding[VALUES.size()];
-		for (final DecimalRounding dr : VALUES) {
-			sorted[dr.getRoundingMode().ordinal()] = dr;
+	private static class ByRoundingMode {
+		private static final DecimalRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();
+	
+		private static final DecimalRounding[] sortByRoundingModeOrdinal() {
+			final DecimalRounding[] sorted = new DecimalRounding[VALUES.size()];
+			for (final DecimalRounding dr : VALUES) {
+				sorted[dr.getRoundingMode().ordinal()] = dr;
+			}
+			return sorted;
 		}
-		return sorted;
 	}
 }

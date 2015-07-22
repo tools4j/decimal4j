@@ -33,7 +33,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalDecimalToDecimalTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
-import org.decimal4j.truncate.OverflowMode;
+import org.decimal4j.truncate.CheckedRounding;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -80,7 +80,7 @@ public class AvgTest extends AbstractDecimalDecimalToDecimalTest {
 			return a.avg(b, getRoundingMode());
 		}
 		//also test checked arithmetic otherwise this is not covered
-		final DecimalArithmetic checkedAith = a.getScaleMetrics().getArithmetic(OverflowMode.CHECKED.getTruncationPolicyFor(getRoundingMode()));
+		final DecimalArithmetic checkedAith = a.getScaleMetrics().getArithmetic(CheckedRounding.valueOf(getRoundingMode()));
 		return newDecimal(a.getScaleMetrics(), checkedAith.avg(a.unscaledValue(), b.unscaledValue()));
 	}
 }
