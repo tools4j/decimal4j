@@ -33,6 +33,12 @@ abstract public class AbstractUncheckedScaleNfArithmetic extends AbstractUncheck
 
 	private final ScaleMetrics scaleMetrics;
 
+	/**
+	 * Constructor with scale metrics for this arithmetic.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics
+	 */
 	public AbstractUncheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 	}

@@ -65,6 +65,18 @@ final class FloatConversion {
 	 */
 	private static final float MAX_LONG_AS_FLOAT_PLUS_ONE = 0x1p63f;
 
+	/**
+	 * Converts the specified float value to a long truncating the fractional
+	 * part if any is present. If the value is NaN, infinite or outside of the
+	 * valid long range, an exception is thrown.
+	 * 
+	 * @param value
+	 *            the value to convert
+	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a {@code long}
+	 */
 	public static final long floatToLong(float value) {
 		if (Float.isNaN(value)) {
 			throw new IllegalArgumentException("Cannot convert float to decimal: " + value);
@@ -75,6 +87,20 @@ final class FloatConversion {
 		throw new IllegalArgumentException("Overflow for conversion from float to decimal: " + value);
 	}
 
+	/**
+	 * Converts the specified float value to a long rounding the fractional
+	 * part if necessary using the given {@code rounding} mode. If the value is
+	 * NaN, infinite or outside of the valid long range, an exception is thrown.
+	 * 
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param value
+	 *            the value to convert
+	 * @return <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a {@code long}
+	 */
 	public static final long floatToLong(DecimalRounding rounding, float value) {
 		if (Float.isNaN(value)) {
 			throw new IllegalArgumentException("Cannot convert float to decimal: " + value);
@@ -140,10 +166,46 @@ final class FloatConversion {
 		}
 	}
 
+	/**
+	 * Converts the specified float value to an unscaled decimal truncating
+	 * extra fractional digits if necessary. If the value is NaN, infinite or
+	 * outside of the valid Decimal range, an exception is thrown.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the result value
+	 * @param value
+	 *            the value to convert
+	 * @return <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a Decimal of
+	 *             the arithmetic's scale
+	 */
 	public static final long floatToUnscaled(DecimalArithmetic arith, float value) {
 		return floatToUnscaled(arith, DecimalRounding.DOWN, value);
 	}
 
+	/**
+	 * Converts the specified float value to an unscaled decimal. The specified
+	 * {@code rounding} mode is used if rounding is necessary. If the value is
+	 * NaN, infinite or outside of the valid Decimal range, an exception is
+	 * thrown.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the result value
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param value
+	 *            the value to convert
+	 * @return <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a Decimal of
+	 *             the arithmetic's scale
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static final long floatToUnscaled(DecimalArithmetic arith, DecimalRounding rounding, float value) {
 		if (value == 0) {
 			return 0;
@@ -251,18 +313,71 @@ final class FloatConversion {
 		return (value >= 0 ? absResult : -absResult) + inc;
 	}
 
+	/**
+	 * Converts the specified long value to a float truncating extra mantissa
+	 * digits if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param value
+	 *            the long value
+	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 */
 	public static final float longToFloat(DecimalArithmetic arith, long value) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, value);
 	}
+
+	/**
+	 * Converts the specified long value to a float rounding extra mantissa
+	 * digits if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param value
+	 *            the long value
+	 * @return <tt>round(value)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static final float longToFloat(DecimalArithmetic arith, DecimalRounding rounding, long value) {
 		if (rounding == DecimalRounding.HALF_EVEN) {
 			return value;
 		}
 		return unscaledToFloat(arith, rounding, value);
 	}
+
+	/**
+	 * Converts the specified unscaled decimal value to a float truncating
+	 * extra precision digits if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param unscaled
+	 *            the unscaled decimal value
+	 * @return <tt>round<sub>DOWN</tt>(value)</tt>
+	 */
 	public static final float unscaledToFloat(DecimalArithmetic arith, long unscaled) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, unscaled);
 	}
+
+	/**
+	 * Converts the specified unscaled decimal value to a float rounding extra
+	 * precision digits if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param unscaled
+	 *            the unscaled decimal value
+	 * @return <tt>round(value)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static final float unscaledToFloat(DecimalArithmetic arith, DecimalRounding rounding, long unscaled) {
 		if (unscaled == 0) {
 			return 0;

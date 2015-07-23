@@ -39,10 +39,22 @@ public final class CheckedScale0fRoundingArithmetic extends AbstractCheckedScale
 
 	private final DecimalRounding rounding;
 
+	/**
+	 * Constructor for decimal arithmetic with the given rounding.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode to use for all decimal arithmetic operations
+	 */
 	public CheckedScale0fRoundingArithmetic(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
 
+	/**
+	 * Constructor for decimal arithmetic with the given rounding.
+	 * 
+	 * @param rounding
+	 *            the rounding to apply to all decimal arithmetic operations
+	 */
 	public CheckedScale0fRoundingArithmetic(DecimalRounding rounding) {
 		this.rounding = rounding;
 	}
@@ -51,7 +63,7 @@ public final class CheckedScale0fRoundingArithmetic extends AbstractCheckedScale
 	public final RoundingMode getRoundingMode() {
 		return rounding.getRoundingMode();
 	}
-	
+
 	@Override
 	public final CheckedRounding getTruncationPolicy() {
 		return CheckedRounding.valueOf(getRoundingMode());
@@ -156,7 +168,7 @@ public final class CheckedScale0fRoundingArithmetic extends AbstractCheckedScale
 	public final long fromDouble(double value) {
 		return DoubleConversion.doubleToLong(rounding, value);
 	}
-	
+
 	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
 		return UnscaledConversion.unscaledToLong(this, rounding, unscaledValue, scale);

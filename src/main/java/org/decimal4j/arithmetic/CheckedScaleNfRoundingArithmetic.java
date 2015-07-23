@@ -175,7 +175,7 @@ public final class CheckedScaleNfRoundingArithmetic extends AbstractCheckedScale
 	public final long fromDouble(double value) {
 		return DoubleConversion.doubleToUnscaled(this, rounding, value);
 	}
-	
+
 	@Override
 	public final long fromUnscaled(long unscaledValue, int scale) {
 		return UnscaledConversion.unscaledToUnscaled(this, rounding, unscaledValue, scale);

@@ -36,6 +36,12 @@ import org.decimal4j.truncate.DecimalRounding;
  */
 public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedScaleNfArithmetic {
 
+	/**
+	 * Constructor with scale metrics for this arithmetic.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics
+	 */
 	public CheckedScaleNfTruncatingArithmetic(ScaleMetrics scaleMetrics) {
 		super(scaleMetrics);
 	}

@@ -33,6 +33,18 @@ import org.decimal4j.scale.ScaleMetrics;
  */
 final class BigIntegerConversion {
 	
+	/**
+	 * Converts the specified big integer value to an unscaled decimal value. An exception is thrown if the value
+	 * exceeds the valid Decimal range.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics of the result value
+	 * @param value
+	 *            the big integer value to convert
+	 * @return the decimal value of the scale as defined by {@code ScaleMetrics}
+	 * @throws IllegalArgumentException
+	 *             if the value is outside of the valid Decimal range
+	 */
 	public static final long bigIntegerToUnscaled(ScaleMetrics scaleMetrics, BigInteger value) {
 		if (value.bitLength() <= 63) {
 			return LongConversion.longToUnscaled(scaleMetrics, value.longValue());

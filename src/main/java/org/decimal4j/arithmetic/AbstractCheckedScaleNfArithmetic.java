@@ -29,11 +29,16 @@ import org.decimal4j.scale.ScaleMetrics;
  * Base class for arithmetic implementations with overflow check for scales
  * other than zero.
  */
-abstract public class AbstractCheckedScaleNfArithmetic extends
-		AbstractCheckedArithmetic {
+abstract public class AbstractCheckedScaleNfArithmetic extends AbstractCheckedArithmetic {
 
 	private final ScaleMetrics scaleMetrics;
 
+	/**
+	 * Constructor with scale metrics for this arithmetic.
+	 * 
+	 * @param scaleMetrics
+	 *            the scale metrics
+	 */
 	public AbstractCheckedScaleNfArithmetic(ScaleMetrics scaleMetrics) {
 		this.scaleMetrics = scaleMetrics;
 	}

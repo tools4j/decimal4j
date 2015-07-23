@@ -27,15 +27,40 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.DecimalRounding;
 
 /**
- * Provides static methods to calculate average of two numbers, that is, {@code (a+b)/2}.
+ * Provides static methods to calculate average of two numbers, that is,
+ * {@code (a+b)/2}.
  */
 final class Avg {
 
+	/**
+	 * Calculates and returns the average of the two values rounded DOWN.
+	 * 
+	 * @param a
+	 *            the first value
+	 * @param b
+	 *            the second value
+	 * @return <tt>round<sub>DOWN</sub>((a + b) / 2)</tt>
+	 */
 	public static final long avg(long a, long b) {
 		final long xor = a ^ b;
 		final long floor = (a & b) + (xor >> 1);
 		return floor + ((floor >>> 63) & xor);
 	}
+
+	/**
+	 * Calculates and returns the average of the two values applying the given
+	 * roundign if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the two values
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param a
+	 *            the first value
+	 * @param b
+	 *            the second value
+	 * @return <tt>round((a + b) / 2)</tt>
+	 */
 	public static final long avg(DecimalArithmetic arith, DecimalRounding rounding, long a, long b) {
 		final long xor = a ^ b;
 		switch (rounding) {
@@ -45,12 +70,12 @@ final class Avg {
 		case CEILING: {
 			return (a | b) - (xor >> 1);
 		}
-		case DOWN://fallthrough
+		case DOWN:// fallthrough
 		case HALF_DOWN: {
 			final long floor = (a & b) + (xor >> 1);
 			return floor + ((floor >>> 63) & xor);
 		}
-		case UP://fallthrough
+		case UP:// fallthrough
 		case HALF_UP: {
 			final long floor = (a & b) + (xor >> 1);
 			return floor + ((~floor >>> 63) & xor);
@@ -58,20 +83,22 @@ final class Avg {
 		case HALF_EVEN: {
 			final long xorShifted = xor >> 1;
 			final long floor = (a & b) + xorShifted;
-			//use ceiling if floor is odd
+			// use ceiling if floor is odd
 			return ((floor & 0x1) == 0) ? floor : (a | b) - xorShifted;
 		}
 		case UNNECESSARY: {
 			final long floor = (a & b) + (xor >> 1);
 			if ((xor & 0x1) != 0) {
-				throw new ArithmeticException("Rounding necessary: " + arith.toString(a) + " avg " + arith.toString(b) + " = " + arith.toString(floor));
+				throw new ArithmeticException("Rounding necessary: " + arith.toString(a) + " avg " + arith.toString(b)
+						+ " = " + arith.toString(floor));
 			}
 			return floor;
 		}
 		default: {
-			//should not get here
+			// should not get here
 			throw new IllegalArgumentException("Unsupported rounding mode: " + rounding);
-		}}
+		}
+		}
 	}
 
 	// no instances

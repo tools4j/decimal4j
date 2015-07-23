@@ -39,10 +39,22 @@ public final class UncheckedScale0fRoundingArithmetic extends AbstractUncheckedS
 
 	private final DecimalRounding rounding;
 
+	/**
+	 * Constructor for decimal arithmetic with the given rounding.
+	 * 
+	 * @param roundingMode
+	 *            the rounding mode to use for all decimal arithmetic operations
+	 */
 	public UncheckedScale0fRoundingArithmetic(RoundingMode roundingMode) {
 		this(DecimalRounding.valueOf(roundingMode));
 	}
 
+	/**
+	 * Constructor for decimal arithmetic with the given rounding.
+	 * 
+	 * @param rounding
+	 *            the rounding to apply to all decimal arithmetic operations
+	 */
 	public UncheckedScale0fRoundingArithmetic(DecimalRounding rounding) {
 		this.rounding = rounding;
 	}
