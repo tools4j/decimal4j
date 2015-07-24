@@ -29,29 +29,63 @@ import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
 
-
-
 /**
  * Contains methods to convert from and to String.
  */
 final class StringConversion {
-	
+
+	/**
+	 * Thread-local used to build Decimal strings. Allocated big enough to avoid
+	 * growth.
+	 */
 	static final ThreadLocal<StringBuilder> STRING_BUILDER_THREAD_LOCAL = new ThreadLocal<StringBuilder>() {
 		@Override
 		protected StringBuilder initialValue() {
-			return new StringBuilder(19 + 1 + 2);//unsigned long: 19 digits, sign: 1, decimal point and leading 0: 2
+			return new StringBuilder(19 + 1 + 2);// unsigned long: 19 digits,
+													// sign: 1, decimal point
+													// and leading 0: 2
 		}
 	};
-	
+
 	private static enum ParseMode {
-		Long,
-		IntegralPart;
+		Long, IntegralPart;
 	}
 
+	/**
+	 * Parses the given string into a long and returns it, rounding extra digits
+	 * if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic of the target value
+	 * @param rounding
+	 *            the rounding to apply if a fraction is present
+	 * @param s
+	 *            the string to parse
+	 * @return the parsed value
+	 * @throws NumberFormatException
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a long
+	 */
 	static final long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
-        return parseUnscaledDecimal(arith, rounding, s);
+		return parseUnscaledDecimal(arith, rounding, s);
 	}
 
+	/**
+	 * Parses the given string into an unscaled decimal and returns it, rounding
+	 * extra digits if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic of the target value
+	 * @param rounding
+	 *            the rounding to apply if extra fraction digits are present
+	 * @param s
+	 *            the string to parse
+	 * @return the parsed value
+	 * @throws NumberFormatException
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a Decimal
+	 *             with the scale of the given arithmetic
+	 */
 	static final long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
 		final int len = s.length();
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
@@ -61,26 +95,27 @@ final class StringConversion {
 			throw newNumberFormatExceptionFor(arith, s);
 		}
 
-		//parse a decimal number
-		final long integralPart;//unscaled
-		final long fractionalPart;//scaled
+		// parse a decimal number
+		final long integralPart;// unscaled
+		final long fractionalPart;// scaled
 		final TruncatedPart truncatedPart;
 		final boolean negative;
 		if (indexOfDecimalPoint < 0) {
-	        integralPart = parseIntegralPart(arith, s, 0, s.length(), ParseMode.Long);
-	        fractionalPart = 0;
-	        truncatedPart = TruncatedPart.ZERO;
-	        negative = integralPart < 0;
+			integralPart = parseIntegralPart(arith, s, 0, s.length(), ParseMode.Long);
+			fractionalPart = 0;
+			truncatedPart = TruncatedPart.ZERO;
+			negative = integralPart < 0;
 		} else {
 			final int fractionalEnd = Math.min(len, indexOfDecimalPoint + 1 + scale);
 			if (indexOfDecimalPoint == 0) {
-				//allowed format .45
+				// allowed format .45
 				integralPart = 0;
 				fractionalPart = parseFractionalPart(arith, s, 1, fractionalEnd);
 				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
 				negative = false;
 			} else {
-				//allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45", "-.45"
+				// allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45",
+				// "-.45"
 				integralPart = parseIntegralPart(arith, s, 0, indexOfDecimalPoint, ParseMode.IntegralPart);
 				fractionalPart = parseFractionalPart(arith, s, indexOfDecimalPoint + 1, fractionalEnd);
 				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
@@ -92,9 +127,17 @@ final class StringConversion {
 		}
 		try {
 			final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
-			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;//negation cannot overflow because it is < Scale18.SCALE_FACTOR
+			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;// negation
+																						// cannot
+																						// overflow
+																						// because
+																						// it
+																						// is
+																						// <
+																						// Scale18.SCALE_FACTOR
 			final long truncatedValue = Checked.add(arith, unscaledIntegeral, unscaledFractional);
-			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue, truncatedPart);
+			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue,
+					truncatedPart);
 			return roundingIncrement == 0 ? truncatedValue : Checked.add(arith, truncatedValue, roundingIncrement);
 		} catch (ArithmeticException e) {
 			throw newNumberFormatExceptionFor(arith, s, e);
@@ -109,12 +152,12 @@ final class StringConversion {
 			while (i < end) {
 				final char ch = s.charAt(i++);
 				final int digit;
-            	if (ch >= '0' & ch <= '9') {
-                    digit = (int)(ch - '0');
-            	} else {
-            		throw newNumberFormatExceptionFor(arith, s);
-            	}
-            	value = value * 10 + digit;
+				if (ch >= '0' & ch <= '9') {
+					digit = (int) (ch - '0');
+				} else {
+					throw newNumberFormatExceptionFor(arith, s);
+				}
+				value = value * 10 + digit;
 			}
 			final int scale = arith.getScale();
 			if (len < scale) {
@@ -125,6 +168,7 @@ final class StringConversion {
 		}
 		return 0;
 	}
+
 	private static final TruncatedPart parseTruncatedPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
 		if (start < end) {
 			final char firstChar = s.charAt(start);
@@ -143,15 +187,15 @@ final class StringConversion {
 			int i = start + 1;
 			while (i < end) {
 				final char ch = s.charAt(i++);
-	        	if (ch > '0' & ch <= '9') {
-	        		if (truncatedPart == TruncatedPart.ZERO) {
-	        			truncatedPart = TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
-	        		} else if (truncatedPart == TruncatedPart.EQUAL_TO_HALF) {
-	        			truncatedPart = TruncatedPart.GREATER_THAN_HALF;
-	        		}
-	        	} else if (ch != '0') {
-	        		throw newNumberFormatExceptionFor(arith, s);
-	        	}
+				if (ch > '0' & ch <= '9') {
+					if (truncatedPart == TruncatedPart.ZERO) {
+						truncatedPart = TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO;
+					} else if (truncatedPart == TruncatedPart.EQUAL_TO_HALF) {
+						truncatedPart = TruncatedPart.GREATER_THAN_HALF;
+					}
+				} else if (ch != '0') {
+					throw newNumberFormatExceptionFor(arith, s);
+				}
 			}
 			return truncatedPart;
 		}
@@ -168,83 +212,86 @@ final class StringConversion {
 		return -1;
 	}
 
-	//copied from Long.parseLong(String, int) but for fixed radix 10
-    private static final long parseIntegralPart(DecimalArithmetic arith, CharSequence s, int start, int end, ParseMode mode) {
-        long result = 0;
-        boolean negative = false;
-        int i = start;
-        long limit = -Long.MAX_VALUE;
-        long multmin;
+	// copied from Long.parseLong(String, int) but for fixed radix 10
+	private static final long parseIntegralPart(DecimalArithmetic arith, CharSequence s, int start, int end, ParseMode mode) {
+		long result = 0;
+		boolean negative = false;
+		int i = start;
+		long limit = -Long.MAX_VALUE;
+		long multmin;
 
-        if (end > start) {
-            char firstChar = s.charAt(0);
-            if (firstChar < '0') { // Possible leading "+" or "-"
-                if (firstChar == '-') {
-                    negative = true;
-                    limit = Long.MIN_VALUE;
-                } else if (firstChar != '+') {
-                	//invalid first character
-                	throw newNumberFormatExceptionFor(arith, s);
-                }
+		if (end > start) {
+			char firstChar = s.charAt(0);
+			if (firstChar < '0') { // Possible leading "+" or "-"
+				if (firstChar == '-') {
+					negative = true;
+					limit = Long.MIN_VALUE;
+				} else if (firstChar != '+') {
+					// invalid first character
+					throw newNumberFormatExceptionFor(arith, s);
+				}
 
-                if (end - start == 1) {
-                	if (mode == ParseMode.IntegralPart) {
-                		//we allow something like "-.75" or "+.75"
-                		return 0;
-                	}
-                	// Cannot have lone "+" or "-"
-                	throw newNumberFormatExceptionFor(arith, s);
-                }
-                i++;
-            }
-            multmin = limit / 10;
-            while (i < end) {
-                // Accumulating negatively avoids surprises near MAX_VALUE
-            	final char ch = s.charAt(i++);
-            	final int digit;
-            	if (ch >= '0' & ch <= '9') {
-                    digit = (int)(ch - '0');
-            	} else {
-                	throw newNumberFormatExceptionFor(arith, s);
-                }
-                if (result < multmin) {
-                	throw newNumberFormatExceptionFor(arith, s);
-                }
-                result *= 10;
-                if (result < limit + digit) {
-                	throw newNumberFormatExceptionFor(arith, s);
-                }
-                result -= digit;
-            }
-        } else {
-        	throw newNumberFormatExceptionFor(arith, s);
-        }
-        return negative ? result : -result;
+				if (end - start == 1) {
+					if (mode == ParseMode.IntegralPart) {
+						// we allow something like "-.75" or "+.75"
+						return 0;
+					}
+					// Cannot have lone "+" or "-"
+					throw newNumberFormatExceptionFor(arith, s);
+				}
+				i++;
+			}
+			multmin = limit / 10;
+			while (i < end) {
+				// Accumulating negatively avoids surprises near MAX_VALUE
+				final char ch = s.charAt(i++);
+				final int digit;
+				if (ch >= '0' & ch <= '9') {
+					digit = (int) (ch - '0');
+				} else {
+					throw newNumberFormatExceptionFor(arith, s);
+				}
+				if (result < multmin) {
+					throw newNumberFormatExceptionFor(arith, s);
+				}
+				result *= 10;
+				if (result < limit + digit) {
+					throw newNumberFormatExceptionFor(arith, s);
+				}
+				result -= digit;
+			}
+		} else {
+			throw newNumberFormatExceptionFor(arith, s);
+		}
+		return negative ? result : -result;
 	}
-	
-    /**
-     * Returns a {@code String} object representing the specified
-     * {@code long}.  The argument is converted to signed decimal
-     * representation and returned as a string, exactly as if passed to
-     * {@link Long#toString(long)}.
-     *
-     * @param   value   a {@code long} to be converted.
-     * @return  a string representation of the argument in base&nbsp;10.
-     */
-    static final String longToString(long value) {
-    	return Long.toString(value);
-    }
-    /**
-     * Returns a {@code String} object representing the specified unscaled 
-     * Decimal value {@code uDecimal}.  The argument is converted to signed 
-     * decimal representation and returned as a string with {@code scale}
-     * decimal places event if trailing fraction digits are zero.
-     *
-     * @param   uDecimal a unscaled Decimal to be converted
-     * @param arith the decimal arithmetics providing the scale to apply
-     * @return  a string representation of the argument
-     */
-    static final String unscaledToString(DecimalArithmetic arith, long uDecimal) {
+
+	/**
+	 * Returns a {@code String} object representing the specified {@code long}.
+	 * The argument is converted to signed decimal representation and returned
+	 * as a string, exactly as if passed to {@link Long#toString(long)}.
+	 *
+	 * @param value
+	 *            a {@code long} to be converted.
+	 * @return a string representation of the argument in base&nbsp;10.
+	 */
+	static final String longToString(long value) {
+		return Long.toString(value);
+	}
+
+	/**
+	 * Returns a {@code String} object representing the specified unscaled
+	 * Decimal value {@code uDecimal}. The argument is converted to signed
+	 * decimal representation and returned as a string with {@code scale}
+	 * decimal places event if trailing fraction digits are zero.
+	 *
+	 * @param uDecimal
+	 *            a unscaled Decimal to be converted
+	 * @param arith
+	 *            the decimal arithmetics providing the scale to apply
+	 * @return a string representation of the argument
+	 */
+	static final String unscaledToString(DecimalArithmetic arith, long uDecimal) {
 		final int scale = arith.getScale();
 		final StringBuilder sb = STRING_BUILDER_THREAD_LOCAL.get();
 		sb.setLength(0);
@@ -252,22 +299,23 @@ final class StringConversion {
 		final int len = sb.length();
 		final int negativeOffset = uDecimal < 0 ? 1 : 0;
 		if (len <= scale + negativeOffset) {
-			//Long.MAX_VALUE = 9,223,372,036,854,775,807
+			// Long.MAX_VALUE = 9,223,372,036,854,775,807
 			sb.insert(negativeOffset, "0.00000000000000000000", 0, 2 + scale - len + negativeOffset);
 		} else {
 			sb.insert(len - scale, '.');
 		}
 		return sb.toString();
-    }
-    
+	}
 
-    private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {
-        return new NumberFormatException("Cannot parse Decimal value with scale " + arith.getScale() + " for input string: \"" + s + "\"");
-    }
-    private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s, Exception cause) {
-        final NumberFormatException ex = newNumberFormatExceptionFor(arith, s);
-    	ex.initCause(cause);
-        return ex;
+	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {
+		return new NumberFormatException(
+				"Cannot parse Decimal value with scale " + arith.getScale() + " for input string: \"" + s + "\"");
+	}
+
+	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s, Exception cause) {
+		final NumberFormatException ex = newNumberFormatExceptionFor(arith, s);
+		ex.initCause(cause);
+		return ex;
 	}
 
 	// no instances

@@ -24,6 +24,7 @@
 package org.decimal4j.arithmetic;
 
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.truncate.OverflowMode;
 
 /**
  * Helper class used by pow methods to handle special cases.
@@ -35,7 +36,7 @@ enum SpecialPowResult {
 	EXPONENT_IS_ZERO {
 		@Override
 		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
-			return arithmetic.one();//yes 0^0 is also 1
+			return arithmetic.one();// yes 0^0 is also 1
 		}
 	},
 	/**
@@ -55,7 +56,8 @@ enum SpecialPowResult {
 		@Override
 		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
 			if (exponent >= 0) {
-				//uDecimal == 0 should never happen (0^0 is usually defined as 1)
+				// uDecimal == 0 should never happen (0^0 is usually defined as
+				// 1)
 				return 0;
 			}
 			throw new ArithmeticException("Division by zero: " + arithmetic.toString(uDecimal) + "^" + exponent);
@@ -67,7 +69,7 @@ enum SpecialPowResult {
 	BASE_IS_ONE {
 		@Override
 		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
-			return uDecimal;//uDecimal is 1
+			return uDecimal;// uDecimal is 1
 		}
 	},
 	/**
@@ -77,7 +79,12 @@ enum SpecialPowResult {
 	BASE_IS_MINUS_ONE {
 		@Override
 		final long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent) {
-			return ((exponent & 0x1) == 0) ? -uDecimal : uDecimal;//uDecimal is one and it's negation cannot overflow
+			return ((exponent & 0x1) == 0) ? -uDecimal : uDecimal;// uDecimal is
+																	// one and
+																	// it's
+																	// negation
+																	// cannot
+																	// overflow
 		}
 	},
 	/**
@@ -98,7 +105,23 @@ enum SpecialPowResult {
 			return arithmetic.square(uDecimal);
 		}
 	};
-	
+
+	/**
+	 * Performs the exponentiation for this special pow result. The arithmetics
+	 * overflow mode is considered.
+	 * 
+	 * @param arithmetic
+	 *            the arithmetic associated with the values
+	 * @param uDecimal
+	 *            the base value
+	 * @param exponent
+	 *            the exponent
+	 * @return <tt>uDecimal<sup>exponent</sup></tt>
+	 * @throws ArithmeticException
+	 *             if {@code uDecimal==0} and exponent is negative or if an
+	 *             overflow occurs and the arithmetic's {@link OverflowMode} is
+	 *             set to throw an exception
+	 */
 	abstract long pow(DecimalArithmetic arithmetic, long uDecimal, int exponent);
 
 	/**

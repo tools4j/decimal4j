@@ -24,6 +24,7 @@
 package org.decimal4j.arithmetic;
 
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.truncate.OverflowMode;
 
 /**
  * Helper class used by multiplication methods to handle special cases.
@@ -62,7 +63,8 @@ enum SpecialMultiplicationResult {
 	FACTOR_1_IS_MINUS_ONE {
 		@Override
 		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
-			return arithmetic.negate(uDecimal2);//we must go through arithmetic because overflow is possible
+			return arithmetic.negate(uDecimal2);// we must go through arithmetic
+												// because overflow is possible
 		}
 	},
 	/**
@@ -71,7 +73,8 @@ enum SpecialMultiplicationResult {
 	FACTOR_2_IS_MINUS_ONE {
 		@Override
 		final long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2) {
-			return arithmetic.negate(uDecimal1);//we must go through arithmetic because overflow is possible
+			return arithmetic.negate(uDecimal1);// we must go through arithmetic
+												// because overflow is possible
 		}
 	},
 	/**
@@ -83,6 +86,22 @@ enum SpecialMultiplicationResult {
 			return arithmetic.square(uDecimal1);
 		}
 	};
+
+	/**
+	 * Performs the multiplication for this special multiplication result. The
+	 * arithmetics overflow mode is considered.
+	 * 
+	 * @param arithmetic
+	 *            the arithmetic associated with the values
+	 * @param uDecimal1
+	 *            the first factor
+	 * @param uDecimal2
+	 *            the second factor
+	 * @return <tt>uDecimal1 * uDecimal2</tt>
+	 * @throws ArithmeticException
+	 *             if an overflow occurs and the arithmetic's
+	 *             {@link OverflowMode} is set to throw an exception
+	 */
 	abstract long multiply(DecimalArithmetic arithmetic, long uDecimal1, long uDecimal2);
 
 	/**

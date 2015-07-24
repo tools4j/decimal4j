@@ -33,6 +33,17 @@ import org.decimal4j.truncate.DecimalRounding;
  */
 final class Round {
 
+	/**
+	 * Truncates the specified value to the given precision.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param uDecimal
+	 *            the unscaled decimal value
+	 * @param precision
+	 *            the precision to round to
+	 * @return <tt>round<sub>DOWN</sub>(uDecimal, precision)</tt>
+	 */
 	public static final long round(DecimalArithmetic arith, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
@@ -44,15 +55,29 @@ final class Round {
 			if (deltaScale <= 18) {
 				deltaMetrics = Scales.getScaleMetrics(scale - precision);
 			} else {
-				throw new IllegalArgumentException("scale - precision must be <= 18 but was " + deltaScale + " for scale=" + scale + " and precision=" + precision);
+				throw new IllegalArgumentException("scale - precision must be <= 18 but was " + deltaScale
+						+ " for scale=" + scale + " and precision=" + precision);
 			}
 		} else {
-			//precision >= scale
+			// precision >= scale
 			return uDecimal;
 		}
 		return uDecimal - deltaMetrics.moduloByScaleFactor(uDecimal);
 	}
-	
+
+	/**
+	 * Rounds the specified value to the given precision.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param rounding
+	 *            the rounding to apply
+	 * @param uDecimal
+	 *            the unscaled decimal value
+	 * @param precision
+	 *            the precision to round to
+	 * @return <tt>round(uDecimal, precision)</tt>
+	 */
 	public static final long round(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
@@ -64,10 +89,11 @@ final class Round {
 			if (deltaScale <= 18) {
 				deltaMetrics = Scales.getScaleMetrics(scale - precision);
 			} else {
-				throw new IllegalArgumentException("scale - precision must be <= 18 but was " + deltaScale + " for scale=" + scale + " and precision=" + precision);
+				throw new IllegalArgumentException("scale - precision must be <= 18 but was " + deltaScale
+						+ " for scale=" + scale + " and precision=" + precision);
 			}
 		} else {
-			//precision >= scale
+			// precision >= scale
 			return uDecimal;
 		}
 		if (uDecimal == 0) {
@@ -75,14 +101,26 @@ final class Round {
 		}
 		final long truncatedDigits = deltaMetrics.moduloByScaleFactor(uDecimal);
 		final long truncatedValue = uDecimal - truncatedDigits;
-		final long truncatedOddEven = truncatedValue >> deltaScale; //move odd bit into place for HALF_EVEN rounding
-		final long roundingInc = Rounding.calculateRoundingIncrement(rounding, truncatedOddEven, truncatedDigits, deltaMetrics.getScaleFactor());
-		return arith.add(truncatedValue, roundingInc == 0 ? 0 : deltaMetrics.multiplyByScaleFactor(roundingInc));//must add via arith to check for overflow
+		final long truncatedOddEven = truncatedValue >> deltaScale; // move odd
+																	// bit into
+																	// place for
+																	// HALF_EVEN
+																	// rounding
+		final long roundingInc = Rounding.calculateRoundingIncrement(rounding, truncatedOddEven, truncatedDigits,
+				deltaMetrics.getScaleFactor());
+		return arith.add(truncatedValue, roundingInc == 0 ? 0 : deltaMetrics.multiplyByScaleFactor(roundingInc));// must
+																													// add
+																													// via
+																													// arith
+																													// to
+																													// check
+																													// for
+																													// overflow
 	}
 
 	// no instances
 	private Round() {
 		super();
 	}
-	
+
 }

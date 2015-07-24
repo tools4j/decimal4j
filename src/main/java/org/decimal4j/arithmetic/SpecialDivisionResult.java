@@ -24,6 +24,7 @@
 package org.decimal4j.arithmetic;
 
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.truncate.OverflowMode;
 
 /**
  * Helper class used by division and inversion methods to handle special cases.
@@ -44,7 +45,8 @@ enum SpecialDivisionResult {
 	DIVISOR_IS_ZERO {
 		@Override
 		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
-			throw new ArithmeticException("Division by zero: " + arithmetic.toString(uDecimalDividend) + " / " + arithmetic.toString(uDecimalDivisor));
+			throw new ArithmeticException("Division by zero: " + arithmetic.toString(uDecimalDividend) + " / "
+					+ arithmetic.toString(uDecimalDivisor));
 		}
 	},
 	/**
@@ -62,7 +64,9 @@ enum SpecialDivisionResult {
 	DIVISOR_IS_MINUS_ONE {
 		@Override
 		final long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
-			return arithmetic.negate(uDecimalDividend);//we must go through arithmetic because overflow is possible
+			return arithmetic.negate(uDecimalDividend);// we must go through
+														// arithmetic because
+														// overflow is possible
 		}
 	},
 	/**
@@ -83,6 +87,23 @@ enum SpecialDivisionResult {
 			return -arithmetic.one();
 		}
 	};
+
+	/**
+	 * Performs the division for this special division result. The arithmetics
+	 * overflow mode is considered.
+	 * 
+	 * @param arithmetic
+	 *            the arithmetic associated with the values
+	 * @param uDecimalDividend
+	 *            the dividend
+	 * @param uDecimalDivisor
+	 *            the divisor
+	 * @return <tt>uDecimalDividend / uDecimalDivisor</tt>
+	 * @throws ArithmeticException
+	 *             if {@code this==DIVISOR_IS_ZERO} or if an overflow occurs and
+	 *             the arithmetic's {@link OverflowMode} is set to throw an
+	 *             exception
+	 */
 	abstract long divide(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor);
 
 	/**
@@ -97,7 +118,8 @@ enum SpecialDivisionResult {
 	 * @return the special case if it is one and null otherwise
 	 */
 	static final SpecialDivisionResult getFor(DecimalArithmetic arithmetic, long uDecimalDividend, long uDecimalDivisor) {
-		//NOTE: this must be the first case because 0/0 must also throw an exception!
+		// NOTE: this must be the first case because 0/0 must also throw an
+		// exception!
 		if (uDecimalDivisor == 0) {
 			return DIVISOR_IS_ZERO;
 		}

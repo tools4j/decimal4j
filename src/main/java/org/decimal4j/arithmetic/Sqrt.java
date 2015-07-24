@@ -37,11 +37,21 @@ final class Sqrt {
 	 */
 	private static final long LONG_MASK = 0xffffffffL;
 
+	/**
+	 * Calculates the square root of the specified long value truncating the
+	 * result if necessary.
+	 * 
+	 * @param lValue
+	 *            the long value
+	 * @return <tt>round<sub>DOWN</sub>(lValue)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code lValue < 0}
+	 */
 	public static final long sqrtLong(long lValue) {
 		if (lValue < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + lValue);
 		}
-		//http://www.codecodex.com/wiki/Calculate_an_integer_square_root
+		// http://www.codecodex.com/wiki/Calculate_an_integer_square_root
 		if ((lValue & 0xfff0000000000000L) == 0) {
 			return (long) StrictMath.sqrt(lValue);
 		}
@@ -49,12 +59,25 @@ final class Sqrt {
 		return result * result - lValue > 0L ? result - 1 : result;
 	}
 
+	/**
+	 * Calculates the square root of the specified long value rounding the
+	 * result if necessary.
+	 * 
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param lValue
+	 *            the long value
+	 * @return <tt>round(lValue)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code lValue < 0}
+	 */
 	public static final long sqrtLong(DecimalRounding rounding, long lValue) {
 		if (lValue < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + lValue);
 		}
-		//square root
-		//@see http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
+		// square root
+		// @see
+		// http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
 		long rem = 0;
 		long root = 0;
 		final int zerosHalf = Long.numberOfLeadingZeros(lValue) >> 1;
@@ -78,17 +101,43 @@ final class Sqrt {
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
+	/**
+	 * Calculates the square root of the specified unscaled decimal value
+	 * truncating the result if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param uDecimal
+	 *            the unscaled decimal value
+	 * @return <tt>round<sub>DOWN</sub>(uDecimal)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code uDecimal < 0}
+	 */
 	public static final long sqrt(DecimalArithmetic arith, long uDecimal) {
 		return sqrt(arith, DecimalRounding.DOWN, uDecimal);
 	}
 
+	/**
+	 * Calculates the square root of the specified unscaled decimal value
+	 * rounding the result if necessary.
+	 * 
+	 * @param arith
+	 *            the arithmetic associated with the value
+	 * @param rounding
+	 *            the rounding to apply if necessary
+	 * @param uDecimal
+	 *            the unscaled decimal value
+	 * @return <tt>round(uDecimal)</tt>
+	 * @throws ArithmeticException
+	 *             if {@code uDecimal < 0}
+	 */
 	public static final long sqrt(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal) {
 		if (uDecimal < 0) {
 			throw new ArithmeticException("Square root of a negative value: " + arith.toString(uDecimal));
 		}
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 
-		//multiply by scale factor into a 128bit integer
+		// multiply by scale factor into a 128bit integer
 		final int lFactor = (int) (uDecimal & LONG_MASK);
 		final int hFactor = (int) (uDecimal >>> 32);
 		long lScaled;
@@ -103,13 +152,14 @@ final class Sqrt {
 		lScaled |= ((product & LONG_MASK) << 32);
 		hScaled = scaleMetrics.mulhiByScaleFactor(hFactor) + hScaled + (product >>> 32);
 
-		//square root
-		//@see http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
+		// square root
+		// @see
+		// http://www.embedded.com/electronics-blogs/programmer-s-toolbox/4219659/Integer-Square-Roots
 		int zerosHalf;
 		long rem = 0;
 		long root = 0;
-		
-		//iteration for high 32 bits
+
+		// iteration for high 32 bits
 		zerosHalf = Long.numberOfLeadingZeros(hScaled) >> 1;
 		hScaled <<= (zerosHalf << 1);
 		for (int i = zerosHalf; i < 32; i++) {
@@ -125,7 +175,7 @@ final class Sqrt {
 			}
 		}
 
-		//iteration for low 32 bits (last iteration below)
+		// iteration for low 32 bits (last iteration below)
 		zerosHalf = zerosHalf == 32 ? Long.numberOfLeadingZeros(lScaled) >> 1 : 0;
 		lScaled <<= (zerosHalf << 1);
 		for (int i = zerosHalf; i < 31; i++) {
@@ -141,7 +191,7 @@ final class Sqrt {
 			}
 		}
 
-		//last iteration needs unsigned compare
+		// last iteration needs unsigned compare
 		root <<= 1;
 		rem = ((rem << 2) + (lScaled >>> 62));
 		lScaled <<= 2;
@@ -153,7 +203,7 @@ final class Sqrt {
 			root--;
 		}
 
-		//round result if necessary
+		// round result if necessary
 		final long truncated = root >>> 1;
 		if (rem == 0 | rounding == DecimalRounding.DOWN | rounding == DecimalRounding.FLOOR) {
 			return truncated;
@@ -161,15 +211,15 @@ final class Sqrt {
 		return truncated + getRoundingIncrement(rounding, truncated, rem);
 	}
 
-	//PRECONDITION: rem != 0
-	//NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
+	// PRECONDITION: rem != 0
+	// NOTE: TruncatedPart cannot be 0.5 because this would square to 0.25
 	private static final int getRoundingIncrement(DecimalRounding rounding, long truncated, long rem) {
 		if (truncated < rem) {
 			return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.GREATER_THAN_HALF);
 		}
 		return rounding.calculateRoundingIncrement(1, truncated, TruncatedPart.LESS_THAN_HALF_BUT_NOT_ZERO);
 	}
-	
+
 	// no instances
 	private Sqrt() {
 		super();

@@ -78,6 +78,12 @@ final class UnsignedDecimal9i36f {
 	private UnsignedDecimal9i36f() {
 		super();
 	}
+	
+	/**
+	 * Assigns the value one to this unsigned 9x36 decimal and returns it.
+	 * 
+	 * @return this
+	 */
 	public final UnsignedDecimal9i36f initOne() {
 		this.norm = Norm.NORMALIZED_18;
 		this.pow10 = 0;
@@ -88,6 +94,14 @@ final class UnsignedDecimal9i36f {
 		this.val0 = 0;
 		return this;
 	}
+
+	/**
+	 * Assigns the value one to this unsigned 9x36 decimal and returns it.
+	 * 
+	 * @param copy
+	 *            the value to copy
+	 * @return this
+	 */
 	public final UnsignedDecimal9i36f init(UnsignedDecimal9i36f copy) {
 		this.norm = copy.norm;
 		this.pow10 = copy.pow10;
@@ -98,11 +112,30 @@ final class UnsignedDecimal9i36f {
 		this.val0 = copy.val0;
 		return this;
 	}
+
+	/**
+	 * Assigns the given integer and fraction component to this unsigned 9x36
+	 * decimal and returns it.
+	 * 
+	 * @param ival
+	 *            the integer part of the value to assign
+	 * @param fval
+	 *            the fractional part of the value to assign
+	 * @param scaleMetrics
+	 *            the scale metrics associated with the value
+	 * @return this
+	 */
 	public final UnsignedDecimal9i36f init(long ival, long fval, ScaleMetrics scaleMetrics) {
 		final ScaleMetrics diffMetrics = Scales.getScaleMetrics(18 - scaleMetrics.getScale());
 		normalizeAndRound(1, 0, ival, diffMetrics.multiplyByScaleFactor(fval), 0, 0, 0, DecimalRounding.UNNECESSARY);
 		return this;
 	}
+	
+	/**
+	 * Returns the current power-ten exponent.
+	 * 
+	 * @return the base-10 exponent of this value
+	 */
 	public final int getPow10() {
 		return pow10;
 	}
@@ -201,6 +234,17 @@ final class UnsignedDecimal9i36f {
 		this.val1 = v1;
 		this.val0 = v0;
 	}
+	
+	/**
+	 * Multiplies this unsigned 9x36 decimal value with another one.
+	 * 
+	 * @param sgn
+	 *            the sign of the final result
+	 * @param factor
+	 *            the factor to be multiplied with
+	 * @param rounding
+	 *            the rounding to apply
+	 */
 	public final void multiply(int sgn, UnsignedDecimal9i36f factor, DecimalRounding rounding) {
 		if (norm != Norm.NORMALIZED_18) {
 			normalizeAndRound(sgn, pow10, ival, val3, val2, val1, val0, rounding);
@@ -323,16 +367,45 @@ final class UnsignedDecimal9i36f {
 		}
 		return getDecimal(sgn, pow10 + 18, 0, ival, val3, val2, val1, val0, 0, 0, 0, arith, rounding);
 	}
-	public final long getInverted(int sgn, DecimalArithmetic arith, DecimalRounding rounding, DecimalRounding powRounding, UnsignedDecimal9i36f acc) {
+	
+	/**
+	 * Returns the inverted result resulting from exponentiation with a negative
+	 * exponent. The result is best-effort accurate.
+	 * 
+	 * @param sgn
+	 *            the sign of the final result
+	 * @param arith
+	 *            the arithmetic of the base value
+	 * @param rounding
+	 *            the rounding to apply
+	 * @param powRounding
+	 *            reciprocal rounding if exponent is negative and rounding
+	 *            otherwise
+	 * @return <tt>round(1 / this)</tt>
+	 */
+	public final long getInverted(int sgn, DecimalArithmetic arith, DecimalRounding rounding, DecimalRounding powRounding) {
 		//1) get scale18 value normalized to 0.3 <= x < 3 (i.e. make it invertible without overflow for uninverted and inverted value)
 		final DecimalArithmetic arith18 = Scale18f.INSTANCE.getArithmetic(rounding.getRoundingMode());//unchecked is fine, see comments below
-		final long divisor = acc.getInvNorm(sgn, arith18, powRounding);
+		final long divisor = this.getInvNorm(sgn, arith18, powRounding);
 		//2) invert normalized scale18 value 
 		final long inverted = arith18.invert(divisor);//can't overflow as for x=abs(divisor): 0.9 <= x < 9 
 		//3) apply inverted powers of 10, including powers from normalization and rescaling 
-		final int pow10 = acc.getPow10() + acc.getInvNormPow10() + (18 - arith.getScale());
+		final int pow10 = this.getPow10() + this.getInvNormPow10() + (18 - arith.getScale());
 		return arith.multiplyByPowerOf10(inverted, -pow10);//overflow possible
 	}
+
+	/**
+	 * Returns the unscaled Decimal result resulting from exponentiation with a non-negative
+	 * exponent. The result is accurate up to 1 ULP of the Decimal.
+	 * 
+	 * @param sgn
+	 *            the sign of the final result
+	 * @param arith
+	 *            the arithmetic of the base value
+	 * @param rounding
+	 *            the rounding to apply
+	 * @return <tt>round(this)</tt>
+	 */
 	public final long getDecimal(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		if (pow10 >= 0) {
 			if (pow10 <= 18) {
