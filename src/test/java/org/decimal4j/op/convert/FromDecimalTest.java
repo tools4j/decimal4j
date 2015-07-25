@@ -111,8 +111,13 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, Decimal<?> operand) {
 		try {
 			@SuppressWarnings("unchecked")
-			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
-			return clazz.getConstructor(Decimal.class).newInstance(operand);
+			final Class<Decimal<S>> mutableClass = (Class<Decimal<S>>) Class.forName(getMutableClassName());
+			@SuppressWarnings("unchecked")
+			final Class<Decimal<S>> immutableClass = (Class<Decimal<S>>) Class.forName(getImmutableClassName());
+			if (immutableClass.isInstance(operand) && RND.nextBoolean()) { 
+				return mutableClass.getConstructor(immutableClass).newInstance(operand);
+			}
+			return mutableClass.getConstructor(Decimal.class).newInstance(operand);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) e.getTargetException();

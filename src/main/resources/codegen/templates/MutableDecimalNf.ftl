@@ -137,6 +137,17 @@ public final class MutableDecimal${scale}f extends AbstractMutableDecimal<Scale$
 	}
 
 	/**
+	 * Constructs a {@code MutableDecimal${scale}f} whose value is numerically equal to
+	 * that of the specified {@link Decimal${scale}f} value.
+	 *
+	 * @param value
+	 *            {@code Decimal${scale}f} value to convert into a {@code MutableDecimal${scale}f}
+	 */
+	public MutableDecimal${scale}f(Decimal${scale}f value) {
+		this(value.unscaledValue(), Decimal${scale}f.METRICS);
+	}
+
+	/**
 	 * Constructs a {@code MutableDecimal${scale}f} whose value is calculated by
 	 * rounding the specified {@link Decimal} argument to scale ${scale} using
 	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if 
