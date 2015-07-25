@@ -17,6 +17,9 @@ import org.decimal4j.scale.Scale${scale}f;
 /**
  * <tt>MutableDecimal${scale}f</tt> represents a mutable decimal number with a fixed
  * number of ${scale} digits to the right of the decimal point.
+ * <p>
+ * All methods for this class throw {@code NullPointerException} when passed a
+ * {@code null} object reference for any input parameter.
  */
 public final class MutableDecimal${scale}f extends AbstractMutableDecimal<Scale${scale}f, MutableDecimal${scale}f> implements Cloneable {
 

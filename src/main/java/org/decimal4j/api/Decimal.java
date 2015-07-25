@@ -74,7 +74,7 @@ import org.decimal4j.truncate.TruncationPolicy;
  * exception if an overflow occurs. The documentation of operations which can
  * cause an overflow always indicates the exact overflow behavior.
  * <p>
- * All methods for this class throw {@code NullPointerException} when passed a
+ * All methods for this interface throw {@code NullPointerException} when passed a
  * {@code null} object reference for any input parameter.
  * 
  * @param <S>

@@ -17,6 +17,9 @@ import org.decimal4j.scale.Scale${scale}f;
 /**
  * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
  * number of ${scale} digits to the right of the decimal point.
+ * <p>
+ * All methods for this class throw {@code NullPointerException} when passed a
+ * {@code null} object reference for any input parameter.
  */
 public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scale}f, Decimal${scale}f> {
 
