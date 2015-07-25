@@ -92,7 +92,7 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 				return factory.valueOfUnscaled(operand, scale, getRoundingMode());
 			}
 		case 1:
-			// Factory, mutable
+			// Factory, mutable (via set)
 			final MutableDecimal<S> mutable = factory.newMutable();
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return noScale ? mutable.setUnscaled(operand) : mutable.setUnscaled(operand, scale);
@@ -100,7 +100,9 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 				return mutable.setUnscaled(operand, scale, getRoundingMode());
 			}
 		case 2:
-			return newMutableInstance(scaleMetrics, operand);
+			if (scale == scaleMetrics.getScale() && isRoundingDefault()) {
+				return newMutableInstance(scaleMetrics, operand);
+			}//else: fallthrough
 		case 3:
 			return newDecimal(scaleMetrics, arithmetic.fromUnscaled(operand, scale));
 		case 4:// fall through
@@ -114,18 +116,9 @@ public class FromUnscaledTest extends AbstractUnscaledToDecimalTest {
 		try {
 			@SuppressWarnings("unchecked")
 			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
-			if (isRoundingDefault() && RND.nextBoolean()) {
-				if (scale == scaleMetrics.getScale() && RND.nextBoolean()) {
-					@SuppressWarnings("unchecked")
-					final Decimal<S> result = (Decimal<S>)clazz.getMethod("unscaled", long.class).invoke(null, operand);
-					return result;
-				} else {
-					return clazz.getConstructor(long.class, int.class).newInstance(operand, scale);
-				}
-			} else {
-				return clazz.getConstructor(long.class, int.class, RoundingMode.class)//
-						.newInstance(operand, scale, getRoundingMode());
-			}
+			@SuppressWarnings("unchecked")
+			final Decimal<S> result = (Decimal<S>)clazz.getMethod("unscaled", long.class).invoke(null, operand);
+			return result;
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) e.getTargetException();

@@ -111,7 +111,9 @@ public class FromDoubleTest extends AbstractDoubleToDecimalTest {
 			}
 		case 2:
 			//mutable constructor
-			return newMutableInstance(scaleMetrics, operand);
+			if (isRoundingDefault()) {
+				return newMutableInstance(scaleMetrics, operand);
+			}//else: fallthrough
 		case 3://fall through
 		default:
 			//Immutable, valueOf method
@@ -123,11 +125,7 @@ public class FromDoubleTest extends AbstractDoubleToDecimalTest {
 		try {
 			@SuppressWarnings("unchecked")
 			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
-			if (isRoundingDefault() && RND.nextBoolean()) {
-				return clazz.getConstructor(double.class).newInstance(operand);
-			} else {
-				return clazz.getConstructor(double.class, RoundingMode.class).newInstance(operand, getRoundingMode());
-			}
+			return clazz.getConstructor(double.class).newInstance(operand);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) e.getTargetException();

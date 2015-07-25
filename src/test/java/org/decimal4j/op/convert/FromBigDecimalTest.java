@@ -80,7 +80,7 @@ public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, BigDecimal operand) {
-		switch(RND.nextInt(4)) {
+		switch(RND.nextInt(5)) {
 		case 0:
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
@@ -98,9 +98,29 @@ public class FromBigDecimalTest extends AbstractBigDecimalToDecimalTest {
 		case 2:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
-		case 3://fallthrough
+		case 3:
+			//Mutable, constructor
+			if (isRoundingDefault()) {
+				return newMutableInstance(scaleMetrics, operand);
+			}//else: fallthrough
+		case 4://fallthrough
 		default:
 			return newDecimal(scaleMetrics, arithmetic.fromBigDecimal(operand));
+		}
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, BigDecimal operand) {
+		try {
+			@SuppressWarnings("unchecked")
+			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
+			return clazz.getConstructor(BigDecimal.class).newInstance(operand);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
+		} catch (Exception e) {
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
 		}
 	}
 

@@ -88,9 +88,27 @@ public class FromBigIntegerTest extends AbstractBigIntegerToDecimalTest {
 		case 2:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
-		case 3://fallthrough
+		case 3:
+			//Mutable, constructor
+			return newMutableInstance(scaleMetrics, operand);
+		case 4://fallthrough
 		default:
 			return newDecimal(scaleMetrics, arithmetic.fromBigInteger(operand));
+		}
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, BigInteger operand) {
+		try {
+			@SuppressWarnings("unchecked")
+			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
+			return clazz.getConstructor(BigInteger.class).newInstance(operand);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
+		} catch (Exception e) {
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
 		}
 	}
 

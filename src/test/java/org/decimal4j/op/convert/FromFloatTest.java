@@ -78,21 +78,23 @@ public class FromFloatTest extends AbstractFloatToDecimalTest {
 
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, float operand) {
-		if (RND.nextBoolean()) {
+		switch(RND.nextInt(3)) {
+		case 0:
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).valueOf(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).valueOf(operand, getRoundingMode());
 			}
-		} else if (RND.nextBoolean()) {
+		case 1:
 			//Factory, mutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand);
 			} else {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
-		} else {
+		case 2://fall through
+		default:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
 		}

@@ -227,10 +227,9 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 				if (RND.nextBoolean()) {
 					return newImmutableInstance(scaleMetrics, operand);
 				}
-				return newMutableInstance(scaleMetrics, operand, null);
-			} else {
-				return newMutableInstance(scaleMetrics, operand, getRoundingMode());
+				return newMutableInstance(scaleMetrics, operand);
 			}
+			//else: fallthrough
 		case 3:// fallthrough
 		default:
 			// Immutable, valueOf method
@@ -239,22 +238,18 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	private <S extends ScaleMetrics> Decimal<S> newImmutableInstance(S scaleMetrics, String operand) {
-		return newInstance(scaleMetrics, getImmutableClassName(), operand, null);
+		return newInstance(scaleMetrics, getImmutableClassName(), operand);
 	}
 
-	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, String operand, RoundingMode roundingMode) {
-		return newInstance(scaleMetrics, getMutableClassName(), operand, roundingMode);
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, String operand) {
+		return newInstance(scaleMetrics, getMutableClassName(), operand);
 	}
 
-	private <S extends ScaleMetrics> Decimal<S> newInstance(S scaleMetrics, String className, String operand, RoundingMode roundingMode) {
+	private <S extends ScaleMetrics> Decimal<S> newInstance(S scaleMetrics, String className, String operand) {
 		try {
 			@SuppressWarnings("unchecked")
 			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(className);
-			if (roundingMode == null) {
-				return clazz.getConstructor(String.class).newInstance(operand);
-			} else {
-				return clazz.getConstructor(String.class, RoundingMode.class).newInstance(operand, roundingMode);
-			}
+			return clazz.getConstructor(String.class).newInstance(operand);
 		} catch (InvocationTargetException e) {
 			if (e.getTargetException() instanceof RuntimeException) {
 				throw (RuntimeException) e.getTargetException();

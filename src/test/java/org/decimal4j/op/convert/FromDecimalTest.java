@@ -80,7 +80,7 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 	
 	@Override
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, Decimal<?> operand) {
-		switch(RND.nextInt(3)) {
+		switch(RND.nextInt(4)) {
 		case 0:
 			//Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
@@ -96,10 +96,30 @@ public class FromDecimalTest extends AbstractUnknownDecimalToDecimalTest {
 			} else {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
-		case 2://fallthrough
+		case 2:
+			//Mutable, constructor
+			if (isRoundingDefault()) {
+				return newMutableInstance(scaleMetrics, operand);
+			}//else: fallthrough
+		case 3://fallthrough
 		default:
 			//Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
+		}
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> newMutableInstance(S scaleMetrics, Decimal<?> operand) {
+		try {
+			@SuppressWarnings("unchecked")
+			final Class<Decimal<S>> clazz = (Class<Decimal<S>>) Class.forName(getMutableClassName());
+			return clazz.getConstructor(Decimal.class).newInstance(operand);
+		} catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
+		} catch (Exception e) {
+			throw new RuntimeException("could not invoke constructor, e=" + e, e);
 		}
 	}
 
