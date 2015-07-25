@@ -362,7 +362,7 @@ final class DoubleConversion {
 	 *            the arithmetic associated with the value
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @return <tt>round<sub>DOWN</tt>(value)</tt>
+	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
 	 */
 	public static final double unscaledToDouble(DecimalArithmetic arith, long unscaled) {
 		return unscaledToDouble(arith, DecimalRounding.DOWN, unscaled);

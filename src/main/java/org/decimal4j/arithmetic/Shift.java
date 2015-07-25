@@ -44,7 +44,7 @@ final class Shift {
 	 *            the value to shift
 	 * @param positions
 	 *            the positions to shift
-	 * @return <tt>round(uDecimal << positions)</tt>
+	 * @return {@code round(uDecimal << positions)}
 	 */
 	public static final long shiftLeft(DecimalRounding rounding, long uDecimal, int positions) {
 		if (positions >= 0) {
@@ -65,7 +65,7 @@ final class Shift {
 	 *            the value to shift
 	 * @param positions
 	 *            the positions to shift
-	 * @return <tt>round(uDecimal >> positions)</tt>
+	 * @return {@code round(uDecimal >> positions)}
 	 */
 	public static final long shiftRight(DecimalRounding rounding, long uDecimal, int positions) {
 		if (uDecimal == 0 | positions == 0) {
@@ -105,7 +105,7 @@ final class Shift {
 	 *            the value to shift
 	 * @param positions
 	 *            the positions to shift
-	 * @return <tt>round(uDecimal << positions)</tt>
+	 * @return {@code round(uDecimal << positions)}
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@link OverflowMode} is set to throw an exception
@@ -150,7 +150,7 @@ final class Shift {
 	 *            the value to shift
 	 * @param positions
 	 *            the positions to shift
-	 * @return <tt>round(uDecimal >> positions)</tt>
+	 * @return {@code round(uDecimal >> positions)}
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@link OverflowMode} is set to throw an exception

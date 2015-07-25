@@ -357,7 +357,7 @@ final class FloatConversion {
 	 *            the arithmetic associated with the value
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @return <tt>round<sub>DOWN</tt>(value)</tt>
+	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
 	 */
 	public static final float unscaledToFloat(DecimalArithmetic arith, long unscaled) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, unscaled);
