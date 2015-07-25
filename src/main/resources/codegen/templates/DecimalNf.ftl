@@ -22,8 +22,11 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	private static final long serialVersionUID = 1L;
 
-	/** Scale metrics constant for {@code Decimal${scale}f} returned by {@link #getScaleMetrics()}*/
-	public static final Scale${scale}f SCALE = Scale${scale}f.INSTANCE;
+	/** Scale value ${scale} for {@code Decimal${scale}f} returned by {@link #getScale()}.*/
+	public static final int SCALE = ${scale};
+
+	/** Scale metrics constant for {@code Decimal${scale}f} returned by {@link #getScaleMetrics()}.*/
+	public static final Scale${scale}f METRICS = Scale${scale}f.INSTANCE;
 
 	/** Factory constant for {@code Decimal${scale}f} returned by {@link #getFactory()}.*/
 	public static final Factory${scale}f FACTORY = Factory${scale}f.INSTANCE;
@@ -32,16 +35,16 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 * Default arithmetic for {@code Decimal${scale}f} performing unchecked operations with rounding mode 
 	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 */
-	public static final DecimalArithmetic DEFAULT_ARITHMETIC = SCALE.getDefaultArithmetic();
+	public static final DecimalArithmetic DEFAULT_ARITHMETIC = METRICS.getDefaultArithmetic();
 	
 	/**
 	 * Default arithmetic for {@code Decimal${scale}f} performing checked operations with rounding mode 
 	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 */
-	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETIC = SCALE.getDefaultCheckedArithmetic();
+	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETIC = METRICS.getDefaultCheckedArithmetic();
 
 	/** The unscaled long value that represents one.*/
-	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
+	public static final long ONE_UNSCALED = METRICS.getScaleFactor();
 
 	/** The {@code Decimal${scale}f} constant zero.*/
 	public static final Decimal${scale}f ZERO = new Decimal${scale}f(0);
@@ -214,53 +217,53 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 	
 	@Override
-	public Scale${scale}f getScaleMetrics() {
+	public final Scale${scale}f getScaleMetrics() {
+		return METRICS;
+	}
+
+	@Override
+	public final int getScale() {
 		return SCALE;
 	}
 
 	@Override
-	public int getScale() {
-		return ${scale};
-	}
-
-	@Override
-	public Factory${scale}f getFactory() {
+	public final Factory${scale}f getFactory() {
 		return FACTORY;
 	}
 
 	@Override
-	protected Decimal${scale}f self() {
+	protected final Decimal${scale}f self() {
 		return this;
 	}
 
 	@Override
-	protected DecimalArithmetic getDefaultArithmetic() {
+	protected final DecimalArithmetic getDefaultArithmetic() {
 		return DEFAULT_ARITHMETIC;
 	}
 	
 	@Override
-	protected DecimalArithmetic getDefaultCheckedArithmetic() {
+	protected final DecimalArithmetic getDefaultCheckedArithmetic() {
 		return DEFAULT_CHECKED_ARITHMETIC;
 	}
 	
 	@Override
-	protected DecimalArithmetic getRoundingDownArithmetic() {
-		return SCALE.getRoundingDownArithmetic();
+	protected final DecimalArithmetic getRoundingDownArithmetic() {
+		return METRICS.getRoundingDownArithmetic();
 	}
 	
 	@Override
-	protected DecimalArithmetic getRoundingFloorArithmetic() {
-		return SCALE.getRoundingFloorArithmetic();
+	protected final DecimalArithmetic getRoundingFloorArithmetic() {
+		return METRICS.getRoundingFloorArithmetic();
 	}
 	
 	@Override
-	protected DecimalArithmetic getRoundingHalfEvenArithmetic() {
-		return SCALE.getRoundingHalfEvenArithmetic();
+	protected final DecimalArithmetic getRoundingHalfEvenArithmetic() {
+		return METRICS.getRoundingHalfEvenArithmetic();
 	}
 	
 	@Override
-	protected DecimalArithmetic getRoundingUnnecessaryArithmetic() {
-		return SCALE.getRoundingUnnecessaryArithmetic();
+	protected final DecimalArithmetic getRoundingUnnecessaryArithmetic() {
+		return METRICS.getRoundingUnnecessaryArithmetic();
 	}
 
  	/**
@@ -322,7 +325,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *             necessary
 	 */
 	public static Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
-		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromFloat(value));
+		return valueOfUnscaled(METRICS.getCheckedArithmetic(roundingMode).fromFloat(value));
 	}
 
 	/**
@@ -361,7 +364,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *             necessary
 	 */
 	public static Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
-		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromDouble(value));
+		return valueOfUnscaled(METRICS.getCheckedArithmetic(roundingMode).fromDouble(value));
 	}
 
 	/**
@@ -414,7 +417,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *             necessary
 	 */
 	public static Decimal${scale}f valueOf(BigDecimal value, RoundingMode roundingMode) {
-		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromBigDecimal(value));
+		return valueOfUnscaled(METRICS.getCheckedArithmetic(roundingMode).fromBigDecimal(value));
 	}
 
 	/**
@@ -514,7 +517,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *             necessary
 	 */
 	public static Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
-		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).parse(value));
+		return valueOfUnscaled(METRICS.getCheckedArithmetic(roundingMode).parse(value));
 	}
 
 	/**
@@ -582,7 +585,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *             if the specified value is too large to be represented as a {@code Decimal${scale}f}
 	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
-		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
+		return valueOfUnscaled(METRICS.getCheckedArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
 	}
 
 	@Override

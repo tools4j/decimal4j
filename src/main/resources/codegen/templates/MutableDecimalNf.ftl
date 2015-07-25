@@ -34,7 +34,7 @@ public final class MutableDecimal${scale}f extends
 	}
 
 	public MutableDecimal${scale}f(String value, RoundingMode roundingMode) {
-		super(Decimal${scale}f.SCALE.getCheckedArithmetic(roundingMode).parse(value));
+		super(Decimal${scale}f.METRICS.getCheckedArithmetic(roundingMode).parse(value));
 	}
 
 	public MutableDecimal${scale}f(long value) {
@@ -93,28 +93,28 @@ public final class MutableDecimal${scale}f extends
 	}
 
 	@Override
-	protected MutableDecimal${scale}f create(long unscaled) {
-		return new MutableDecimal${scale}f(unscaled, Decimal${scale}f.SCALE);
+	protected final MutableDecimal${scale}f create(long unscaled) {
+		return new MutableDecimal${scale}f(unscaled, Decimal${scale}f.METRICS);
 	}
 	
 	@Override
-	protected MutableDecimal${scale}f[] createArray(int length) {
+	protected final MutableDecimal${scale}f[] createArray(int length) {
 		return new MutableDecimal${scale}f[length];
 	}
 
 	@Override
-	protected MutableDecimal${scale}f self() {
+	protected final MutableDecimal${scale}f self() {
 		return this;
 	}
 
 	@Override
-	public Scale${scale}f getScaleMetrics() {
-		return Decimal${scale}f.SCALE;
+	public final Scale${scale}f getScaleMetrics() {
+		return Decimal${scale}f.METRICS;
 	}
 
 	@Override
-	public int getScale() {
-		return ${scale};
+	public final int getScale() {
+		return Decimal${scale}f.SCALE;
 	}
 
 	@Override
@@ -129,27 +129,27 @@ public final class MutableDecimal${scale}f extends
 	
 	@Override
 	protected DecimalArithmetic getDefaultCheckedArithmetic() {
-		return Decimal${scale}f.SCALE.getDefaultCheckedArithmetic();
+		return Decimal${scale}f.METRICS.getDefaultCheckedArithmetic();
 	}
 
 	@Override
 	protected DecimalArithmetic getRoundingDownArithmetic() {
-		return Decimal${scale}f.SCALE.getRoundingDownArithmetic();
+		return Decimal${scale}f.METRICS.getRoundingDownArithmetic();
 	}
 	
 	@Override
 	protected DecimalArithmetic getRoundingFloorArithmetic() {
-		return Decimal${scale}f.SCALE.getRoundingFloorArithmetic();
+		return Decimal${scale}f.METRICS.getRoundingFloorArithmetic();
 	}
 	
 	@Override
 	protected DecimalArithmetic getRoundingHalfEvenArithmetic() {
-		return Decimal${scale}f.SCALE.getRoundingHalfEvenArithmetic();
+		return Decimal${scale}f.METRICS.getRoundingHalfEvenArithmetic();
 	}
 	
 	@Override
 	protected DecimalArithmetic getRoundingUnnecessaryArithmetic() {
-		return Decimal${scale}f.SCALE.getRoundingUnnecessaryArithmetic();
+		return Decimal${scale}f.METRICS.getRoundingUnnecessaryArithmetic();
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public final class MutableDecimal${scale}f extends
 	 * @return a new MutableDecimal${scale}f value initialised with <code>unscaledValue * 10<sup>-${scale}</sup></code>
 	 */
 	public static MutableDecimal${scale}f unscaled(long unscaledValue) {
-		return new MutableDecimal${scale}f(unscaledValue, Decimal${scale}f.SCALE);
+		return new MutableDecimal${scale}f(unscaledValue, Decimal${scale}f.METRICS);
 	}
 
 	/**
