@@ -22,20 +22,20 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	private static final long serialVersionUID = 1L;
 
-	/** Scale metrics constant for Decimal${scale}f returned by {@link #getScaleMetrics()}*/
+	/** Scale metrics constant for {@code Decimal${scale}f} returned by {@link #getScaleMetrics()}*/
 	public static final Scale${scale}f SCALE = Scale${scale}f.INSTANCE;
 
-	/** Factory constant for Decimal${scale}f returned by {@link #getFactory()}.*/
+	/** Factory constant for {@code Decimal${scale}f} returned by {@link #getFactory()}.*/
 	public static final Factory${scale}f FACTORY = Factory${scale}f.INSTANCE;
 	
 	/**
-	 * Default arithmetic for Decimal${scale}f performing unchecked operations with rounding mode 
+	 * Default arithmetic for {@code Decimal${scale}f} performing unchecked operations with rounding mode 
 	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 */
 	public static final DecimalArithmetic DEFAULT_ARITHMETIC = SCALE.getDefaultArithmetic();
 	
 	/**
-	 * Default arithmetic for Decimal${scale}f performing checked operations with rounding mode 
+	 * Default arithmetic for {@code Decimal${scale}f} performing checked operations with rounding mode 
 	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 */
 	public static final DecimalArithmetic DEFAULT_CHECKED_ARITHMETIC = SCALE.getDefaultCheckedArithmetic();
@@ -43,7 +43,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	/** The unscaled long value that represents one.*/
 	public static final long ONE_UNSCALED = SCALE.getScaleFactor();
 
-	/** The Decimal${scale}f constant zero.*/
+	/** The {@code Decimal${scale}f} constant zero.*/
 	public static final Decimal${scale}f ZERO = new Decimal${scale}f(0);
     /**
      * A constant holding the smallest positive value a {@code Decimal${scale}f}
@@ -69,47 +69,47 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
         }
     }
 
-	/** The Decimal${scale}f constant 1.*/
+	/** The {@code Decimal${scale}f} constant 1.*/
 	public static final Decimal${scale}f ONE = valueOf(1);
-	/** The Decimal${scale}f constant 2.*/
+	/** The {@code Decimal${scale}f} constant 2.*/
 	public static final Decimal${scale}f TWO = valueOf(2);
-	/** The Decimal${scale}f constant 3.*/
+	/** The {@code Decimal${scale}f} constant 3.*/
 	public static final Decimal${scale}f THREE = valueOf(3);
-	/** The Decimal${scale}f constant 4.*/
+	/** The {@code Decimal${scale}f} constant 4.*/
 	public static final Decimal${scale}f FOUR = valueOf(4);
-	/** The Decimal${scale}f constant 5.*/
+	/** The {@code Decimal${scale}f} constant 5.*/
 	public static final Decimal${scale}f FIVE = valueOf(5);
-	/** The Decimal${scale}f constant 6.*/
+	/** The {@code Decimal${scale}f} constant 6.*/
 	public static final Decimal${scale}f SIX = valueOf(6);
-	/** The Decimal${scale}f constant 7.*/
+	/** The {@code Decimal${scale}f} constant 7.*/
 	public static final Decimal${scale}f SEVEN = valueOf(7);
-	/** The Decimal${scale}f constant 8.*/
+	/** The {@code Decimal${scale}f} constant 8.*/
 	public static final Decimal${scale}f EIGHT = valueOf(8);
-	/** The Decimal${scale}f constant 9.*/
+	/** The {@code Decimal${scale}f} constant 9.*/
 	public static final Decimal${scale}f NINE = valueOf(9);
 <#if (scale <= 17)>
-	/** The Decimal${scale}f constant 10.*/
-	public static final Decimal${scale}f TEN = new Decimal${scale}f(10 * ONE_UNSCALED);
+	/** The {@code Decimal${scale}f} constant 10.*/
+	public static final Decimal${scale}f TEN = valueOf(10);
 <#if (scale <= 16)>
-	/** The Decimal${scale}f constant 100.*/
+	/** The {@code Decimal${scale}f} constant 100.*/
 	public static final Decimal${scale}f HUNDRED = new Decimal${scale}f(100 * ONE_UNSCALED);
 <#if (scale <= 15)>
-	/** The Decimal${scale}f constant 1000.*/
+	/** The {@code Decimal${scale}f} constant 1000.*/
 	public static final Decimal${scale}f THOUSAND = new Decimal${scale}f(1000 * ONE_UNSCALED);
 <#if (scale <= 12)>
-	/** The Decimal${scale}f constant 10<sup>6</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>6</sup>.*/
 	public static final Decimal${scale}f MILLION = new Decimal${scale}f(1000000 * ONE_UNSCALED);
 <#if (scale <= 9)>
-	/** The Decimal${scale}f constant 10<sup>9</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>9</sup>.*/
 	public static final Decimal${scale}f BILLION = new Decimal${scale}f(1000000000 * ONE_UNSCALED);
 <#if (scale <= 6)>
-	/** The Decimal${scale}f constant 10<sup>12</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>12</sup>.*/
 	public static final Decimal${scale}f TRILLION = new Decimal${scale}f(1000000000000L * ONE_UNSCALED);
 <#if (scale <= 3)>
-	/** The Decimal${scale}f constant 10<sup>15</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>15</sup>.*/
 	public static final Decimal${scale}f QUADRILLION = new Decimal${scale}f(1000000000000000L * ONE_UNSCALED);
 <#if (scale <= 0)>
-	/** The Decimal${scale}f constant 10<sup>18</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>18</sup>.*/
 	public static final Decimal${scale}f QUINTILLION = new Decimal${scale}f(1000000000000000000L * ONE_UNSCALED);
 </#if>
 </#if>
@@ -120,34 +120,34 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 </#if>
 </#if>
 
-	/** The Decimal${scale}f constant -1.*/
+	/** The {@code Decimal${scale}f} constant -1.*/
 	public static final Decimal${scale}f MINUS_ONE = valueOf(-1);
 
 <#if (scale >= 1)>
-	/** The Decimal${scale}f constant 0.5.*/
+	/** The {@code Decimal${scale}f} constant 0.5.*/
 	public static final Decimal${scale}f HALF = new Decimal${scale}f(ONE_UNSCALED / 2);
-	/** The Decimal${scale}f constant 0.1.*/
+	/** The {@code Decimal${scale}f} constant 0.1.*/
 	public static final Decimal${scale}f TENTH = new Decimal${scale}f(ONE_UNSCALED / 10);
 <#if (scale >= 2)>
-	/** The Decimal${scale}f constant 0.01.*/
+	/** The {@code Decimal${scale}f} constant 0.01.*/
 	public static final Decimal${scale}f HUNDREDTH = new Decimal${scale}f(ONE_UNSCALED / 100);
 <#if (scale >= 3)>
-	/** The Decimal${scale}f constant 0.001.*/
+	/** The {@code Decimal${scale}f} constant 0.001.*/
 	public static final Decimal${scale}f THOUSANDTH = new Decimal${scale}f(ONE_UNSCALED / 1000);
 <#if (scale >= 6)>
-	/** The Decimal${scale}f constant 10<sup>-6</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>-6</sup>.*/
 	public static final Decimal${scale}f MILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000);
 <#if (scale >= 9)>
-	/** The Decimal${scale}f constant 10<sup>-9</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>-9</sup>.*/
 	public static final Decimal${scale}f BILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000);
 <#if (scale >= 12)>
-	/** The Decimal${scale}f constant 10<sup>-12</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>-12</sup>.*/
 	public static final Decimal${scale}f TRILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000000L);
 <#if (scale >= 15)>
-	/** The Decimal${scale}f constant 10<sup>-15</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>-15</sup>.*/
 	public static final Decimal${scale}f QUADRILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000000000L);
 <#if (scale >= 18)>
-	/** The Decimal${scale}f constant 10<sup>-18</sup>.*/
+	/** The {@code Decimal${scale}f} constant 10<sup>-18</sup>.*/
 	public static final Decimal${scale}f QUINTILLIONTH = new Decimal${scale}f(ONE_UNSCALED / 1000000000000000000L);
 </#if>
 </#if>
@@ -179,10 +179,36 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
      */
 	public static final Decimal${scale}f MIN_INTEGER_VALUE = new Decimal${scale}f((Long.MIN_VALUE / ONE_UNSCALED) * ONE_UNSCALED);
 
+	/**
+	 * Private constructor with unscaled value.
+	 *
+	 * @param unscaled the unscaled value
+	 */
 	private Decimal${scale}f(long unscaled) {
 		super(unscaled);
 	}
 
+	/**
+	 * Translates the string representation of a {@code Decimal} into a
+	 * {@code Decimal${scale}f}. The string representation consists of an
+	 * optional sign, {@code '+'} or {@code '-'} , followed by a sequence of
+	 * zero or more decimal digits ("the integer"), optionally followed by a
+	 * fraction.
+	 * <p>
+	 * The fraction consists of a decimal point followed by zero or more decimal
+	 * digits. The string must contain at least one digit in either the integer
+	 * or the fraction. If the fraction contains more than ${scale} digits, the 
+	 * value is rounded using {@link RoundingMode#HALF_UP HALF_UP} rounding. An 
+	 * exception is thrown if the value is too large to be represented as a 
+	 * {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            String value to convert into a {@code Decimal${scale}f}
+	 * @throws NumberFormatException
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a 
+	 *             {@code Decimal${scale}f}
+	 */
 	public Decimal${scale}f(String value) {
 		super(DEFAULT_CHECKED_ARITHMETIC.parse(value));
 	}
@@ -237,13 +263,19 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return SCALE.getRoundingUnnecessaryArithmetic();
 	}
 
-    /**
-     * Returns a Decimal${scale}f whose value is equal to that of the
-     * specified {@code long}.
-     *
-     * @param  value value of the Decimal${scale}f to return.
-     * @return a Decimal${scale}f with the specified value.
-     */
+ 	/**
+	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
+	 * that of the specified {@code long} value. An exception is thrown if the
+	 * specified value is too large to be represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            long value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} value numerically equal to the specified 
+	 *            {@code long} value
+	 * @throws IllegalArgumentException
+	 *            if {@code value} is too large to be represented as a 
+	 *            {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(long value) {
         if (value == 0)
             return ZERO;
@@ -254,50 +286,246 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromLong(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by
+	 * rounding the specified {@code float} argument to scale ${scale}
+	 * using {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown
+	 * if the specified value is too large to be represented as a {@code Decimal${scale}f}. 
+	 *
+	 * @param value
+	 *            float value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(float value) {
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromFloat(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by
+	 * rounding the specified {@code float} argument to scale ${scale}
+	 * using the specified {@code roundingMode}. An exception is thrown
+	 * if the specified value is too large to be represented as a {@code Decimal${scale}f}. 
+	 *
+	 * @param value
+	 *            float value to convert into a {@code Decimal${scale}f}
+	 * @param roundingMode
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the float to be represented as a {@code Decimal${scale}f}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static Decimal${scale}f valueOf(float value, RoundingMode roundingMode) {
 		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromFloat(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by
+	 * rounding the specified {@code double} argument to scale ${scale}
+	 * using {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown
+	 * if the specified value is too large to be represented as a {@code Decimal${scale}f}. 
+	 *
+	 * @param value
+	 *            double value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(double value) {
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromDouble(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by
+	 * rounding the specified {@code double} argument to scale ${scale}
+	 * using the specified {@code roundingMode}. An exception is thrown
+	 * if the specified value is too large to be represented as a {@code Decimal${scale}f}. 
+	 *
+	 * @param value
+	 *            double value to convert into a {@code Decimal${scale}f}
+	 * @param roundingMode
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is NaN or infinite or if the magnitude is
+	 *             too large for the double to be represented as a {@code Decimal${scale}f}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static Decimal${scale}f valueOf(double value, RoundingMode roundingMode) {
 		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromDouble(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to that of
+	 * the specified {@link BigInteger} value. An exception is thrown if the
+	 * specified value is too large to be represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            {@code BigInteger} value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} value numerically equal to the specified big 
+	 *         integer value
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(BigInteger value) {
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromBigInteger(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by rounding
+	 * the specified {@link BigDecimal} argument to scale ${scale} using
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if the 
+	 * specified value is too large to be represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            {@code BigDecimal} value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(BigDecimal value) {
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromBigDecimal(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by rounding
+	 * the specified {@link BigDecimal} argument to scale ${scale} using 
+	 * the specified {@code roundingMode}. An exception is thrown if the 
+	 * specified value is too large to be represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            {@code BigDecimal} value to convert into a {@code Decimal${scale}f}
+	 * @param roundingMode
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static Decimal${scale}f valueOf(BigDecimal value, RoundingMode roundingMode) {
 		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromBigDecimal(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by rounding
+	 * the specified {@link Decimal} argument to scale ${scale} using
+	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if the
+	 * specified value is too large to be represented as a {@code Decimal${scale}f}. 
+	 *
+	 * @param value
+	 *            Decimal value to convert into a {@code Decimal${scale}f} 
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(Decimal<?> value) {
+		if (value instanceof Decimal${scale}f) {
+			return (Decimal${scale}f)value;
+		}
 		return valueOfUnscaled(value.unscaledValue(), value.getScale());
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is calculated by rounding
+	 * the specified {@link Decimal} argument to scale ${scale} using
+	 * the specified {@code roundingMode}. An exception is thrown if the
+	 * specified value is too large to be represented as a {@code Decimal${scale}f}. 
+	 *
+	 * @param value
+	 *            Decimal value to convert into a {@code Decimal${scale}f} 
+	 * @param roundingMode
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @throws IllegalArgumentException
+	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static Decimal${scale}f valueOf(Decimal<?> value, RoundingMode roundingMode) {
+		if (value instanceof Decimal${scale}f) {
+			return (Decimal${scale}f)value;
+		}
 		return valueOfUnscaled(value.unscaledValue(), value.getScale(), roundingMode);
 	}
 
+	/**
+	 * Translates the string representation of a {@code Decimal} into a
+	 * {@code Decimal${scale}f}. The string representation consists of an
+	 * optional sign, {@code '+'} or {@code '-'} , followed by a sequence of
+	 * zero or more decimal digits ("the integer"), optionally followed by a
+	 * fraction.
+	 * <p>
+	 * The fraction consists of a decimal point followed by zero or more decimal
+	 * digits. The string must contain at least one digit in either the integer
+	 * or the fraction. If the fraction contains more than ${scale} digits, the 
+	 * value is rounded using {@link RoundingMode#HALF_UP HALF_UP} rounding. An 
+	 * exception is thrown if the value is too large to be represented as a 
+	 * {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            String value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @throws NumberFormatException
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a 
+	 *             {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOf(String value) {
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.parse(value));
 	}
 
+	/**
+	 * Translates the string representation of a {@code Decimal} into a
+	 * {@code Decimal${scale}f}. The string representation consists of an
+	 * optional sign, {@code '+'} or {@code '-'} , followed by a sequence of
+	 * zero or more decimal digits ("the integer"), optionally followed by a
+	 * fraction.
+	 * <p>
+	 * The fraction consists of a decimal point followed by zero or more decimal
+	 * digits. The string must contain at least one digit in either the integer
+	 * or the fraction. If the fraction contains more than ${scale} digits, the 
+	 * value is rounded using the specified {@code roundingMode}. An exception 
+	 * is thrown if the value is too large to be represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param value
+	 *            String value to convert into a {@code Decimal${scale}f}
+	 * @param roundingMode
+	 *            the rounding mode to apply if the fraction contains more than
+	 *            ${scale} digits
+	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @throws NumberFormatException
+	 *             if {@code value} does not represent a valid {@code Decimal}
+	 *             or if the value is too large to be represented as a 
+	 *             {@code Decimal${scale}f}
+	 * @throws ArithmeticException
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is
+	 *             necessary
+	 */
 	public static Decimal${scale}f valueOf(String value, RoundingMode roundingMode) {
 		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).parse(value));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
+	 * <tt>(unscaledValue &times; 10<sup>-${scale}</sup>)</tt>.
+	 *
+	 * @param unscaledValue
+	 *            unscaled value to convert into a {@code Decimal${scale}f}
+	 * @return a {@code Decimal${scale}f} calculated as:
+	 *         <tt>unscaledValue &times; 10<sup>-${scale}</sup></tt>
+	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {
 		if (unscaledValue == 0) {
 			return ZERO;
@@ -314,10 +542,45 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 		return new Decimal${scale}f(unscaledValue);
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
+	 * <tt>(unscaledValue &times; 10<sup>-scale</sup>)</tt>. The result is
+	 * rounded to scale ${scale} using {@link RoundingMode#HALF_UP HALF_UP} 
+	 * rounding. An exception is thrown if the specified value is too large 
+	 * to be represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param unscaledValue
+	 *            unscaled value to convert into a {@code Decimal${scale}f}
+	 * @param scale
+	 *            the scale to apply to {@code unscaledValue}
+	 * @return a {@code Decimal${scale}f} calculated as:
+	 *         <tt>round<sub>HALF_UP</sub>(unscaledValue &times; 10<sup>-scale</sup>)</tt>
+	 * @throws IllegalArgumentException
+	 *             if the specified value is too large to be represented as a 
+	 *             {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale) {
 		return valueOfUnscaled(DEFAULT_CHECKED_ARITHMETIC.fromUnscaled(unscaledValue, scale));
 	}
 
+	/**
+	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
+	 * <tt>(unscaledValue &times; 10<sup>-scale</sup>)</tt>. The result
+	 * is rounded to scale ${scale} using the specified {@code roundingMode}. 
+	 * An exception is thrown if the specified value is too large to be 
+	 * represented as a {@code Decimal${scale}f}.
+	 *
+	 * @param unscaledValue
+	 *            unscaled value to convert into a Decimal${scale}
+	 * @param scale
+	 *            the scale to apply to {@code unscaledValue}
+	 * @param roundingMode
+	 *            the rounding mode to apply during the conversion if necessary
+	 * @return a {@code Decimal${scale}f} calculated as:
+	 *         <tt>round(unscaledValue &times; 10<sup>-scale</sup>)</tt>
+	 * @throws IllegalArgumentException
+	 *             if the specified value is too large to be represented as a {@code Decimal${scale}f}
+	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue, int scale, RoundingMode roundingMode) {
 		return valueOfUnscaled(SCALE.getCheckedArithmetic(roundingMode).fromUnscaled(unscaledValue, scale));
 	}
