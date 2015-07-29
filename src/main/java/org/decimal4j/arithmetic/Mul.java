@@ -36,6 +36,8 @@ import org.decimal4j.truncate.DecimalRounding;
  */
 final class Mul {
 
+	private static final ScaleMetrics SCALE9F = Scale9f.INSTANCE;
+
 	//sufficient (but not necessary) condition that product fits in long
 	private static final boolean doesProductFitInLong(long uDecimal1, long uDecimal2) {
 		if (-SQRT_MAX_VALUE <= uDecimal1 & uDecimal1 <= SQRT_MAX_VALUE & -SQRT_MAX_VALUE <= uDecimal2 & uDecimal2 <= SQRT_MAX_VALUE) {
@@ -122,16 +124,15 @@ final class Mul {
 			return scaleMetrics2.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + scaleMetrics2.divideByScaleFactor(f1 * f2);
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
-			final Scale9f scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
-			final long h1 = scale9f.divideByScaleFactor(uDecimal1);
-			final long h2 = scale9f.divideByScaleFactor(uDecimal2);
-			final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
-			final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
+			final long h1 = SCALE9F.divideByScaleFactor(uDecimal1);
+			final long h2 = SCALE9F.divideByScaleFactor(uDecimal2);
+			final long l1 = uDecimal1 - SCALE9F.multiplyByScaleFactor(h1);
+			final long l2 = uDecimal2 - SCALE9F.multiplyByScaleFactor(h2);
 			final long h1xl2 = h1 * l2;
 			final long h2xl1 = h2 * l1;
-			final long l1xl2d = scale9f.divideByScaleFactor(l1 * l2);
+			final long l1xl2d = SCALE9F.divideByScaleFactor(l1 * l2);
 			final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
 			final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
 			final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
@@ -226,27 +227,26 @@ final class Mul {
 			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, f1xf2r, scaleMetrics2.getScaleFactor());
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
-			final ScaleMetrics scale9f = Scale9f.INSTANCE;
 			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
 			final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
-			final long h1 = scale9f.divideByScaleFactor(uDecimal1);
-			final long h2 = scale9f.divideByScaleFactor(uDecimal2);
-			final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
-			final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
+			final long h1 = SCALE9F.divideByScaleFactor(uDecimal1);
+			final long h2 = SCALE9F.divideByScaleFactor(uDecimal2);
+			final long l1 = uDecimal1 - SCALE9F.multiplyByScaleFactor(h1);
+			final long l2 = uDecimal2 - SCALE9F.multiplyByScaleFactor(h2);
 			final long h1xl2 = h1 * l2;
 			final long h2xl1 = h2 * l1;
 			final long l1xl2 = l1 * l2;
-			final long l1xl2d = scale9f.divideByScaleFactor(l1xl2);
+			final long l1xl2d = SCALE9F.divideByScaleFactor(l1xl2);
 			final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
 			final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
 			final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
 			final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
-			final long l1xl2r = l1xl2 - scale9f.multiplyByScaleFactor(l1xl2d);
+			final long l1xl2r = l1xl2 - SCALE9F.multiplyByScaleFactor(l1xl2d);
 			final long h1xl2_h2xl1_l1xl1 = h1xl2r + h2xl1r + l1xl2d; 
 			final long h1xl2_h2xl1_l1xl1d = scaleDiff09.divideByScaleFactor(h1xl2_h2xl1_l1xl1); 
 			final long h1xl2_h2xl1_l1xl1r = h1xl2_h2xl1_l1xl1 - scaleDiff09.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1d); 
 			final long unrounded = scaleDiff18.multiplyByScaleFactor(h1 * h2) + h1xl2d + h2xl1d + h1xl2_h2xl1_l1xl1d;
-			final long remainder = scale9f.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;
+			final long remainder = SCALE9F.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;
 			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, remainder, scaleMetrics2.getScaleFactor());
 		}
 	}
@@ -363,17 +363,16 @@ final class Mul {
 				return result;
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
-				final ScaleMetrics scale9f = Scale9f.INSTANCE;
 				final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
 				final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
-				final long h1 = scale9f.divideByScaleFactor(uDecimal1);
-				final long h2 = scale9f.divideByScaleFactor(uDecimal2);
-				final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
-				final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
+				final long h1 = SCALE9F.divideByScaleFactor(uDecimal1);
+				final long h2 = SCALE9F.divideByScaleFactor(uDecimal2);
+				final long l1 = uDecimal1 - SCALE9F.multiplyByScaleFactor(h1);
+				final long l2 = uDecimal2 - SCALE9F.multiplyByScaleFactor(h2);
 				final long h1xh2 = Checked.multiplyLong(h1, h2);//checked
 				final long h1xl2 = h1 * l2;//cannot overflow
 				final long h2xl1 = h2 * l1;//cannot overflow
-				final long l1xl2d = scale9f.divideByScaleFactor(l1 * l2);//product fits for scale 9, hence unchecked
+				final long l1xl2d = SCALE9F.divideByScaleFactor(l1 * l2);//product fits for scale 9, hence unchecked
 				final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
 				final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
 				final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
@@ -494,22 +493,21 @@ final class Mul {
 				return result + Rounding.calculateRoundingIncrement(rounding, result, f1xf2r, scaleMetrics2.getScaleFactor());
 			} else {
 				//use scale9 to split into 2 parts: h (high) and l (low)
-				final ScaleMetrics scale9f = Scale9f.INSTANCE;
 				final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
 				final ScaleMetrics scaleDiff18 = Scales.getScaleMetrics(18 - scale);
-				final long h1 = scale9f.divideByScaleFactor(uDecimal1);
-				final long h2 = scale9f.divideByScaleFactor(uDecimal2);
-				final long l1 = uDecimal1 - scale9f.multiplyByScaleFactor(h1);
-				final long l2 = uDecimal2 - scale9f.multiplyByScaleFactor(h2);
+				final long h1 = SCALE9F.divideByScaleFactor(uDecimal1);
+				final long h2 = SCALE9F.divideByScaleFactor(uDecimal2);
+				final long l1 = uDecimal1 - SCALE9F.multiplyByScaleFactor(h1);
+				final long l2 = uDecimal2 - SCALE9F.multiplyByScaleFactor(h2);
 				final long h1xl2 = h1 * l2;
 				final long h2xl1 = h2 * l1;
 				final long l1xl2 = l1 * l2;
-				final long l1xl2d = scale9f.divideByScaleFactor(l1xl2);
+				final long l1xl2d = SCALE9F.divideByScaleFactor(l1xl2);
 				final long h1xl2d = scaleDiff09.divideByScaleFactor(h1xl2);
 				final long h2xl1d = scaleDiff09.divideByScaleFactor(h2xl1);
 				final long h1xl2r = h1xl2 - scaleDiff09.multiplyByScaleFactor(h1xl2d);
 				final long h2xl1r = h2xl1 - scaleDiff09.multiplyByScaleFactor(h2xl1d);
-				final long l1xl2r = l1xl2 - scale9f.multiplyByScaleFactor(l1xl2d);
+				final long l1xl2r = l1xl2 - SCALE9F.multiplyByScaleFactor(l1xl2d);
 				final long h1xl2_h2xl1_l1xl1 = h1xl2r + h2xl1r + l1xl2d; 
 				final long h1xl2_h2xl1_l1xl1d = scaleDiff09.divideByScaleFactor(h1xl2_h2xl1_l1xl1); 
 				final long h1xl2_h2xl1_l1xl1r = h1xl2_h2xl1_l1xl1 - scaleDiff09.multiplyByScaleFactorExact(h1xl2_h2xl1_l1xl1d); 
@@ -521,7 +519,7 @@ final class Mul {
 				result = Checked.addLong(result, h2xl1d);
 				result = Checked.addLong(result, scaleDiff09.divideByScaleFactor(h1xl2r + h2xl1r + l1xl2d));//inner sum cannot overflow
 				
-				final long remainder = scale9f.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;//cannot overflow
+				final long remainder = SCALE9F.multiplyByScaleFactor(h1xl2_h2xl1_l1xl1r) + l1xl2r;//cannot overflow
 				return Checked.addLong(result, Rounding.calculateRoundingIncrement(rounding, result, remainder, scaleMetrics2.getScaleFactor()));
 			}
 		} catch (ArithmeticException e) {
