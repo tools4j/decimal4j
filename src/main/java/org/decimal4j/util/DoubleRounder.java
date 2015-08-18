@@ -101,16 +101,23 @@ public final class DoubleRounder {
 		return round(value, roundingMode, scaleMetrics.getRoundingHalfEvenArithmetic(), ulp);
 	}
 
-	@Override
-	public String toString() {
-		return "DoubleRounder[precision=" + getPrecision() + "]";
-	}
-
+	/**
+	 * Returns a hash code for this <tt>DoubleRounder</tt> instance.
+	 * 
+	 * @return a hash code value for this object.
+	 */
 	@Override
 	public int hashCode() {
 		return scaleMetrics.hashCode();
 	}
 
+	/**
+	 * Returns true if {@code obj} is a <tt>DoubleRounder</tt> with the same precision as {@code this} rounder instance.
+	 * 
+	 * @param obj
+	 *            the reference object with which to compare
+	 * @return true for a double rounder with the same precision as this instance
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == this)
@@ -121,6 +128,16 @@ public final class DoubleRounder {
 			return scaleMetrics.equals(((DoubleRounder) obj).scaleMetrics);
 		}
 		return false;
+	}
+
+	/**
+	 * Returns a string consisting of the simple class name and the precision.
+	 * 
+	 * @return a string like "DoubleRounder[precision=7]"
+	 */
+	@Override
+	public String toString() {
+		return "DoubleRounder[precision=" + getPrecision() + "]";
 	}
 
 	/**
