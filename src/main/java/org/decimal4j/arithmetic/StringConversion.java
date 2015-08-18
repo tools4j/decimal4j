@@ -23,6 +23,8 @@
  */
 package org.decimal4j.arithmetic;
 
+import java.io.IOException;
+
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
@@ -280,6 +282,24 @@ final class StringConversion {
 	}
 
 	/**
+	 * Creates a {@code String} object representing the specified {@code long}
+	 * and appends it to the given {@code appendable}.
+	 *
+	 * @param value
+	 *            a {@code long} to be converted.
+	 * @param appendable
+	 *            t the appendable to which the string is to be appended
+	 * @throws IOException
+	 *             If an I/O error occurs when appending to {@code appendable}
+	 */
+	static final void longToString(long value, Appendable appendable) throws IOException {
+		final StringBuilder sb = STRING_BUILDER_THREAD_LOCAL.get();
+		sb.setLength(0);
+		sb.append(value);
+		appendable.append(sb);
+	}
+
+	/**
 	 * Returns a {@code String} object representing the specified unscaled
 	 * Decimal value {@code uDecimal}. The argument is converted to signed
 	 * decimal representation and returned as a string with {@code scale}
@@ -292,9 +312,35 @@ final class StringConversion {
 	 * @return a string representation of the argument
 	 */
 	static final String unscaledToString(DecimalArithmetic arith, long uDecimal) {
-		final int scale = arith.getScale();
+		return unscaledToStringBuilder(arith, uDecimal).toString();
+	}
+
+	/**
+	 * Constructs a {@code String} object representing the specified unscaled
+	 * Decimal value {@code uDecimal} and appends the constructed string to the
+	 * given appendable argument. The value is converted to signed decimal
+	 * representation and converted to a string with {@code scale} decimal
+	 * places event if trailing fraction digits are zero.
+	 *
+	 * @param uDecimal
+	 *            a unscaled Decimal to be converted to a string
+	 * @param arith
+	 *            the decimal arithmetics providing the scale to apply
+	 * @param appendable
+	 *            t the appendable to which the string is to be appended
+	 * @throws IOException
+	 *             If an I/O error occurs when appending to {@code appendable}
+	 */
+	static final void unscaledToString(DecimalArithmetic arith, long uDecimal, Appendable appendable) throws IOException {
+		final StringBuilder sb = unscaledToStringBuilder(arith, uDecimal);
+		appendable.append(sb);
+	}
+
+	private static final StringBuilder unscaledToStringBuilder(DecimalArithmetic arith, long uDecimal) {
 		final StringBuilder sb = STRING_BUILDER_THREAD_LOCAL.get();
 		sb.setLength(0);
+
+		final int scale = arith.getScale();
 		sb.append(uDecimal);
 		final int len = sb.length();
 		final int negativeOffset = uDecimal < 0 ? 1 : 0;
@@ -304,7 +350,7 @@ final class StringConversion {
 		} else {
 			sb.insert(len - scale, '.');
 		}
-		return sb.toString();
+		return sb;
 	}
 
 	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {

@@ -23,6 +23,7 @@
  */
 package org.decimal4j.api;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
@@ -1043,4 +1044,27 @@ public interface DecimalArithmetic {
 	 */
 	String toString(long uDecimal);
 
+	/**
+	 * Converts the specified unscaled decimal value into a {@link String} and
+	 * appends the string to the {@code appendable}.
+	 * <p>
+	 * If the {@link #getScale() scale} is zero, the conversion into a string is
+	 * identical to {@link Long#toString(long)}. For all other scales a string
+	 * value with exactly {@code scale} fraction digits is created even if some
+	 * trailing fraction digits are zero.
+	 * <p>
+	 * Note: this operation is <b>not</b> strictly garbage free since
+	 * internally, a {@link ThreadLocal} string builder is used to construct the
+	 * string. The {@code ThreadLocal} value may become garbage if the thread
+	 * becomes garbage.
+	 * 
+	 * @param uDecimal
+	 *            the unscaled decimal value to convert into a {@code String}
+	 * @param appendable
+	 *            the appendable to which the string representation of the
+	 *            unscaled decimal value is to be appended
+	 * @throws IOException
+	 *             If an I/O error occurs when appending to {@code appendable}
+	 */
+	void toString(long uDecimal, Appendable appendable) throws IOException;
 }

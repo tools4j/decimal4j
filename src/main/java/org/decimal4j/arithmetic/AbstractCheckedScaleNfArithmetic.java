@@ -23,6 +23,8 @@
  */
 package org.decimal4j.arithmetic;
 
+import java.io.IOException;
+
 import org.decimal4j.scale.ScaleMetrics;
 
 /**
@@ -72,5 +74,9 @@ abstract public class AbstractCheckedScaleNfArithmetic extends AbstractCheckedAr
 	public final String toString(long uDecimal) {
 		return StringConversion.unscaledToString(this, uDecimal);
 	}
-
+	
+	@Override
+	public final void toString(long uDecimal, Appendable appendable) throws IOException {
+		StringConversion.unscaledToString(this, uDecimal, appendable);
+	}
 }

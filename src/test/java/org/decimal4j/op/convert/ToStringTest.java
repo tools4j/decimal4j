@@ -23,6 +23,7 @@
  */
 package org.decimal4j.op.convert;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -66,8 +67,26 @@ public class ToStringTest extends AbstractDecimalToAnyTest<String> {
 		return operand.toPlainString();
 	}
 	
+	private static final String STRING = "BLABLABLKJSLDFJLKJOI_)$(@U)DKSLDFLKJSLKXCMFREWOKLRJT";
 	@Override
 	protected <S extends ScaleMetrics> String actualResult(Decimal<S> operand) {
-		return operand.toString();
+		if (RND.nextBoolean()) {
+			return operand.toString();
+		}
+		//use appendable version
+		try {
+			final StringBuilder sb = new StringBuilder();
+			if (RND.nextBoolean()) {
+				arithmetic.toString(operand.unscaledValue(), sb);
+				return sb.toString();
+			}
+			//use appendable version with some existing string
+			final String prefix = STRING.substring(0, RND.nextInt(STRING.length()));
+			sb.append(prefix);
+			arithmetic.toString(operand.unscaledValue(), sb);
+			return sb.substring(prefix.length());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
