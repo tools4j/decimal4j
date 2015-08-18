@@ -60,7 +60,6 @@ public class DoubleRounderTest {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics precision : TestSettings.SCALES) {
 			for (final RoundingMode mode : TestSettings.UNCHECKED_ROUNDING_MODES) {
-				if (mode == RoundingMode.UNNECESSARY) continue;//FIXME also support UNNECESSARY
 				data.add(new Object[] { precision.getScale(), mode});
 			}
 		}
@@ -88,7 +87,7 @@ public class DoubleRounderTest {
 		if (!isFinite(d)) {
 			return d;
 		}
-		final BigDecimal bd = new BigDecimal(d);//or valueOf(..) ?
+		final BigDecimal bd = BigDecimal.valueOf(d);
 		return bd.setScale(precision, roundingMode).doubleValue();
 	}
 	

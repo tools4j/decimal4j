@@ -36,7 +36,7 @@ import org.decimal4j.scale.Scales;
  */
 public final class DoubleRounder {
 
-	private final DecimalArithmetic arithmeticsHalfEven;
+	private final ScaleMetrics scaleMetrics;
 	private final double ulp;
 
 	/**
@@ -61,9 +61,8 @@ public final class DoubleRounder {
 	 *             if scale metrics is null
 	 */
 	public DoubleRounder(ScaleMetrics scaleMetrics) {
-		Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
-		this.arithmeticsHalfEven = scaleMetrics.getArithmetic(RoundingMode.HALF_EVEN);
-		this.ulp = arithmeticsHalfEven.toDouble(1);
+		this.scaleMetrics = Objects.requireNonNull(scaleMetrics, "scaleMetrics cannot be null");
+		this.ulp = scaleMetrics.getRoundingHalfEvenArithmetic().toDouble(1);
 	}
 
 	/**
@@ -72,7 +71,7 @@ public final class DoubleRounder {
 	 * @return this rounder's decimal precision
 	 */
 	public int getPrecision() {
-		return arithmeticsHalfEven.getScale();
+		return scaleMetrics.getScale();
 	}
 
 	/**
@@ -85,7 +84,7 @@ public final class DoubleRounder {
 	 * @see #getPrecision()
 	 */
 	public double round(double value) {
-		return round(value, RoundingMode.HALF_UP);
+		return round(value, scaleMetrics.getDefaultArithmetic(), scaleMetrics.getRoundingHalfEvenArithmetic(), ulp);
 	}
 
 	/**
@@ -101,13 +100,29 @@ public final class DoubleRounder {
 	 * @see #getPrecision()
 	 */
 	public double round(double value, RoundingMode roundingMode) {
-		if (!isFinite(value) || 2*ulp <= Math.ulp(value)) {
-			return value;
-		}
-		final long uDecimal = arithmeticsHalfEven.deriveArithmetic(roundingMode).fromDouble(value);
-		return arithmeticsHalfEven.toDouble(uDecimal);
+		return round(value, roundingMode, scaleMetrics.getRoundingHalfEvenArithmetic(), ulp);
 	}
-
+	
+	@Override
+	public String toString() {
+		return "DoubleRounder[precision=" + getPrecision() + "]";
+	}
+	
+	@Override
+	public int hashCode() {
+		return scaleMetrics.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) return true;
+		if (obj == null) return false;
+		if (obj instanceof DoubleRounder) {
+			return scaleMetrics.equals(((DoubleRounder)obj).scaleMetrics);
+		}
+		return false;
+	}
+	
 	/**
 	 * Rounds the given double value to the specified decimal {@code precision}
 	 * using {@link RoundingMode#HALF_UP HALF_UP} rounding.
@@ -119,7 +134,9 @@ public final class DoubleRounder {
 	 * @return the rounded value
 	 */
 	public static final double round(double value, int precision) {
-		return round(value, precision, RoundingMode.HALF_UP);
+		final ScaleMetrics sm = toScaleMetrics(precision);
+		final DecimalArithmetic halfEvenArith = sm.getRoundingHalfEvenArithmetic();
+		return round(value, sm.getDefaultArithmetic(), halfEvenArith, halfEvenArith.toDouble(1));
 	}
 
 	/**
@@ -136,14 +153,34 @@ public final class DoubleRounder {
 	 * @return the rounded value
 	 */
 	public static final double round(double value, int precision, RoundingMode roundingMode) {
-		final ScaleMetrics scaleMetrics = toScaleMetrics(precision);
-		final DecimalArithmetic arith = scaleMetrics.getArithmetic(roundingMode);
-		final DecimalArithmetic arithHalfEven = scaleMetrics.getArithmetic(RoundingMode.HALF_EVEN);
-		if (!isFinite(value) || 2*arithHalfEven.toDouble(1) <= Math.ulp(value)) {
+		final ScaleMetrics sm = toScaleMetrics(precision);
+		final DecimalArithmetic halfEvenArith = sm.getRoundingHalfEvenArithmetic();
+		return round(value, roundingMode, halfEvenArith, halfEvenArith.toDouble(1));
+	}
+
+	private static final double round(double value, RoundingMode roundingMode, DecimalArithmetic halfEvenArith, double ulp) {
+		if (roundingMode == RoundingMode.UNNECESSARY) {
+			return checkRoundingUnnecessary(value, halfEvenArith, ulp);
+		}
+		return round(value, halfEvenArith.deriveArithmetic(roundingMode), halfEvenArith, ulp);
+	}
+
+	private static final double round(double value, DecimalArithmetic roundingArith, DecimalArithmetic halfEvenArith, double ulp) {
+		if (!isFinite(value) || 2*ulp <= Math.ulp(value)) {
 			return value;
 		}
-		final long uDecimal = arith.fromDouble(value);
-		return arithHalfEven.toDouble(uDecimal);
+		final long uDecimal = roundingArith.fromDouble(value);
+		return halfEvenArith.toDouble(uDecimal);
+	}
+
+	private static final double checkRoundingUnnecessary(double value, DecimalArithmetic halfEvenArith, double ulp) {
+		if (isFinite(value) && 2*ulp > Math.ulp(value)) {
+			final long uDecimal = halfEvenArith.fromDouble(value);
+			if (halfEvenArith.toDouble(uDecimal) != value) {
+				throw new ArithmeticException("Rounding necessary for precision " + halfEvenArith.getScale() + ": " + value);
+			}
+		}
+		return value;
 	}
 
 	private static final ScaleMetrics toScaleMetrics(int precision) {

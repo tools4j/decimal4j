@@ -86,8 +86,10 @@ public class FloatAndDoubleUtil {
 
 	public static double[] specialDoubleOperands(ScaleMetrics scaleMetrics) {
 		final NavigableSet<Double> set = new TreeSet<Double>();
-		for (final double d : SPECIALS_DOUBLE) {
-			set.add(d);
+		for (final double dbl : SPECIALS_DOUBLE) {
+			set.add(dbl);
+			set.add(dbl + Math.ulp(dbl));
+			set.add(dbl - Math.ulp(dbl));
 		}
 		for (final long l : TestSettings.TEST_CASES.getSpecialValuesFor(scaleMetrics)) {
 			final double dbl = l;
@@ -105,8 +107,10 @@ public class FloatAndDoubleUtil {
 
 	public static float[] specialFloatOperands(ScaleMetrics scaleMetrics) {
 		final NavigableSet<Float> set = new TreeSet<Float>();
-		for (final float f : SPECIALS_FLOAT) {
-			set.add(f);
+		for (final float flt : SPECIALS_FLOAT) {
+			set.add(flt);
+			set.add(flt + Math.ulp(flt));
+			set.add(flt - Math.ulp(flt));
 		}
 		for (final long l : TestSettings.TEST_CASES.getSpecialValuesFor(scaleMetrics)) {
 			final float flt = l;
