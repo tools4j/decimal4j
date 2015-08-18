@@ -31,8 +31,8 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
 /**
- * Utility class to round doubles and floats to an arbitrary decimal precision
- * between 0 and 18. The rounding is efficient and garbage free.
+ * Utility class to round double values to an arbitrary decimal precision between 0 and 18. The rounding is efficient
+ * and garbage free.
  */
 public final class DoubleRounder {
 
@@ -52,8 +52,7 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Creates a rounder with the given scale metrics defining the decimal
-	 * precision.
+	 * Creates a rounder with the given scale metrics defining the decimal precision.
 	 * 
 	 * @param scaleMetrics
 	 *            the scale metrics determining the rounding precision
@@ -75,8 +74,8 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Rounds the given double value to the decimal precision of this rounder
-	 * using {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * Rounds the given double value to the decimal precision of this rounder using {@link RoundingMode#HALF_UP HALF_UP}
+	 * rounding.
 	 * 
 	 * @param value
 	 *            the value to round
@@ -88,44 +87,45 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Rounds the given double value to the decimal precision of this rounder
-	 * using the specified rounding mode.
+	 * Rounds the given double value to the decimal precision of this rounder using the specified rounding mode.
 	 * 
 	 * @param value
 	 *            the value to round
 	 * @param roundingMode
-	 *            the rounding mode indicating how the least significant
-	 *            returned decimal digit of the result is to be calculated
+	 *            the rounding mode indicating how the least significant returned decimal digit of the result is to be
+	 *            calculated
 	 * @return the rounded value
 	 * @see #getPrecision()
 	 */
 	public double round(double value, RoundingMode roundingMode) {
 		return round(value, roundingMode, scaleMetrics.getRoundingHalfEvenArithmetic(), ulp);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "DoubleRounder[precision=" + getPrecision() + "]";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return scaleMetrics.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == this) return true;
-		if (obj == null) return false;
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
 		if (obj instanceof DoubleRounder) {
-			return scaleMetrics.equals(((DoubleRounder)obj).scaleMetrics);
+			return scaleMetrics.equals(((DoubleRounder) obj).scaleMetrics);
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Rounds the given double value to the specified decimal {@code precision}
-	 * using {@link RoundingMode#HALF_UP HALF_UP} rounding.
+	 * Rounds the given double value to the specified decimal {@code precision} using {@link RoundingMode#HALF_UP
+	 * HALF_UP} rounding.
 	 * 
 	 * @param value
 	 *            the value to round
@@ -140,16 +140,15 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Rounds the given double value to the specified decimal {@code precision}
-	 * using the specified rounding mode.
+	 * Rounds the given double value to the specified decimal {@code precision} using the specified rounding mode.
 	 * 
 	 * @param value
 	 *            the value to round
 	 * @param precision
 	 *            the decimal precision to round to (aka decimal places)
 	 * @param roundingMode
-	 *            the rounding mode indicating how the least significant
-	 *            returned decimal digit of the result is to be calculated
+	 *            the rounding mode indicating how the least significant returned decimal digit of the result is to be
+	 *            calculated
 	 * @return the rounded value
 	 */
 	public static final double round(double value, int precision, RoundingMode roundingMode) {
@@ -166,7 +165,7 @@ public final class DoubleRounder {
 	}
 
 	private static final double round(double value, DecimalArithmetic roundingArith, DecimalArithmetic halfEvenArith, double ulp) {
-		if (!isFinite(value) || 2*ulp <= Math.ulp(value)) {
+		if (!isFinite(value) || 2 * ulp <= Math.ulp(value)) {
 			return value;
 		}
 		final long uDecimal = roundingArith.fromDouble(value);
@@ -174,10 +173,11 @@ public final class DoubleRounder {
 	}
 
 	private static final double checkRoundingUnnecessary(double value, DecimalArithmetic halfEvenArith, double ulp) {
-		if (isFinite(value) && 2*ulp > Math.ulp(value)) {
+		if (isFinite(value) && 2 * ulp > Math.ulp(value)) {
 			final long uDecimal = halfEvenArith.fromDouble(value);
 			if (halfEvenArith.toDouble(uDecimal) != value) {
-				throw new ArithmeticException("Rounding necessary for precision " + halfEvenArith.getScale() + ": " + value);
+				throw new ArithmeticException(
+						"Rounding necessary for precision " + halfEvenArith.getScale() + ": " + value);
 			}
 		}
 		return value;
@@ -191,19 +191,18 @@ public final class DoubleRounder {
 		return Scales.getScaleMetrics(precision);
 	}
 
-    /**
-     * Java-7 port of {@link Double#isFinite(double)}.
-     * <p>
-     * Returns {@code true} if the argument is a finite floating-point
-     * value; returns {@code false} otherwise (for NaN and infinity
-     * arguments).
-     *
-     * @param d the {@code double} value to be tested
-     * @return {@code true} if the argument is a finite
-     * floating-point value, {@code false} otherwise.
-     * @see Double#isFinite(double)
-     */
-    private static boolean isFinite(double d) {
-        return Math.abs(d) <= Double.MAX_VALUE;
-    }
+	/**
+	 * Java-7 port of {@link Double#isFinite(double)}.
+	 * <p>
+	 * Returns {@code true} if the argument is a finite floating-point value; returns {@code false} otherwise (for NaN
+	 * and infinity arguments).
+	 *
+	 * @param d
+	 *            the {@code double} value to be tested
+	 * @return {@code true} if the argument is a finite floating-point value, {@code false} otherwise.
+	 * @see Double#isFinite(double)
+	 */
+	private static boolean isFinite(double d) {
+		return Math.abs(d) <= Double.MAX_VALUE;
+	}
 }
