@@ -35,17 +35,14 @@ final class DoubleConversion {
 
 	private static final long LONG_MASK = 0xffffffffL;
 
-	// The mask for the significand, according to the {@link
-	// Double#doubleToRawLongBits(double)} spec.
+	// The mask for the significand, according to the {@link Double#doubleToRawLongBits(double)} spec.
 	private static final long SIGNIFICAND_MASK = 0x000fffffffffffffL;
 
-	// The mask for the exponent, according to the {@link
-	// Double#doubleToRawLongBits(double)} spec.
+	// The mask for the exponent, according to the {@link Double#doubleToRawLongBits(double)} spec.
 	@SuppressWarnings("unused")
 	private static final long EXPONENT_MASK = 0x7ff0000000000000L;
 
-	// The mask for the sign, according to the {@link
-	// Double#doubleToRawLongBits(double)} spec.
+	// The mask for the sign, according to the {@link Double#doubleToRawLongBits(double)} spec.
 	private static final long SIGN_MASK = 0x8000000000000000L;
 
 	private static final int SIGNIFICAND_BITS = 52;
@@ -59,38 +56,35 @@ final class DoubleConversion {
 
 	private static final double MIN_LONG_AS_DOUBLE = -0x1p63;
 	/*
-	 * We cannot store Long.MAX_VALUE as a double without losing precision.
-	 * Instead, we store Long.MAX_VALUE + 1 == -Long.MIN_VALUE, and then offset
-	 * all comparisons by 1.
+	 * We cannot store Long.MAX_VALUE as a double without losing precision. Instead, we store Long.MAX_VALUE + 1 ==
+	 * -Long.MIN_VALUE, and then offset all comparisons by 1.
 	 */
 	private static final double MAX_LONG_AS_DOUBLE_PLUS_ONE = 0x1p63;
 
 	/**
-	 * Converts the specified double value to a long truncating the fractional
-	 * part if any is present. If the value is NaN, infinite or outside of the
-	 * valid long range, an exception is thrown.
+	 * Converts the specified double value to a long truncating the fractional part if any is present. If the value is
+	 * NaN, infinite or outside of the valid long range, an exception is thrown.
 	 * 
 	 * @param value
 	 *            the value to convert
 	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if {@code value} is NaN or infinite or if the magnitude is
-	 *             too large for the double to be represented as a {@code long}
+	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
+	 *             as a {@code long}
 	 */
 	public static final long doubleToLong(double value) {
 		if (Double.isNaN(value)) {
-			throw new IllegalArgumentException("Cannot convert double to decimal: " + value);
+			throw new IllegalArgumentException("Cannot convert double to long: " + value);
 		}
 		if (isInLongRange(value)) {
 			return (long) value;
 		}
-		throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+		throw new IllegalArgumentException("Overflow for conversion from double to long: " + value);
 	}
 
 	/**
-	 * Converts the specified double value to a long rounding the fractional
-	 * part if necessary using the given {@code rounding} mode. If the value is
-	 * NaN, infinite or outside of the valid long range, an exception is thrown.
+	 * Converts the specified double value to a long rounding the fractional part if necessary using the given
+	 * {@code rounding} mode. If the value is NaN, infinite or outside of the valid long range, an exception is thrown.
 	 * 
 	 * @param rounding
 	 *            the rounding to apply if necessary
@@ -98,26 +92,24 @@ final class DoubleConversion {
 	 *            the value to convert
 	 * @return <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if {@code value} is NaN or infinite or if the magnitude is
-	 *             too large for the double to be represented as a {@code long}
+	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
+	 *             as a {@code long}
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode==UNNECESSARY} and rounding is
-	 *             necessary
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */
 	public static final long doubleToLong(DecimalRounding rounding, double value) {
 		if (Double.isNaN(value)) {
-			throw new IllegalArgumentException("Cannot convert double to decimal: " + value);
+			throw new IllegalArgumentException("Cannot convert double to long: " + value);
 		}
 		if (isInLongRange(value)) {
 			return (long) roundIntermediate(value, rounding);
 		}
-		throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+		throw new IllegalArgumentException("Overflow for conversion from double to long: " + value);
 	}
 
 	/*
-	 * Copied from guava. This method returns a value y such that rounding y
-	 * DOWN (towards zero) gives the same result as rounding x according to the
-	 * specified mode. PRECONDITION: isFinite(x)
+	 * Copied from guava. This method returns a value y such that rounding y DOWN (towards zero) gives the same result
+	 * as rounding x according to the specified mode. PRECONDITION: isFinite(x)
 	 */
 	private static final double roundIntermediate(double x, DecimalRounding mode) {
 		switch (mode) {
@@ -170,9 +162,8 @@ final class DoubleConversion {
 	}
 
 	/**
-	 * Converts the specified double value to an unscaled decimal truncating
-	 * extra fractional digits if necessary. If the value is NaN, infinite or
-	 * outside of the valid Decimal range, an exception is thrown.
+	 * Converts the specified double value to an unscaled decimal truncating extra fractional digits if necessary. If
+	 * the value is NaN, infinite or outside of the valid Decimal range, an exception is thrown.
 	 * 
 	 * @param arith
 	 *            the arithmetic associated with the result value
@@ -180,18 +171,16 @@ final class DoubleConversion {
 	 *            the value to convert
 	 * @return <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if {@code value} is NaN or infinite or if the magnitude is
-	 *             too large for the double to be represented as a Decimal of
-	 *             the arithmetic's scale
+	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
+	 *             as a Decimal of the arithmetic's scale
 	 */
 	public static final long doubleToUnscaled(DecimalArithmetic arith, double value) {
 		return doubleToUnscaled(arith, DecimalRounding.DOWN, value);
 	}
 
 	/**
-	 * Converts the specified double value to an unscaled decimal. The specified
-	 * {@code rounding} mode is used if rounding is necessary. If the value is
-	 * NaN, infinite or outside of the valid Decimal range, an exception is
+	 * Converts the specified double value to an unscaled decimal. The specified {@code rounding} mode is used if
+	 * rounding is necessary. If the value is NaN, infinite or outside of the valid Decimal range, an exception is
 	 * thrown.
 	 * 
 	 * @param arith
@@ -202,12 +191,10 @@ final class DoubleConversion {
 	 *            the value to convert
 	 * @return <tt>round(value)</tt>
 	 * @throws IllegalArgumentException
-	 *             if {@code value} is NaN or infinite or if the magnitude is
-	 *             too large for the double to be represented as a Decimal of
-	 *             the arithmetic's scale
+	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
+	 *             as a Decimal of the arithmetic's scale
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode==UNNECESSARY} and rounding is
-	 *             necessary
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */
 	public static final long doubleToUnscaled(DecimalArithmetic arith, DecimalRounding rounding, double value) {
 		if (value == 0) {
@@ -215,7 +202,7 @@ final class DoubleConversion {
 		}
 		final int exp = Math.getExponent(value);
 		if (exp >= Long.SIZE) {
-			throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+			throw newOverflowException(arith, value);
 		}
 
 		// multiply significand by scale factor into a 128bit integer
@@ -252,17 +239,17 @@ final class DoubleConversion {
 		if (shift > 0) {
 			// multiply: shift left
 			if (hScaled != 0) {
-				throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+				throw newOverflowException(arith, value);
 			}
 			final int zeros = Long.numberOfLeadingZeros(lScaled);
 			if (shift >= zeros) {
-				throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+				throw newOverflowException(arith, value);
 			}
 			final long absResult = lScaled << shift;
 			return value >= 0 ? absResult : -absResult;
 		} else if (shift == 0) {
 			if (hScaled != 0 | lScaled < 0) {
-				throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+				throw newOverflowException(arith, value);
 			}
 			return value >= 0 ? lScaled : -lScaled;
 		} else {// shift < 0
@@ -278,7 +265,7 @@ final class DoubleConversion {
 		final long absResult;
 		if (shift < Long.SIZE) {
 			if ((hScaled >>> shift) != 0) {
-				throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+				throw newOverflowException(arith, value);
 			}
 			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
 		} else if (shift < 2 * Long.SIZE) {
@@ -287,7 +274,7 @@ final class DoubleConversion {
 			return 0;// rounded down
 		}
 		if (absResult < 0) {
-			throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+			throw newOverflowException(arith, value);
 		}
 		return value >= 0 ? absResult : -absResult;
 	}
@@ -297,7 +284,7 @@ final class DoubleConversion {
 		final TruncatedPart truncatedPart;
 		if (shift < Long.SIZE) {
 			if ((hScaled >>> shift) != 0) {
-				throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+				throw newOverflowException(arith, value);
 			}
 			absResult = (hScaled << (Long.SIZE - shift)) | (lScaled >>> shift);
 			final long rem = modPow2(lScaled, shift);
@@ -313,14 +300,13 @@ final class DoubleConversion {
 		final int inc = absResult < 0 ? 0
 				: rounding.calculateRoundingIncrement(value >= 0 ? 1 : -1, absResult, truncatedPart);
 		if (absResult < 0 | (absResult == Long.MAX_VALUE & inc == 1)) {
-			throw new IllegalArgumentException("Overflow for conversion from double to decimal: " + value);
+			throw newOverflowException(arith, value);
 		}
 		return (value >= 0 ? absResult : -absResult) + inc;
 	}
 
 	/**
-	 * Converts the specified long value to a double truncating extra mantissa
-	 * digits if necessary.
+	 * Converts the specified long value to a double truncating extra mantissa digits if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic associated with the value
@@ -333,8 +319,7 @@ final class DoubleConversion {
 	}
 
 	/**
-	 * Converts the specified long value to a double rounding extra mantissa
-	 * digits if necessary.
+	 * Converts the specified long value to a double rounding extra mantissa digits if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic associated with the value
@@ -344,8 +329,7 @@ final class DoubleConversion {
 	 *            the long value
 	 * @return <tt>round(value)</tt>
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode==UNNECESSARY} and rounding is
-	 *             necessary
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */
 	public static final double longToDouble(DecimalArithmetic arith, DecimalRounding rounding, long value) {
 		if (rounding == DecimalRounding.HALF_EVEN) {
@@ -355,8 +339,7 @@ final class DoubleConversion {
 	}
 
 	/**
-	 * Converts the specified unscaled decimal value to a double truncating
-	 * extra precision digits if necessary.
+	 * Converts the specified unscaled decimal value to a double truncating extra precision digits if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic associated with the value
@@ -369,8 +352,7 @@ final class DoubleConversion {
 	}
 
 	/**
-	 * Converts the specified unscaled decimal value to a double rounding extra
-	 * precision digits if necessary.
+	 * Converts the specified unscaled decimal value to a double rounding extra precision digits if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic associated with the value
@@ -380,8 +362,7 @@ final class DoubleConversion {
 	 *            the unscaled decimal value
 	 * @return <tt>round(value)</tt>
 	 * @throws ArithmeticException
-	 *             if {@code roundingMode==UNNECESSARY} and rounding is
-	 *             necessary
+	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */
 	public static final double unscaledToDouble(DecimalArithmetic arith, DecimalRounding rounding, long unscaled) {
 		if (unscaled == 0) {
@@ -395,24 +376,20 @@ final class DoubleConversion {
 		final int nlzAbsVal = Long.numberOfLeadingZeros(absVal);
 
 		/*
-		 * NOTE: a) If absVal has no more than 53 bits it can be represented as
-		 * a double value without loss of precision (52 mantissa bits plus the
-		 * implicit leading 1 bit) b) The scale factor has never more than 53
-		 * bits if shifted right by the trailing power-of-2 zero bits ==> For
-		 * HALF_EVEN rounding mode we can therefore apply the scale factor via
-		 * double division without losing information
+		 * NOTE: a) If absVal has no more than 53 bits it can be represented as a double value without loss of precision
+		 * (52 mantissa bits plus the implicit leading 1 bit) b) The scale factor has never more than 53 bits if shifted
+		 * right by the trailing power-of-2 zero bits ==> For HALF_EVEN rounding mode we can therefore apply the scale
+		 * factor via double division without losing information
 		 */
 		if (Long.SIZE - nlzAbsVal <= SIGNIFICAND_BITS + 1 & rounding == DecimalRounding.HALF_EVEN) {
 			return unscaledToDoubleWithDoubleDivisionRoundHalfEven(scaleMetrics, unscaled, pow2, absVal);
 		}
 
 		/*
-		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor
-		 * then the division absVal/factor == 1.xxxxx, i.e. it is normalized 2)
-		 * because we omit the 1 in the mantissa, we calculate valModFactor =
-		 * absVal - floor(absVal/factor)*factor = absVal - 1*factor 3) we shift
-		 * valModFactor such that the 1 from the division would be on bit 53 4)
-		 * we perform the division
+		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor then the division absVal/factor ==
+		 * 1.xxxxx, i.e. it is normalized 2) because we omit the 1 in the mantissa, we calculate valModFactor = absVal -
+		 * floor(absVal/factor)*factor = absVal - 1*factor 3) we shift valModFactor such that the 1 from the division
+		 * would be on bit 53 4) we perform the division
 		 */
 
 		// (1) + (2)
@@ -424,26 +401,15 @@ final class DoubleConversion {
 			final long scaledAbsVal = absVal << alignShift;
 			final long diff = scaledAbsVal - scaleMetrics.getScaleFactor();
 			exp = -alignShift + (int) (diff >> 63);
-			valModFactor = diff + ((diff >> 63) & scaledAbsVal);// if
-																// scaledAbsVal
-																// < factor we
-																// shift left by
-																// 1, i.e. we
-																// add the
-																// absVal
+			// if scaledAbsVal < factor we shift left by 1, i.e. we add the absVal
+			valModFactor = diff + ((diff >> 63) & scaledAbsVal);
 			mantissaShift = SIGNIFICAND_BITS;
 		} else {
 			final long scaledFactor = scaleMetrics.getScaleFactor() << -alignShift;
 			if (Unsigned.isLess(absVal, scaledFactor)) {
 				exp = -alignShift - 1;
-				valModFactor = absVal - (scaledFactor >>> 1);// if absVal <
-																// scaledFactor
-																// we shift by 1
-																// (right shift
-																// of
-																// scaledFactor
-																// to avoid
-																// overflow)
+				// if absVal < scaledFactor we shift left by 1 (right shift of scaledFactor to avoid overflow)
+				valModFactor = absVal - (scaledFactor >>> 1);
 				mantissaShift = SIGNIFICAND_BITS + alignShift + 1;
 			} else {
 				exp = -alignShift;
@@ -511,20 +477,8 @@ final class DoubleConversion {
 			final long truncated = scaleMetrics.divideByScaleFactor(scaledVal);
 			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift)
 					| (valModFactor & (-1L >>> (Long.SIZE + mantissaShift)));
-			final long shiftedScaleFactor = scaleFactor << -mantissaShift;// this
-																			// cannot
-																			// overflow
-																			// as
-																			// min(mantissaShift)=-9
-																			// for
-																			// scale=1,
-																			// -8
-																			// for
-																			// scale=10,
-																			// ...,
-																			// -1
-																			// for
-																			// scale=10^8
+			// this cannot overflow as min(mantissaShift)=-9 for scale=1, -8 for scale=10, ..., -1 for scale=10^8
+			final long shiftedScaleFactor = scaleFactor << -mantissaShift;
 			quotient = truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder,
 					shiftedScaleFactor);
 		}
@@ -544,8 +498,7 @@ final class DoubleConversion {
 	// @return value % (2^n)
 	private static final long modPow2(long value, int n) {
 		// return value & ((1L << n) - 1);
-		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);// last bracket is
-																// for case n=0
+		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);// last bracket is for case n=0
 	}
 
 	private static final boolean isInLongRange(double value) {
@@ -558,7 +511,7 @@ final class DoubleConversion {
 	}
 
 	private static final boolean isFinite(double d) {
-		return Math.getExponent(d) <= Double.MAX_EXPONENT;
+		return Math.abs(d) <= Double.MAX_VALUE;
 	}
 
 	// PRECONDITION: isFinite(d)
@@ -567,6 +520,11 @@ final class DoubleConversion {
 		long bits = Double.doubleToRawLongBits(d);
 		bits &= SIGNIFICAND_MASK;
 		return (exponent == Double.MIN_EXPONENT - 1) ? bits << 1 : bits | IMPLICIT_BIT;
+	}
+
+	private static final IllegalArgumentException newOverflowException(final DecimalArithmetic arith, double value) {
+		return new IllegalArgumentException(
+				"Overflow for conversion from double to decimal with scale " + arith.getScale() + ": " + value);
 	}
 
 	// no instances
