@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.base.AbstractImmutableDecimal;
+import org.decimal4j.exact.Multipliable${scale}f;
 import org.decimal4j.factory.Factory${scale}f;
 import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
@@ -604,6 +605,32 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	@Override
 	protected Decimal${scale}f[] createArray(int length) {
 		return new Decimal${scale}f[length];
+	}
+	
+	/**
+	 * Returns this {@code Decimal} as a multipliable factor for exact 
+	 * typed exact multiplication. The second factor is passed to one of
+	 * the {@code by(..)} methods of the returned multiplier. The scale of
+	 * the result is the sum of the scales of {@code this} Decimal and the
+	 * second factor passed to the {@code by(..)} method.
+	 * <p>
+	 * The method is similar to {@link #multiplyExact(Decimal) multiplyExact(Decimal)} but the result
+	 * is retrieved in exact typed form with the correct result scale. 
+	 * <p>
+	 * For instance one can write:
+	 * <pre>
+<#if (scale+2<=maxScale)>
+	 * Decimal${scale+2}f product = this.multiplyExact().by(Decimal2f.FIVE);
+<#else>
+	 * Decimal${scale}f product = this.multiplyExact().by(Decimal0f.FIVE);
+</#if>
+	 * </pre>
+	 * 
+	 * @return a multipliable object encapsulating this Decimal as first factor
+	 *             of an exact multiplication
+	 */
+	public Multipliable${scale}f multiplyExact() {
+		return new Multipliable${scale}f(this);
 	}
 
 	@Override
