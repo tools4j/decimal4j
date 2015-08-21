@@ -608,9 +608,9 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	}
 	
 	/**
-	 * Returns this {@code Decimal} as a multipliable factor for exact 
-	 * typed exact multiplication. The second factor is passed to one of
-	 * the {@code by(..)} methods of the returned multiplier. The scale of
+	 * Returns this {@code Decimal} as a multipliable factor for typed 
+	 * exact multiplication. The second factor is passed to one of the
+	 * {@code by(..)} methods of the returned multiplier. The scale of
 	 * the result is the sum of the scales of {@code this} Decimal and the
 	 * second factor passed to the {@code by(..)} method.
 	 * <p>
