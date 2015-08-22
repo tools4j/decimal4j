@@ -205,12 +205,10 @@ if (project.hasProperty('upload')) {
         					developer {
         						id 'terzerm'
         						name 'Marco Terzer'
-        						email 'terzerm@gmail.com'
         					}
         					developer {
         						id 'majerv'
         						name 'Viktor Majer'
-        						email 'viktor.majer1@gmail.com'
         					}
         				}
         			}
