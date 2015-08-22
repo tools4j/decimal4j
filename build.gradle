@@ -3,6 +3,8 @@ apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'license'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 //temporary jacoco fix for java8
 jacoco {
@@ -10,7 +12,9 @@ jacoco {
 }
 
 sourceCompatibility = 1.7
-version = '0.9.7'
+group = "org.decimal4j"
+version = '1.0.1-SNAPSHOT'
+archivesBaseName = "decimal4j"
 
 jar {
     manifest {
@@ -44,7 +48,7 @@ test {
 uploadArchives {
     repositories {
        flatDir {
-           dirs 'repos'
+           dirs 'build/repositories'
        }
     }
 }
@@ -59,6 +63,7 @@ buildscript {
 		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
 		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.1.3'
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
 	}
 	
 	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
@@ -97,6 +102,20 @@ javadoc {
 	options.overview = "src/main/java/overview.html";
 }
 
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
 jmh {
    include = '.*Benchmark.*' // include pattern (regular expression) for benchmarks to be executed
 //   include = '.*AddBenchmark.*' // include pattern (regular expression) for benchmarks to be executed
@@ -132,4 +151,78 @@ jmh {
 //   warmupBenchmarks = ['.*Warmup'] // Warmup benchmarks to include in the run in addition to already selected. JMH will not measure these benchmarks, but only use them for the warmup.
 //   zip64 = true // Use ZIP64 format for bigger archives
    
+}
+
+
+if (project.hasProperty('upload')) {
+
+    allprojects {
+        apply plugin: 'signing'
+        apply plugin: 'maven'
+		apply plugin: 'io.codearte.nexus-staging'
+
+        // Signature of artifacts
+        signing {
+            sign configurations.archives
+        }
+
+        // OSSRH publication
+        uploadArchives {
+            repositories {
+            	mavenDeployer {
+            		beforeDeployment { 
+            			MavenDeployment deployment -> signing.signPom(deployment)
+            		}
+            		repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+            			authentication(userName: ossrhUsername, password: ossrhPassword)
+            		}
+            		snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+            			authentication(userName: ossrhUsername, password: ossrhPassword)
+            		}
+            		
+            		pom.project {
+						name 'decimal4j'
+						packaging 'jar'
+						// optionally artifactId can be defined here 
+						description 'Java library for fast fixed precision arithmetics based on longs with support for up to 18 decimal places.'
+						url 'http://decimal4j.org'
+
+        				scm {
+        					connection 'scm:git:git@github.com:tools4j/decimal4j.git'
+        					developerConnection 'scm:git:git@github.com:tools4j/decimal4j.git'
+        					url 'git@github.com:tools4j/decimal4j.git'
+        				}
+        				licenses {
+        					license {
+        						name 'MIT License'
+        						url 'http://opensource.org/licenses/MIT'
+        					}
+        				}
+        				
+        				developers {
+        					developer {
+        						id 'terzerm'
+        						name 'Marco Terzer'
+        						email 'terzerm@gmail.com'
+        					}
+        					developer {
+        						id 'majerv'
+        						name 'Viktor Majer'
+        						email 'viktor.majer1@gmail.com'
+        					}
+        				}
+        			}
+        			// remove jmh scope dependencies showing as compile
+        			pom.whenConfigured { pom ->
+        				pom.dependencies = pom.dependencies.findAll { dep -> dep.groupId != 'org.openjdk.jmh' }
+        			}
+        		}
+            }
+        }
+
+		nexusStaging {
+		    username = ossrhUsername
+		    password = ossrhPassword
+		}
+    }
 }
