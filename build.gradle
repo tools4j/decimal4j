@@ -27,7 +27,9 @@ repositories {
 }
 
 dependencies {
-    compile 'org.openjdk.jmh:jmh-core:1.1.1'
+//NOTE: uncomment below line to run individual jmh test via test's main method
+//      one can run all jmh performance tests with 'gradle jmh' without the below line
+//    compile 'org.openjdk.jmh:jmh-core:1.1.1'
     
     testCompile 'junit:junit:4.11'
     testCompile 'pl.pragmatists:JUnitParams:1.0.4'
@@ -211,10 +213,6 @@ if (project.hasProperty('upload')) {
         						email 'viktor.majer1@gmail.com'
         					}
         				}
-        			}
-        			// remove jmh scope dependencies showing as compile
-        			pom.whenConfigured { pom ->
-        				pom.dependencies = pom.dependencies.findAll { dep -> dep.groupId != 'org.openjdk.jmh' }
         			}
         		}
             }
