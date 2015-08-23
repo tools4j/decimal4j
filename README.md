@@ -6,14 +6,19 @@ http://decimal4j.org/javadoc
 
 #### Features
  - Fixed precision arithmetic with 0 to 18 decimal places
- - Result has usually the same scale as the primary operand (also for multiplication and division)
- - Type of a variable defines the scale (except for wildcard types)
- - Efficient conversion from and to various other number types
- - Convenience methods to directly inter-operate with other data types (long, double, ...)
- - Supports all rounding modes
- - Option to throw an exception when an arithmetic overflow occurs
- - ``MutableDecimal`` implementation for chained operations
- - Fast and efficient implementation, with primitive arithmetic API for zero-garbage computations (with unscaled long values)
+   - Implementation based on unscaled long value
+   - Option to throw an exception when an arithmetic overflow occurs
+ - Scale
+   - Type of a variable defines the scale (except for wildcard types)
+   - Result has usually the same scale as the primary operand (also for multiplication and division)
+ - Type Conversion  
+   - Efficient conversion from and to various other number types
+   - Convenience methods to directly inter-operate with other data types (long, double, ...)
+   - All rounding modes supported
+ - Efficiency
+   - Fast and efficient implementation
+   - ``MutableDecimal`` implementation for chained operations
+   - Primitive arithmetic API for zero-garbage computations (with unscaled long values)
 
 #### Quick Start
 
