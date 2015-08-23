@@ -1,5 +1,19 @@
 ## decimal4j
-Java library for fast fixed precision arithmetics based on longs with support for up to 18 decimal places
+Java library for fast fixed precision arithmetic based on longs with support for up to 18 decimal places.
+
+#### Javadoc API
+http://decimal4j.org/javadoc
+
+#### Features
+ - Fixed precision arithmetic with 0 to 18 decimal places
+ - Result has usually the same scale as the primary operand (also for multiplication and division)
+ - Type of a variable defines the scale (except for wildcard types)
+ - Efficient conversion from and to various other number types
+ - Convenience methods to directly inter-operate with other data types (long, double, ...)
+ - Supports all rounding modes
+ - Option to throw an exception when an arithmetic overflow occurs
+ - ``MutableDecimal`` implementation for chained operations
+ - Fast and efficient implementation, with primitive arithmetic API for zero-garbage computations (with unscaled long values)
 
 #### Quick Start
 
@@ -39,9 +53,6 @@ will output
     Circumference of circle with 5m radius is ~31.42m
     Circumference of circle with 5m radius is ~31.41592653589793m
     Circumference of circle with 5m radius is larger than 31.41m
-
-#### Javadoc API
-http://decimal4j.org/javadoc
 
 #### Maven
 decimal4j has not been released yet. The current snapshot version can be referenced as follows:
