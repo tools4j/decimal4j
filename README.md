@@ -14,7 +14,7 @@ http://decimal4j.org/javadoc
  - Type Conversion  
    - Efficient conversion from and to various other number types
    - Convenience methods to directly inter-operate with other data types (long, double, ...)
-   - All rounding modes supported
+   - All rounding modes supported (default: HALF_UP)
  - Efficiency
    - Fast and efficient implementation
    - ``MutableDecimal`` implementation for chained operations
