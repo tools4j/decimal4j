@@ -1,10 +1,10 @@
 # decimal4j
 Java library for fast fixed precision arithmetics based on longs with support for up to 18 decimal places
 
-## Javadoc API
+### Javadoc API
 http://decimal4j.org/javadoc
 
-## Maven
+### Maven
 decimal4j has not been released yet. The current snapshot version can be referenced as follows:
 
     <dependency>
@@ -25,7 +25,7 @@ You have to specify the sonatype snapshot repository to access snapshot versions
     	</repository>
     </repositories>
 
-## Download
+### Download
 decimal4j has not been released yet. The current snapshot version can be downloaded from the sonatype snapshot repository:
 
 https://oss.sonatype.org/content/repositories/snapshots/org/decimal4j
