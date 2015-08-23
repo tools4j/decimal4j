@@ -45,19 +45,19 @@ will output
 		    Decimal18f PI = Decimal18f.valueOf(Math.PI);
 		    Decimal2f radius = Decimal2f.valueOf(5);
 		    Decimal2f circ = radius.multiplyBy(PI.multiply(2));
-		    System.out.println("Circumference of circle with 5m radius is ~" + circ + "m");
-		    System.out.println("Circumference of circle with 5m radius is ~" + (2*Math.PI * 5) + "m");
+		    System.out.println("Circumference with 5m radius is ~" + circ + "m");
+		    System.out.println("Circumference with 5m radius is ~" + (2*Math.PI * 5) + "m");
 
 		    Decimal2f down = radius.multiplyBy(PI.multiply(2), RoundingMode.DOWN);
-		    System.out.println("Circumference of circle with 5m radius is larger than " + down + "m");
+		    System.out.println("Circumference with 5m radius is larger than " + down + "m");
 	    }
     }
 
 will output
 
-    Circumference of circle with 5m radius is ~31.42m
-    Circumference of circle with 5m radius is ~31.41592653589793m
-    Circumference of circle with 5m radius is larger than 31.41m
+    Circumference with 5m radius is ~31.42m
+    Circumference with 5m radius is ~31.41592653589793m
+    Circumference with 5m radius is larger than 31.41m
 
 #### Maven
 decimal4j has not been released yet. The current snapshot version can be referenced as follows:
