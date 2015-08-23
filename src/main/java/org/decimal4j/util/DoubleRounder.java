@@ -209,7 +209,7 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Java-7 port of {@link Double#isFinite(double)}.
+	 * Java-7 port of {@code Double#isFinite(double)}.
 	 * <p>
 	 * Returns {@code true} if the argument is a finite floating-point value; returns {@code false} otherwise (for NaN
 	 * and infinity arguments).
@@ -217,7 +217,6 @@ public final class DoubleRounder {
 	 * @param d
 	 *            the {@code double} value to be tested
 	 * @return {@code true} if the argument is a finite floating-point value, {@code false} otherwise.
-	 * @see Double#isFinite(double)
 	 */
 	private static boolean isFinite(double d) {
 		return Math.abs(d) <= Double.MAX_VALUE;
