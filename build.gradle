@@ -1,10 +1,7 @@
 apply plugin: 'java'
-apply plugin: 'eclipse'
 apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'license'
-apply plugin: 'maven'
-apply plugin: 'signing'
 
 //temporary jacoco fix for java8
 jacoco {
@@ -26,10 +23,26 @@ repositories {
     mavenCentral()
 }
 
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+	
+	dependencies {
+		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
+		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.1.3'
+		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
+	}
+	
+	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
+}
+
 dependencies {
-//NOTE: uncomment below line to run individual jmh test via test's main method
-//      one can run all jmh performance tests with 'gradle jmh' without the below line
-//    compile 'org.openjdk.jmh:jmh-core:1.1.1'
+	//NOTE: only needed for IDEs like eclipse to compile the jmh benchmarks
+	//		gradle is happy with the jmh dependencies below
+    compile 'org.openjdk.jmh:jmh-core:1.1.1'
     
     testCompile 'junit:junit:4.11'
     testCompile 'pl.pragmatists:JUnitParams:1.0.4'
@@ -53,22 +66,6 @@ uploadArchives {
            dirs 'build/repositories'
        }
     }
-}
-
-buildscript {
-	repositories {
-		mavenCentral()
-		jcenter()
-	}
-	
-	dependencies {
-		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
-		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.1.3'
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
-	}
-	
-	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
 }
 
 def generatedSources = "${buildDir}/generated-src"
@@ -155,14 +152,13 @@ jmh {
    
 }
 
-
-if (project.hasProperty('upload')) {
+gradle.taskGraph.whenReady { graph -> if (graph.hasTask(uploadArchives)) {
 
     allprojects {
         apply plugin: 'signing'
         apply plugin: 'maven'
 		apply plugin: 'io.codearte.nexus-staging'
-
+		
         // Signature of artifacts
         signing {
             sign configurations.archives
@@ -212,6 +208,10 @@ if (project.hasProperty('upload')) {
         					}
         				}
         			}
+        			// remove jmh scope dependencies showing as compile time dependency
+        			pom.whenConfigured { pom ->
+        				pom.dependencies = pom.dependencies.findAll { dep -> dep.groupId != 'org.openjdk.jmh' }
+        			}
         		}
             }
         }
@@ -221,4 +221,4 @@ if (project.hasProperty('upload')) {
 		    password = ossrhPassword
 		}
     }
-}
+}}
