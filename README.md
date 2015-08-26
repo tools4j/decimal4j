@@ -82,7 +82,7 @@ You have to specify the sonatype snapshot repository to access snapshot versions
 		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		<releases><enabled>false</enabled></releases>
 		<snapshots><enabled>true</enabled></snapshots>
-    	</repository>
+	</repository>
 </repositories>
 ```
 
