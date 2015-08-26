@@ -37,7 +37,7 @@ public class Interest {
 
 will output
 ```
-    First quarter interest: $159.13
+First quarter interest: $159.13
 ```
 
 ###### Example 2: Circumference of a Circle
@@ -58,9 +58,9 @@ public class Circle {
 
 will output
 ```
-	Circumference with 5m radius is ~31.42m
-	Circumference with 5m radius is ~31.41592653589793m
-	Circumference with 5m radius is larger than 31.41m
+Circumference with 5m radius is ~31.42m
+Circumference with 5m radius is ~31.41592653589793m
+Circumference with 5m radius is larger than 31.41m
 ```
 
 #### Maven
