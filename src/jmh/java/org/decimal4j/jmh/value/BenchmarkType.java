@@ -109,6 +109,21 @@ public enum BenchmarkType {
 			return RND.nextBoolean() ? -value : value;
 		}
 	},
+	MultiplyExact {
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			//avoid overflows
+			if (first == Long.MIN_VALUE) {
+				return randomLong(2);//only 0 or 1 without overflow
+			}
+			long max = Long.MAX_VALUE / Math.abs(first);
+			if (max < Long.MAX_VALUE) max++;
+			final long value = randomLong(Math.min(max, valueType.maxValue));
+			
+			//positive or negative?
+			return RND.nextBoolean() ? -value : value;
+		}
+	},
 	Divide {
 		@Override
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
@@ -123,6 +138,17 @@ public enum BenchmarkType {
 			
 			//positive or negative?
 			return RND.nextBoolean() ? -value : value;
+		}
+	},
+	DivideExact {
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			//avoid overflow, only possible for Long.MIN_VALUE / -1
+			long second = valueType.random(SignType.ALL);
+			while (first == Long.MIN_VALUE & second == -1) {
+				second = valueType.random(SignType.ALL);
+			}
+			return second;
 		}
 	},
 	Avg {
