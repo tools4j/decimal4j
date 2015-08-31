@@ -196,6 +196,11 @@ public final class UncheckedScaleNfTruncatingArithmetic extends AbstractUnchecke
 
 	@Override
 	public final long parse(String value) {
-		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
+		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value, 0, value.length());
+	}
+	
+	@Override
+	public final long parse(CharSequence value, int start, int end) {
+		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value, start, end);
 	}
 }

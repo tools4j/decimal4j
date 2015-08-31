@@ -181,7 +181,12 @@ public final class CheckedScale0fRoundingArithmetic extends AbstractCheckedScale
 
 	@Override
 	public final long parse(String value) {
-		return StringConversion.parseLong(this, rounding, value);
+		return StringConversion.parseLong(this, rounding, value, 0, value.length());
+	}
+	
+	@Override
+	public final long parse(CharSequence value, int start, int end) {
+		return StringConversion.parseLong(this, rounding, value, start, end);
 	}
 
 }

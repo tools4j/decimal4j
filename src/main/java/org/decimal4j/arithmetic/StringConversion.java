@@ -37,8 +37,7 @@ import org.decimal4j.truncate.TruncatedPart;
 final class StringConversion {
 
 	/**
-	 * Thread-local used to build Decimal strings. Allocated big enough to avoid
-	 * growth.
+	 * Thread-local used to build Decimal strings. Allocated big enough to avoid growth.
 	 */
 	static final ThreadLocal<StringBuilder> STRING_BUILDER_THREAD_LOCAL = new ThreadLocal<StringBuilder>() {
 		@Override
@@ -54,8 +53,7 @@ final class StringConversion {
 	}
 
 	/**
-	 * Parses the given string into a long and returns it, rounding extra digits
-	 * if necessary.
+	 * Parses the given string into a long and returns it, rounding extra digits if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic of the target value
@@ -63,18 +61,23 @@ final class StringConversion {
 	 *            the rounding to apply if a fraction is present
 	 * @param s
 	 *            the string to parse
+	 * @param start
+	 *            the start index to read characters in {@code s}, inclusive
+	 * @param end
+	 *            the end index where to stop reading in characters in {@code s}, exclusive
 	 * @return the parsed value
+	 * @throws IndexOutOfBoundsException
+	 *             if {@code start < 0} or {@code end > s.length()}
 	 * @throws NumberFormatException
-	 *             if {@code value} does not represent a valid {@code Decimal}
-	 *             or if the value is too large to be represented as a long
+	 *             if {@code value} does not represent a valid {@code Decimal} or if the value is too large to be
+	 *             represented as a long
 	 */
-	static final long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
-		return parseUnscaledDecimal(arith, rounding, s);
+	static final long parseLong(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s, int start, int end) {
+		return parseUnscaledDecimal(arith, rounding, s, start, end);
 	}
 
 	/**
-	 * Parses the given string into an unscaled decimal and returns it, rounding
-	 * extra digits if necessary.
+	 * Parses the given string into an unscaled decimal and returns it, rounding extra digits if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic of the target value
@@ -82,18 +85,26 @@ final class StringConversion {
 	 *            the rounding to apply if extra fraction digits are present
 	 * @param s
 	 *            the string to parse
+	 * @param start
+	 *            the start index to read characters in {@code s}, inclusive
+	 * @param end
+	 *            the end index where to stop reading in characters in {@code s}, exclusive
 	 * @return the parsed value
+	 * @throws IndexOutOfBoundsException
+	 *             if {@code start < 0} or {@code end > s.length()}
 	 * @throws NumberFormatException
-	 *             if {@code value} does not represent a valid {@code Decimal}
-	 *             or if the value is too large to be represented as a Decimal
-	 *             with the scale of the given arithmetic
+	 *             if {@code value} does not represent a valid {@code Decimal} or if the value is too large to be
+	 *             represented as a Decimal with the scale of the given arithmetic
 	 */
-	static final long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s) {
-		final int len = s.length();
+	static final long parseUnscaledDecimal(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s, int start, int end) {
+		if (start < 0 | end > s.length()) {
+			throw new IndexOutOfBoundsException("Start or end index is out of bounds: [" + start + ", " + end
+					+ " must be <= [0, " + s.length() + "]");
+		}
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
-		final int indexOfDecimalPoint = indexOfDecimalPoint(s);
-		if (indexOfDecimalPoint == len & scale > 0) {
+		final int indexOfDecimalPoint = indexOfDecimalPoint(s, start, end);
+		if (indexOfDecimalPoint == end & scale > 0) {
 			throw newNumberFormatExceptionFor(arith, s);
 		}
 
@@ -103,25 +114,25 @@ final class StringConversion {
 		final TruncatedPart truncatedPart;
 		final boolean negative;
 		if (indexOfDecimalPoint < 0) {
-			integralPart = parseIntegralPart(arith, s, 0, s.length(), ParseMode.Long);
+			integralPart = parseIntegralPart(arith, s, start, end, ParseMode.Long);
 			fractionalPart = 0;
 			truncatedPart = TruncatedPart.ZERO;
 			negative = integralPart < 0;
 		} else {
-			final int fractionalEnd = Math.min(len, indexOfDecimalPoint + 1 + scale);
-			if (indexOfDecimalPoint == 0) {
+			final int fractionalEnd = Math.min(end, indexOfDecimalPoint + 1 + scale);
+			if (indexOfDecimalPoint == start) {
 				// allowed format .45
 				integralPart = 0;
-				fractionalPart = parseFractionalPart(arith, s, 1, fractionalEnd);
-				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
+				fractionalPart = parseFractionalPart(arith, s, start + 1, fractionalEnd);
+				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, end);
 				negative = false;
 			} else {
 				// allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45",
 				// "-.45"
-				integralPart = parseIntegralPart(arith, s, 0, indexOfDecimalPoint, ParseMode.IntegralPart);
+				integralPart = parseIntegralPart(arith, s, start, indexOfDecimalPoint, ParseMode.IntegralPart);
 				fractionalPart = parseFractionalPart(arith, s, indexOfDecimalPoint + 1, fractionalEnd);
-				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, len);
-				negative = integralPart < 0 | (integralPart == 0 && s.charAt(0) == '-');
+				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, end);
+				negative = integralPart < 0 | (integralPart == 0 && s.charAt(start) == '-');
 			}
 		}
 		if (truncatedPart.isGreaterThanZero() & rounding == DecimalRounding.UNNECESSARY) {
@@ -129,14 +140,8 @@ final class StringConversion {
 		}
 		try {
 			final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
-			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;// negation
-																						// cannot
-																						// overflow
-																						// because
-																						// it
-																						// is
-																						// <
-																						// Scale18.SCALE_FACTOR
+			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;// < Scale18.SCALE_FACTOR hence
+																						// no overflow
 			final long truncatedValue = Checked.add(arith, unscaledIntegeral, unscaledFractional);
 			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue,
 					truncatedPart);
@@ -204,9 +209,8 @@ final class StringConversion {
 		return TruncatedPart.ZERO;
 	}
 
-	private static final int indexOfDecimalPoint(CharSequence s) {
-		final int len = s.length();
-		for (int i = 0; i < len; i++) {
+	private static final int indexOfDecimalPoint(CharSequence s, int start, int end) {
+		for (int i = start; i < end; i++) {
 			if (s.charAt(i) == '.') {
 				return i;
 			}
@@ -223,7 +227,7 @@ final class StringConversion {
 		long multmin;
 
 		if (end > start) {
-			char firstChar = s.charAt(0);
+			char firstChar = s.charAt(start);
 			if (firstChar < '0') { // Possible leading "+" or "-"
 				if (firstChar == '-') {
 					negative = true;
@@ -269,9 +273,8 @@ final class StringConversion {
 	}
 
 	/**
-	 * Returns a {@code String} object representing the specified {@code long}.
-	 * The argument is converted to signed decimal representation and returned
-	 * as a string, exactly as if passed to {@link Long#toString(long)}.
+	 * Returns a {@code String} object representing the specified {@code long}. The argument is converted to signed
+	 * decimal representation and returned as a string, exactly as if passed to {@link Long#toString(long)}.
 	 *
 	 * @param value
 	 *            a {@code long} to be converted.
@@ -282,8 +285,8 @@ final class StringConversion {
 	}
 
 	/**
-	 * Creates a {@code String} object representing the specified {@code long}
-	 * and appends it to the given {@code appendable}.
+	 * Creates a {@code String} object representing the specified {@code long} and appends it to the given
+	 * {@code appendable}.
 	 *
 	 * @param value
 	 *            a {@code long} to be converted.
@@ -300,10 +303,9 @@ final class StringConversion {
 	}
 
 	/**
-	 * Returns a {@code String} object representing the specified unscaled
-	 * Decimal value {@code uDecimal}. The argument is converted to signed
-	 * decimal representation and returned as a string with {@code scale}
-	 * decimal places event if trailing fraction digits are zero.
+	 * Returns a {@code String} object representing the specified unscaled Decimal value {@code uDecimal}. The argument
+	 * is converted to signed decimal representation and returned as a string with {@code scale} decimal places event if
+	 * trailing fraction digits are zero.
 	 *
 	 * @param uDecimal
 	 *            a unscaled Decimal to be converted
@@ -316,11 +318,9 @@ final class StringConversion {
 	}
 
 	/**
-	 * Constructs a {@code String} object representing the specified unscaled
-	 * Decimal value {@code uDecimal} and appends the constructed string to the
-	 * given appendable argument. The value is converted to signed decimal
-	 * representation and converted to a string with {@code scale} decimal
-	 * places event if trailing fraction digits are zero.
+	 * Constructs a {@code String} object representing the specified unscaled Decimal value {@code uDecimal} and appends
+	 * the constructed string to the given appendable argument. The value is converted to signed decimal representation
+	 * and converted to a string with {@code scale} decimal places event if trailing fraction digits are zero.
 	 *
 	 * @param uDecimal
 	 *            a unscaled Decimal to be converted to a string

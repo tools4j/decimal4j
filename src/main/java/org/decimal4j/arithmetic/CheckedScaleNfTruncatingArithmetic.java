@@ -185,9 +185,15 @@ public final class CheckedScaleNfTruncatingArithmetic extends AbstractCheckedSca
 	public final long toUnscaled(long uDecimal, int scale) {
 		return UnscaledConversion.unscaledToUnscaled(scale, this, uDecimal);
 	}
+
 	@Override
 	public final long parse(String value) {
-		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value);
+		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value, 0, value.length());
+	}
+
+	@Override
+	public final long parse(CharSequence value, int start, int end) {
+		return StringConversion.parseUnscaledDecimal(this, DecimalRounding.DOWN, value, start, end);
 	}
 
 }

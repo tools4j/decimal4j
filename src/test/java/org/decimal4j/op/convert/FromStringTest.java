@@ -205,7 +205,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, String operand) {
-		switch (RND.nextInt(4)) {
+		switch (RND.nextInt(5)) {
 		case 0:
 			// Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
@@ -221,6 +221,9 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
 		case 2:
+			// DecimalArithmetic API with CharSequence
+			return parseCharSequence(scaleMetrics, operand);
+		case 3:
 			// String constructor
 			// NOTE: immutable has no constructor with rounding mode param
 			if (isRoundingDefault()) {
@@ -230,7 +233,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 				return newMutableInstance(scaleMetrics, operand);
 			}
 			//else: fallthrough
-		case 3:// fallthrough
+		case 4:// fallthrough
 		default:
 			// Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
@@ -258,6 +261,18 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		} catch (Exception e) {
 			throw new RuntimeException("could not invoke constructor, e=" + e, e);
 		}
+	}
+
+	private <S extends ScaleMetrics> Decimal<S> parseCharSequence(S scaleMetrics, String operand) {
+		final StringBuilder charSeq = new StringBuilder(operand);
+		//prepend and append some crap chars
+		final String blabla = "BLABLA";
+		final String prefix = blabla.substring(0, RND.nextInt(blabla.length()));
+		final String postfix = blabla.substring(0, RND.nextInt(blabla.length()));
+		charSeq.insert(0, prefix).append(postfix);
+		final int start = prefix.length();
+		final int end = charSeq.length() - postfix.length();
+		return getDecimalFactory(scaleMetrics).valueOfUnscaled(arithmetic.parse(charSeq, start, end));
 	}
 
 	@SuppressWarnings("unchecked")
