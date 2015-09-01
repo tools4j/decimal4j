@@ -16,9 +16,9 @@ http://decimal4j.org/javadoc
    - Convenience methods to directly inter-operate with other data types (long, double, ...)
    - All rounding modes supported (default: HALF_UP)
  - Efficiency
-   - Fast and efficient implementation
-   - ``MutableDecimal`` implementation for chained operations
-   - Primitive arithmetic API for zero-garbage computations (with unscaled long values)
+   - Fast and efficient implementation (see [performance benchmarks](https://github.com/tools4j/decimal4j/wiki/Performance))
+   - [`MutableDecimal`](https://github.com/tools4j/decimal4j/wiki/Example#example-3-mean-and-standard-deviation-with-mutabledecimal) implementation for chained operations
+   - `DecimalArithmetic`  API for [zero-garbage computations]((https://github.com/tools4j/decimal4j/wiki/DecimalArithmetic-API) ) (with unscaled long values)
 
 #### Quick Start
 
