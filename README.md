@@ -63,6 +63,8 @@ Circumference with 5m radius is ~31.41592653589793m
 Circumference with 5m radius is larger than 31.41m
 ```
 
+More examples can be found in the [wiki](https://github.com/tools4j/decimal4j/wiki/Examples).
+
 #### Maven
 decimal4j has not been released yet. The current snapshot version can be referenced as follows:
 ```xml
