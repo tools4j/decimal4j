@@ -32,55 +32,47 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * <tt>ScaleMetrics</tt> defines various metrics associated with the scale of a
- * {@link Decimal} number. It is mainly used internally from code implementing
- * the arithmetic operations of a {@code Decimal}.
+ * <tt>ScaleMetrics</tt> defines various metrics associated with the scale of a {@link Decimal} number. It is mainly
+ * used internally from code implementing the arithmetic operations of a {@code Decimal}.
  * <p>
- * The {@link #getScale() scale} determines the number of fraction digits of the
- * {@code Decimal}. The {@link #getScaleFactor() scale factor} is the
- * multiplier/divisor for conversions between the {@code Decimal} value and the
- * unscaled {@code long} value underlying every {@code Decimal}.
+ * The {@link #getScale() scale} determines the number of fraction digits of the {@code Decimal}. The
+ * {@link #getScaleFactor() scale factor} is the multiplier/divisor for conversions between the {@code Decimal} value
+ * and the unscaled {@code long} value underlying every {@code Decimal}.
  * <p>
- * Operations such as {@link #multiplyByScaleFactor(long)
- * multiplyByScaleFactor(..)} are defined here as separate methods to allow for
- * compiler optimizations. Multiplications and divisions are for instance
- * translated into shifts and adds by the compiler instead of the more expensive
- * multiplication and division operations with non-constant long values.
+ * Operations such as {@link #multiplyByScaleFactor(long) multiplyByScaleFactor(..)} are defined here as separate
+ * methods to allow for compiler optimizations. Multiplications and divisions are for instance translated into shifts
+ * and adds by the compiler instead of the more expensive multiplication and division operations with non-constant long
+ * values.
  * <p>
- * {@code ScaleMetrics} also provides access to {@link DecimalArithmetic}
- * instances for different rounding modes and overflow policies.
- * {@code DecimalArithmetic} objects can be used to deal with decimal numbers
- * <i>natively</i>; in native mode {@code Decimal} numbers are passed to the
- * arithmetic class in their native form as unscaled {@code long} values.
+ * {@code ScaleMetrics} also provides access to {@link DecimalArithmetic} instances for different rounding modes and
+ * overflow policies. {@code DecimalArithmetic} objects can be used to deal with {@code Decimal} numbers in their
+ * <i>primitive</i> form, meaning that {@code Decimal} numbers are passed to the arithmetic class as unscaled
+ * {@code long} values.
  */
 public interface ScaleMetrics {
 	/**
-	 * Returns the scale, the number of fraction digits to the right of the
-	 * decimal point of a {@link Decimal} value.
+	 * Returns the scale, the number of fraction digits to the right of the decimal point of a {@link Decimal} value.
 	 * 
 	 * @return the scale also known as number of fraction digits
 	 */
 	int getScale();
 
 	/**
-	 * Returns the scale factor, which is 10<sup>f</sup> where {@code f} stands
-	 * for the {@link #getScale() scale}.
+	 * Returns the scale factor, which is 10<sup>f</sup> where {@code f} stands for the {@link #getScale() scale}.
 	 * 
 	 * @return the scale factor
 	 */
 	long getScaleFactor();
 
 	/**
-	 * Returns the {@link #getScaleFactor() scale factor} as a
-	 * {@link BigInteger} value.
+	 * Returns the {@link #getScaleFactor() scale factor} as a {@link BigInteger} value.
 	 * 
 	 * @return the scale factor as big integer
 	 */
 	BigInteger getScaleFactorAsBigInteger();
 
 	/**
-	 * Returns the {@link #getScaleFactor() scale factor} as a
-	 * {@link BigDecimal} value with scale zero.
+	 * Returns the {@link #getScaleFactor() scale factor} as a {@link BigDecimal} value with scale zero.
 	 * 
 	 * @return the scale factor as big decimal with scale zero.
 	 */
@@ -89,35 +81,30 @@ public interface ScaleMetrics {
 	/**
 	 * Returns the number of leading zeros of the scale factor
 	 * 
-	 * @return {@link Long#numberOfLeadingZeros(long)} applied to the scale
-	 *         factor
+	 * @return {@link Long#numberOfLeadingZeros(long)} applied to the scale factor
 	 */
 	int getScaleFactorNumberOfLeadingZeros();
 
 	/**
-	 * Returns the largest integer value that can be represented using this
-	 * scale.
+	 * Returns the largest integer value that can be represented using this scale.
 	 * 
 	 * @return {@code Long.MAX_VALUE / scaleFactor}
 	 */
 	long getMaxIntegerValue();
 
 	/**
-	 * Returns the smallest integer value that can be represented using this
-	 * scale.
+	 * Returns the smallest integer value that can be represented using this scale.
 	 * 
 	 * @return {@code Long.MIN_VALUE / scaleFactor}
 	 */
 	long getMinIntegerValue();
 
 	/**
-	 * Returns true if the specified integer {@code value} can be represented
-	 * using this scale.
+	 * Returns true if the specified integer {@code value} can be represented using this scale.
 	 * 
 	 * @param value
 	 *            the value to test
-	 * @return true if
-	 *         {@code (Long.MIN_VALUE / scaleFactor) <= value <= (Long.MAX_VALUE / scaleFactor)}
+	 * @return true if {@code (Long.MIN_VALUE / scaleFactor) <= value <= (Long.MAX_VALUE / scaleFactor)}
 	 */
 	boolean isValidIntegerValue(long value);
 
@@ -131,9 +118,8 @@ public interface ScaleMetrics {
 	long multiplyByScaleFactor(long factor);
 
 	/**
-	 * Returns {@code factor*scaleFactor}, checking for lost information. If the
-	 * result is out of the range of the {@code long} type, then an
-	 * {@code ArithmeticException} is thrown.
+	 * Returns {@code factor*scaleFactor}, checking for lost information. If the result is out of the range of the
+	 * {@code long} type, then an {@code ArithmeticException} is thrown.
 	 * 
 	 * @param factor
 	 *            the factor
@@ -144,8 +130,7 @@ public interface ScaleMetrics {
 	long multiplyByScaleFactorExact(long factor);
 
 	/**
-	 * Returns {@code factor*low32(scaleFactor)} where low32 refers to the low
-	 * 32 bits of the factor.
+	 * Returns {@code factor*low32(scaleFactor)} where low32 refers to the low 32 bits of the factor.
 	 * 
 	 * @param factor
 	 *            the factor
@@ -154,8 +139,7 @@ public interface ScaleMetrics {
 	long mulloByScaleFactor(int factor);
 
 	/**
-	 * Returns {@code factor*high32(scaleFactor)} where high32 refers to the
-	 * high 32 bits of the factor.
+	 * Returns {@code factor*high32(scaleFactor)} where high32 refers to the high 32 bits of the factor.
 	 * 
 	 * @param factor
 	 *            the factor
@@ -189,94 +173,87 @@ public interface ScaleMetrics {
 	 * @return {@code dividend % scaleFactor}
 	 */
 	long moduloByScaleFactor(long dividend);
-	
+
 	/**
-	 * Returns the string representation of the specified {@code value} applying
-	 * this metric's scale.
+	 * Returns the string representation of the specified {@code value} applying this metric's scale.
 	 * 
-	 * @param value the unscaled decimal to convert to a string
+	 * @param value
+	 *            the unscaled decimal to convert to a string
 	 * @return a fixed precision string representation of the specified value
 	 * @see DecimalArithmetic#toString(long)
 	 */
 	String toString(long value);
 
 	/**
-	 * Returns the default arithmetic for this scale performing unchecked
-	 * operations with rounding mode {@link RoundingMode#HALF_UP HALF_UP}.
+	 * Returns the default arithmetic for this scale performing unchecked operations with rounding mode
+	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 * 
-	 * @return default arithmetic for this scale rounding HALF_UP without
-	 *         overflow checks
+	 * @return default arithmetic for this scale rounding HALF_UP without overflow checks
 	 */
 	DecimalArithmetic getDefaultArithmetic();
 
 	/**
-	 * Returns the default arithmetic for this scale performing checked
-	 * operations with rounding mode {@link RoundingMode#HALF_UP HALF_UP}.
+	 * Returns the default arithmetic for this scale performing checked operations with rounding mode
+	 * {@link RoundingMode#HALF_UP HALF_UP}.
 	 * 
-	 * @return default arithmetic for this scale rounding HALF_UP with overflow
-	 *         checks
+	 * @return default arithmetic for this scale rounding HALF_UP with overflow checks
 	 */
 	DecimalArithmetic getDefaultCheckedArithmetic();
 
 	/**
-	 * Returns the arithmetic for this scale performing unchecked operations
-	 * with rounding mode {@link RoundingMode#DOWN DOWN}.
+	 * Returns the arithmetic for this scale performing unchecked operations with rounding mode {@link RoundingMode#DOWN
+	 * DOWN}.
 	 * 
 	 * @return arithmetic for this scale rounding DOWN without overflow checks
 	 */
 	DecimalArithmetic getRoundingDownArithmetic();
 
 	/**
-	 * Returns the arithmetic for this scale performing unchecked operations
-	 * with rounding mode {@link RoundingMode#FLOOR FLOOR}.
+	 * Returns the arithmetic for this scale performing unchecked operations with rounding mode
+	 * {@link RoundingMode#FLOOR FLOOR}.
 	 * 
 	 * @return arithmetic for this scale rounding FLOOR without overflow checks
 	 */
 	DecimalArithmetic getRoundingFloorArithmetic();
 
 	/**
-	 * Returns the arithmetic for this scale performing unchecked operations
-	 * with rounding mode {@link RoundingMode#HALF_EVEN HALF_EVEN}.
+	 * Returns the arithmetic for this scale performing unchecked operations with rounding mode
+	 * {@link RoundingMode#HALF_EVEN HALF_EVEN}.
 	 * 
-	 * @return arithmetic for this scale rounding HALF_EVEN without overflow
-	 *         checks
+	 * @return arithmetic for this scale rounding HALF_EVEN without overflow checks
 	 */
 	DecimalArithmetic getRoundingHalfEvenArithmetic();
 
 	/**
-	 * Returns the arithmetic for this scale performing unchecked operations
-	 * with rounding mode {@link RoundingMode#UNNECESSARY UNNECESSARY}.
+	 * Returns the arithmetic for this scale performing unchecked operations with rounding mode
+	 * {@link RoundingMode#UNNECESSARY UNNECESSARY}.
 	 * 
-	 * @return default arithmetic for this scale for rounding UNNECESSARY mode
-	 *         without overflow checks
+	 * @return default arithmetic for this scale for rounding UNNECESSARY mode without overflow checks
 	 */
 	DecimalArithmetic getRoundingUnnecessaryArithmetic();
 
 	/**
-	 * Returns the arithmetic for this scale that performs all operations with
-	 * the specified {@code roundingMode} and without overflow checks.
+	 * Returns the arithmetic for this scale that performs all operations with the specified {@code roundingMode} and
+	 * without overflow checks.
 	 *
 	 * @param roundingMode
 	 *            the rounding mode used by the returned arithmetic
-	 * @return arithmetic for this scale with specified rounding mode and
-	 *         without overflow checks
+	 * @return arithmetic for this scale with specified rounding mode and without overflow checks
 	 */
 	DecimalArithmetic getArithmetic(RoundingMode roundingMode);
 
 	/**
-	 * Returns the arithmetic for this scale that performs all operations with
-	 * the specified {@code roundingMode} and with overflow checks.
+	 * Returns the arithmetic for this scale that performs all operations with the specified {@code roundingMode} and
+	 * with overflow checks.
 	 *
 	 * @param roundingMode
 	 *            the rounding mode used by the returned arithmetic
-	 * @return arithmetic for this scale with specified rounding mode and with
-	 *         overflow checks
+	 * @return arithmetic for this scale with specified rounding mode and with overflow checks
 	 */
 	DecimalArithmetic getCheckedArithmetic(RoundingMode roundingMode);
 
 	/**
-	 * Returns the arithmetic for this scale that performs all operations with
-	 * the specified {@code truncationPolicy}.
+	 * Returns the arithmetic for this scale that performs all operations with the specified {@code truncationPolicy}.
 	 *
 	 * @param truncationPolicy
 	 *            the truncation policy used by the returned arithmetic

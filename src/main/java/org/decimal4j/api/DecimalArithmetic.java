@@ -34,9 +34,9 @@ import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * <tt>DecimalArithmetic</tt> defines the basic native operations for {@link Decimal} numbers for one particular
+ * <tt>DecimalArithmetic</tt> defines the basic primitive operations for {@link Decimal} numbers for one particular
  * combination of {@link #getScale() scale}, {@link #getRoundingMode() rounding mode} and {@link #getOverflowMode()
- * overflow mode}. Native here means that <tt>Decimal</tt> values are simply represented by their underlying unscaled
+ * overflow mode}. Primitive here means that <tt>Decimal</tt> values are simply represented by their underlying unscaled
  * <tt>long</tt> value. All operations therefore use unscaled longs for <tt>Decimal</tt> arguments and return longs for
  * <tt>Decimal</tt> number results.
  * <p>
