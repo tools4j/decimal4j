@@ -39,6 +39,7 @@ import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -205,7 +206,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 	}
 
 	protected <S extends ScaleMetrics> Decimal<S> actualResult(S scaleMetrics, String operand) {
-		switch (RND.nextInt(5)) {
+		switch (RND.nextInt(6)) {
 		case 0:
 			// Factory, immutable
 			if (isRoundingDefault() && RND.nextBoolean()) {
@@ -221,9 +222,20 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 				return getDecimalFactory(scaleMetrics).newMutable().set(operand, getRoundingMode());
 			}
 		case 2:
-			// DecimalArithmetic API with CharSequence
-			return parseCharSequence(scaleMetrics, operand);
+			// DecimalArithmetic API with String
+			if (RND.nextBoolean()) {
+				return getDecimalFactory(scaleMetrics).valueOfUnscaled(arithmetic.parse(operand));
+			} else {
+				return getDecimalFactory(scaleMetrics).valueOfUnscaled(arithmetic.deriveArithmetic(OverflowMode.CHECKED).parse(operand));
+			}
 		case 3:
+			// DecimalArithmetic API with CharSequence
+			if (RND.nextBoolean()) {
+				return parseCharSequence(arithmetic, scaleMetrics, operand);
+			} else {
+				return parseCharSequence(arithmetic.deriveArithmetic(OverflowMode.CHECKED), scaleMetrics, operand);
+			}
+		case 4:
 			// String constructor
 			// NOTE: immutable has no constructor with rounding mode param
 			if (isRoundingDefault()) {
@@ -233,7 +245,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 				return newMutableInstance(scaleMetrics, operand);
 			}
 			//else: fallthrough
-		case 4:// fallthrough
+		case 5:// fallthrough
 		default:
 			// Immutable, valueOf method
 			return valueOf(scaleMetrics, operand);
@@ -263,7 +275,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		}
 	}
 
-	private <S extends ScaleMetrics> Decimal<S> parseCharSequence(S scaleMetrics, String operand) {
+	private <S extends ScaleMetrics> Decimal<S> parseCharSequence(DecimalArithmetic arith, S scaleMetrics, String operand) {
 		final StringBuilder charSeq = new StringBuilder(operand);
 		//prepend and append some crap chars
 		final String blabla = "BLABLA";
@@ -272,7 +284,7 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		charSeq.insert(0, prefix).append(postfix);
 		final int start = prefix.length();
 		final int end = charSeq.length() - postfix.length();
-		return getDecimalFactory(scaleMetrics).valueOfUnscaled(arithmetic.parse(charSeq, start, end));
+		return getDecimalFactory(scaleMetrics).valueOfUnscaled(arith.parse(charSeq, start, end));
 	}
 
 	@SuppressWarnings("unchecked")

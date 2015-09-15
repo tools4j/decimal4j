@@ -30,11 +30,15 @@ import java.util.List;
 
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.arithmetic.Exceptions;
+import org.decimal4j.factory.DecimalFactory;
+import org.decimal4j.factory.Factories;
 import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -102,26 +106,6 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 		return "scale";
 	}
 
-	private BigDecimal expectedResult(BigDecimal a, int targetScale) {
-		if (Scales.MIN_SCALE <= targetScale & targetScale <= Scales.MAX_SCALE) {
-			final BigDecimal result = a.setScale(targetScale, getRoundingMode());
-			if (result.unscaledValue().bitLength() > 63) {
-				throw new ArithmeticException("Overflow: " + result);
-			}
-			return result;
-		}
-		throw new IllegalArgumentException("Illegal target scale: " + targetScale);
-	}
-
-	private <S extends ScaleMetrics> Decimal<?> actualResult(Decimal<S> a, int targetScale) {
-		final ScaleMetrics metrics = Scales.getScaleMetrics(targetScale);
-		final RoundingMode mode = getRoundingMode();
-		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
-			return RND.nextBoolean() ? a.scale(targetScale) : a.scale(metrics);
-		}
-		return RND.nextBoolean() ? a.scale(targetScale, mode) : a.scale(metrics, mode);
-	}
-
 	@Override
 	protected <S extends ScaleMetrics> void runRandomTest(S scaleMetrics, int index) {
 		final Decimal<S> decimalOperand = randomDecimal(scaleMetrics);
@@ -166,4 +150,41 @@ public class ScaleTest extends AbstractRandomAndSpecialValueTest {
 		// assert
 		actual.assertEquivalentTo(expected, messagePrefix);
 	}
+
+	private BigDecimal expectedResult(BigDecimal a, int targetScale) {
+		if (Scales.MIN_SCALE <= targetScale & targetScale <= Scales.MAX_SCALE) {
+			final BigDecimal result = a.setScale(targetScale, getRoundingMode());
+			if (result.unscaledValue().bitLength() > 63) {
+				throw new ArithmeticException("Overflow: " + result);
+			}
+			return result;
+		}
+		throw new IllegalArgumentException("Illegal target scale: " + targetScale);
+	}
+
+	private <S extends ScaleMetrics> Decimal<?> actualResult(Decimal<S> a, int targetScale) {
+		final ScaleMetrics metrics = Scales.getScaleMetrics(targetScale);
+		final RoundingMode mode = getRoundingMode();
+		if (isStandardTruncationPolicy() && RND.nextBoolean()) {
+			return RND.nextBoolean() ? a.scale(targetScale) : a.scale(metrics);
+		}
+		if (RND.nextBoolean()) {
+			return RND.nextBoolean() ? a.scale(targetScale, mode) : a.scale(metrics, mode);
+		}
+		//use arithmetic.toUnscaled(..)
+		final DecimalArithmetic checkedArith = arithmetic.deriveArithmetic(OverflowMode.CHECKED);
+		final DecimalFactory<?> factory = Factories.getDecimalFactory(targetScale);
+		try {
+			final long unscaledResult;
+			if (RND.nextBoolean()) {
+				unscaledResult = arithmetic.toUnscaled(a.unscaledValue(), targetScale);
+			} else {
+				unscaledResult = checkedArith.toUnscaled(a.unscaledValue(), targetScale);
+			}
+			return factory.valueOfUnscaled(unscaledResult);
+		} catch (IllegalArgumentException e) {
+			throw Exceptions.newArithmeticExceptionWithCause(e.getMessage(), e);
+		}
+	}
+
 }

@@ -34,6 +34,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalToAnyTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -70,21 +71,35 @@ public class ToStringTest extends AbstractDecimalToAnyTest<String> {
 	private static final String STRING = "BLABLABLKJSLDFJLKJOI_)$(@U)DKSLDFLKJSLKXCMFREWOKLRJT";
 	@Override
 	protected <S extends ScaleMetrics> String actualResult(Decimal<S> operand) {
-		if (RND.nextBoolean()) {
-			return operand.toString();
-		}
-		//use appendable version
 		try {
-			final StringBuilder sb = new StringBuilder();
-			if (RND.nextBoolean()) {
+			switch (RND.nextInt(5)) {
+			case 0:
+				return operand.toString();
+			case 1:
+				//Scale.toString(..)
+				return getScaleMetrics().toString(operand.unscaledValue());
+			case 2: {
+				//use appendable version
+				final StringBuilder sb = new StringBuilder();
 				arithmetic.toString(operand.unscaledValue(), sb);
 				return sb.toString();
 			}
-			//use appendable version with some existing string
-			final String prefix = STRING.substring(0, RND.nextInt(STRING.length()));
-			sb.append(prefix);
-			arithmetic.toString(operand.unscaledValue(), sb);
-			return sb.substring(prefix.length());
+			case 3: {
+				//use appendable version with some existing string
+				final StringBuilder sb = new StringBuilder();
+				final String prefix = STRING.substring(0, RND.nextInt(STRING.length()));
+				sb.append(prefix);
+				arithmetic.toString(operand.unscaledValue(), sb);
+				return sb.substring(prefix.length());
+			}
+			case 4://fallthrough
+			default: {
+				//use appendable version or checked arithmetic
+				final StringBuilder sb = new StringBuilder();
+				arithmetic.deriveArithmetic(OverflowMode.CHECKED).toString(operand.unscaledValue(), sb);
+				return sb.toString();
+			}
+			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

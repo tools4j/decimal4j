@@ -29,17 +29,14 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * Provides rounding constants implementing {@link TruncationPolicy} for
- * {@link OverflowMode#UNCHECKED}. The constants are equivalent to the constants
- * defined by {@link RoundingMode}; the policy's {@link #getOverflowMode()}
- * method always returns {@link OverflowMode#UNCHECKED UNCHECKED} overflow mode.
+ * Provides rounding constants implementing {@link TruncationPolicy} for {@link OverflowMode#UNCHECKED}. The constants
+ * are equivalent to the constants defined by {@link RoundingMode}; the policy's {@link #getOverflowMode()} method
+ * always returns {@link OverflowMode#UNCHECKED UNCHECKED} overflow mode.
  */
 public enum UncheckedRounding implements TruncationPolicy {
 	/**
-	 * Unchecked truncation policy with rounding mode to round away from zero.
-	 * Always increments the digit prior to a non-zero discarded fraction. Note
-	 * that this rounding mode never decreases the magnitude of the calculated
-	 * value.
+	 * Unchecked truncation policy with rounding mode to round away from zero. Always increments the digit prior to a
+	 * non-zero discarded fraction. Note that this rounding mode never decreases the magnitude of the calculated value.
 	 * 
 	 * @see RoundingMode#UP
 	 */
@@ -48,6 +45,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.UP;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.UP;
@@ -55,10 +53,9 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to round towards zero.
-	 * Never increments the digit prior to a discarded fraction (i.e.,
-	 * truncates). Note that this rounding mode never increases the magnitude of
-	 * the calculated value.
+	 * Unchecked truncation policy with rounding mode to round towards zero. Never increments the digit prior to a
+	 * discarded fraction (i.e., truncates). Note that this rounding mode never increases the magnitude of the
+	 * calculated value.
 	 * 
 	 * @see RoundingMode#DOWN
 	 */
@@ -67,6 +64,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.DOWN;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.DOWN;
@@ -74,11 +72,9 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to round towards positive
-	 * infinity. If the result is positive, behaves as for
-	 * {@code RoundingMode.UP}; if negative, behaves as for
-	 * {@code RoundingMode.DOWN}. Note that this rounding mode never decreases
-	 * the calculated value.
+	 * Unchecked truncation policy with rounding mode to round towards positive infinity. If the result is positive,
+	 * behaves as for {@code RoundingMode.UP}; if negative, behaves as for {@code RoundingMode.DOWN}. Note that this
+	 * rounding mode never decreases the calculated value.
 	 * 
 	 * @see RoundingMode#CEILING
 	 */
@@ -87,6 +83,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.CEILING;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.CEILING;
@@ -94,11 +91,9 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to round towards negative
-	 * infinity. If the result is positive, behave as for
-	 * {@code RoundingMode.DOWN}; if negative, behave as for
-	 * {@code RoundingMode.UP}. Note that this rounding mode never increases the
-	 * calculated value.
+	 * Unchecked truncation policy with rounding mode to round towards negative infinity. If the result is positive,
+	 * behave as for {@code RoundingMode.DOWN}; if negative, behave as for {@code RoundingMode.UP}. Note that this
+	 * rounding mode never increases the calculated value.
 	 * 
 	 * @see RoundingMode#FLOOR
 	 */
@@ -107,6 +102,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.FLOOR;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.FLOOR;
@@ -114,12 +110,10 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to round towards
-	 * {@literal "nearest neighbor"} unless both neighbors are equidistant, in
-	 * which case round up. Behaves as for {@code RoundingMode.UP} if the
-	 * discarded fraction is &ge; 0.5; otherwise, behaves as for
-	 * {@code RoundingMode.DOWN}. Note that this is the rounding mode commonly
-	 * taught at school.
+	 * Unchecked truncation policy with rounding mode to round towards {@literal "nearest neighbor"} unless both
+	 * neighbors are equidistant, in which case round up. Behaves as for {@code RoundingMode.UP} if the discarded
+	 * fraction is &ge; 0.5; otherwise, behaves as for {@code RoundingMode.DOWN}. Note that this is the rounding mode
+	 * commonly taught at school.
 	 * 
 	 * @see RoundingMode#HALF_UP
 	 */
@@ -128,6 +122,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.HALF_UP;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.HALF_UP;
@@ -135,11 +130,9 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to round towards
-	 * {@literal "nearest neighbor"} unless both neighbors are equidistant, in
-	 * which case round down. Behaves as for {@code RoundingMode.UP} if the
-	 * discarded fraction is &gt; 0.5; otherwise, behaves as for
-	 * {@code RoundingMode.DOWN}.
+	 * Unchecked truncation policy with rounding mode to round towards {@literal "nearest neighbor"} unless both
+	 * neighbors are equidistant, in which case round down. Behaves as for {@code RoundingMode.UP} if the discarded
+	 * fraction is &gt; 0.5; otherwise, behaves as for {@code RoundingMode.DOWN}.
 	 * 
 	 * @see RoundingMode#HALF_DOWN
 	 */
@@ -148,6 +141,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.HALF_DOWN;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.HALF_DOWN;
@@ -155,16 +149,13 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to round towards the
-	 * {@literal "nearest neighbor"} unless both neighbors are equidistant, in
-	 * which case, round towards the even neighbor. Behaves as for
-	 * {@code RoundingMode.HALF_UP} if the digit to the left of the discarded
-	 * fraction is odd; behaves as for {@code RoundingMode.HALF_DOWN} if it's
-	 * even. Note that this is the rounding mode that statistically minimizes
-	 * cumulative error when applied repeatedly over a sequence of calculations.
-	 * It is sometimes known as {@literal "Banker's rounding,"} and is chiefly
-	 * used in the USA. This rounding mode is analogous to the rounding policy
-	 * used for {@code float} and {@code double} arithmetic in Java.
+	 * Unchecked truncation policy with rounding mode to round towards the {@literal "nearest neighbor"} unless both
+	 * neighbors are equidistant, in which case, round towards the even neighbor. Behaves as for
+	 * {@code RoundingMode.HALF_UP} if the digit to the left of the discarded fraction is odd; behaves as for
+	 * {@code RoundingMode.HALF_DOWN} if it's even. Note that this is the rounding mode that statistically minimizes
+	 * cumulative error when applied repeatedly over a sequence of calculations. It is sometimes known as
+	 * {@literal "Banker's rounding,"} and is chiefly used in the USA. This rounding mode is analogous to the rounding
+	 * policy used for {@code float} and {@code double} arithmetic in Java.
 	 * 
 	 * @see RoundingMode#HALF_EVEN
 	 */
@@ -173,6 +164,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.HALF_EVEN;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.HALF_EVEN;
@@ -180,10 +172,9 @@ public enum UncheckedRounding implements TruncationPolicy {
 	},
 
 	/**
-	 * Unchecked truncation policy with rounding mode to assert that the
-	 * requested operation has an exact result, hence no rounding is necessary.
-	 * If this rounding mode is specified on an operation that yields an inexact
-	 * result, an {@code ArithmeticException} is thrown.
+	 * Unchecked truncation policy with rounding mode to assert that the requested operation has an exact result, hence
+	 * no rounding is necessary. If this rounding mode is specified on an operation that yields an inexact result, an
+	 * {@code ArithmeticException} is thrown.
 	 * 
 	 * @see RoundingMode#UNNECESSARY
 	 */
@@ -192,6 +183,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 		public final RoundingMode getRoundingMode() {
 			return RoundingMode.UNNECESSARY;
 		}
+
 		@Override
 		public final CheckedRounding toCheckedRounding() {
 			return CheckedRounding.UNNECESSARY;
@@ -209,20 +201,29 @@ public enum UncheckedRounding implements TruncationPolicy {
 	}
 
 	/**
-	 * Returns the policy with the same {@link #getRoundingMode() rounding mode}
-	 * as this unchecked rounding policy but for {@link OverflowMode#CHECKED
-	 * CHECKED} {@link #getOverflowMode() overflow mode}.
+	 * Returns the policy with the same {@link #getRoundingMode() rounding mode} as this unchecked rounding policy but
+	 * for {@link OverflowMode#CHECKED CHECKED} {@link #getOverflowMode() overflow mode}.
 	 * 
 	 * @return the {@link CheckedRounding} counterpart to this policy.
 	 */
 	abstract public CheckedRounding toCheckedRounding();
 
 	/**
-	 * Immutable set with all values of this enum. Avoids object creation in
-	 * contrast to {@link #values()}.
+	 * Returns "UNCHECKED/(name)" where {@code (name)} stands for the {@link #name()} of this constant.
+	 * 
+	 * @return a string like "UNCHECKED/HALF_UP"
 	 */
-	public static final Set<UncheckedRounding> VALUES = Collections.unmodifiableSet(EnumSet.allOf(UncheckedRounding.class));
-	
+	@Override
+	public final String toString() {
+		return "UNCHECKED/" + name();
+	}
+
+	/**
+	 * Immutable set with all values of this enum. Avoids object creation in contrast to {@link #values()}.
+	 */
+	public static final Set<UncheckedRounding> VALUES = Collections
+			.unmodifiableSet(EnumSet.allOf(UncheckedRounding.class));
+
 	/**
 	 * Returns the checked rounding constant for the given rounding mode.
 	 * 
@@ -236,7 +237,7 @@ public enum UncheckedRounding implements TruncationPolicy {
 
 	private static class ByRoundingMode {
 		private static final UncheckedRounding[] VALUES_BY_ROUNDING_MODE_ORDINAL = sortByRoundingModeOrdinal();
-	
+
 		private static final UncheckedRounding[] sortByRoundingModeOrdinal() {
 			final UncheckedRounding[] sorted = new UncheckedRounding[VALUES.size()];
 			for (final UncheckedRounding dr : VALUES) {

@@ -216,8 +216,7 @@ final class Pow {
 			}
 			if (seenbit) {
 				acc.multiply(sgn, acc, powRounding); // acc=acc*acc [square]
-				// else (!seenbit) no point in squaring ONE
-			}
+			}// else (!seenbit) no point in squaring ONE
 		}
 
 		if (n < 0) {

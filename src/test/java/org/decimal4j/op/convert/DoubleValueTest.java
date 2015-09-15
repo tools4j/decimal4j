@@ -34,6 +34,7 @@ import org.decimal4j.factory.Factories;
 import org.decimal4j.op.AbstractDecimalToAnyTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -82,7 +83,15 @@ public class DoubleValueTest extends AbstractDecimalToAnyTest<Double> {
 		if (getRoundingMode() == RoundingMode.HALF_EVEN && RND.nextBoolean()) {
 			return operand.doubleValue();
 		}
-		return operand.doubleValue(getRoundingMode());
+		if (RND.nextBoolean()) {
+			return operand.doubleValue(getRoundingMode());
+		}
+		//use arithmetic
+		if (RND.nextBoolean()) {
+			return arithmetic.toDouble(operand.unscaledValue());
+		} else {
+			return arithmetic.deriveArithmetic(OverflowMode.CHECKED).toDouble(operand.unscaledValue());
+		}
 	}
 	
 }

@@ -33,6 +33,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalToAnyTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -86,8 +87,15 @@ public class LongValueTest extends AbstractDecimalToAnyTest<Long> {
 		}
 		if (isRoundingDown() && RND.nextBoolean()) {
 			return operand.longValue();
-		} else {
+		}
+		if (RND.nextBoolean()) {
 			return operand.longValue(getRoundingMode());
+		}
+		//use arithmetic
+		if (RND.nextBoolean()) {
+			return arithmetic.toLong(operand.unscaledValue());
+		} else {
+			return arithmetic.deriveArithmetic(OverflowMode.CHECKED).toLong(operand.unscaledValue());
 		}
 	}
 }

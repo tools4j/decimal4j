@@ -298,8 +298,6 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 			return false;
 		}
 	}
-	
-	
 
 	@Override
 	protected BigDecimal expectedResult(BigDecimal a, int b) {

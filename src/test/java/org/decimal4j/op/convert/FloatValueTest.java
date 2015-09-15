@@ -33,6 +33,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.op.AbstractDecimalToAnyTest;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.test.TestSettings;
+import org.decimal4j.truncate.OverflowMode;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -75,6 +76,14 @@ public class FloatValueTest extends AbstractDecimalToAnyTest<Float> {
 		if (getRoundingMode() == RoundingMode.HALF_EVEN && RND.nextBoolean()) {
 			return operand.floatValue();
 		}
-		return operand.floatValue(getRoundingMode());
+		if (RND.nextBoolean()) {
+			return operand.floatValue(getRoundingMode());
+		}
+		//use arithmetic
+		if (RND.nextBoolean()) {
+			return arithmetic.toFloat(operand.unscaledValue());
+		} else {
+			return arithmetic.deriveArithmetic(OverflowMode.CHECKED).toFloat(operand.unscaledValue());
+		}
 	}
 }

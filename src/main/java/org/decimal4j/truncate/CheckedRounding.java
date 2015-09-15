@@ -218,6 +218,16 @@ public enum CheckedRounding implements TruncationPolicy {
 	abstract public UncheckedRounding toUncheckedRounding();
 
 	/**
+	 * Returns "CHECKED/(name)" where {@code (name)} stands for the {@link #name()} of this constant.
+	 * 
+	 * @return a string like "CHECKED/HALF_UP"
+	 */
+	@Override
+	public final String toString() {
+		return "CHECKED/" + name();
+	}
+
+	/**
 	 * Immutable set with all values of this enum. Avoids object creation in
 	 * contrast to {@link #values()}.
 	 */
