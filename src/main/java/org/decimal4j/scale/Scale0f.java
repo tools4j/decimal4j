@@ -59,7 +59,15 @@ public enum Scale0f implements ScaleMetrics {
 	/**
 	 * The scale value <code>0</code>.
 	 */
-	public static final int SCALE = 12;
+	public static final int SCALE = 0;
+
+	/**
+	 * The scale factor <code>10<sup>0</sup></code>.
+	 */
+	public static final long SCALE_FACTOR = 1L;
+	
+	/** Long.numberOfLeadingZeros(SCALE_FACTOR)*/
+	private static final int NLZ_SCALE_FACTOR = 63;
 
 	private static final long LONG_MASK = 0xffffffffL;
 
@@ -91,17 +99,17 @@ public enum Scale0f implements ScaleMetrics {
 
 	@Override
 	public final int getScale() {
-		return 0;
+		return SCALE;
 	}
 
 	@Override
 	public final long getScaleFactor() {
-		return 1;
+		return SCALE_FACTOR;
 	}
 
 	@Override
 	public final int getScaleFactorNumberOfLeadingZeros() {
-		return 63;
+		return NLZ_SCALE_FACTOR;
 	}
 
 	@Override

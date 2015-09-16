@@ -48,6 +48,8 @@ public class DoubleRounderObjectTest {
 			for (int scale2 = Scales.MIN_SCALE; scale2 <= Scales.MAX_SCALE; scale2++) {
 				final DoubleRounder rounder1 = new DoubleRounder(scale1);
 				final DoubleRounder rounder2 = new DoubleRounder(scale2);
+				Assert.assertEquals("should be equal to itself", rounder1, rounder1);
+				Assert.assertEquals("should be equal to itself", rounder2, rounder2);
 				if (scale1 == scale2) {
 					Assert.assertEquals("should be equal for same scale", rounder1, rounder2);
 				} else {
@@ -55,6 +57,13 @@ public class DoubleRounderObjectTest {
 				}
 			}
 		}
+	}
+
+	@Test
+	public void testNotEquals() {
+		final DoubleRounder rounder = new DoubleRounder(7);
+		Assert.assertNotEquals("should not be equal to null", rounder, null);
+		Assert.assertNotEquals("should not be equal to other object type", rounder, "bla");
 	}
 
 	@Test

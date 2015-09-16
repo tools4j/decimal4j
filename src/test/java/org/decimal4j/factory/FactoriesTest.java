@@ -51,11 +51,13 @@ public class FactoriesTest {
 			final DecimalFactory<?> factory = Factories.getDecimalFactory(scale);
 			//then
 			assertNotNull("factory should not be null", factory);
+			assertEquals("factory should have scale " + scale, scale, factory.getScale());
 			assertEquals("factory should have scale " + scale, scale, factory.getScaleMetrics().getScale());
 			//when
 			final DecimalFactory<?> generic = Factories.getGenericDecimalFactory(scale);
 			//then
 			assertNotNull("generic factory should not be null", generic);
+			assertEquals("generic factory should have scale " + scale, scale, generic.getScale());
 			assertEquals("generic factory should have scale " + scale, scale, generic.getScaleMetrics().getScale());
 		}
 	}
