@@ -57,7 +57,7 @@ public class JmhRunner {
 	}
 	public void run() throws RunnerException, IOException, InterruptedException {
 		final File jmhJar = findJmhJar();
-		final Process process = Runtime.getRuntime().exec("java -cp " + jmhJar.getAbsolutePath() + " " + JmhRunner.class.getName() + " " + benchmarkClass.getSimpleName());
+		final Process process = Runtime.getRuntime().exec("java -cp " + jmhJar.getAbsolutePath() + " " + JmhRunner.class.getName() + " " + benchmarkClass.getName());
 		final Thread t1 = read(process.getInputStream());
 		final Thread t2 = read(process.getErrorStream());
 		if (0 != process.waitFor()) {
@@ -100,9 +100,26 @@ public class JmhRunner {
 		return thread;
 	}
 	
-	public static void main(String[] args) throws RunnerException {
+	private static String askRunAll() throws IOException {
+		System.out.print("Do you want to run all jmh benchmarks? (can take approx. 3h!)[y/n]");
+		final char ch = (char)System.in.read();
+		System.out.println();
+		if (Character.toLowerCase(ch) == 'y') {
+			return ".*";
+		}
+		System.out.println("aborted.");
+		System.exit(1);
+		return null;//should not get here
+	}
+	public static void main(String[] args) throws RunnerException, IOException {
+		final String include;
+		if (args.length == 0) {
+			include = askRunAll();
+		} else {
+			include = args[0];
+		}
 		final Options opt = new OptionsBuilder()//
-			.include(".*" + args[0] + ".*")//
+			.include(include)//
 			.mode(Mode.Throughput)//
 			.measurementIterations(3)//
 			.measurementBatchSize(1)//
