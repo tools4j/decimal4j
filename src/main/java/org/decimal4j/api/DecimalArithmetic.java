@@ -551,19 +551,19 @@ public interface DecimalArithmetic {
 	 * is an integer rather than a decimal. If rounding must be performed, this arithmetic's {@link #getRoundingMode()
 	 * rounding mode} is applied.
 	 * <p>
-	 * The current implementation uses the core algorithm defined in ANSI standard X3.274-1996. For {@code n >= 0}, the
+	 * The current implementation uses the core algorithm defined in ANSI standard X3.274-1996. For {@code exponent >= 0}, the
 	 * returned numerical value is within 1 ULP of the exact numerical value; the result is actually exact for all
-	 * rounding modes other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed for {@code n < 0} but the
+	 * rounding modes other than HALF_UP, HALF_EVEN and HALF_DOWN. No precision is guaranteed for {@code exponent < 0} but the
 	 * result is usually exact up to 10-20 ULP.
 	 * <p>
 	 * Properties of the X3.274-1996 algorithm are:
 	 * <ul>
 	 * <li>An {@code IllegalArgumentException} is thrown if {@code abs(n) > 999999999}</li>
-	 * <li>if {@code n} is zero, one is returned even if {@code this} is zero, otherwise
+	 * <li>if {@code exponent} is zero, one is returned even if {@code uDecimalBase} is zero, otherwise
 	 * <ul>
-	 * <li>if {@code n} is positive, the result is calculated via the repeated squaring technique into a single
+	 * <li>if {@code exponent} is positive, the result is calculated via the repeated squaring technique into a single
 	 * accumulator</li>
-	 * <li>if {@code n} is negative, the result is calculated as if {@code n} were positive; this value is then divided
+	 * <li>if {@code exponent} is negative, the result is calculated as if {@code exponent} were positive; this value is then divided
 	 * into one</li>
 	 * <li>The final value from either the positive or negative case is then rounded using this arithmetic's
 	 * {@link #getRoundingMode() rounding mode}</li>
