@@ -28,6 +28,7 @@ import java.util.Random;
 
 import org.decimal4j.jmh.state.AbstractValueBenchmarkState;
 import org.decimal4j.jmh.state.PowBenchmarkState;
+import org.decimal4j.jmh.state.ScaleBenchmarkState;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.CheckedRounding;
@@ -171,6 +172,30 @@ public enum BenchmarkType {
 		@Override
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
 			throw new RuntimeException("internal error: pow has no second decimal argument");
+		}
+	},
+	Round {
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			throw new RuntimeException("internal error: round has no second decimal argument");
+		}
+	},
+	Scale {
+		@Override
+		public long randomFirst(AbstractValueBenchmarkState benchmarkState, ValueType valueType) {
+			//create a value that does not overflow when rescaled
+			final ScaleBenchmarkState scaleState = (ScaleBenchmarkState)benchmarkState;
+			if (scaleState.targetScale <= scaleState.scale) {
+				return valueType.random(SignType.ALL);
+			}
+			final ScaleMetrics diffMetrics = Scales.getScaleMetrics(scaleState.targetScale - scaleState.scale);
+			final long minValue = Math.max(valueType.minValue, diffMetrics.getMinIntegerValue());
+			final long maxValue = Math.min(valueType.maxValue, diffMetrics.getMaxIntegerValue());
+			return randomLong(maxValue) - randomLong(-Math.max(minValue, -Long.MAX_VALUE));
+		}
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			throw new RuntimeException("internal error: scale has no second decimal argument");
 		}
 	},
 	ConvertToDouble {
