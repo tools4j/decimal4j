@@ -94,3 +94,10 @@ decimal4j has not been released yet. The current snapshot version can be downloa
 
 https://oss.sonatype.org/content/repositories/snapshots/org/decimal4j
 
+#### More Information
+* [Javadoc API](http://decimal4j.org/javadoc)
+* [Wiki](https://github.com/tools4j/decimal4j/wiki)
+* [DoubleRounder utility](https://github.com/tools4j/decimal4j/wiki/DoubleRounder Utility) to round double values to an arbitrary precision between 0 and 18
+* [More Examples](https://github.com/tools4j/decimal4j/wiki/Examples).
+* [Zero-garbage Computations](https://github.com/tools4j/decimal4j/wiki/DecimalArithmetic-API) (with unscaled long values)
+* [Performance Benchmarks](https://github.com/tools4j/decimal4j/wiki/Performance)
