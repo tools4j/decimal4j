@@ -34,7 +34,7 @@ import org.openjdk.jmh.annotations.State;
 
 @State(Scope.Benchmark)
 public class RoundBenchmarkState extends AbstractValueBenchmarkState {
-	@Param({ "HALF_EVEN" , "DOWN"})
+	@Param({"DOWN", "HALF_UP"})
 	public RoundingMode roundingMode;
 	@Param({"Int", "Long"})
 	public ValueType valueType;
