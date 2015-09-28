@@ -29,8 +29,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -130,10 +128,9 @@ public class JmhRunner {
 			.warmupTime(TimeValue.milliseconds(1000))//
 			.build();
 		final Collection<RunResult> runResult = new Runner(opt).run();
-		final PrintWriter writer = new PrintWriter(new OutputStreamWriter(System.out));
-		final ResultFormat resultFormat = ResultFormatFactory.getInstance(ResultFormatType.CSV, writer);
+		final ResultFormat resultFormat = ResultFormatFactory.getInstance(ResultFormatType.CSV, System.out);
 		resultFormat.writeOut(runResult);
-		writer.flush();
+		System.out.flush();
 	}
 
 }
