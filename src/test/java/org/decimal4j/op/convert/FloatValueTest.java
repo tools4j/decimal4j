@@ -98,9 +98,9 @@ public class FloatValueTest extends AbstractDecimalToAnyTest<Float> {
 			return operand.signum() >= 0 ? ceil : floor;
 		case UNNECESSARY:
 			throw new ArithmeticException("Rounding necessary: " + operand);
-		case HALF_EVEN://fallthrough
+		case HALF_EVEN:
 			throw new IllegalArgumentException("Unsupported rounding mode: " + getRoundingMode());
-		default:
+		default://HALF_UP + HALF_DOWN 
 			break;
 		}
 		//HALF_DOWN/HALF_UP
@@ -110,6 +110,7 @@ public class FloatValueTest extends AbstractDecimalToAnyTest<Float> {
 		if (halfCmp != 0) {
 			return halfCmp < 0 ? ceil : floor;
 		}
+		//exactly HALF
 		if (getRoundingMode() == RoundingMode.HALF_UP) {
 			return operand.signum() > 0 ? ceil : floor;
 		}
