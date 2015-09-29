@@ -366,29 +366,25 @@ final class FloatConversion {
 		if (unscaled == 0) {
 			return 0;
 		}
+		if (rounding == DecimalRounding.HALF_EVEN) {
+			return (float)DoubleConversion.unscaledToDouble(arith, rounding, unscaled);
+		}
+
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		final int scale = arith.getScale();
-		// eliminate sign and trailing power-of-2 zero bits
 		final long absUnscaled = Math.abs(unscaled);
+		
+		// eliminate sign and trailing power-of-2 zero bits
 		final int pow2 = Long.numberOfTrailingZeros(absUnscaled);
 		final long absVal = absUnscaled >>> pow2;
 		final int nlzAbsVal = Long.numberOfLeadingZeros(absVal);
 
 		/*
-		 * NOTE: a) If absVal has no more than 24 bits it can be represented as a float value without loss of precision
-		 * (23 mantissa bits plus the implicit leading 1 bit) b) The scale factor 10 has 30 leading zero bits, leaves 34
-		 * bits, shifted right by the trailing power-of-2 zero bits is exactly 24 bits ==> For HALF_EVEN rounding mode
-		 * we can therefore apply the scale factor via float division without losing information
-		 */
-		if (Long.SIZE - nlzAbsVal <= SIGNIFICAND_BITS + 1 & rounding == DecimalRounding.HALF_EVEN & scale <= 10) {
-			return unscaledToFloatWithFloatDivisionRoundHalfEven(scaleMetrics, unscaled, pow2, absVal);
-		}
-
-		/*
-		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor then the division absVal/factor ==
-		 * 1.xxxxx, i.e. it is normalized 2) because we omit the 1 in the mantissa, we calculate valModFactor = absVal -
-		 * floor(absVal/factor)*factor = absVal - 1*factor 3) we shift valModFactor such that the 1 from the division
-		 * would be on bit 24 4) we perform the division
+		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor then the division 
+		 *    absVal/factor == 1.xxxxx, i.e. it is normalized 
+		 * 2) because we omit the 1 in the mantissa, we calculate 
+		 *    valModFactor = absVal - floor(absVal/factor)*factor = absVal - 1*factor 
+		 * 3) we shift valModFactor such that the 1 from the division would be on bit 24 
+		 * 4) we perform the division
 		 */
 
 		// (1) + (2)
@@ -425,18 +421,6 @@ final class FloatConversion {
 				valModFactor);
 	}
 
-	private static final float unscaledToFloatWithFloatDivisionRoundHalfEven(ScaleMetrics scaleMetrics, long unscaled, int pow2, long absVal) {
-		final int scale = scaleMetrics.getScale();
-		final float dividend = absVal;
-		final float divisor = scaleMetrics.getScaleFactor() >> scale;
-		final float quotient = dividend / divisor;
-		final int exponent = Math.getExponent(quotient) + pow2 - scale;
-		final int significand = Float.floatToRawIntBits(quotient) & SIGNIFICAND_MASK;
-		final int signBit = (int) ((unscaled >>> 32) & SIGN_MASK);
-		final int raw = signBit | ((exponent + EXPONENT_BIAS) << SIGNIFICAND_BITS) | significand;
-		return Float.intBitsToFloat(raw);
-	}
-
 	private static final float unscaledToFloatShiftAndDivideByScaleFactor(ScaleMetrics scaleMetrics, long unscaled, int exp, int mantissaShift, long valModFactor) {
 		final long quot;
 		if (mantissaShift >= 0) {
@@ -464,9 +448,9 @@ final class FloatConversion {
 			final long lValModFactor = valModFactor << mantissaShift;
 			if (hValModFactor == 0) {
 				final long truncated = scaleMetrics.divideUnsignedByScaleFactor(lValModFactor);
-				final long remainder = lValModFactor - scaleMetrics.multiplyByScaleFactor(truncated);
+				final long remainder = applySign(unscaled, lValModFactor - scaleMetrics.multiplyByScaleFactor(truncated));
 				quotient = truncated
-						+ Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor);
+						+ Math.abs(Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor));
 			} else {
 				quotient = Math.abs(Div.div128by64(rounding, unscaled < 0, hValModFactor, lValModFactor, scaleFactor));
 				// rounding already done by div128by64
@@ -474,12 +458,13 @@ final class FloatConversion {
 		} else {
 			final long scaledVal = valModFactor >>> -mantissaShift;
 			final long truncated = scaleMetrics.divideByScaleFactor(scaledVal);
-			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift)
-					| (valModFactor & (-1L >>> (Long.SIZE + mantissaShift)));
-			// this cannot overflow as min(mantissaShift)=-9 for scale=1, -8 for scale=10, ..., -1 for scale=10^8
-			final long shiftedScaleFactor = scaleFactor << -mantissaShift;
-			quotient = truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder,
-					shiftedScaleFactor);
+			final long remainder = applySign(unscaled, ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift)
+					| (valModFactor & (-1L >>> (Long.SIZE + mantissaShift))));
+			// NOTE: below shift can overflow as min(mantissaShift)=-39 for scale=1, -38 for scale=10, ..., -21 for scale=10^18
+			//		 hence we use MAX_VALUE in this case, should always be more than 2x remainder (which is good enough for HALF_UP etc)
+			final long shiftedScaleFactor = -mantissaShift >= scaleMetrics.getScaleFactorNumberOfLeadingZeros() ? Long.MAX_VALUE : scaleFactor << -mantissaShift;
+			quotient = truncated + Math.abs(Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder,
+					shiftedScaleFactor));
 		}
 		final int raw;
 		final int signBit = (int) ((unscaled >>> 32) & SIGN_MASK);
@@ -497,6 +482,10 @@ final class FloatConversion {
 	private static final long modPow2(long value, int n) {
 		// return value & ((1L << n) - 1);
 		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);// last bracket is for case n=0
+	}
+
+	private static final long applySign(final long signed, final long value) {
+		return signed >= 0 ? value : -value;
 	}
 
 	private static final boolean isInLongRange(float value) {

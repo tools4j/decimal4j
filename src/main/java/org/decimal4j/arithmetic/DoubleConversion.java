@@ -369,8 +369,15 @@ final class DoubleConversion {
 			return 0;
 		}
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
-		// eliminate sign and trailing power-of-2 zero bits
+		
 		final long absUnscaled = Math.abs(unscaled);
+        if (absUnscaled < (1L << SIGNIFICAND_BITS) & rounding == DecimalRounding.HALF_EVEN) {
+            // Don't have too guard against Math.abs(MIN_VALUE)
+            // because MIN_VALUE also works without loss of precision
+            return (double)unscaled / scaleMetrics.getScaleFactor();
+        }
+		
+		// eliminate sign and trailing power-of-2 zero bits
 		final int pow2 = Long.numberOfTrailingZeros(absUnscaled);
 		final long absVal = absUnscaled >>> pow2;
 		final int nlzAbsVal = Long.numberOfLeadingZeros(absVal);
@@ -386,10 +393,12 @@ final class DoubleConversion {
 		}
 
 		/*
-		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor then the division absVal/factor ==
-		 * 1.xxxxx, i.e. it is normalized 2) because we omit the 1 in the mantissa, we calculate valModFactor = absVal -
-		 * floor(absVal/factor)*factor = absVal - 1*factor 3) we shift valModFactor such that the 1 from the division
-		 * would be on bit 53 4) we perform the division
+		 * 1) we align absVal and factor such that: 2*factor > absVal >= factor 
+		 *    then the division absVal/factor == 1.xxxxx, i.e. it is normalized 
+		 * 2) because we omit the 1 in the mantissa, we calculate 
+		 *    valModFactor = absVal - floor(absVal/factor)*factor = absVal - 1*factor 
+		 * 3) we shift valModFactor such that the 1 from the division would be on bit 53 
+		 * 4) we perform the division
 		 */
 
 		// (1) + (2)
@@ -465,9 +474,8 @@ final class DoubleConversion {
 			final long lValModFactor = valModFactor << mantissaShift;
 			if (hValModFactor == 0) {
 				final long truncated = scaleMetrics.divideUnsignedByScaleFactor(lValModFactor);
-				final long remainder = lValModFactor - scaleMetrics.multiplyByScaleFactor(truncated);
-				quotient = truncated
-						+ Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor);
+				final long remainder = applySign(unscaled, lValModFactor - scaleMetrics.multiplyByScaleFactor(truncated));
+				quotient = truncated + Math.abs(Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder, scaleFactor));
 			} else {
 				quotient = Math.abs(Div.div128by64(rounding, unscaled < 0, hValModFactor, lValModFactor, scaleFactor));
 				// rounding already done by div128by64
@@ -475,12 +483,12 @@ final class DoubleConversion {
 		} else {
 			final long scaledVal = valModFactor >>> -mantissaShift;
 			final long truncated = scaleMetrics.divideByScaleFactor(scaledVal);
-			final long remainder = ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift)
-					| (valModFactor & (-1L >>> (Long.SIZE + mantissaShift)));
-			// this cannot overflow as min(mantissaShift)=-9 for scale=1, -8 for scale=10, ..., -1 for scale=10^8
+			final long remainder = applySign(unscaled, ((scaledVal - scaleMetrics.multiplyByScaleFactor(truncated)) << -mantissaShift)
+					| (valModFactor & (-1L >>> (Long.SIZE + mantissaShift))));
+			// this cannot overflow as min(mantissaShift)=-10 for scale=1, -9 for scale=10, ..., -1 for scale=10^9
 			final long shiftedScaleFactor = scaleFactor << -mantissaShift;
-			quotient = truncated + Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder,
-					shiftedScaleFactor);
+			quotient = truncated + Math.abs(Rounding.calculateRoundingIncrementForDivision(rounding, truncated, remainder,
+					shiftedScaleFactor));
 		}
 		final long raw;
 		if (quotient <= SIGNIFICAND_MASK) {
@@ -499,6 +507,10 @@ final class DoubleConversion {
 	private static final long modPow2(long value, int n) {
 		// return value & ((1L << n) - 1);
 		return value & (-1L >>> (Long.SIZE - n)) & (-n >> 31);// last bracket is for case n=0
+	}
+	
+	private static final long applySign(final long signed, final long value) {
+		return signed >= 0 ? value : -value;
 	}
 
 	private static final boolean isInLongRange(double value) {

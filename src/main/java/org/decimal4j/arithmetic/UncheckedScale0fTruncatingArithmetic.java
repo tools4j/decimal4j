@@ -139,7 +139,7 @@ public final class UncheckedScale0fTruncatingArithmetic extends AbstractUnchecke
 
 	@Override
 	public final float toFloat(long uDecimal) {
-		return (float) uDecimal;
+		return FloatConversion.longToFloat(this, uDecimal);
 	}
 
 	@Override

@@ -54,10 +54,9 @@ public class DoubleValueTest extends AbstractDecimalToAnyTest<Double> {
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			//TODO how should we test rounding modes other than HALF_EVEN, i.e. how do we compute the expected result?
-//			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
-//				data.add(new Object[] { s, rm, s.getArithmetic(rm) });
-//			}
+			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
+				data.add(new Object[] { s, rm, s.getArithmetic(rm) });
+			}
 			data.add(new Object[] { s, RoundingMode.HALF_EVEN, s.getArithmetic(RoundingMode.HALF_EVEN) });
 		}
 		return data;
@@ -75,7 +74,52 @@ public class DoubleValueTest extends AbstractDecimalToAnyTest<Double> {
 
 	@Override
 	protected Double expectedResult(BigDecimal operand) {
-		return operand.doubleValue();
+		final double dval = operand.doubleValue();
+		if (getRoundingMode() == RoundingMode.HALF_EVEN) {
+			return dval;
+		}
+		final BigDecimal halfEven = new BigDecimal(dval);
+		final int cmp = halfEven.compareTo(operand);
+		if (cmp == 0) {
+			return dval;
+		}
+		final double ceil;
+		final double floor;
+		if (cmp > 0) {
+			ceil = dval;
+			floor = Math.nextDown(dval);
+		} else {
+			floor = dval;
+			ceil = Math.nextUp(dval);
+		}
+		switch (getRoundingMode()) {
+		case FLOOR:
+			return floor;
+		case CEILING:
+			return ceil;
+		case DOWN:
+			return operand.signum() >= 0 ? floor : ceil;
+		case UP:
+			return operand.signum() >= 0 ? ceil : floor;
+		case UNNECESSARY:
+			throw new ArithmeticException("Rounding necessary: " + operand);
+		case HALF_EVEN://fallthrough
+			throw new IllegalArgumentException("Unsupported rounding mode: " + getRoundingMode());
+		default:
+			break;
+		}
+		//HALF_DOWN/HALF_UP
+		final BigDecimal upperHalf = new BigDecimal(ceil).subtract(operand).abs();
+		final BigDecimal lowerHalf = operand.subtract(new BigDecimal(floor)).abs();
+		final int halfCmp = upperHalf.compareTo(lowerHalf);
+		if (halfCmp != 0) {
+			return halfCmp < 0 ? ceil : floor;
+		}
+		if (getRoundingMode() == RoundingMode.HALF_UP) {
+			return operand.signum() > 0 ? ceil : floor;
+		}
+		//HALF_DOWN: opposite
+		return operand.signum() > 0 ? floor : ceil;
 	}
 
 	@Override
