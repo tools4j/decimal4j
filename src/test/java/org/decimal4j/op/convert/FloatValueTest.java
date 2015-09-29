@@ -82,10 +82,10 @@ public class FloatValueTest extends AbstractDecimalToAnyTest<Float> {
 		final float floor;
 		if (cmp > 0) {
 			ceil = fval;
-			floor = Math.nextDown(fval);
+			floor = Math.nextAfter(fval, Float.NEGATIVE_INFINITY);
 		} else {
 			floor = fval;
-			ceil = Math.nextUp(fval);
+			ceil = Math.nextAfter(fval, Float.POSITIVE_INFINITY);
 		}
 		switch (getRoundingMode()) {
 		case FLOOR:

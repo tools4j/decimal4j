@@ -89,10 +89,10 @@ public class DoubleValueTest extends AbstractDecimalToAnyTest<Double> {
 		final double floor;
 		if (cmp > 0) {
 			ceil = dval;
-			floor = Math.nextDown(dval);
+			floor = Math.nextAfter(dval, Double.NEGATIVE_INFINITY);
 		} else {
 			floor = dval;
-			ceil = Math.nextUp(dval);
+			ceil = Math.nextAfter(dval, Double.POSITIVE_INFINITY);
 		}
 		switch (getRoundingMode()) {
 		case FLOOR:
