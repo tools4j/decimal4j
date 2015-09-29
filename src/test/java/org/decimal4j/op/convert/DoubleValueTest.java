@@ -57,7 +57,9 @@ public class DoubleValueTest extends AbstractDecimalToAnyTest<Double> {
 			for (final RoundingMode rm : TestSettings.UNCHECKED_ROUNDING_MODES) {
 				data.add(new Object[] { s, rm, s.getArithmetic(rm) });
 			}
-			data.add(new Object[] { s, RoundingMode.HALF_EVEN, s.getArithmetic(RoundingMode.HALF_EVEN) });
+			if (!TestSettings.UNCHECKED_ROUNDING_MODES.contains(RoundingMode.HALF_EVEN)) {
+				data.add(new Object[] { s, RoundingMode.HALF_EVEN, s.getArithmetic(RoundingMode.HALF_EVEN) });
+			}
 		}
 		return data;
 	}
