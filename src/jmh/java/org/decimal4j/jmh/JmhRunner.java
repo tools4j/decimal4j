@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.results.RunResult;
@@ -56,13 +57,15 @@ public class JmhRunner {
 	public void run() throws RunnerException, IOException, InterruptedException {
 		final File jmhJar = findJmhJar();
 		final Process process = Runtime.getRuntime().exec("java -cp " + jmhJar.getAbsolutePath() + " " + JmhRunner.class.getName() + " " + benchmarkClass.getName());
-		final Thread t1 = read(process.getInputStream());
-		final Thread t2 = read(process.getErrorStream());
+		final Reader r1 = new Reader(process.getInputStream());
+		final Reader r2 = new Reader(process.getErrorStream());
+		r1.start();
+		r2.start();
 		if (0 != process.waitFor()) {
 			System.err.println("FAILED");
 		}
-		t1.interrupt();
-		t2.interrupt();
+		r1.await();
+		r2.await();
 	}
 	
 	private final File findJmhJar() {
@@ -78,24 +81,32 @@ public class JmhRunner {
 		}
 		throw new IllegalStateException("no jmh jar file found in '" + libDir.getAbsolutePath() + "', hint: run 'gradle jmhJar' first");
 	}
-	private static Thread read(InputStream inputStream) {
-		final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-		final Thread thread = new Thread() {
-			@Override
-			public void run() {
-				try {
-					String line = reader.readLine();
-					while (line != null && !isInterrupted()) {
-						System.out.println(line);
-						line = reader.readLine();
-					}
-				} catch (IOException e) {
-					throw new RuntimeException(e);
+	private static class Reader extends Thread {
+		private final AtomicBoolean isReading = new AtomicBoolean(false);
+		private final BufferedReader reader;
+		public Reader(final InputStream inputStream) {
+			this.reader = new BufferedReader(new InputStreamReader(inputStream));
+		}
+		@Override
+		public void run() {
+			try {
+				String line = reader.readLine();
+				while (line != null && !isInterrupted()) {
+					isReading.set(true);
+					System.out.println(line);
+					line = reader.readLine();
 				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
-		};
-		thread.start();
-		return thread;
+		}
+		public void await() throws InterruptedException {
+			while (isReading.get()) {
+				isReading.set(false);
+				Thread.sleep(1000);
+			}
+			interrupt();
+		}
 	}
 	
 	private static String askRunAll() throws IOException {
@@ -128,6 +139,7 @@ public class JmhRunner {
 			.warmupTime(TimeValue.milliseconds(1000))//
 			.build();
 		final Collection<RunResult> runResult = new Runner(opt).run();
+		System.out.flush();
 		final ResultFormat resultFormat = ResultFormatFactory.getInstance(ResultFormatType.CSV, System.out);
 		resultFormat.writeOut(runResult);
 		System.out.flush();
