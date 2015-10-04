@@ -297,7 +297,7 @@ final class FloatConversion {
 		}
 		final int inc = absResult < 0 ? 0
 				: rounding.calculateRoundingIncrement(value >= 0 ? 1 : -1, absResult, truncatedPart);
-		if (absResult < 0 | (absResult == Long.MAX_VALUE & inc == 1)) {
+		if (absResult < 0 | (value >= 0 & absResult == Long.MAX_VALUE & inc == 1)) {
 			throw newOverflowException(arith, value);
 		}
 		return (value >= 0 ? absResult : -absResult) + inc;
