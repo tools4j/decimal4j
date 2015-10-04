@@ -39,6 +39,11 @@ public class TruncationPolicyTest {
 		for (final UncheckedRounding policy : UncheckedRounding.VALUES) {
 			//then
 			assertSame("overflow mode should be UNCHECKED", OverflowMode.UNCHECKED, policy.getOverflowMode());
+			
+			//when
+			final UncheckedRounding other = CheckedRounding.valueOf(policy.name()).toUncheckedRounding();
+			//then
+			assertSame("should be same policy", policy, other);
 		}
 	}
 
@@ -47,6 +52,11 @@ public class TruncationPolicyTest {
 		for (final CheckedRounding policy : CheckedRounding.VALUES) {
 			//then
 			assertSame("overflow mode should be CHECKED", OverflowMode.CHECKED, policy.getOverflowMode());
+
+			//when
+			final CheckedRounding other = UncheckedRounding.valueOf(policy.name()).toCheckedRounding();
+			//then
+			assertSame("should be same policy", policy, other);
 		}
 	}
 	
