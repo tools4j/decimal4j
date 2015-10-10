@@ -100,4 +100,5 @@ https://oss.sonatype.org/content/repositories/snapshots/org/decimal4j
 * [DoubleRounder Utility](https://github.com/tools4j/decimal4j/wiki/DoubleRounder Utility): rounding double values to an arbitrary precision between 0 and 18
 * [More Examples](https://github.com/tools4j/decimal4j/wiki/Examples)
 * [Zero-garbage Computations](https://github.com/tools4j/decimal4j/wiki/DecimalArithmetic-API) (with unscaled long values)
+* [Test Coverage](https://github.com/tools4j/decimal4j/wiki/Test Coverage)
 * [Performance Benchmarks](https://github.com/tools4j/decimal4j/wiki/Performance)
