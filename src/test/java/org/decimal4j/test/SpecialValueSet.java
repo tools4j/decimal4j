@@ -35,7 +35,7 @@ public enum SpecialValueSet {
 	MINUS_HUNDRED_TO_HUNDRED(forLoop(-100, 100)),
 	//power-of-10-sets
 	POW_10_POSITIVE(powLoop(1, 1000000000000000000L, 10)),
-	POW_10_NEGATIVE(powLoop(-1000000000000000000L, -1, 10)),
+	POW_10_NEGATIVE(neg(POW_10_POSITIVE)),
 	POW_10(POW_10_NEGATIVE, POW_10_POSITIVE),
 	//min/max-value-sets
 	MIN_MAX_LONG_INT(Long.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Long.MAX_VALUE),
@@ -49,9 +49,9 @@ public enum SpecialValueSet {
 	MIN_MAX_ALL_HALF(div(MIN_MAX_ALL, 2)),
 	MIN_MAX_ALL_HALF_PLUS_MINUS_ONE(plus(MIN_MAX_ALL_HALF, -1, 0, 1)),
 	//predefined sets
-	TINY(MINUS_TEN_TO_TEN, POW_10, MIN_MAX_LONG_INT),
-	SMALL(MINUS_TEN_TO_TEN, POW_10_PLUS_MINUS_ONE, MIN_MAX_LONG_INT_PLUS_MINUS_ONE),
-	STANDARD(MINUS_TWENTY_TO_TWENTY, POW_10_PLUS_MINUS_ONE, MIN_MAX_LONG_INT_PLUS_MINUS_ONE),
+	TINY(MINUS_TEN_TO_TEN, POW_10_POSITIVE, MIN_MAX_LONG_INT),
+	SMALL(MINUS_TEN_TO_TEN, POW_10, MIN_MAX_LONG_INT_PLUS_MINUS_ONE),
+	STANDARD(MINUS_TWENTY_TO_TWENTY, POW_10, MIN_MAX_ALL_PLUS_MINUS_ONE),
 	LARGE(MINUS_TWENTY_TO_TWENTY, POW_10_PLUS_MINUS_ONE, MIN_MAX_ALL_PLUS_MINUS_ONE),
 	ALL(MINUS_TWENTY_TO_TWENTY, POW_10_PLUS_MINUS_ONE, POW_10_HALF, MIN_MAX_ALL_PLUS_MINUS_ONE, MIN_MAX_ALL_HALF_PLUS_MINUS_ONE);
 	;
@@ -118,6 +118,13 @@ public enum SpecialValueSet {
 		}
 		return vals;
 	}
+	private static SortedSet<Long> neg(SpecialValueSet set) {
+		final SortedSet<Long> neg = new TreeSet<Long>();
+		for (long val : set.values) {
+			neg.add(-val);
+		}
+		return neg;
+	}
 	private static SortedSet<Long> plus(SpecialValueSet set, long... inc) {
 		final SortedSet<Long> vals = new TreeSet<Long>();
 		for (final long val : set.values) {
@@ -134,15 +141,10 @@ public enum SpecialValueSet {
 		}
 		return vals;
 	}
-	public static SortedSet<Long> select(ValueRange range, SpecialValueSet... sets) {
-		final SortedSet<Long> vals = new TreeSet<Long>();
-		for (final SpecialValueSet set : sets) {
-			for (final long val : set.values) {
-				if (range.include(val)) {
-					vals.add(val);
-				}
-			}
-		}
-		return vals;
-	}
+	
+//	public static void main(String[] args) {
+//		for (final SpecialValueSet set : SpecialValueSet.values()) {
+//			System.out.println(set.name() + ":\t" + set.values.size());
+//		}
+//	}
 }
