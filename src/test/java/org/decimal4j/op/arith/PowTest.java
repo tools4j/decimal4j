@@ -58,6 +58,8 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 		switch (TestSettings.TEST_CASES) {
 		case ALL:
 			return 2000;
+		case LARGE:
+			return 1000;
 		case STANDARD:
 			return 500;
 		case SMALL:
