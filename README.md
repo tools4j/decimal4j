@@ -66,33 +66,26 @@ Circumference with 5m radius is larger than 31.41m
 ###### More examples
 Can be found in the [wiki](https://github.com/tools4j/decimal4j/wiki/Examples).
 
-#### Maven
-decimal4j has not been released yet. The current snapshot version can be referenced as follows:
+#### Maven/Gradle
+
+###### Maven
 ```xml
 <dependency>
 	<groupId>org.decimal4j</groupId>
 	<artifactId>decimal4j</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 	<scope>compile</scope>
 </dependency>
 ```
 
-You have to specify the sonatype snapshot repository to access snapshot versions:
-```xml
-<repositories>
-	<repository>
-  		<id>sonatype.snapshots</id>
-		<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		<releases><enabled>false</enabled></releases>
-		<snapshots><enabled>true</enabled></snapshots>
-	</repository>
-</repositories>
+###### Gradle
+```
+compile 'org.decimal4j:decimal4j:1.0.1'
 ```
 
 #### Download
-decimal4j has not been released yet. The current snapshot version can be downloaded from the sonatype snapshot repository:
-
-https://oss.sonatype.org/content/repositories/snapshots/org/decimal4j
+You can download binaries, sources and javadoc from maven central:
+* [decimal4j download](http://search.maven.org/#artifactdetails%7Corg.decimal4j%7Cdecimal4j%7C1.0.1%7Cjar)
 
 #### More Information
 * [Javadoc API](http://decimal4j.org/javadoc)
