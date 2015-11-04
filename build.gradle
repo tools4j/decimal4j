@@ -10,7 +10,7 @@ jacoco {
 
 sourceCompatibility = 1.7
 group = "org.decimal4j"
-version = '1.0.1'
+version = '1.0.3-SNAPSHOT'
 archivesBaseName = "decimal4j"
 
 def versionJmh = "1.11.1"
