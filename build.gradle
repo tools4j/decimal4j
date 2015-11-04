@@ -10,7 +10,7 @@ jacoco {
 
 sourceCompatibility = 1.7
 group = "org.decimal4j"
-version = '1.0.1-SNAPSHOT'
+version = '1.0.1'
 archivesBaseName = "decimal4j"
 
 def versionJmh = "1.11.1"
@@ -78,8 +78,25 @@ task generateSources() << {
 	)
 }
 	
+task copyLicense(type: Copy) {
+    from('.')
+    into('build/resources/main/')
+    include('LICENSE.md')
+    rename('LICENSE.md', 'LICENSE.txt')
+}
+task copyLicenseToSrc(type: Copy) {
+    from('build/resources/main/')
+    into('build/generated-src/')
+    include('LICENSE.txt')
+}
+
 sourceSets.main.java {
 	srcDirs generatedSources, 'src/main/java'
+}
+sourceSets.main.resources {
+	srcDirs generatedSources, 'src/main/java'
+	exclude '**/*.template' 
+	exclude '**/codegen/**' 
 }
 
 license {
@@ -89,8 +106,9 @@ license {
 	ext.year = Calendar.getInstance().get(Calendar.YEAR)
 }
 licenseFormat.dependsOn generateSources
-
-compileJava.dependsOn generateSources,licenseFormat
+copyLicense.dependsOn processResources
+copyLicenseToSrc.dependsOn copyLicense,generateSources
+compileJava.dependsOn generateSources,licenseFormat,copyLicense,copyLicenseToSrc
 
 javadoc {
 	options.showFromPackage()
@@ -111,7 +129,9 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts {
-    archives javadocJar, sourcesJar
+    archives jar
+    archives javadocJar
+    archives sourcesJar
 }
 
 jmh {
@@ -151,7 +171,7 @@ jmh {
 //   zip64 = true // Use ZIP64 format for bigger archives
 }
 
-gradle.taskGraph.whenReady { graph -> if (graph.hasTask(uploadArchives)) {
+if (project.hasProperty('upload')) {
 
     allprojects {
         apply plugin: 'signing'
@@ -220,4 +240,4 @@ gradle.taskGraph.whenReady { graph -> if (graph.hasTask(uploadArchives)) {
 		    password = ossrhPassword
 		}
     }
-}}
+}
