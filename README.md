@@ -1,17 +1,17 @@
 ## decimal4j
-Java library for fast fixed precision arithmetic based on longs with support for up to 18 decimal places.
+Java library for fast fixed-point arithmetic based on longs with support for up to 18 decimal places.
 
 #### Javadoc API
 http://decimal4j.org/javadoc
 
 #### Features
- - Fixed precision arithmetic with 0 to 18 decimal places
+ - Fixed-point arithmetic with 0 to 18 decimal places
    - Implementation based on unscaled long value
    - Option to throw an exception when an arithmetic overflow occurs
  - Scale
    - Type of a variable defines the scale (except for wildcard types)
    - Result has usually the same scale as the primary operand (also for multiplication and division)
- - Type Conversion  
+ - Type Conversion
    - Efficient conversion from and to various other number types
    - Convenience methods to directly inter-operate with other data types (long, double, ...)
    - All rounding modes supported (default: HALF_UP)
