@@ -23,7 +23,7 @@
  */
 /**
  * Contains the {@link org.decimal4j.api.Decimal Decimal} interface and other 
- * central elements defining the <b>decimal4j</b> API for fixed precision 
- * decimal numbers.
+ * central elements defining the <b>decimal4j</b> API for fixed-point decimal 
+ * numbers.
  */
 package org.decimal4j.api;

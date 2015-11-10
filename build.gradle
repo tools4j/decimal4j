@@ -201,7 +201,7 @@ if (project.hasProperty('upload')) {
 						name 'decimal4j'
 						packaging 'jar'
 						// optionally artifactId can be defined here 
-						description 'Java library for fast fixed precision arithmetics based on longs with support for up to 18 decimal places.'
+						description 'Java library for fast fixed-point arithmetic based on longs with support for up to 18 decimal places.'
 						url 'http://decimal4j.org'
 
         				scm {

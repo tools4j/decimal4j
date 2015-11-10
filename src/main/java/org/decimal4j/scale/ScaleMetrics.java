@@ -179,7 +179,7 @@ public interface ScaleMetrics {
 	 * 
 	 * @param value
 	 *            the unscaled decimal to convert to a string
-	 * @return a fixed precision string representation of the specified value
+	 * @return a fixed-point string representation of the specified value
 	 * @see DecimalArithmetic#toString(long)
 	 */
 	String toString(long value);
