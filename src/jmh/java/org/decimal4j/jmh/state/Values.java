@@ -45,6 +45,7 @@ public final class Values<S extends ScaleMetrics> {
 	public final ImmutableDecimal<S> immutable2;
 	public final ImmutableDecimal<?> immutableExact2;
 	public final MutableDecimal<S> mutable;
+	public final String string1;
 
 	private Values(long unscaled1, long unscaled2, int scale, DecimalFactory<S> decimalFactory) {
 		this.unscaled1 = unscaled1;
@@ -57,6 +58,7 @@ public final class Values<S extends ScaleMetrics> {
 		this.immutable2 = decimalFactory.valueOfUnscaled(unscaled2);
 		this.immutableExact2 = scale <= 9 ? immutable2 : Factories.getDecimalFactory(18 - scale).valueOfUnscaled(unscaled2);
 		this.mutable = decimalFactory.newMutable();
+		this.string1 = immutable1.toString();
 	}
 
 	static Values<?> create(BenchmarkType benchmarkType, AbstractValueBenchmarkState benchmarkState, ValueType valueType1, ValueType valueType2) {

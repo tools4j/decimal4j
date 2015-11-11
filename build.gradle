@@ -13,7 +13,7 @@ group = "org.decimal4j"
 version = '1.0.3-SNAPSHOT'
 archivesBaseName = "decimal4j"
 
-def versionJmh = "1.11.1"
+def versionJmh = "1.11.2"
 
 jar {
     manifest {

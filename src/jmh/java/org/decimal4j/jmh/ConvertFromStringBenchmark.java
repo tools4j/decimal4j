@@ -27,9 +27,8 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.decimal4j.api.Decimal;
-import org.decimal4j.api.MutableDecimal;
-import org.decimal4j.factory.DecimalFactory;
-import org.decimal4j.jmh.state.ConvertFromDoubleBenchmarkState;
+import org.decimal4j.jmh.state.ConvertFromStringBenchmarkState;
+import org.decimal4j.jmh.state.Values;
 import org.decimal4j.scale.ScaleMetrics;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.OperationsPerInvocation;
@@ -37,59 +36,59 @@ import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.RunnerException;
 
 /**
- * Micro benchmarks for from-double conversion.
+ * Micro benchmarks for from-string conversion.
  */
-public class ConvertFromDoubleBenchmark extends AbstractBenchmark {
+public class ConvertFromStringBenchmark extends AbstractBenchmark {
 
 	@Benchmark
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
-	public final void bigDecimals(ConvertFromDoubleBenchmarkState state, Blackhole blackhole) {
+	public final void bigDecimals(ConvertFromStringBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(bigDecimals(state, state.doubles[i]));
+			blackhole.consume(bigDecimals(state, state.values[i]));
 		}
 	}
 
 	@Benchmark
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
-	public final void immutableDecimals(ConvertFromDoubleBenchmarkState state, Blackhole blackhole) {
+	public final void immutableDecimals(ConvertFromStringBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(immutableDecimals(state, state.factory, state.doubles[i]));
+			blackhole.consume(immutableDecimals(state, state.values[i]));
 		}
 	}
 
 	@Benchmark
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
-	public final void mutableDecimals(ConvertFromDoubleBenchmarkState state, Blackhole blackhole) {
+	public final void mutableDecimals(ConvertFromStringBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(mutableDecimals(state, state.mutable, state.doubles[i]));
+			blackhole.consume(mutableDecimals(state, state.values[i]));
 		}
 	}
 
 	@Benchmark
 	@OperationsPerInvocation(OPERATIONS_PER_INVOCATION)
-	public final void nativeDecimals(ConvertFromDoubleBenchmarkState state, Blackhole blackhole) {
+	public final void nativeDecimals(ConvertFromStringBenchmarkState state, Blackhole blackhole) {
 		for (int i = 0; i < OPERATIONS_PER_INVOCATION; i++) {
-			blackhole.consume(nativeDecimals(state, state.doubles[i]));
+			blackhole.consume(nativeDecimals(state, state.values[i]));
 		}
 	}
 	
-	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(ConvertFromDoubleBenchmarkState state, double value) {
-		return BigDecimal.valueOf(value);//rounding mode not supported
+	private static final <S extends ScaleMetrics> BigDecimal bigDecimals(ConvertFromStringBenchmarkState state, Values<S> values) {
+		return new BigDecimal(values.string1, state.mcLong64);
 	}
 
-	private static final <S extends ScaleMetrics> Decimal<S> immutableDecimals(ConvertFromDoubleBenchmarkState state, DecimalFactory<S> factory, double value) {
-		return factory.valueOf(value, state.roundingMode);//rounding mode is in arithmetic
+	private static final <S extends ScaleMetrics> Decimal<?> immutableDecimals(ConvertFromStringBenchmarkState state, Values<S> values) {
+		return state.factory.parse(values.string1, state.roundingMode);
 	}
 
-	private static final <S extends ScaleMetrics> Decimal<S> mutableDecimals(ConvertFromDoubleBenchmarkState state, MutableDecimal<S> mutable, double value) {
-		return mutable.set(value, state.roundingMode);
+	private static final <S extends ScaleMetrics> Decimal<?> mutableDecimals(ConvertFromStringBenchmarkState state, Values<S> values) {
+		return values.mutable.set(values.string1, state.roundingMode);
 	}
 
-	private static final <S extends ScaleMetrics> long nativeDecimals(ConvertFromDoubleBenchmarkState state, double value) {
-		return state.arithmetic.fromDouble(value);//rounding mode is in arithmetic
+	private static final <S extends ScaleMetrics> long nativeDecimals(ConvertFromStringBenchmarkState state, Values<S> values) {
+		return state.arithmetic.parse(values.string1);//rounding mode is in arithmetic
 	}
 
 	public static void main(String[] args) throws RunnerException, IOException, InterruptedException {
-		run(ConvertFromDoubleBenchmark.class);
+		run(ConvertFromStringBenchmark.class);
 	}
 }

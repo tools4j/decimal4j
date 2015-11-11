@@ -198,6 +198,18 @@ public enum BenchmarkType {
 			throw new RuntimeException("internal error: scale has no second decimal argument");
 		}
 	},
+	ConvertFromString {
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			throw new RuntimeException("internal error: conversion from string has no second decimal argument");
+		}
+	},
+	ConvertToString {
+		@Override
+		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
+			throw new RuntimeException("internal error: conversion to string has no second decimal argument");
+		}
+	},
 	ConvertToDouble {
 		@Override
 		public long randomSecond(AbstractValueBenchmarkState benchmarkState, ValueType valueType, long first) {
