@@ -40,20 +40,20 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Unit test for {@link Decimal#abs()}
+ * Unit test for {@link Decimal#toString()}
  */
 @RunWith(Parameterized.class)
 public class ToStringTest extends AbstractDecimalToAnyTest<String> {
 	
-	public ToStringTest(ScaleMetrics scaleMetrics, RoundingMode roundingMode, DecimalArithmetic arithmetic) {
+	public ToStringTest(ScaleMetrics scaleMetrics, DecimalArithmetic arithmetic) {
 		super(arithmetic);
 	}
 
-	@Parameters(name = "{index}: scale={0}, rounding={1}")
+	@Parameters(name = "{index}: scale={0}")
 	public static Iterable<Object[]> data() {
 		final List<Object[]> data = new ArrayList<Object[]>();
 		for (final ScaleMetrics s : TestSettings.SCALES) {
-			data.add(new Object[] {s, RoundingMode.DOWN, s.getArithmetic(RoundingMode.DOWN)});
+			data.add(new Object[] {s, s.getArithmetic(RoundingMode.DOWN)});
 		}
 		return data;
 	}
@@ -94,7 +94,7 @@ public class ToStringTest extends AbstractDecimalToAnyTest<String> {
 			}
 			case 4://fallthrough
 			default: {
-				//use appendable version or checked arithmetic
+				//use appendable version for checked arithmetic
 				final StringBuilder sb = new StringBuilder();
 				arithmetic.deriveArithmetic(OverflowMode.CHECKED).toString(operand.unscaledValue(), sb);
 				return sb.toString();

@@ -45,6 +45,9 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 
 	private final long unscaled;
 
+    /*Used to store the string representation, if computed */
+    private transient String stringCache;
+
 	/**
 	 * Constructor with unscaled value.
 	 * 
@@ -129,5 +132,14 @@ abstract public class AbstractImmutableDecimal<S extends ScaleMetrics, D extends
 	@Override
 	public ImmutableDecimal<S> max(ImmutableDecimal<S> val) {
 		return isGreaterThanOrEqualTo(val) ? this : val;
+	}
+	
+	@Override
+	public final String toString() {
+		String s = stringCache;
+		if (s == null) {
+			stringCache = s = getDefaultArithmetic().toString(unscaledValue());
+		}
+		return s;
 	}
 }
