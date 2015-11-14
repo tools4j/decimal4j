@@ -156,14 +156,8 @@ final class StringConversion {
 		if (len > 0) {
 			int i = start;
 			long value = 0;
-			while (i < end) {
-				final char ch = s.charAt(i++);
-				final int digit;
-				if (ch >= '0' & ch <= '9') {
-					digit = (int) (ch - '0');
-				} else {
-					throw newNumberFormatExceptionFor(arith, s);
-				}
+			while  (i < end) {
+				final int digit = getDigit(arith, s, s.charAt(i++));
 				value = value * 10 + digit;
 			}
 			final int scale = arith.getScale();
@@ -224,7 +218,6 @@ final class StringConversion {
 		boolean negative = false;
 		int i = start;
 		long limit = -Long.MAX_VALUE;
-		long multmin;
 
 		if (end > start) {
 			char firstChar = s.charAt(start);
@@ -232,9 +225,11 @@ final class StringConversion {
 				if (firstChar == '-') {
 					negative = true;
 					limit = Long.MIN_VALUE;
-				} else if (firstChar != '+') {
-					// invalid first character
-					throw newNumberFormatExceptionFor(arith, s);
+				} else {
+					if (firstChar != '+') {
+						// invalid first character
+						throw newNumberFormatExceptionFor(arith, s);
+					}
 				}
 
 				if (end - start == 1) {
@@ -247,17 +242,24 @@ final class StringConversion {
 				}
 				i++;
 			}
-			multmin = limit / 10;
-			while (i < end) {
-				// Accumulating negatively avoids surprises near MAX_VALUE
-				final char ch = s.charAt(i++);
-				final int digit;
-				if (ch >= '0' & ch <= '9') {
-					digit = (int) (ch - '0');
-				} else {
+			
+			final int end2 = end - 1;
+			while (i < end2) {
+				final int digit0 = getDigit(arith, s, s.charAt(i++));
+				final int digit1 = getDigit(arith, s, s.charAt(i++));
+				final int inc = TENS[digit0] + digit1;
+				if (result < (-Long.MAX_VALUE / 100)) {//same limit with Long.MIN_VALUE
 					throw newNumberFormatExceptionFor(arith, s);
 				}
-				if (result < multmin) {
+				result *= 100;
+				if (result < limit + inc) {
+					throw newNumberFormatExceptionFor(arith, s);
+				}
+				result -= inc;
+			}
+			if (i < end) {
+				final int digit = getDigit(arith, s, s.charAt(i++));
+				if (result < (-Long.MAX_VALUE / 10)) {//same limit with Long.MIN_VALUE
 					throw newNumberFormatExceptionFor(arith, s);
 				}
 				result *= 10;
@@ -271,6 +273,16 @@ final class StringConversion {
 		}
 		return negative ? result : -result;
 	}
+	
+	private static int getDigit(final DecimalArithmetic arith, final CharSequence s, final char ch) {
+		if (ch >= '0' & ch <= '9') {
+			return (int) (ch - '0');
+		} else {
+			throw newNumberFormatExceptionFor(arith, s);
+		}
+	}
+	
+	private static final int[] TENS = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
 
 	/**
 	 * Returns a {@code String} object representing the specified {@code long}. The argument is converted to signed
