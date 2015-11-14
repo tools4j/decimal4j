@@ -274,7 +274,7 @@ final class StringConversion {
 		return negative ? result : -result;
 	}
 	
-	private static int getDigit(final DecimalArithmetic arith, final CharSequence s, final char ch) {
+	private static final int getDigit(final DecimalArithmetic arith, final CharSequence s, final char ch) {
 		if (ch >= '0' & ch <= '9') {
 			return (int) (ch - '0');
 		} else {
