@@ -121,7 +121,7 @@ final class Mul {
 			final long i2 = scaleMetrics2.divideByScaleFactor(uDecimal2);
 			final long f1 = uDecimal1 - scaleMetrics2.multiplyByScaleFactor(i1);
 			final long f2 = uDecimal2 - scaleMetrics2.multiplyByScaleFactor(i2);
-			return scaleMetrics2.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + scaleMetrics2.divideByScaleFactor(f1 * f2);
+			return uDecimal1 * i2 + i1 * f2 + scaleMetrics2.divideByScaleFactor(f1 * f2);
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
 			final ScaleMetrics scaleDiff09 = Scales.getScaleMetrics(scale - 9);
@@ -223,7 +223,7 @@ final class Mul {
 			final long f1xf2 = f1 * f2;
 			final long f1xf2d = scaleMetrics2.divideByScaleFactor(f1xf2);
 			final long f1xf2r = f1xf2 - scaleMetrics2.multiplyByScaleFactor(f1xf2d);
-			final long unrounded = scaleMetrics2.multiplyByScaleFactor(i1 * i2) + i1 * f2 + i2 * f1 + f1xf2d;
+			final long unrounded = uDecimal1 * i2 + i1 * f2 + f1xf2d;
 			return unrounded + Rounding.calculateRoundingIncrement(rounding, unrounded, f1xf2r, scaleMetrics2.getScaleFactor());
 		} else {
 			//use scale9 to split into 2 parts: h (high) and l (low)
@@ -351,14 +351,11 @@ final class Mul {
 				final long i2 = scaleMetrics2.divideByScaleFactor(uDecimal2);
 				final long f1 = uDecimal1 - scaleMetrics2.multiplyByScaleFactor(i1);
 				final long f2 = uDecimal2 - scaleMetrics2.multiplyByScaleFactor(i2);
-				final long i1xi2 = Checked.multiplyLong(i1, i2);//checked
 				final long i1xf2 = i1 * f2;//cannot overflow
-				final long i2xf1 = i2 * f1;//cannot overflow
 				final long f1xf2 = scaleMetrics2.divideByScaleFactor(f1 * f2);//product fits for this scale, hence unchecked
 				//add it all up now, every operation checked
-				long result = scaleMetrics2.multiplyByScaleFactorExact(i1xi2);
+				long result = Checked.multiplyLong(uDecimal1, i2);
 				result = Checked.addLong(result, i1xf2);
-				result = Checked.addLong(result, i2xf1);
 				result = Checked.addLong(result, f1xf2);
 				return result;
 			} else {
@@ -476,18 +473,13 @@ final class Mul {
 				final long i2 = scaleMetrics2.divideByScaleFactor(uDecimal2);
 				final long f1 = uDecimal1 - scaleMetrics2.multiplyByScaleFactor(i1);
 				final long f2 = uDecimal2 - scaleMetrics2.multiplyByScaleFactor(i2);
-				final long f1xf2 = f1 * f2;
+				final long i1xf2 = i1 * f2;//cannot overflow
+				final long f1xf2 = f1 * f2;//cannot overflow for this scale
 				final long f1xf2d = scaleMetrics2.divideByScaleFactor(f1xf2);
 				final long f1xf2r = f1xf2 - scaleMetrics2.multiplyByScaleFactor(f1xf2d);
-				
-				final long i1xi2 = Checked.multiplyLong(i1, i2);//checked
-				final long i1xf2 = i1 * f2;//cannot overflow
-				final long i2xf1 = i2 * f1;//cannot overflow
-	
 				//add it all up now, every operation checked
-				long result = scaleMetrics2.multiplyByScaleFactorExact(i1xi2);
+				long result = Checked.multiplyLong(uDecimal1, i2);
 				result = Checked.addLong(result, i1xf2);
-				result = Checked.addLong(result, i2xf1);
 				result = Checked.addLong(result, f1xf2d);
 				
 				return result + Rounding.calculateRoundingIncrement(rounding, result, f1xf2r, scaleMetrics2.getScaleFactor());
