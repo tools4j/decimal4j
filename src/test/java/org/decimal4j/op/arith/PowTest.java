@@ -180,10 +180,11 @@ public class PowTest extends AbstractDecimalIntToDecimalTest {
 		}
 	}
 	@Test
-	public void testMinus0_935341829powMinus342() {
+	public void test0_935341829powMinus342() {
 		if (getScale() == 9) {
+			//fails with tolerance < 17 ULP
 			final ScaleMetrics m = getScaleMetrics();
-			runTest(m, "0.935341829^-342", newDecimal(m, -935341829), -342);
+			runTest(m, "0.935341829^-342", newDecimal(m, 935341829), -342);
 		}
 	}
 	
