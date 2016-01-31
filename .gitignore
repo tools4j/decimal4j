@@ -5,3 +5,5 @@
 /bin
 /build
 jmh-benchmarks
+.idea
+decimal4j.iml
