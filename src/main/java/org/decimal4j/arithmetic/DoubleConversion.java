@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 decimal4j (tools4j), Marco Terzer
+ * Copyright (c) 2016 decimal4j (tools4j), Marco Terzer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -122,13 +122,13 @@ final class DoubleConversion {
 			if (x >= 0.0 || isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return x - 1.0;
+				return (long)x - 1.0;
 			}
 		case CEILING:
 			if (x <= 0.0 || isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return x + 1.0;
+				return (long)x + 1.0;
 			}
 		case DOWN:
 			return x;
@@ -136,7 +136,7 @@ final class DoubleConversion {
 			if (isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return x + Math.copySign(1.0, x);
+				return (long)x + Math.copySign(1.0, x);
 			}
 		case HALF_EVEN:
 			return Math.rint(x);

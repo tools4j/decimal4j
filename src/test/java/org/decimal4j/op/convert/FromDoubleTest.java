@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 decimal4j (tools4j), Marco Terzer
+ * Copyright (c) 2016 decimal4j (tools4j), Marco Terzer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,12 +23,6 @@
  */
 package org.decimal4j.op.convert;
 
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.decimal4j.api.Decimal;
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.api.MutableDecimal;
@@ -41,6 +35,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test {@link DecimalArithmetic#fromDouble(double)} via
@@ -66,6 +66,20 @@ public class FromDoubleTest extends AbstractDoubleToDecimalTest {
 			}
 		}
 		return data;
+	}
+
+	@Test
+	public void run0p99999999999999994_failureBuild_513() {
+		//failed for 0.99999999999999984 to 0.99999999999999994, scale 0, rounding UP / CEILING
+		final double input = 0.99999999999999994;
+		runTest(getScaleMetrics(), "0p99999999999999994_failureBuild_513", input);
+	}
+
+	@Test
+	public void runNeg0p99999999999999994_failureBuild_513() {
+		//failed for -0.99999999999999984 to -0.99999999999999994, scale 0, rounding UP, FLOOR
+		final double input = -0.99999999999999994;
+		runTest(getScaleMetrics(), "Neg0p99999999999999994_failureBuild_513", input);
 	}
 
 	@Override
