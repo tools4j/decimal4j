@@ -3,6 +3,6 @@ jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
-machine:
-  environment:
-    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+# Don't use the Travis Container-Based Infrastructure
+# (intermittently dies with error 137 -- out of mem)
+sudo: true
