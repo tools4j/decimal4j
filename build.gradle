@@ -3,11 +3,6 @@ apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'license'
 
-//temporary jacoco fix for java8
-jacoco {
-    toolVersion = "0.7.1.201405082137"
-}
-
 sourceCompatibility = 1.7
 group = "org.decimal4j"
 version = '1.0.3-SNAPSHOT'
