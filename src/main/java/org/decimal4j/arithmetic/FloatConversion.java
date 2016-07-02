@@ -121,13 +121,13 @@ final class FloatConversion {
 			if (x >= 0.0f || isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return (long)x - 1.0f;
+				return (long)x - 1L;
 			}
 		case CEILING:
 			if (x <= 0.0f || isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return (long)x + 1.0f;
+				return (long)x + 1L;
 			}
 		case DOWN:
 			return x;
@@ -135,7 +135,7 @@ final class FloatConversion {
 			if (isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return (long)x + Math.copySign(1.0f, x);
+				return (long)x + (x > 0 ? 1L : -1L);
 			}
 		case HALF_EVEN:
 			return rint(x);

@@ -122,13 +122,13 @@ final class DoubleConversion {
 			if (x >= 0.0 || isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return (long)x - 1.0;
+				return (long)x - 1L;
 			}
 		case CEILING:
 			if (x <= 0.0 || isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return (long)x + 1.0;
+				return (long)x + 1L;
 			}
 		case DOWN:
 			return x;
@@ -136,7 +136,7 @@ final class DoubleConversion {
 			if (isMathematicalInteger(x)) {
 				return x;
 			} else {
-				return (long)x + Math.copySign(1.0, x);
+				return (long)x + (x > 0 ? 1L : -1L);
 			}
 		case HALF_EVEN:
 			return Math.rint(x);
