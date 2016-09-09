@@ -90,6 +90,9 @@ compile 'org.decimal4j:decimal4j:1.0.1'
 You can download binaries, sources and javadoc from maven central:
 * [decimal4j download](http://search.maven.org/#artifactdetails%7Corg.decimal4j%7Cdecimal4j%7C1.0.1%7Cjar)
 
+#### FAQ
+* [Questions & Answers](https://github.com/tools4j/decimal4j/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3Aquestion)
+
 #### More Information
 * [Javadoc API](http://decimal4j.org/javadoc)
 * [Wiki](https://github.com/tools4j/decimal4j/wiki)
