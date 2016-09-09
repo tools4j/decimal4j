@@ -5,7 +5,7 @@ apply plugin: 'license'
 
 sourceCompatibility = 1.7
 group = "org.decimal4j"
-version = '1.0.3-SNAPSHOT'
+version = '1.0.3'
 archivesBaseName = "decimal4j"
 
 def versionJmh = "1.11.2"
