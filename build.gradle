@@ -5,7 +5,7 @@ apply plugin: 'license'
 
 sourceCompatibility = 1.7
 group = "org.decimal4j"
-version = '1.0.3-SNAPSHOT'
+version = '1.0.7-SNAPSHOT'
 archivesBaseName = "decimal4j"
 
 def versionJmh = "1.11.2"
@@ -163,6 +163,8 @@ jmh {
 //   zip64 = true // Use ZIP64 format for bigger archives
 }
 
+//snapshot first, then release:
+//gradle clean uploadArchives -Pupload -DossrhUsername=xxx -DossrhPassword=xxx
 if (project.hasProperty('upload')) {
 
     allprojects {
