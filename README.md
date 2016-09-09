@@ -76,19 +76,19 @@ Can be found in the [wiki](https://github.com/tools4j/decimal4j/wiki/Examples).
 <dependency>
 	<groupId>org.decimal4j</groupId>
 	<artifactId>decimal4j</artifactId>
-	<version>1.0.1</version>
+	<version>1.0.3</version>
 	<scope>compile</scope>
 </dependency>
 ```
 
 ###### Gradle
 ```
-compile 'org.decimal4j:decimal4j:1.0.1'
+compile 'org.decimal4j:decimal4j:1.0.3'
 ```
 
 #### Download
 You can download binaries, sources and javadoc from maven central:
-* [decimal4j download](http://search.maven.org/#artifactdetails%7Corg.decimal4j%7Cdecimal4j%7C1.0.1%7Cjar)
+* [decimal4j download](http://search.maven.org/#artifactdetails%7Corg.decimal4j%7Cdecimal4j%7C1.0.3%7Cjar)
 
 #### FAQ
 * [Questions & Answers](https://github.com/tools4j/decimal4j/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3Aquestion)
