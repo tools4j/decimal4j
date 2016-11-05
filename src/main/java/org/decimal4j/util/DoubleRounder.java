@@ -182,15 +182,23 @@ public final class DoubleRounder {
 	}
 
 	private static final double round(double value, DecimalArithmetic roundingArith, DecimalArithmetic halfEvenArith, double ulp) {
-		if (!isFinite(value) || 2 * ulp <= Math.ulp(value)) {
+		//return the value unchanged if
+		// (a) the value is infinite or NaN
+		// (b) the next double is 2 decimal UPLs away (or more):
+		//     in this case no other double value represents the decimal value more accurately
+		if (!isFinite(value) || ulp * 2 <= Math.ulp(value)) {
 			return value;
 		}
+		// NOTE: condition (b) above prevents overflows as such cases do not get to here
 		final long uDecimal = roundingArith.fromDouble(value);
 		return halfEvenArith.toDouble(uDecimal);
 	}
 
 	private static final double checkRoundingUnnecessary(double value, DecimalArithmetic halfEvenArith, double ulp) {
+		//same condition as in round(..) method above
 		if (isFinite(value) && 2 * ulp > Math.ulp(value)) {
+			//By definition, rounding is necessary if there is another double value that represents our decimal more
+			//accurately. This is the case when we get a different double value after two conversions.
 			final long uDecimal = halfEvenArith.fromDouble(value);
 			if (halfEvenArith.toDouble(uDecimal) != value) {
 				throw new ArithmeticException(

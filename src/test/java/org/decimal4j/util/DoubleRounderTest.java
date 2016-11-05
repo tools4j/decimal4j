@@ -87,7 +87,8 @@ public class DoubleRounderTest {
 		if (!isFinite(d)) {
 			return d;
 		}
-		final BigDecimal bd = BigDecimal.valueOf(d);
+		//we need exact representation of the double, except when we check UNNECESSARY rounding mode
+		final BigDecimal bd = roundingMode == RoundingMode.UNNECESSARY ? BigDecimal.valueOf(d) : new BigDecimal(d);
 		return bd.setScale(precision, roundingMode).doubleValue();
 	}
 	
@@ -113,8 +114,8 @@ public class DoubleRounderTest {
 		// expected
 		ArithmeticResult<Double> expected;
 		try {
-			final double rounded = expectedResult(d);
-			expected = ArithmeticResult.forResult(String.valueOf(rounded), d);
+			final double exp = expectedResult(d);
+			expected = ArithmeticResult.forResult(String.valueOf(exp), exp);
 		} catch (ArithmeticException e) {
 			expected = ArithmeticResult.forException(e);
 		} catch (NumberFormatException e) {
@@ -126,8 +127,8 @@ public class DoubleRounderTest {
 		// actual
 		ArithmeticResult<Double> actual;
 		try {
-			final double rounded = actualResult(d);
-			actual = ArithmeticResult.forResult(String.valueOf(rounded), d);
+			final double act = actualResult(d);
+			actual = ArithmeticResult.forResult(String.valueOf(act), act);
 		} catch (ArithmeticException e) {
 			actual = ArithmeticResult.forException(e);
 		} catch (IllegalArgumentException e) {
