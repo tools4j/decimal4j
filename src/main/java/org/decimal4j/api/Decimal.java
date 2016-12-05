@@ -2261,7 +2261,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the division.
+	 * the outcome of the negation.
 	 * 
 	 * @return {@code -this}
 	 */
@@ -2275,7 +2275,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the division.
+	 * the outcome of the negation.
 	 * 
 	 * @param overflowMode
 	 *            the overflow mode to apply
@@ -2294,7 +2294,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the division.
+	 * the outcome of the operation.
 	 * 
 	 * @return {@code abs(this)}
 	 */
@@ -2308,7 +2308,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the division.
+	 * the outcome of the operation.
 	 * 
 	 * @param overflowMode
 	 *            the overflow mode to apply
@@ -2427,7 +2427,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the operation.
+	 * the outcome of the square root operation.
 	 * 
 	 * @return {@code sqrt(this)}
 	 * @throws ArithmeticException
@@ -2441,7 +2441,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the operation.
+	 * the outcome of the square root operation.
 	 * 
 	 * @param roundingMode
 	 *            the rounding mode to apply if the result needs to be rounded
@@ -2607,7 +2607,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the shift operation.
+	 * the outcome of the operation.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to
@@ -2644,7 +2644,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the shift operation.
+	 * the outcome of the operation.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to
@@ -2686,7 +2686,7 @@ public interface Decimal<S extends ScaleMetrics> extends Comparable<Decimal<S>> 
 	 * <p>
 	 * The returned value is a new instance if this Decimal is an {@link ImmutableDecimal}. If it is a
 	 * {@link MutableDecimal} then its internal state is altered and {@code this} is returned as result now representing
-	 * the outcome of the shift operation.
+	 * the outcome of the operation.
 	 * 
 	 * @param n
 	 *            power to raise this {@code Decimal} to
