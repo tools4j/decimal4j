@@ -96,8 +96,8 @@ You can download binaries, sources and javadoc from maven central:
 #### More Information
 * [Javadoc API](http://decimal4j.org/javadoc)
 * [Wiki](https://github.com/tools4j/decimal4j/wiki)
-* [DoubleRounder Utility](https://github.com/tools4j/decimal4j/wiki/DoubleRounder Utility): rounding double values to an arbitrary decimal precision from 0 to 18
+* [DoubleRounder Utility](https://github.com/tools4j/decimal4j/wiki/DoubleRounder-Utility): rounding double values to an arbitrary decimal precision from 0 to 18
 * [More Examples](https://github.com/tools4j/decimal4j/wiki/Examples)
 * [Zero-garbage Computations](https://github.com/tools4j/decimal4j/wiki/DecimalArithmetic-API) (with unscaled long values)
-* [Test Coverage](https://github.com/tools4j/decimal4j/wiki/Test Coverage)
+* [Test Coverage](https://github.com/tools4j/decimal4j/wiki/Test-Coverage)
 * [Performance Benchmarks](https://github.com/tools4j/decimal4j/wiki/Performance)
