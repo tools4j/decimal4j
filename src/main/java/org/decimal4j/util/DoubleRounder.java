@@ -23,17 +23,32 @@
  */
 package org.decimal4j.util;
 
-import java.math.RoundingMode;
-import java.util.Objects;
-
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
+import java.math.RoundingMode;
+import java.util.Objects;
+
 /**
- * Utility class to round double values to an arbitrary decimal precision between 0 and 18. The rounding is efficient
- * and garbage free.
+ * DoubleRounder Utility <b>(Deprecated)</b>.
+ * <p>
+ * DoubleRounder sometimes returns counter-intuitive results. The reason is that it performs mathematically
+ * correct rounding. For instance <tt>DoubleRounder.round(256.025d, 2)</tt> will be rounded down to
+ * <tt>256.02</tt> because the double value represented as <tt>256.025d</tt> is somewhat smaller than the rational
+ * value <tt>256.025</tt> and hence will be rounded down.
+ * <p>
+ * Notes:
+ * <ul>
+ * <li>This behaviour is very similar to that of the {@link java.math.BigDecimal#BigDecimal(double) BigDecimal(double)}
+ * constructor (but not to {@link java.math.BigDecimal#valueOf(double) valueOf(double)} which uses the string
+ * constructor).</li>
+ * <li>The problem can be circumvented with a double rounding step to a higher precision first, but it is complicated
+ * and we are not going into the details here</li>
+ * </ul>
+ * For those reasons we <b>cannot recommend to use DoubleRounder</b>.
  */
+@Deprecated
 public final class DoubleRounder {
 
 	private final ScaleMetrics scaleMetrics;
