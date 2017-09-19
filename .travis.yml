@@ -1,8 +1,8 @@
 language: java
 jdk:
   - oraclejdk8
-  - oraclejdk7
-#  - openjdk7
+  - openjdk7
+#  - oraclejdk7 --- no longer supported by travis :-(
 # Don't use the Travis Container-Based Infrastructure
 # (intermittently dies with error 137 -- out of mem)
 sudo: true
