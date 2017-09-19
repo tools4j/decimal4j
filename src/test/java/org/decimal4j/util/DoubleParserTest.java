@@ -1,3 +1,26 @@
+/**
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015-2017 decimal4j (tools4j), Marco Terzer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package org.decimal4j.util;
 
 import org.junit.Test;
@@ -15,6 +38,7 @@ public class DoubleParserTest {
     private static final Random RND = new Random();
     private static final int RANDOM_RUNS = 100000;
     private static final int DECIMAL_RUNS = 100000;
+    private static final int INTEGER_RUNS = 100000;
 
     private static final double toleranceUlp(final double d) {
         final double ulp = Math.ulp(d);
@@ -27,10 +51,10 @@ public class DoubleParserTest {
 
     @Test
     public void parseInteger() throws Exception {
-        for (int i = -1000; i < 1000; i++) {
+        for (int i = -INTEGER_RUNS; i < INTEGER_RUNS; i++) {
             assertEquals(i, DoubleParser.parseDouble(String.valueOf(i)), NO_TOLERANCE);
         }
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < INTEGER_RUNS; i++) {
             testVariantsOf(i);
             assertEquals("" + (Integer.MIN_VALUE + i), Integer.MIN_VALUE + i, DoubleParser.parseDouble(String.valueOf(Integer.MIN_VALUE + i)), NO_TOLERANCE);
             assertEquals("" + (Integer.MAX_VALUE - i), Integer.MAX_VALUE - i, DoubleParser.parseDouble(String.valueOf(Integer.MAX_VALUE - i)), NO_TOLERANCE);
@@ -115,6 +139,14 @@ public class DoubleParserTest {
             final double tolerance = toleranceUlp(d);
             assertEquals("+random-bits[" + i + "]", d, DoubleParser.parseDouble(String.valueOf(d)), tolerance);
             assertEquals("-random-bits[" + i + "]", -d, DoubleParser.parseDouble(String.valueOf(-d)), tolerance);
+        }
+    }
+
+    @Test
+    public void parseDoubleRandomLong() throws Exception {
+        for (int i = 0; i < RANDOM_RUNS; i++) {
+            final long l = RND.nextLong();
+            assertEquals("+random-long[" + i + "]: " + l, l, DoubleParser.parseDouble(String.valueOf(l)), NO_TOLERANCE);
         }
     }
 
