@@ -23,13 +23,13 @@
  */
 package org.decimal4j.arithmetic;
 
-import java.io.IOException;
-
 import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 import org.decimal4j.truncate.DecimalRounding;
 import org.decimal4j.truncate.TruncatedPart;
+
+import java.io.IOException;
 
 /**
  * Contains methods to convert from and to String.
@@ -105,7 +105,7 @@ final class StringConversion {
 		final int scale = scaleMetrics.getScale();
 		final int indexOfDecimalPoint = indexOfDecimalPoint(s, start, end);
 		if (indexOfDecimalPoint == end & scale > 0) {
-			throw newNumberFormatExceptionFor(arith, s);
+			throw newNumberFormatExceptionFor(arith, s, start, end);
 		}
 
 		// parse a decimal number
@@ -147,7 +147,7 @@ final class StringConversion {
 					truncatedPart);
 			return roundingIncrement == 0 ? truncatedValue : Checked.add(arith, truncatedValue, roundingIncrement);
 		} catch (ArithmeticException e) {
-			throw newNumberFormatExceptionFor(arith, s, e);
+			throw newNumberFormatExceptionFor(arith, s, start, end, e);
 		}
 	}
 
@@ -157,7 +157,7 @@ final class StringConversion {
 			int i = start;
 			long value = 0;
 			while  (i < end) {
-				final int digit = getDigit(arith, s, s.charAt(i++));
+				final int digit = getDigit(arith, s, start, end, s.charAt(i++));
 				value = value * 10 + digit;
 			}
 			final int scale = arith.getScale();
@@ -183,7 +183,7 @@ final class StringConversion {
 			} else if (firstChar > '5' & firstChar <= '9') {
 				truncatedPart = TruncatedPart.GREATER_THAN_HALF;
 			} else {
-				throw newNumberFormatExceptionFor(arith, s);
+				throw newNumberFormatExceptionFor(arith, s, start, end);
 			}
 			int i = start + 1;
 			while (i < end) {
@@ -195,7 +195,7 @@ final class StringConversion {
 						truncatedPart = TruncatedPart.GREATER_THAN_HALF;
 					}
 				} else if (ch != '0') {
-					throw newNumberFormatExceptionFor(arith, s);
+					throw newNumberFormatExceptionFor(arith, s, start, end);
 				}
 			}
 			return truncatedPart;
@@ -228,7 +228,7 @@ final class StringConversion {
 				} else {
 					if (firstChar != '+') {
 						// invalid first character
-						throw newNumberFormatExceptionFor(arith, s);
+						throw newNumberFormatExceptionFor(arith, s, start, end);
 					}
 				}
 
@@ -238,47 +238,48 @@ final class StringConversion {
 						return 0;
 					}
 					// Cannot have lone "+" or "-"
-					throw newNumberFormatExceptionFor(arith, s);
+					throw newNumberFormatExceptionFor(arith, s, start, end);
 				}
 				i++;
 			}
 			
 			final int end2 = end - 1;
 			while (i < end2) {
-				final int digit0 = getDigit(arith, s, s.charAt(i++));
-				final int digit1 = getDigit(arith, s, s.charAt(i++));
+				final int digit0 = getDigit(arith, s, start, end, s.charAt(i++));
+				final int digit1 = getDigit(arith, s, start, end, s.charAt(i++));
 				final int inc = TENS[digit0] + digit1;
 				if (result < (-Long.MAX_VALUE / 100)) {//same limit with Long.MIN_VALUE
-					throw newNumberFormatExceptionFor(arith, s);
+					throw newNumberFormatExceptionFor(arith, s, start, end);
 				}
 				result *= 100;
 				if (result < limit + inc) {
-					throw newNumberFormatExceptionFor(arith, s);
+					throw newNumberFormatExceptionFor(arith, s, start, end);
 				}
 				result -= inc;
 			}
 			if (i < end) {
-				final int digit = getDigit(arith, s, s.charAt(i++));
+				final int digit = getDigit(arith, s, start, end, s.charAt(i++));
 				if (result < (-Long.MAX_VALUE / 10)) {//same limit with Long.MIN_VALUE
-					throw newNumberFormatExceptionFor(arith, s);
+					throw newNumberFormatExceptionFor(arith, s, start, end);
 				}
 				result *= 10;
 				if (result < limit + digit) {
-					throw newNumberFormatExceptionFor(arith, s);
+					throw newNumberFormatExceptionFor(arith, s, start, end);
 				}
 				result -= digit;
 			}
 		} else {
-			throw newNumberFormatExceptionFor(arith, s);
+			throw newNumberFormatExceptionFor(arith, s, start, end);
 		}
 		return negative ? result : -result;
 	}
 	
-	private static final int getDigit(final DecimalArithmetic arith, final CharSequence s, final char ch) {
+	private static final int getDigit(final DecimalArithmetic arith, final CharSequence s,
+									  final int start, final int end, final char ch) {
 		if (ch >= '0' & ch <= '9') {
 			return (int) (ch - '0');
 		} else {
-			throw newNumberFormatExceptionFor(arith, s);
+			throw newNumberFormatExceptionFor(arith, s, start, end);
 		}
 	}
 	
@@ -365,13 +366,13 @@ final class StringConversion {
 		return sb;
 	}
 
-	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s) {
+	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s, int start, int end) {
 		return new NumberFormatException(
-				"Cannot parse Decimal value with scale " + arith.getScale() + " for input string: \"" + s + "\"");
+				"Cannot parse Decimal value with scale " + arith.getScale() + " for input string: \"" + s.subSequence(start, end) + "\"");
 	}
 
-	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s, Exception cause) {
-		final NumberFormatException ex = newNumberFormatExceptionFor(arith, s);
+	private static final NumberFormatException newNumberFormatExceptionFor(DecimalArithmetic arith, CharSequence s, int start, int end, Exception cause) {
+		final NumberFormatException ex = newNumberFormatExceptionFor(arith, s, start, end);
 		ex.initCause(cause);
 		return ex;
 	}
