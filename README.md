@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/tools4j/decimal4j.svg?branch=master)](https://travis-ci.org/tools4j/decimal4j)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.decimal4j/decimal4j/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.decimal4j/decimal4j)
+[![Maven Central](https://img.shields.io/maven-central/v/org.decimal4j/decimal4j.svg)](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22decimal4j%22)
 
 ## decimal4j
 Java library for fast fixed-point arithmetic based on longs with support for up to 18 decimal places.
