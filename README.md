@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/tools4j/decimal4j.svg?branch=master)](https://travis-ci.org/tools4j/decimal4j)
 [![Maven Central](https://img.shields.io/maven-central/v/org.decimal4j/decimal4j.svg)](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22decimal4j%22)
+[![Javadocs](http://www.javadoc.io/badge/org.decimal4j/decimal4j.svg)](http://www.javadoc.io/doc/org.decimal4j/decimal4j)
 
 ## decimal4j
 Java library for fast fixed-point arithmetic based on longs with support for up to 18 decimal places.
@@ -94,7 +95,7 @@ You can download binaries, sources and javadoc from maven central:
 * [Questions & Answers](https://github.com/tools4j/decimal4j/issues?utf8=%E2%9C%93&q=is%3Aissue+label%3Aquestion)
 
 #### More Information
-* [Javadoc API](http://decimal4j.org/javadoc)
+* [Javadoc API](http://decimal4j.org/javadoc) [![Javadocs](http://www.javadoc.io/badge/org.decimal4j/decimal4j.svg)](http://www.javadoc.io/doc/org.decimal4j/decimal4j)
 * [Wiki](https://github.com/tools4j/decimal4j/wiki)
 * [More Examples](https://github.com/tools4j/decimal4j/wiki/Examples)
 * [Zero-garbage Computations](https://github.com/tools4j/decimal4j/wiki/DecimalArithmetic-API) (with unscaled long values)
