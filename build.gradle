@@ -1,7 +1,22 @@
+buildscript {
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+	dependencies {
+		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
+	}
+}
+plugins {
+	id "me.champeau.gradle.jmh" version "0.2.0"
+	id "com.github.hierynomus.license-base" version"0.15.0"
+	id 'io.codearte.nexus-staging' version '0.21.1'
+}
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
-apply plugin: 'license'
+apply plugin: 'com.github.hierynomus.license-base'
 
 sourceCompatibility = 1.7
 group = "org.decimal4j"
@@ -9,6 +24,8 @@ version = '1.0.7-SNAPSHOT'
 archivesBaseName = "decimal4j"
 
 def versionJmh = "1.11.2"
+def generatedSources = 'build/generated-src'
+def generatedResources = 'build/generated-res'
 
 jar {
     manifest {
@@ -20,28 +37,12 @@ repositories {
     mavenCentral()
 }
 
-buildscript {
-	repositories {
-		mavenCentral()
-		jcenter()
-	}
-	
-	dependencies {
-		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
-		classpath 'me.champeau.gradle:jmh-gradle-plugin:0.2.0'
-		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
-		classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3"
-	}
-	
-	ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
-}
-
 dependencies {
-	//NOTE: only needed for IDEs like eclipse to compile the jmh benchmarks
-	//		gradle is happy with jmh dependencies added by the jmh plugin
-    compile "org.openjdk.jmh:jmh-core:${versionJmh}"
-    
-    testCompile 'junit:junit:4.11'
+//	//NOTE: only needed for IDEs like eclipse to compile the jmh benchmarks
+//	//		gradle is happy with jmh dependencies added by the jmh plugin
+//    compile "org.openjdk.jmh:jmh-core:${versionJmh}"
+
+	testCompile 'junit:junit:4.11'
     testCompile 'pl.pragmatists:JUnitParams:1.0.4'
 }
 
@@ -66,36 +67,33 @@ uploadArchives {
     }
 }
 
-def generatedSources = "${buildDir}/generated-src"
-
-task generateSources() << {
-	println "Generating sources...."
-	ant.fmpp(
-		configuration: "src/main/resources/codegen/config.fmpp",
-		sourceRoot: "src/main/resources/codegen/templates",
-		outputRoot: generatedSources
-	)
+task generateSources() {
+	doLast {
+		println "Generating sources...."
+		ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
+		ant.fmpp(
+				configuration: "src/main/resources/codegen/config.fmpp",
+				sourceRoot: "src/main/resources/codegen/templates",
+				outputRoot: generatedSources
+		)
+		new File(generatedSources).eachFileRecurse {
+			println it
+		}
+		println "Generating sources complete."
+	}
 }
 	
 task copyLicense(type: Copy) {
     from('.')
-    into('build/resources/main/')
+    into(generatedResources)
     include('LICENSE.md')
     rename('LICENSE.md', 'LICENSE.txt')
 }
-task copyLicenseToSrc(type: Copy) {
-    from('build/resources/main/')
-    into('build/generated-src/')
-    include('LICENSE.txt')
-}
 
-sourceSets.main.java {
-	srcDirs generatedSources, 'src/main/java'
-}
-sourceSets.main.resources {
-	srcDirs generatedSources, 'src/main/java'
-	exclude '**/*.template' 
-	exclude '**/codegen/**' 
+task copyLicenseToSrc(type: Copy) {
+    from(generatedResources)
+    into(generatedSources)
+    include('LICENSE.txt')
 }
 
 license {
@@ -104,10 +102,29 @@ license {
 	include "**/*.java"
 	ext.year = Calendar.getInstance().get(Calendar.YEAR)
 }
-licenseFormat.dependsOn generateSources
-copyLicense.dependsOn processResources
-copyLicenseToSrc.dependsOn copyLicense,generateSources
-compileJava.dependsOn generateSources,licenseFormat,copyLicense,copyLicenseToSrc
+
+task licenseFormatGen(type: com.hierynomus.gradle.license.tasks.LicenseFormat) {
+	source = generatedSources
+	outputs.upToDateWhen { false }
+}
+
+licenseFormatGen.dependsOn 'generateSources'
+licenseFormatMain.dependsOn 'generateSources','licenseFormatGen','licenseFormatJmh','licenseFormatTest'
+copyLicense.dependsOn 'processResources'
+copyLicenseToSrc.dependsOn 'copyLicense','generateSources'
+//compileJava.dependsOn 'generateSources','licenseFormat','licenseFormatGen','copyLicense','copyLicenseToSrc'
+compileJava.dependsOn 'generateSources','licenseFormatMain','licenseFormatGen','copyLicense','copyLicenseToSrc'
+compileTestJava.dependsOn 'licenseFormatTest'
+
+sourceSets.main.java {
+	srcDirs += generatedSources
+}
+
+sourceSets.main.resources {
+	srcDirs += generatedResources
+	exclude '**/*.template'
+	exclude '**/codegen/**'
+}
 
 javadoc {
 	options.showFromPackage()
