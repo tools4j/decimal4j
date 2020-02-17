@@ -7,6 +7,7 @@ buildscript {
 		classpath 'net.sourceforge.fmpp:fmpp:0.9.14'
 	}
 }
+
 plugins {
 	id "me.champeau.gradle.jmh" version "0.2.0"
 	id "com.github.hierynomus.license-base" version"0.15.0"
@@ -27,9 +28,19 @@ def versionJmh = "1.11.2"
 def generatedSources = 'build/generated-src'
 def generatedResources = 'build/generated-res'
 
+sourceSets.main.java {
+	srcDirs += generatedSources
+}
+
+sourceSets.main.resources {
+	srcDirs += generatedResources
+	exclude '**/*.template'
+	exclude '**/codegen/**'
+}
+
 jar {
     manifest {
-        attributes 'Implementation-Title': 'decimal4j', 'Implementation-Version': version
+        attributes 'Implementation-Title': 'decimal4j', 'Implementation-Version': project.version
     }
 }
 
@@ -42,8 +53,8 @@ dependencies {
 //	//		gradle is happy with jmh dependencies added by the jmh plugin
 //    compile "org.openjdk.jmh:jmh-core:${versionJmh}"
 
-	testCompile 'junit:junit:4.11'
-    testCompile 'pl.pragmatists:JUnitParams:1.0.4'
+	testImplementation 'junit:junit:4.11'
+	testImplementation 'pl.pragmatists:JUnitParams:1.0.4'
 }
 
 test {
@@ -67,7 +78,8 @@ uploadArchives {
     }
 }
 
-task generateSources() {
+task generateSources {
+	mustRunAfter init
 	doLast {
 		println "Generating sources...."
 		ant.taskdef(name: 'fmpp', classname:'fmpp.tools.AntTask', classpath: buildscript.configurations.classpath.asPath)
@@ -85,14 +97,14 @@ task generateSources() {
 	
 task copyLicense(type: Copy) {
     from('.')
-    into(generatedResources)
+    into(generatedResources +'/LICENSE.txt')
     include('LICENSE.md')
     rename('LICENSE.md', 'LICENSE.txt')
 }
 
 task copyLicenseToSrc(type: Copy) {
     from(generatedResources)
-    into(generatedSources)
+    into(generatedSources + '/LICENSE.txt')
     include('LICENSE.txt')
 }
 
@@ -116,16 +128,6 @@ copyLicenseToSrc.dependsOn 'copyLicense','generateSources'
 compileJava.dependsOn 'generateSources','licenseFormatMain','licenseFormatGen','copyLicense','copyLicenseToSrc'
 compileTestJava.dependsOn 'licenseFormatTest'
 
-sourceSets.main.java {
-	srcDirs += generatedSources
-}
-
-sourceSets.main.resources {
-	srcDirs += generatedResources
-	exclude '**/*.template'
-	exclude '**/codegen/**'
-}
-
 javadoc {
 	options.showFromPackage()
 	options.linkSource()
@@ -134,14 +136,9 @@ javadoc {
 	options.overview = "src/main/java/overview.html";
 }
 
-task javadocJar(type: Jar) {
-    classifier = 'javadoc'
-    from javadoc
-}
-
-task sourcesJar(type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+java {
+	withSourcesJar()
+	withJavadocJar()
 }
 
 artifacts {
