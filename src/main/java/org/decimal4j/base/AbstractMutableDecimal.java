@@ -64,12 +64,12 @@ abstract public class AbstractMutableDecimal<S extends ScaleMetrics, D extends A
 
 	/**
 	 * Returns {@code this} decimal after assigning the value
-	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>.
+	 * <code>(unscaled &times; 10<sup>-scale</sup>)</code>.
 	 * 
 	 * @param unscaled
 	 *            unscaled value to assign to this {@code Decimal}
 	 * @return {@code this} decimal value now representing
-	 *         <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>
+	 *         <code>(unscaled &times; 10<sup>-scale</sup>)</code>
 	 */
 	@Override
 	protected D createOrAssign(long unscaled) {

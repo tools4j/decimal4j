@@ -53,26 +53,26 @@ abstract public class AbstractDecimal<S extends ScaleMetrics, D extends Abstract
 
 	/**
 	 * Returns this or a new {@code Decimal} whose value is
-	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>.
+	 * <code>(unscaled &times; 10<sup>-scale</sup>)</code>.
 	 * <p>
 	 * The returned value is a new instance if this decimal is an
 	 * {@link ImmutableDecimal}. If it is a {@link MutableDecimal} then its
 	 * internal state is altered and {@code this} is returned as result now
-	 * representing <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>.
+	 * representing <code>(unscaled &times; 10<sup>-scale</sup>)</code>.
 	 * 
 	 * @param unscaled
 	 *            unscaled value to be returned as a {@code Decimal}
-	 * @return <tt>unscaled &times; 10<sup>-scale</sup></tt>
+	 * @return <code>unscaled &times; 10<sup>-scale</sup></code>
 	 */
 	abstract protected D createOrAssign(long unscaled);
 
 	/**
 	 * Returns a new {@code Decimal} whose value is
-	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>.
+	 * <code>(unscaled &times; 10<sup>-scale</sup>)</code>.
 	 * 
 	 * @param unscaled
 	 *            unscaled value to be returned as a {@code Decimal}
-	 * @return <tt>unscaled &times; 10<sup>-scale</sup></tt>
+	 * @return <code>unscaled &times; 10<sup>-scale</sup></code>
 	 */
 	abstract protected D create(long unscaled);
 

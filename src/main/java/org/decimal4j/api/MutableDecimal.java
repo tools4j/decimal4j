@@ -79,7 +79,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * this Mutable Decimal and returns {@code this} now representing one ULP.
 	 * 
 	 * @return {@code this} Decimal after assigning the value
-	 *         <tt>ULP=10<sup>-scale</sup></tt>
+	 *         <code>ULP=10<sup>-scale</sup></code>
 	 */
 	MutableDecimal<S> setUlp();
 
@@ -106,7 +106,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a Decimal
 	 *             with the scale of this mutable Decimal
@@ -157,7 +157,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param value
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the float to be represented as a Decimal with
@@ -177,7 +177,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 *            value to be set
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
+	 * @return {@code this} Decimal after assigning: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the float to be represented as a Decimal with
@@ -199,7 +199,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param value
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a Decimal with
@@ -219,7 +219,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 *            value to be set
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
+	 * @return {@code this} Decimal after assigning: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a Decimal with
@@ -241,7 +241,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param value
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a Decimal
 	 *             with the scale of this mutable Decimal
@@ -260,7 +260,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 *            value to be set
 	 * @param roundingMode
 	 *            the rounding mode to apply if rounding is necessary
-	 * @return {@code this} Decimal after assigning: <tt>round(value)</tt>
+	 * @return {@code this} Decimal after assigning: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a Decimal
 	 *             with the scale of this mutable Decimal
@@ -272,21 +272,21 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} and
-	 * returns {@code this} now representing <tt>(unscaledValue * 10
-	 * <sup>-scale</sup>)</tt> where scale refers to the {@link #getScale()
+	 * returns {@code this} now representing <code>(unscaledValue * 10
+	 * <sup>-scale</sup>)</code> where scale refers to the {@link #getScale()
 	 * scale} of this mutable Decimal.
 	 * 
 	 * @param unscaledValue
 	 *            value to be set
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>unscaledValue * 10<sup>-scale</sup></tt>.
+	 *         <code>unscaledValue * 10<sup>-scale</sup></code>.
 	 */
 	MutableDecimal<S> setUnscaled(long unscaledValue);
 
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} with the
 	 * given {@code scale} and returns {@code this} now representing
-	 * <tt>(unscaledValue * 10<sup>-scale</sup>)</tt>. The value is rounded to
+	 * <code>(unscaledValue * 10<sup>-scale</sup>)</code>. The value is rounded to
 	 * the {@link #getScale() scale} of this mutable Decimal using
 	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if
 	 * the specified value is too large to be represented as a Decimal of this
@@ -297,7 +297,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param scale
 	 *            the scale used for {@code unscaledValue}
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>round<sub>HALF_UP</sub>(unscaledValue * 10<sup>-scale</sup>)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(unscaledValue * 10<sup>-scale</sup>)</code>
 	 * @throws IllegalArgumentException
 	 *             if the value is too large to be represented as a Decimal with
 	 *             the scale of this mutable Decimal
@@ -307,7 +307,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	/**
 	 * Sets {@code this} Decimal to the specified {@code unscaledValue} with the
 	 * given {@code scale} and returns {@code this} now representing
-	 * <tt>(unscaledValue * 10<sup>-scale</sup>)</tt>. The value is rounded to
+	 * <code>(unscaledValue * 10<sup>-scale</sup>)</code>. The value is rounded to
 	 * the {@link #getScale() scale} of this mutable Decimal using the specified
 	 * {@code roundingMode}. An exception is thrown if the specified value is
 	 * too large to be represented as a Decimal of this of this mutable
@@ -320,7 +320,7 @@ public interface MutableDecimal<S extends ScaleMetrics> extends Decimal<S> {
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
 	 * @return {@code this} Decimal after assigning:
-	 *         <tt>round(unscaledValue * 10<sup>-scale</sup>)</tt>
+	 *         <code>round(unscaledValue * 10<sup>-scale</sup>)</code>
 	 * @throws IllegalArgumentException
 	 *             if the value is too large to be represented as a Decimal with
 	 *             the scale of this mutable Decimal

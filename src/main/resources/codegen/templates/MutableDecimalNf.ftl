@@ -16,7 +16,7 @@ import org.decimal4j.immutable.Decimal${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
 
 /**
- * <tt>MutableDecimal${scale}f</tt> represents a mutable decimal number with a fixed
+ * <code>MutableDecimal${scale}f</code> represents a mutable decimal number with a fixed
  * number of ${scale} digits to the right of the decimal point.
  * <p>
  * All methods for this class throw {@code NullPointerException} when passed a

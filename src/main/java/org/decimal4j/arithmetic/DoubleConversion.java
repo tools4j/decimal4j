@@ -67,7 +67,7 @@ final class DoubleConversion {
 	 * 
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @return <code>round<sub>DOWN</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
 	 *             as a {@code long}
@@ -90,7 +90,7 @@ final class DoubleConversion {
 	 *            the rounding to apply if necessary
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
 	 *             as a {@code long}
@@ -169,7 +169,7 @@ final class DoubleConversion {
 	 *            the arithmetic associated with the result value
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
 	 *             as a Decimal of the arithmetic's scale
@@ -189,7 +189,7 @@ final class DoubleConversion {
 	 *            the rounding to apply if necessary
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the double to be represented
 	 *             as a Decimal of the arithmetic's scale
@@ -312,7 +312,7 @@ final class DoubleConversion {
 	 *            the arithmetic associated with the value
 	 * @param value
 	 *            the long value
-	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @return <code>round<sub>DOWN</sub>(value)</code>
 	 */
 	public static final double longToDouble(DecimalArithmetic arith, long value) {
 		return unscaledToDouble(arith, DecimalRounding.DOWN, value);
@@ -327,7 +327,7 @@ final class DoubleConversion {
 	 *            the rounding to apply if necessary
 	 * @param value
 	 *            the long value
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */
@@ -345,7 +345,7 @@ final class DoubleConversion {
 	 *            the arithmetic associated with the value
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @return <code>round<sub>DOWN</sub>(value)</code>
 	 */
 	public static final double unscaledToDouble(DecimalArithmetic arith, long unscaled) {
 		return unscaledToDouble(arith, DecimalRounding.DOWN, unscaled);
@@ -360,7 +360,7 @@ final class DoubleConversion {
 	 *            the rounding to apply if necessary
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */

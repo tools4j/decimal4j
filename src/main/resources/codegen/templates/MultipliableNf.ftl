@@ -58,7 +58,7 @@ public final class Multipliable${scale}f {
 <#if (scale+scale <= maxScale)>
 
 	/**
-	 * Returns a {@code Decimal} whose value is <tt>(this<sup>2</sup>)</tt>. The
+	 * Returns a {@code Decimal} whose value is <code>(this<sup>2</sup>)</code>. The
 	 * result is exact and has scale ${scale+scale} which is twice the scale of
 	 * the Decimal that this multipliable object represents. An
 	 * {@link ArithmeticException} is thrown if the product is out of the
@@ -66,7 +66,7 @@ public final class Multipliable${scale}f {
 	 * <p>
 	 * Note that the result is <i>always</i> a new instance.
 	 * 
-	 * @return <tt>(this * this)</tt>
+	 * @return <code>(this * this)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and product is out of the possible
 	 *             range for a {@code Decimal${scale+scale}f}
@@ -86,7 +86,7 @@ public final class Multipliable${scale}f {
 	 * 
 	 * @param factor
 	 *            the factor to multiply with the Decimal that this multipliable represents
-	 * @return <tt>(this * factor)</tt>
+	 * @return <code>(this * factor)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and product is out of the possible
 	 *             range for a {@code Decimal${scale+scale}f}
@@ -109,7 +109,7 @@ public final class Multipliable${scale}f {
 	 * 
 	 * @param factor
 	 *            the factor to multiply with the Decimal that this multipliable represents
-	 * @return <tt>(this * factor)</tt>
+	 * @return <code>(this * factor)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and product is out of the possible
 	 *             range for a {@code Decimal${scale+scale2}f}
@@ -128,7 +128,7 @@ public final class Multipliable${scale}f {
 	 * 
 	 * @param factor
 	 *            the factor to multiply with the Decimal that this multipliable represents
-	 * @return <tt>(this * factor)</tt>
+	 * @return <code>(this * factor)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and product is out of the possible
 	 *             range for a {@code Decimal${scale+scale2}f}
@@ -141,7 +141,7 @@ public final class Multipliable${scale}f {
 
 	
 	/**
-	 * Returns a hash code for this <tt>Multipliable${scale}f</tt> which happens to be the 
+	 * Returns a hash code for this <code>Multipliable${scale}f</code> which happens to be the
 	 * hash code of the underlying {@code Decimal${scale}f} value.
 	 * 
 	 * @return a hash code value for this object

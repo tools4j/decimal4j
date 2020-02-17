@@ -32,7 +32,7 @@ import org.decimal4j.api.DecimalArithmetic;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * <tt>ScaleMetrics</tt> defines various metrics associated with the scale of a {@link Decimal} number. It is mainly
+ * <code>ScaleMetrics</code> defines various metrics associated with the scale of a {@link Decimal} number. It is mainly
  * used internally from code implementing the arithmetic operations of a {@code Decimal}.
  * <p>
  * The {@link #getScale() scale} determines the number of fraction digits of the {@code Decimal}. The

@@ -43,7 +43,7 @@ final class Sqrt {
 	 * 
 	 * @param lValue
 	 *            the long value
-	 * @return <tt>round<sub>DOWN</sub>(lValue)</tt>
+	 * @return <code>round<sub>DOWN</sub>(lValue)</code>
 	 * @throws ArithmeticException
 	 *             if {@code lValue < 0}
 	 */
@@ -67,7 +67,7 @@ final class Sqrt {
 	 *            the rounding to apply if necessary
 	 * @param lValue
 	 *            the long value
-	 * @return <tt>round(lValue)</tt>
+	 * @return <code>round(lValue)</code>
 	 * @throws ArithmeticException
 	 *             if {@code lValue < 0}
 	 */
@@ -109,7 +109,7 @@ final class Sqrt {
 	 *            the arithmetic associated with the value
 	 * @param uDecimal
 	 *            the unscaled decimal value
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal)</code>
 	 * @throws ArithmeticException
 	 *             if {@code uDecimal < 0}
 	 */
@@ -127,7 +127,7 @@ final class Sqrt {
 	 *            the rounding to apply if necessary
 	 * @param uDecimal
 	 *            the unscaled decimal value
-	 * @return <tt>round(uDecimal)</tt>
+	 * @return <code>round(uDecimal)</code>
 	 * @throws ArithmeticException
 	 *             if {@code uDecimal < 0}
 	 */

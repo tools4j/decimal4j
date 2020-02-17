@@ -39,7 +39,7 @@ final class Avg {
 	 *            the first value
 	 * @param b
 	 *            the second value
-	 * @return <tt>round<sub>DOWN</sub>((a + b) / 2)</tt>
+	 * @return <code>round<sub>DOWN</sub>((a + b) / 2)</code>
 	 */
 	public static final long avg(long a, long b) {
 		final long xor = a ^ b;
@@ -59,7 +59,7 @@ final class Avg {
 	 *            the first value
 	 * @param b
 	 *            the second value
-	 * @return <tt>round((a + b) / 2)</tt>
+	 * @return <code>round((a + b) / 2)</code>
 	 */
 	public static final long avg(DecimalArithmetic arith, DecimalRounding rounding, long a, long b) {
 		final long xor = a ^ b;

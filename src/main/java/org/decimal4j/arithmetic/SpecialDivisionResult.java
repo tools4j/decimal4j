@@ -98,7 +98,7 @@ enum SpecialDivisionResult {
 	 *            the dividend
 	 * @param uDecimalDivisor
 	 *            the divisor
-	 * @return <tt>uDecimalDividend / uDecimalDivisor</tt>
+	 * @return <code>uDecimalDividend / uDecimalDivisor</code>
 	 * @throws ArithmeticException
 	 *             if {@code this==DIVISOR_IS_ZERO} or if an overflow occurs and
 	 *             the arithmetic's {@link OverflowMode} is set to throw an

@@ -116,7 +116,7 @@ enum SpecialPowResult {
 	 *            the base value
 	 * @param exponent
 	 *            the exponent
-	 * @return <tt>uDecimal<sup>exponent</sup></tt>
+	 * @return <code>uDecimal<sup>exponent</sup></code>
 	 * @throws ArithmeticException
 	 *             if {@code uDecimal==0} and exponent is negative or if an
 	 *             overflow occurs and the arithmetic's {@link OverflowMode} is

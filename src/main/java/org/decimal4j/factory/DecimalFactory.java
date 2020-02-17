@@ -119,7 +119,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *
 	 * @param value
 	 *            float value to convert into an immutable Decimal value
-	 * @return a Decimal calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a Decimal calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the float to be represented as a
@@ -138,7 +138,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            float value to convert into an immutable Decimal value
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a Decimal calculated as: <tt>round(value)</tt>
+	 * @return a Decimal calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the float to be represented as a
@@ -158,7 +158,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *
 	 * @param value
 	 *            double value to convert into an immutable Decimal value
-	 * @return a Decimal calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a Decimal calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
@@ -177,7 +177,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            double value to convert into an immutable Decimal value
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a Decimal calculated as: <tt>round(value)</tt>
+	 * @return a Decimal calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a
@@ -215,7 +215,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param value
 	 *            {@code BigDecimal} value to convert into an immutable Decimal
 	 *            value
-	 * @return a Decimal calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a Decimal calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} too large to be represented as a Decimal
 	 *             with the scale of this factory
@@ -234,7 +234,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            value
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a Decimal calculated as: <tt>round(value)</tt>
+	 * @return a Decimal calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} too large to be represented as a Decimal
 	 *             with the scale of this factory
@@ -254,7 +254,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param value
 	 *            Decimal value to convert into an immutable Decimal value of
 	 *            this factory's scale
-	 * @return a Decimal calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a Decimal calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} too large to be represented as a Decimal
 	 *             with the scale of this factory
@@ -273,7 +273,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 *            this factory's scale
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a Decimal calculated as: <tt>round(value)</tt>
+	 * @return a Decimal calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} too large to be represented as a Decimal
 	 *             with the scale of this factory
@@ -301,7 +301,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param value
 	 *            String value to convert into an immutable Decimal value of
 	 *            this factory's scale
-	 * @return a Decimal calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a Decimal calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws NumberFormatException
 	 *             if {@code value} does not represent a valid {@code Decimal}
 	 *             or if the value is too large to be represented as a Decimal
@@ -329,7 +329,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param roundingMode
 	 *            the rounding mode to apply if the fraction contains more
 	 *            digits than the scale of this factory
-	 * @return a Decimal calculated as: <tt>round(value)</tt>
+	 * @return a Decimal calculated as: <code>round(value)</code>
 	 * @throws NumberFormatException
 	 *             if {@code value} does not represent a valid {@code Decimal}
 	 *             or if the value is too large to be represented as a Decimal
@@ -342,19 +342,19 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal whose value is numerically equal to
-	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt> where {@code scale}
+	 * <code>(unscaled &times; 10<sup>-scale</sup>)</code> where {@code scale}
 	 * refers to this factory's {@link #getScale() scale}.
 	 *
 	 * @param unscaled
 	 *            unscaled value to convert into an immutable Decimal value
 	 * @return a Decimal calculated as:
-	 *         <tt>unscaled &times; 10<sup>-scale</sup></tt>
+	 *         <code>unscaled &times; 10<sup>-scale</sup></code>
 	 */
 	ImmutableDecimal<S> valueOfUnscaled(long unscaled);
 
 	/**
 	 * Returns a new immutable Decimal whose value is numerically equal to
-	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>. The result is rounded to
+	 * <code>(unscaled &times; 10<sup>-scale</sup>)</code>. The result is rounded to
 	 * the {@link #getScale() scale} of this factory using
 	 * {@link RoundingMode#HALF_UP HALF_UP} rounding. An exception is thrown if
 	 * the specified value is too large to be represented as a Decimal of this
@@ -365,7 +365,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param scale
 	 *            the scale to apply to the {@code unscaled} value
 	 * @return a Decimal calculated as:
-	 *         <tt>round<sub>HALF_UP</sub>(unscaled &times; 10<sup>-scale</sup>)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(unscaled &times; 10<sup>-scale</sup>)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} too large to be represented as a Decimal of
 	 *             this factory's scale
@@ -374,7 +374,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 
 	/**
 	 * Returns a new immutable Decimal whose value is numerically equal to
-	 * <tt>(unscaled &times; 10<sup>-scale</sup>)</tt>. The result is rounded to
+	 * <code>(unscaled &times; 10<sup>-scale</sup>)</code>. The result is rounded to
 	 * the {@link #getScale() scale} of this factory using the specified
 	 * {@code roundingMode}. An exception is thrown if the specified value is
 	 * too large to be represented as a Decimal of this factory's scale.
@@ -386,7 +386,7 @@ public interface DecimalFactory<S extends ScaleMetrics> {
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
 	 * @return a Decimal calculated as:
-	 *         <tt>round(unscaled &times; 10<sup>-scale</sup>)</tt>
+	 *         <code>round(unscaled &times; 10<sup>-scale</sup>)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} too large to be represented as a Decimal of
 	 *             this factory's scale

@@ -46,7 +46,7 @@ final class Pow {
 	}
 
 	/**
-	 * Calculates the power <tt>(lBase<sup>exponent</sup>)</tt>. Overflows are
+	 * Calculates the power <code>(lBase<sup>exponent</sup>)</code>. Overflows are
 	 * silently ignored.
 	 * 
 	 * @param arith
@@ -58,7 +58,7 @@ final class Pow {
 	 *            the unscaled decimal base value
 	 * @param exponent
 	 *            the exponent
-	 * @return <tt>round(lBase<sup>exponent</sup>)</tt>
+	 * @return <code>round(lBase<sup>exponent</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if {@code lBase==0} and the exponent is negative or if
 	 *             {@code roundingMode==UNNECESSARY} and rounding is necessary
@@ -88,7 +88,7 @@ final class Pow {
 	}
 
 	/**
-	 * Calculates the power <tt>(lBase<sup>exponent</sup>)</tt>. An exception is
+	 * Calculates the power <code>(lBase<sup>exponent</sup>)</code>. An exception is
 	 * thrown if an overflow occurs.
 	 * 
 	 * @param arith
@@ -100,7 +100,7 @@ final class Pow {
 	 *            the unscaled decimal base value
 	 * @param exponent
 	 *            the exponent
-	 * @return <tt>round(lBase<sup>exponent</sup>)</tt>
+	 * @return <code>round(lBase<sup>exponent</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if {@code lBase==0} and the exponent is negative, if
 	 *             {@code roundingMode==UNNECESSARY} and rounding is necessary

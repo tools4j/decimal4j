@@ -34,15 +34,15 @@ import org.decimal4j.truncate.OverflowMode;
 import org.decimal4j.truncate.TruncationPolicy;
 
 /**
- * <tt>DecimalArithmetic</tt> defines the basic primitive operations for {@link Decimal} numbers for one particular
+ * <code>DecimalArithmetic</code> defines the basic primitive operations for {@link Decimal} numbers for one particular
  * combination of {@link #getScale() scale}, {@link #getRoundingMode() rounding mode} and {@link #getOverflowMode()
- * overflow mode}. Primitive here means that <tt>Decimal</tt> values are simply represented by their underlying unscaled
- * <tt>long</tt> value. All operations therefore use unscaled longs for <tt>Decimal</tt> arguments and return longs for
- * <tt>Decimal</tt> number results.
+ * overflow mode}. Primitive here means that <code>Decimal</code> values are simply represented by their underlying unscaled
+ * <code>long</code> value. All operations therefore use unscaled longs for <code>Decimal</code> arguments and return longs for
+ * <code>Decimal</code> number results.
  * <p>
- * Application code does not usually need to use <tt>DecimalArithmetic</tt> directly. It may be appropriate however for
+ * Application code does not usually need to use <code>DecimalArithmetic</code> directly. It may be appropriate however for
  * very specialized applications with low latency, high frequency or zero garbage requirements. All operations of
- * <tt>DecimalArithmetic</tt> do not allocate any objects (zero garbage) unless otherwise indicated.
+ * <code>DecimalArithmetic</code> do not allocate any objects (zero garbage) unless otherwise indicated.
  */
 public interface DecimalArithmetic {
 	/**
@@ -50,9 +50,9 @@ public interface DecimalArithmetic {
 	 * {@code DecimalArithmetic}. Corresponds to the number of digits to the right of the decimal point (cannot be
 	 * negative).
 	 * <p>
-	 * A given {@link Decimal} value multiplied with <tt>10<sup>f</sup></tt> results in an unscaled long value.
+	 * A given {@link Decimal} value multiplied with <code>10<sup>f</sup></code> results in an unscaled long value.
 	 * Conversely, a {@code Decimal} value {@code d} can be computed from the unscaled value {@code u} as
-	 * <tt>d = u*10<sup>-f</sup></tt>.
+	 * <code>d = u*10<sup>-f</sup></code>.
 	 * 
 	 * @return the non-negative scale {@code f} applied to unscaled decimal values within this {@code DecimalArithmetic}
 	 *         object
@@ -161,7 +161,7 @@ public interface DecimalArithmetic {
 	DecimalArithmetic deriveArithmetic(TruncationPolicy truncationPolicy);
 
 	/**
-	 * Returns the unscaled decimal for the decimal value {@code 1}. One is the value <tt>10<sup>scale</sup></tt> which
+	 * Returns the unscaled decimal for the decimal value {@code 1}. One is the value <code>10<sup>scale</sup></code> which
 	 * is also the multiplier used to get the unscaled decimal from the true decimal value.
 	 * 
 	 * @return the unscaled decimal representing the decimal value 1
@@ -221,26 +221,26 @@ public interface DecimalArithmetic {
 	/**
 	 * Returns an unscaled decimal whose value is the sum of the specified arguments: {@code (uDecimal + lValue)}.
 	 * <p>
-	 * Mathematically the method calculates <tt>(uDecimal + lValue * 10<sup>scale</sup>)</tt> avoiding information loss
+	 * Mathematically the method calculates <code>(uDecimal + lValue * 10<sup>scale</sup>)</code> avoiding information loss
 	 * due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
 	 *            unscaled decimal value to be added
 	 * @param lValue
 	 *            long value to be added
-	 * @return <tt>(uDecimal + lValue * 10<sup>scale</sup>)</tt>
+	 * @return <code>(uDecimal + lValue * 10<sup>scale</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
 	 */
 	long addLong(long uDecimal, long lValue);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal + unscaled * 10<sup>-scale</sup>)</tt>. If rounding must
+	 * Returns an unscaled decimal whose value is <code>(uDecimal + unscaled * 10<sup>-scale</sup>)</code>. If rounding must
 	 * be performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied. Note that scale of the first
 	 * operand is determined by this arithmetic's {@link #getScale() scale} whereas the scale of the second
 	 * {@code unscaled} value is explicitly specified by the {@code scale} argument.
 	 * <p>
-	 * Mathematically the method calculates <tt>round(uDecimal + lValue * 10<sup>-scale + s</sup>)</tt> where {@code s}
+	 * Mathematically the method calculates <code>round(uDecimal + lValue * 10<sup>-scale + s</sup>)</code> where {@code s}
 	 * refers to this arithetic's scale. The method avoids information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -249,7 +249,7 @@ public interface DecimalArithmetic {
 	 *            unscaled value to add
 	 * @param scale
 	 *            scale associated with the {@code unscaled} value
-	 * @return <tt>round(uDecimal + unscaled * 10<sup>-scale</sup>)</tt>
+	 * @return <code>round(uDecimal + unscaled * 10<sup>-scale</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY and rounding is necessary or if an
 	 *             overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
@@ -274,26 +274,26 @@ public interface DecimalArithmetic {
 	 * Returns an unscaled decimal whose value is the difference of the specified arguments: {@code (uDecimal - lValue)}
 	 * .
 	 * <p>
-	 * Mathematically the method calculates <tt>(uDecimal - lValue * 10<sup>scale</sup>)</tt> avoiding information loss
+	 * Mathematically the method calculates <code>(uDecimal - lValue * 10<sup>scale</sup>)</code> avoiding information loss
 	 * due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
 	 *            unscaled decimal value to subtract from
 	 * @param lValue
 	 *            long value to subtract
-	 * @return <tt>(uDecimal - lValue * 10<sup>scale</sup>)</tt>
+	 * @return <code>(uDecimal - lValue * 10<sup>scale</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
 	 */
 	long subtractLong(long uDecimal, long lValue);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal - unscaled * 10<sup>-scale</sup>)</tt>. If rounding must
+	 * Returns an unscaled decimal whose value is <code>(uDecimal - unscaled * 10<sup>-scale</sup>)</code>. If rounding must
 	 * be performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied. Note that scale of the first
 	 * operand is determined by this arithmetic's {@link #getScale() scale} whereas the scale of the second
 	 * {@code unscaled} value is explicitly specified by the {@code scale} argument.
 	 * <p>
-	 * Mathematically the method calculates <tt>round(uDecimal - lValue * 10<sup>-scale + s</sup>)</tt> where {@code s}
+	 * Mathematically the method calculates <code>round(uDecimal - lValue * 10<sup>-scale + s</sup>)</code> where {@code s}
 	 * refers to this arithetic's scale. The method avoids information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -302,7 +302,7 @@ public interface DecimalArithmetic {
 	 *            unscaled value to subtract
 	 * @param scale
 	 *            scale associated with the {@code unscaled} value
-	 * @return <tt>round(uDecimal - unscaled * 10<sup>-scale</sup>)</tt> as unscaled decimal
+	 * @return <code>round(uDecimal - unscaled * 10<sup>-scale</sup>)</code> as unscaled decimal
 	 * @throws ArithmeticException
 	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY and rounding is necessary or if an
 	 *             overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
@@ -314,7 +314,7 @@ public interface DecimalArithmetic {
 	 * {@code (uDecimal1 * uDecimal2)}. If rounding must be performed, this arithmetic's {@link #getRoundingMode()
 	 * rounding mode} is applied.
 	 * <p>
-	 * Mathematically the method calculates <tt>round((uDecimal1 * uDecimal2) * 10<sup>-scale</sup>)</tt> avoiding
+	 * Mathematically the method calculates <code>round((uDecimal1 * uDecimal2) * 10<sup>-scale</sup>)</code> avoiding
 	 * information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal1
@@ -343,12 +343,12 @@ public interface DecimalArithmetic {
 	long multiplyByLong(long uDecimal, long lValue);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal * unscaled * 10<sup>-scale</sup>)</tt>. If rounding must
+	 * Returns an unscaled decimal whose value is <code>(uDecimal * unscaled * 10<sup>-scale</sup>)</code>. If rounding must
 	 * be performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied. Note that scale of the first
 	 * operand is determined by this arithmetic's {@link #getScale() scale} whereas the scale of the second
 	 * {@code unscaled} value is explicitly specified by the {@code scale} argument.
 	 * <p>
-	 * Mathematically the method calculates <tt>round((uDecimal * unscaled) * 10<sup>-scale</sup>)</tt> avoiding
+	 * Mathematically the method calculates <code>round((uDecimal * unscaled) * 10<sup>-scale</sup>)</code> avoiding
 	 * information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -357,7 +357,7 @@ public interface DecimalArithmetic {
 	 *            unscaled value to be multiplied
 	 * @param scale
 	 *            scale associated with the {@code unscaled} value
-	 * @return <tt>round(uDecimal * (unscaled * 10<sup>-scale</sup>))</tt>
+	 * @return <code>round(uDecimal * (unscaled * 10<sup>-scale</sup>))</code>
 	 * @throws ArithmeticException
 	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY and rounding is necessary or if an
 	 *             overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
@@ -365,7 +365,7 @@ public interface DecimalArithmetic {
 	long multiplyByUnscaled(long uDecimal, long unscaled, int scale);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal * 10<sup>n</sup>)</tt>.
+	 * Returns an unscaled decimal whose value is <code>(uDecimal * 10<sup>n</sup>)</code>.
 	 * <p>
 	 * The power, {@code n}, may be negative, in which case this method performs a division by a power of ten. If
 	 * rounding must be performed (for negative n), this arithmetic's {@link #getRoundingMode() rounding mode} is
@@ -375,7 +375,7 @@ public interface DecimalArithmetic {
 	 *            value to be multiplied
 	 * @param n
 	 *            the power of ten
-	 * @return <tt>round(uDecimal &times; 10<sup>n</sup>)</tt>
+	 * @return <code>round(uDecimal &times; 10<sup>n</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY and rounding is necessary or if an
 	 *             overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
@@ -387,7 +387,7 @@ public interface DecimalArithmetic {
 	 * {@code (uDecimalDividend / uDecimalDivisor)}. If rounding must be performed, this arithmetic's
 	 * {@link #getRoundingMode() rounding mode} is applied.
 	 * <p>
-	 * Mathematically the method calculates <tt>round((uDecimalDividend * 10<sup>scale</sup>) / uDecimalDivisor)</tt>
+	 * Mathematically the method calculates <code>round((uDecimalDividend * 10<sup>scale</sup>) / uDecimalDivisor)</code>
 	 * avoiding information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimalDividend
@@ -420,12 +420,12 @@ public interface DecimalArithmetic {
 	long divideByLong(long uDecimalDividend, long lDivisor);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal / (unscaled * 10<sup>-scale</sup>))</tt>. If rounding
+	 * Returns an unscaled decimal whose value is <code>(uDecimal / (unscaled * 10<sup>-scale</sup>))</code>. If rounding
 	 * must be performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied. Note that scale of the
 	 * first operand is determined by this arithmetic's {@link #getScale() scale} whereas the scale of the second
 	 * {@code unscaled} value is explicitly specified by the {@code scale} argument.
 	 * <p>
-	 * Mathematically the method calculates <tt>round((uDecimal * 10<sup>scale</sup>) / unscaled)</tt> avoiding
+	 * Mathematically the method calculates <code>round((uDecimal * 10<sup>scale</sup>) / unscaled)</code> avoiding
 	 * information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -434,7 +434,7 @@ public interface DecimalArithmetic {
 	 *            unscaled value by which the dividend is to be divided.
 	 * @param scale
 	 *            scale associated with the {@code unscaled} value
-	 * @return <tt>round(uDecimal / (unscaled * 10<sup>-scale</sup>))</tt>
+	 * @return <code>round(uDecimal / (unscaled * 10<sup>-scale</sup>))</code>
 	 * @throws ArithmeticException
 	 *             if {@code uDecimal} is zero, if {@link #getRoundingMode() rounding mode} is UNNECESSARY and rounding
 	 *             is necessary or if an overflow occurs and the {@link #getOverflowMode() overflow mode} is set to
@@ -443,7 +443,7 @@ public interface DecimalArithmetic {
 	long divideByUnscaled(long uDecimal, long unscaled, int scale);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimal / 10<sup>n</sup>)</tt>. If rounding must be performed,
+	 * Returns an unscaled decimal whose value is <code>(uDecimal / 10<sup>n</sup>)</code>. If rounding must be performed,
 	 * this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
 	 * <p>
 	 * The power, {@code n}, may be negative, in which case this method performs a multiplication by a power of ten.
@@ -452,7 +452,7 @@ public interface DecimalArithmetic {
 	 *            value to be divided.
 	 * @param n
 	 *            the power of ten
-	 * @return <tt>round(uDecimal / 10<sup>n</sup>)</tt>
+	 * @return <code>round(uDecimal / 10<sup>n</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if {@link #getRoundingMode() rounding mode} is UNNECESSARY and rounding is necessary or if an
 	 *             overflow occurs and the {@link #getOverflowMode() overflow mode} is set to throw an exception
@@ -501,7 +501,7 @@ public interface DecimalArithmetic {
 	 * Returns an unscaled decimal whose value is the inverse of the argument: {@code 1/uDecimal}. If rounding must be
 	 * performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
 	 * <p>
-	 * Mathematically the method calculates <tt>round((10<sup>scale</sup> * 10<sup>scale</sup>) / uDecimalDivisor)</tt>
+	 * Mathematically the method calculates <code>round((10<sup>scale</sup> * 10<sup>scale</sup>) / uDecimalDivisor)</code>
 	 * avoiding information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -515,10 +515,10 @@ public interface DecimalArithmetic {
 	long invert(long uDecimal);
 
 	/**
-	 * Returns an unscaled decimal whose value is the square of the specified argument: <tt>uDecimal<sup>2</sup></tt>.
+	 * Returns an unscaled decimal whose value is the square of the specified argument: <code>uDecimal<sup>2</sup></code>.
 	 * If rounding must be performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
 	 * <p>
-	 * Mathematically the method calculates <tt>round((uDecimal * uDecimal) * 10<sup>-scale</sup>)</tt> avoiding
+	 * Mathematically the method calculates <code>round((uDecimal * uDecimal) * 10<sup>-scale</sup>)</code> avoiding
 	 * information loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -531,10 +531,10 @@ public interface DecimalArithmetic {
 	long square(long uDecimal);
 
 	/**
-	 * Returns an unscaled decimal whose value is the square root of the specified argument: <tt>sqrt(uDecimal)</tt>. If
+	 * Returns an unscaled decimal whose value is the square root of the specified argument: <code>sqrt(uDecimal)</code>. If
 	 * rounding must be performed, this arithmetic's {@link #getRoundingMode() rounding mode} is applied.
 	 * <p>
-	 * Mathematically the method calculates <tt>round(sqrt(uDecimal * 10<sup>scale</sup>))</tt> avoiding information
+	 * Mathematically the method calculates <code>round(sqrt(uDecimal * 10<sup>scale</sup>))</code> avoiding information
 	 * loss due to overflow of intermediary results.
 	 * 
 	 * @param uDecimal
@@ -547,7 +547,7 @@ public interface DecimalArithmetic {
 	long sqrt(long uDecimal);
 
 	/**
-	 * Returns an unscaled decimal whose value is <tt>(uDecimalBase<sup>exponent</sup>)</tt>. Note that {@code exponent}
+	 * Returns an unscaled decimal whose value is <code>(uDecimalBase<sup>exponent</sup>)</code>. Note that {@code exponent}
 	 * is an integer rather than a decimal. If rounding must be performed, this arithmetic's {@link #getRoundingMode()
 	 * rounding mode} is applied.
 	 * <p>
@@ -578,7 +578,7 @@ public interface DecimalArithmetic {
 	 *            the unscaled decimal base value
 	 * @param exponent
 	 *            exponent to which {@code uDecimalBase} is to be raised.
-	 * @return <tt>uDecimalBase<sup>exponent</sup></tt>
+	 * @return <code>uDecimalBase<sup>exponent</sup></code>
 	 * @throws IllegalArgumentException
 	 *             if {@code abs(exponent) > 999999999}
 	 * @throws ArithmeticException
@@ -591,7 +591,7 @@ public interface DecimalArithmetic {
 	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimal << n)}. The shift distance, {@code n}, may be
 	 * negative, in which case this method performs a right shift. The result is equal to
-	 * <tt>round(uDecimal * 2<sup>n</sup>)</tt> using this arithmetic's {@link #getRoundingMode() rounding mode} if
+	 * <code>round(uDecimal * 2<sup>n</sup>)</code> using this arithmetic's {@link #getRoundingMode() rounding mode} if
 	 * rounding is necessary.
 	 * 
 	 * @param uDecimal
@@ -609,7 +609,7 @@ public interface DecimalArithmetic {
 	/**
 	 * Returns an unscaled decimal whose value is {@code (uDecimal >> n)}. The shift distance, {@code n}, may be
 	 * negative, in which case this method performs a left shift. The result is equal to
-	 * <tt>round(uDecimal / 2<sup>n</sup>)</tt> using this arithmetic's {@link #getRoundingMode() rounding mode} if
+	 * <code>round(uDecimal / 2<sup>n</sup>)</code> using this arithmetic's {@link #getRoundingMode() rounding mode} if
 	 * rounding is necessary.
 	 * 
 	 * @param uDecimal

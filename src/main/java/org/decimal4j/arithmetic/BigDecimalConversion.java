@@ -44,7 +44,7 @@ final class BigDecimalConversion {
 	 *            the rounding mode to apply if necessary
 	 * @param value
 	 *            the big decimal value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if the value is outside of the valid long range
 	 * @throws ArithmeticException
@@ -74,7 +74,7 @@ final class BigDecimalConversion {
 	 *            the rounding mode to apply if necessary
 	 * @param value
 	 *            the big decimal value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if the value is outside of the valid Decimal range
 	 * @throws ArithmeticException

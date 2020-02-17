@@ -16,7 +16,7 @@ import org.decimal4j.mutable.MutableDecimal${scale}f;
 import org.decimal4j.scale.Scale${scale}f;
 
 /**
- * <tt>Decimal${scale}f</tt> represents an immutable decimal number with a fixed
+ * <code>Decimal${scale}f</code> represents an immutable decimal number with a fixed
  * number of ${scale} digits to the right of the decimal point.
  * <p>
  * All methods for this class throw {@code NullPointerException} when passed a
@@ -301,7 +301,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *
 	 * @param value
 	 *            float value to convert into a {@code Decimal${scale}f}
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the float to be represented as a {@code Decimal${scale}f}
@@ -320,7 +320,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *            float value to convert into a {@code Decimal${scale}f}
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the float to be represented as a {@code Decimal${scale}f}
@@ -340,7 +340,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *
 	 * @param value
 	 *            double value to convert into a {@code Decimal${scale}f}
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a {@code Decimal${scale}f}
@@ -359,7 +359,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *            double value to convert into a {@code Decimal${scale}f}
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is
 	 *             too large for the double to be represented as a {@code Decimal${scale}f}
@@ -395,7 +395,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *
 	 * @param value
 	 *            {@code BigDecimal} value to convert into a {@code Decimal${scale}f}
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
 	 */
@@ -413,7 +413,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *            {@code BigDecimal} value to convert into a {@code Decimal${scale}f}
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
 	 * @throws ArithmeticException
@@ -432,7 +432,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *
 	 * @param value
 	 *            Decimal value to convert into a {@code Decimal${scale}f} 
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
 	 */
@@ -453,7 +453,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *            Decimal value to convert into a {@code Decimal${scale}f} 
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is too large to be represented as a {@code Decimal${scale}f}
 	 * @throws ArithmeticException
@@ -483,7 +483,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 *
 	 * @param value
 	 *            String value to convert into a {@code Decimal${scale}f}
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round<sub>HALF_UP</sub>(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round<sub>HALF_UP</sub>(value)</code>
 	 * @throws NumberFormatException
 	 *             if {@code value} does not represent a valid {@code Decimal}
 	 *             or if the value is too large to be represented as a 
@@ -511,7 +511,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 * @param roundingMode
 	 *            the rounding mode to apply if the fraction contains more than
 	 *            ${scale} digits
-	 * @return a {@code Decimal${scale}f} calculated as: <tt>round(value)</tt>
+	 * @return a {@code Decimal${scale}f} calculated as: <code>round(value)</code>
 	 * @throws NumberFormatException
 	 *             if {@code value} does not represent a valid {@code Decimal}
 	 *             or if the value is too large to be represented as a 
@@ -526,12 +526,12 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	/**
 	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
-	 * <tt>(unscaledValue &times; 10<sup>-${scale}</sup>)</tt>.
+	 * <code>(unscaledValue &times; 10<sup>-${scale}</sup>)</code>.
 	 *
 	 * @param unscaledValue
 	 *            unscaled value to convert into a {@code Decimal${scale}f}
 	 * @return a {@code Decimal${scale}f} calculated as:
-	 *         <tt>unscaledValue &times; 10<sup>-${scale}</sup></tt>
+	 *         <code>unscaledValue &times; 10<sup>-${scale}</sup></code>
 	 */
 	public static Decimal${scale}f valueOfUnscaled(long unscaledValue) {
 		if (unscaledValue == 0) {
@@ -551,7 +551,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	/**
 	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
-	 * <tt>(unscaledValue &times; 10<sup>-scale</sup>)</tt>. The result is
+	 * <code>(unscaledValue &times; 10<sup>-scale</sup>)</code>. The result is
 	 * rounded to scale ${scale} using {@link RoundingMode#HALF_UP HALF_UP} 
 	 * rounding. An exception is thrown if the specified value is too large 
 	 * to be represented as a {@code Decimal${scale}f}.
@@ -561,7 +561,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 * @param scale
 	 *            the scale to apply to {@code unscaledValue}
 	 * @return a {@code Decimal${scale}f} calculated as:
-	 *         <tt>round<sub>HALF_UP</sub>(unscaledValue &times; 10<sup>-scale</sup>)</tt>
+	 *         <code>round<sub>HALF_UP</sub>(unscaledValue &times; 10<sup>-scale</sup>)</code>
 	 * @throws IllegalArgumentException
 	 *             if the specified value is too large to be represented as a 
 	 *             {@code Decimal${scale}f}
@@ -572,7 +572,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 
 	/**
 	 * Returns a {@code Decimal${scale}f} whose value is numerically equal to
-	 * <tt>(unscaledValue &times; 10<sup>-scale</sup>)</tt>. The result
+	 * <code>(unscaledValue &times; 10<sup>-scale</sup>)</code>. The result
 	 * is rounded to scale ${scale} using the specified {@code roundingMode}. 
 	 * An exception is thrown if the specified value is too large to be 
 	 * represented as a {@code Decimal${scale}f}.
@@ -584,7 +584,7 @@ public final class Decimal${scale}f extends AbstractImmutableDecimal<Scale${scal
 	 * @param roundingMode
 	 *            the rounding mode to apply during the conversion if necessary
 	 * @return a {@code Decimal${scale}f} calculated as:
-	 *         <tt>round(unscaledValue &times; 10<sup>-scale</sup>)</tt>
+	 *         <code>round(unscaledValue &times; 10<sup>-scale</sup>)</code>
 	 * @throws IllegalArgumentException
 	 *             if the specified value is too large to be represented as a {@code Decimal${scale}f}
 	 */

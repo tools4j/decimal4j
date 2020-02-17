@@ -43,7 +43,7 @@ final class Pow10 {
 	 *            the value to multiply
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal * 10<sup>n</sup>)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal * 10<sup>n</sup>)</code>
 	 */
 	public static final long multiplyByPowerOf10(final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
@@ -83,7 +83,7 @@ final class Pow10 {
 	 *            the value to multiply
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round(uDecimal * 10<sup>n</sup>)</tt>
+	 * @return <code>round(uDecimal * 10<sup>n</sup>)</code>
 	 */
 	public static final long multiplyByPowerOf10(final DecimalRounding rounding, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
@@ -133,7 +133,7 @@ final class Pow10 {
 	 *            the value to multiply
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal * 10<sup>n</sup>)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal * 10<sup>n</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@code OverflowMode} is set to throw an exception
@@ -171,7 +171,7 @@ final class Pow10 {
 	 *            the value to multiply
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round(uDecimal * 10<sup>n</sup>)</tt>
+	 * @return <code>round(uDecimal * 10<sup>n</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@code OverflowMode} is set to throw an exception
@@ -219,7 +219,7 @@ final class Pow10 {
 	 *            the value to divide
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal / 10<sup>n</sup>)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal / 10<sup>n</sup>)</code>
 	 */
 	public static final long divideByPowerOf10(final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
@@ -260,7 +260,7 @@ final class Pow10 {
 	 *            the value to divide
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round(uDecimal / 10<sup>n</sup>)</tt>
+	 * @return <code>round(uDecimal / 10<sup>n</sup>)</code>
 	 */
 	public static final long divideByPowerOf10(final DecimalRounding rounding, final long uDecimal, final int n) {
 		if (uDecimal == 0 | n == 0) {
@@ -315,7 +315,7 @@ final class Pow10 {
 	 *            the value to divide
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal / 10<sup>n</sup>)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal / 10<sup>n</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@code OverflowMode} is set to throw an exception
@@ -353,7 +353,7 @@ final class Pow10 {
 	 *            the value to divide
 	 * @param n
 	 *            the power-ten exponent
-	 * @return <tt>round(uDecimal / 10<sup>n</sup>)</tt>
+	 * @return <code>round(uDecimal / 10<sup>n</sup>)</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@code OverflowMode} is set to throw an exception
@@ -406,7 +406,7 @@ final class Pow10 {
 	 *            true if the divisor is positive
 	 * @param pow10divisorMetrics
 	 *            the metrics reflecting the power-ten-division
-	 * @return <tt>round<sub>DOWN</sub>(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</code>
 	 *         where scale is the {@code scale} of the dividend and
 	 *         {@code scale10} is the exponent of the power-ten divisor (negated
 	 *         if {@code pow10divisorIsPositive==false})
@@ -441,7 +441,7 @@ final class Pow10 {
 	 *            true if the divisor is positive
 	 * @param pow10divisorMetrics
 	 *            the metrics reflecting the power-ten-division
-	 * @return <tt>round(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</tt>
+	 * @return <code>round(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</code>
 	 *         where scale is the {@code scale} of the dividend and
 	 *         {@code scale10} is the exponent of the power-ten divisor (negated
 	 *         if {@code pow10divisorIsPositive==false})
@@ -481,7 +481,7 @@ final class Pow10 {
 	 *            true if the divisor is positive
 	 * @param pow10divisorMetrics
 	 *            the metrics reflecting the power-ten-division
-	 * @return <tt>round<sub>DOWN</sub>(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</code>
 	 *         where scale is the {@code scale} of the dividend and
 	 *         {@code scale10} is the exponent of the power-ten divisor (negated
 	 *         if {@code pow10divisorIsPositive==false})
@@ -520,7 +520,7 @@ final class Pow10 {
 	 *            true if the divisor is positive
 	 * @param pow10divisorMetrics
 	 *            the metrics reflecting the power-ten-division
-	 * @return <tt>round(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</tt>
+	 * @return <code>round(uDecimalDividend / 10<sup>(scale - scale10)</sup>)</code>
 	 *         where scale is the {@code scale} of the dividend and
 	 *         {@code scale10} is the exponent of the power-ten divisor (negated
 	 *         if {@code pow10divisorIsPositive==false})

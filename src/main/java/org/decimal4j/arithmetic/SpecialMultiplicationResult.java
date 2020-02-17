@@ -97,7 +97,7 @@ enum SpecialMultiplicationResult {
 	 *            the first factor
 	 * @param uDecimal2
 	 *            the second factor
-	 * @return <tt>uDecimal1 * uDecimal2</tt>
+	 * @return <code>uDecimal1 * uDecimal2</code>
 	 * @throws ArithmeticException
 	 *             if an overflow occurs and the arithmetic's
 	 *             {@link OverflowMode} is set to throw an exception

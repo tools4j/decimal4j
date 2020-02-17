@@ -75,7 +75,7 @@ final class LongConversion {
 	 *            the scale metrics associated with {@code uDecimal}
 	 * @param uDecimal
 	 *            the unscaled decimal value to convert
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal)</code>
 	 */
 	public static final long unscaledToLong(ScaleMetrics scaleMetrics, long uDecimal) {
 		return scaleMetrics.divideByScaleFactor(uDecimal);
@@ -91,7 +91,7 @@ final class LongConversion {
 	 *            the rounding to apply during the conversion if necessary
 	 * @param uDecimal
 	 *            the unscaled decimal value to convert
-	 * @return <tt>round(uDecimal)</tt>
+	 * @return <code>round(uDecimal)</code>
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is
 	 *             necessary

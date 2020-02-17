@@ -381,7 +381,7 @@ final class UnsignedDecimal9i36f {
 	 * @param powRounding
 	 *            reciprocal rounding if exponent is negative and rounding
 	 *            otherwise
-	 * @return <tt>round(1 / this)</tt>
+	 * @return <code>round(1 / this)</code>
 	 */
 	public final long getInverted(int sgn, DecimalArithmetic arith, DecimalRounding rounding, DecimalRounding powRounding) {
 		//1) get scale18 value normalized to 0.3 <= x < 3 (i.e. make it invertible without overflow for uninverted and inverted value)
@@ -404,7 +404,7 @@ final class UnsignedDecimal9i36f {
 	 *            the arithmetic of the base value
 	 * @param rounding
 	 *            the rounding to apply
-	 * @return <tt>round(this)</tt>
+	 * @return <code>round(this)</code>
 	 */
 	public final long getDecimal(int sgn, DecimalArithmetic arith, DecimalRounding rounding) {
 		if (pow10 >= 0) {

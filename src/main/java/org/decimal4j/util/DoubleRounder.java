@@ -34,9 +34,9 @@ import java.util.Objects;
  * DoubleRounder Utility <b>(Deprecated)</b>.
  * <p>
  * DoubleRounder sometimes returns counter-intuitive results. The reason is that it performs mathematically
- * correct rounding. For instance <tt>DoubleRounder.round(256.025d, 2)</tt> will be rounded down to
- * <tt>256.02</tt> because the double value represented as <tt>256.025d</tt> is somewhat smaller than the rational
- * value <tt>256.025</tt> and hence will be rounded down.
+ * correct rounding. For instance <code>DoubleRounder.round(256.025d, 2)</code> will be rounded down to
+ * <code>256.02</code> because the double value represented as <code>256.025d</code> is somewhat smaller than the rational
+ * value <code>256.025</code> and hence will be rounded down.
  * <p>
  * Notes:
  * <ul>
@@ -117,7 +117,7 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Returns a hash code for this <tt>DoubleRounder</tt> instance.
+	 * Returns a hash code for this <code>DoubleRounder</code> instance.
 	 * 
 	 * @return a hash code value for this object.
 	 */
@@ -127,7 +127,7 @@ public final class DoubleRounder {
 	}
 
 	/**
-	 * Returns true if {@code obj} is a <tt>DoubleRounder</tt> with the same precision as {@code this} rounder instance.
+	 * Returns true if {@code obj} is a <code>DoubleRounder</code> with the same precision as {@code this} rounder instance.
 	 * 
 	 * @param obj
 	 *            the reference object with which to compare

@@ -37,7 +37,7 @@ final class Square {
 	private static final Scale9f SCALE9F = Scale9f.INSTANCE;
 	
 	/**
-	 * Value representing: <tt>floor(sqrt(Long.MAX_VALUE))</tt>
+	 * Value representing: <code>floor(sqrt(Long.MAX_VALUE))</code>
 	 */
 	static final long SQRT_MAX_VALUE = 3037000499L;
 

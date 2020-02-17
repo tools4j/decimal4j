@@ -68,7 +68,7 @@ final class FloatConversion {
 	 * 
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @return <code>round<sub>DOWN</sub>(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the float to be represented
 	 *             as a {@code long}
@@ -91,7 +91,7 @@ final class FloatConversion {
 	 *            the rounding to apply if necessary
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the float to be represented
 	 *             as a {@code long}
@@ -168,7 +168,7 @@ final class FloatConversion {
 	 *            the arithmetic associated with the result value
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the float to be represented
 	 *             as a Decimal of the arithmetic's scale
@@ -188,7 +188,7 @@ final class FloatConversion {
 	 *            the rounding to apply if necessary
 	 * @param value
 	 *            the value to convert
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws IllegalArgumentException
 	 *             if {@code value} is NaN or infinite or if the magnitude is too large for the float to be represented
 	 *             as a Decimal of the arithmetic's scale
@@ -310,7 +310,7 @@ final class FloatConversion {
 	 *            the arithmetic associated with the value
 	 * @param value
 	 *            the long value
-	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @return <code>round<sub>DOWN</sub>(value)</code>
 	 */
 	public static final float longToFloat(DecimalArithmetic arith, long value) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, value);
@@ -325,7 +325,7 @@ final class FloatConversion {
 	 *            the rounding to apply if necessary
 	 * @param value
 	 *            the long value
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */
@@ -343,7 +343,7 @@ final class FloatConversion {
 	 *            the arithmetic associated with the value
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @return <tt>round<sub>DOWN</sub>(value)</tt>
+	 * @return <code>round<sub>DOWN</sub>(value)</code>
 	 */
 	public static final float unscaledToFloat(DecimalArithmetic arith, long unscaled) {
 		return unscaledToFloat(arith, DecimalRounding.DOWN, unscaled);
@@ -358,7 +358,7 @@ final class FloatConversion {
 	 *            the rounding to apply if necessary
 	 * @param unscaled
 	 *            the unscaled decimal value
-	 * @return <tt>round(value)</tt>
+	 * @return <code>round(value)</code>
 	 * @throws ArithmeticException
 	 *             if {@code roundingMode==UNNECESSARY} and rounding is necessary
 	 */

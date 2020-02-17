@@ -38,7 +38,7 @@ final class Invert {
 	 * 
 	 * @param lValue
 	 *            the long value to invert
-	 * @return <tt>round<sub>DOWN</sub>(1/lValue)</tt>
+	 * @return <code>round<sub>DOWN</sub>(1/lValue)</code>
 	 * @throws ArithmeticException
 	 *             if {@code lValue == 0}
 	 */
@@ -62,7 +62,7 @@ final class Invert {
 	 *            the rounding to apply if necessary
 	 * @param lValue
 	 *            the long value to invert
-	 * @return <tt>round(1/lValue)</tt>
+	 * @return <code>round(1/lValue)</code>
 	 * @throws ArithmeticException
 	 *             if {@code lValue == 0} or if
 	 *             {@code roundingMode==UNNECESSARY} and rounding is necessary
@@ -89,7 +89,7 @@ final class Invert {
 	 *            the arithmetic associated with the given value
 	 * @param uDecimal
 	 *            the unscaled decimal value to invert
-	 * @return <tt>round<sub>DOWN</sub>(1/uDecimal)</tt>
+	 * @return <code>round<sub>DOWN</sub>(1/uDecimal)</code>
 	 * @throws ArithmeticException
 	 *             if {@code uDecimalDividend} is zero or if an overflow occurs
 	 *             and the arithmetics {@link OverflowMode} is set to throw an
@@ -111,7 +111,7 @@ final class Invert {
 	 *            the rounding to apply if necessary
 	 * @param uDecimal
 	 *            the unscaled decimal value to invert
-	 * @return <tt>round(1/uDecimal)</tt>
+	 * @return <code>round(1/uDecimal)</code>
 	 * @throws ArithmeticException
 	 *             if {@code uDecimalDividend} is zero, if {@code roundingMode}
 	 *             is UNNECESSARY and rounding is necessary or if an overflow

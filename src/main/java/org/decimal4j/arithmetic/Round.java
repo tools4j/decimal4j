@@ -42,7 +42,7 @@ final class Round {
 	 *            the unscaled decimal value
 	 * @param precision
 	 *            the precision to round to
-	 * @return <tt>round<sub>DOWN</sub>(uDecimal, precision)</tt>
+	 * @return <code>round<sub>DOWN</sub>(uDecimal, precision)</code>
 	 */
 	public static final long round(DecimalArithmetic arith, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
@@ -76,7 +76,7 @@ final class Round {
 	 *            the unscaled decimal value
 	 * @param precision
 	 *            the precision to round to
-	 * @return <tt>round(uDecimal, precision)</tt>
+	 * @return <code>round(uDecimal, precision)</code>
 	 */
 	public static final long round(DecimalArithmetic arith, DecimalRounding rounding, long uDecimal, int precision) {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();

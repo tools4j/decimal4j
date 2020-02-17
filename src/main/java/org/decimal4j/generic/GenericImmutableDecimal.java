@@ -33,7 +33,7 @@ import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
 /**
- * <tt>GenericImmutableDecimal</tt> is an {@link ImmutableDecimal} implemented
+ * <code>GenericImmutableDecimal</code> is an {@link ImmutableDecimal} implemented
  * in a generic way, that is, different instances can have different scales. In
  * contrast the classes defined in the {@code immutable} package have have no
  * generic parameter as they have a fixed scale per class.
