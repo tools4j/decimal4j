@@ -39,9 +39,12 @@ sourceSets.main.resources {
 }
 
 jar {
-    manifest {
-        attributes 'Implementation-Title': 'decimal4j', 'Implementation-Version': project.version
-    }
+	manifest.attributes(
+			'Implementation-Title': 'decimal4j',
+			'Implementation-Version': "${project.version}",
+			'Implementation-Vendor': 'tools4j',
+			'Automatic-Module-Name': 'org.decimal4j'
+	)
 }
 
 repositories {
@@ -132,7 +135,7 @@ javadoc {
 	options.showFromPackage()
 	options.linkSource()
 	options.links("http://docs.oracle.com/javase/8/docs/api/");
-	options.windowTitle = "decimal4j API ${version}"
+	options.windowTitle = "decimal4j API ${project.version}"
 	options.overview = "src/main/java/overview.html";
 }
 
