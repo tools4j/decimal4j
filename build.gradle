@@ -12,12 +12,14 @@ plugins {
 	id "me.champeau.gradle.jmh" version "0.2.0"
 	id "com.github.hierynomus.license-base" version"0.15.0"
 	id 'io.codearte.nexus-staging' version '0.21.1'
+	id 'io.freefair.javadoc-links' version '4.1.6'
 }
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
 apply plugin: 'com.github.hierynomus.license-base'
+apply plugin: 'io.freefair.javadoc-links'
 
 sourceCompatibility = 1.7
 group = "org.decimal4j"
@@ -134,7 +136,6 @@ compileTestJava.dependsOn 'licenseFormatTest'
 javadoc {
 	options.showFromPackage()
 	options.linkSource()
-	options.links("http://docs.oracle.com/javase/8/docs/api/");
 	options.windowTitle = "decimal4j API ${project.version}"
 	options.overview = "src/main/java/overview.html";
 }
