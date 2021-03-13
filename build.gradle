@@ -118,6 +118,9 @@ license {
     strictCheck true
 	include "**/*.java"
 	ext.year = Calendar.getInstance().get(Calendar.YEAR)
+	mapping {
+		java='SLASHSTAR_STYLE'
+	}
 }
 
 task licenseFormatGen(type: com.hierynomus.gradle.license.tasks.LicenseFormat) {
