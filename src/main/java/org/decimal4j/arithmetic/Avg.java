@@ -49,7 +49,7 @@ final class Avg {
 
 	/**
 	 * Calculates and returns the average of the two values applying the given
-	 * roundign if necessary.
+	 * rounding if necessary.
 	 * 
 	 * @param arith
 	 *            the arithmetic associated with the two values

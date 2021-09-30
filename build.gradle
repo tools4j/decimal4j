@@ -9,7 +9,7 @@ buildscript {
 }
 
 plugins {
-	id "me.champeau.gradle.jmh" version "0.2.0"
+	id "me.champeau.gradle.jmh" version "0.5.3"
 	id "com.github.hierynomus.license-base" version"0.15.0"
 	id 'io.codearte.nexus-staging' version '0.21.1'
 	id 'io.freefair.javadoc-links' version '4.1.6'
@@ -160,7 +160,7 @@ jmh {
 //   include = '.*AddBenchmark.*' // include pattern (regular expression) for benchmarks to be executed
 //   exclude = '.*CheckedBenchmark.*,.*PowBenchmark.*' // exclude pattern (regular expression) for benchmarks to be executed
 //   exclude = '.*PowBenchmark.*' // exclude pattern (regular expression) for benchmarks to be executed
-   benchmarkMode = 'thrpt' // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
+   benchmarkMode = ['thrpt'] // Benchmark mode. Available modes are: [Throughput/thrpt, AverageTime/avgt, SampleTime/sample, SingleShotTime/ss, All/all]
    iterations = 3 // Number of measurement iterations to do.
    timeOnIteration = '1000ms' // Time to spend at each measurement iteration.
    batchSize = 1 // Batch size: number of benchmark method calls per operation. (some benchmark modes can ignore this setting)
