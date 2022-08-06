@@ -10,7 +10,7 @@ buildscript {
 
 plugins {
 	id "me.champeau.gradle.jmh" version "0.5.3"
-	id "com.github.hierynomus.license-base" version"0.15.0"
+	id "com.github.hierynomus.license" version"0.15.0"
 	id 'io.codearte.nexus-staging' version '0.21.1'
 	id 'io.freefair.javadoc-links' version '4.1.6'
 }
@@ -18,10 +18,10 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'me.champeau.gradle.jmh'
-apply plugin: 'com.github.hierynomus.license-base'
+apply plugin: 'com.github.hierynomus.license'
 apply plugin: 'io.freefair.javadoc-links'
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 group = "org.decimal4j"
 version = '1.0.7-SNAPSHOT'
 archivesBaseName = "decimal4j"
@@ -36,14 +36,12 @@ sourceSets.main.java {
 
 sourceSets.main.resources {
 	srcDirs += generatedResources
-	exclude '**/*.template'
-	exclude '**/codegen/**'
 }
 
 jar {
 	manifest.attributes(
 			'Implementation-Title': 'decimal4j',
-			'Implementation-Version': "${project.version}",
+			'Implementation-Version': "${version}",
 			'Implementation-Vendor': 'tools4j',
 			'Automatic-Module-Name': 'org.decimal4j'
 	)
@@ -54,11 +52,12 @@ repositories {
 }
 
 dependencies {
+
 //	//NOTE: only needed for IDEs like eclipse to compile the jmh benchmarks
 //	//		gradle is happy with jmh dependencies added by the jmh plugin
 //    compile "org.openjdk.jmh:jmh-core:${versionJmh}"
 
-	testImplementation 'junit:junit:4.11'
+	testImplementation 'junit:junit:4.13.2'
 	testImplementation 'pl.pragmatists:JUnitParams:1.0.4'
 }
 
@@ -123,7 +122,7 @@ license {
     header rootProject.file('src/main/resources/LICENSE.template')
     strictCheck true
 	include "**/*.java"
-	ext.year = Calendar.getInstance().get(Calendar.YEAR)
+	ext.year = Year.now().value
 	mapping {
 		java='SLASHSTAR_STYLE'
 	}
@@ -134,18 +133,16 @@ task licenseFormatGen(type: com.hierynomus.gradle.license.tasks.LicenseFormat) {
 	outputs.upToDateWhen { false }
 }
 
-licenseFormatGen.dependsOn 'generateSources'
-licenseFormatMain.dependsOn 'generateSources','licenseFormatGen','licenseFormatJmh','licenseFormatTest'
 copyLicense.dependsOn 'processResources'
 copyLicenseToSrc.dependsOn 'copyLicense','generateSources'
-//compileJava.dependsOn 'generateSources','licenseFormat','licenseFormatGen','copyLicense','copyLicenseToSrc'
-compileJava.dependsOn 'generateSources','licenseFormatMain','licenseFormatGen','copyLicense','copyLicenseToSrc'
+licenseFormatGen.dependsOn 'generateSources'
+compileJava.dependsOn 'generateSources','licenseFormatMain','licenseFormatGen','licenseFormatJmh','licenseFormatTest','copyLicense','copyLicenseToSrc'
 compileTestJava.dependsOn 'licenseFormatTest'
 
 javadoc {
 	options.showFromPackage()
 	options.linkSource()
-	options.windowTitle = "decimal4j API ${project.version}"
+	options.windowTitle = "decimal4j API ${version}"
 	options.overview = "src/main/java/overview.html";
 }
 

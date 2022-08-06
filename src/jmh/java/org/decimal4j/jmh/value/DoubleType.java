@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright (c) 2015-2021 decimal4j (tools4j), Marco Terzer
+ * Copyright (c) 2015-2022 decimal4j (tools4j), Marco Terzer
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,7 @@ public enum DoubleType {
 			return RND.nextDouble();
 		}
 	},
-	/** Gaussian between 0 and 1 */ 
+	/** Gaussian with mean 0 and std deviation 1 */
 	Gaussian {
 		@Override
 		public double random(int scale) {
