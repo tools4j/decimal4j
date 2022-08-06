@@ -26,7 +26,9 @@ group = "org.decimal4j"
 version = '1.0.7-SNAPSHOT'
 archivesBaseName = "decimal4j"
 
-def versionJmh = "1.11.2"
+def versionJunit = '4.13.2'
+def versionJunitParams = '1.1.1'
+def versionJmh = '1.11.2'
 def generatedSources = 'build/generated-src'
 def generatedResources = 'build/generated-res'
 
@@ -40,10 +42,12 @@ sourceSets.main.resources {
 
 jar {
 	manifest.attributes(
-			'Implementation-Title': 'decimal4j',
-			'Implementation-Version': "${version}",
-			'Implementation-Vendor': 'tools4j',
-			'Automatic-Module-Name': 'org.decimal4j'
+			'Implementation-Title': 	'decimal4j',
+			'Implementation-Version': 	"${version}",
+			'Implementation-Vendor': 	'tools4j.org',
+			'Automatic-Module-Name': 	'org.decimal4j',
+			'Bundle-Name': 				'org.decimal4j',
+			'Bundle-SymbolicName': 		'org.decimal4j'
 	)
 }
 
@@ -57,8 +61,8 @@ dependencies {
 //	//		gradle is happy with jmh dependencies added by the jmh plugin
 //    compile "org.openjdk.jmh:jmh-core:${versionJmh}"
 
-	testImplementation 'junit:junit:4.13.2'
-	testImplementation 'pl.pragmatists:JUnitParams:1.0.4'
+	testImplementation 'junit:junit:' + versionJunit
+	testImplementation 'pl.pragmatists:JUnitParams:' + versionJunitParams
 }
 
 test {
