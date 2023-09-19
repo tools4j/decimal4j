@@ -49,7 +49,7 @@ final class StringConversion {
 	};
 
 	private static enum ParseMode {
-		Long, IntegralPart;
+		Long, IntegralPart, IntegralExtra, Exponent
 	}
 
 	/**
@@ -104,8 +104,9 @@ final class StringConversion {
 		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();
 		final int scale = scaleMetrics.getScale();
 		final int indexOfDecimalPoint = indexOfDecimalPoint(s, start, end);
-		if (indexOfDecimalPoint == end & scale > 0) {
-			throw newNumberFormatExceptionFor(arith, s, start, end);
+		final int indexOfExponentIndicator = indexOfExponentIndicator(s, indexOfDecimalPoint < 0 ? start : indexOfDecimalPoint + 1, end);
+		if (indexOfExponentIndicator >= 0) {
+			return parseScientificNotation(arith, rounding, s, start, end, indexOfDecimalPoint, indexOfExponentIndicator);
 		}
 
 		// parse a decimal number
@@ -127,8 +128,7 @@ final class StringConversion {
 				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, end);
 				negative = false;
 			} else {
-				// allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45",
-				// "-.45"
+				// allowed formats: "0.45", "+0.45", "-0.45", ".45", "+.45", "-.45" etc
 				integralPart = parseIntegralPart(arith, s, start, indexOfDecimalPoint, ParseMode.IntegralPart);
 				fractionalPart = parseFractionalPart(arith, s, indexOfDecimalPoint + 1, fractionalEnd);
 				truncatedPart = parseTruncatedPart(arith, s, fractionalEnd, end);
@@ -139,10 +139,85 @@ final class StringConversion {
 			throw Exceptions.newRoundingNecessaryArithmeticException();
 		}
 		try {
-			final long unscaledIntegeral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
-			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;// < Scale18.SCALE_FACTOR hence
-																						// no overflow
-			final long truncatedValue = Checked.add(arith, unscaledIntegeral, unscaledFractional);
+			final long unscaledIntegral = scaleMetrics.multiplyByScaleFactorExact(integralPart);
+			final long unscaledFractional = negative ? -fractionalPart : fractionalPart;// < Scale18.SCALE_FACTOR hence no overflow
+			final long truncatedValue = Checked.add(arith, unscaledIntegral, unscaledFractional);
+			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue,
+					truncatedPart);
+			return roundingIncrement == 0 ? truncatedValue : Checked.add(arith, truncatedValue, roundingIncrement);
+		} catch (ArithmeticException e) {
+			throw newNumberFormatExceptionFor(arith, s, start, end, e);
+		}
+	}
+
+	private static final long parseScientificNotation(DecimalArithmetic arith, DecimalRounding rounding, CharSequence s,
+													  int start, int end, int indexOfDecimalPoint, int indexOfExponentIndicator) {
+		final ScaleMetrics scaleMetrics = arith.getScaleMetrics();;
+		final int scale = scaleMetrics.getScale();
+		final long expLong = parseIntegralPart(arith, s, indexOfExponentIndicator + 1, end, ParseMode.Exponent);
+		final int exp = expLong < -Integer.MAX_VALUE ? -Integer.MAX_VALUE : expLong > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int)expLong;
+
+		final int integralStart = start;
+		final int integralEnd = indexOfDecimalPoint >= 0 ? indexOfDecimalPoint : indexOfExponentIndicator;
+		final int fractionalStart = indexOfDecimalPoint >= 0 ? indexOfDecimalPoint + 1 : indexOfExponentIndicator;
+		final int fractionalEnd = indexOfExponentIndicator;
+
+		final int signLen = s.charAt(integralStart) == '-' | s.charAt(integralStart) == '+' ? 1 : 0;
+		final int integralDigitsToConvert = exp >= 0 ? 0 : Math.min(-exp, integralEnd - integralStart - signLen);
+		final int fractionalDigitsToConvert = exp <= 0 ? 0 : Math.min(exp, fractionalEnd - fractionalStart);
+		final int exponentToMultiply = exp <= 0 ? exp + integralDigitsToConvert : exp - fractionalDigitsToConvert;
+		final int integralToFractional = Math.min(scale, integralDigitsToConvert);
+		final int integralToTruncated = integralDigitsToConvert - integralToFractional;
+		final int fractionalToIntegral = fractionalDigitsToConvert;
+		final int fractionalToTruncated = Math.min(0, (fractionalEnd - fractionalStart) - scale - fractionalDigitsToConvert);
+
+		final int intgStart = integralStart;
+		final int fraxStart = integralEnd - integralToTruncated - integralToFractional;
+		final int truxStart = integralEnd - integralToTruncated;
+		final int truxEnd = integralEnd;
+		final int fraxEnd = truxStart;
+		final int intgEnd = fraxStart;
+
+		final int intxStart = fractionalStart;
+		final int fracStart = fractionalStart + fractionalToIntegral;
+		final int trunStart = fractionalStart + fractionalToIntegral + fractionalToTruncated;
+		final int trunEnd = fractionalEnd;
+		final int fracEnd = trunStart;
+		final int intxEnd = fracStart;
+
+		final long integralPart = parseIntegralPart(arith, s, intgStart, intgEnd, ParseMode.IntegralPart);
+		final long integralExtra = parseIntegralPart(arith, s, intxStart, intxEnd, ParseMode.IntegralExtra);
+		final long fractionalPart = parseFractionalPartRaw(arith, s, fracStart, fracEnd);
+		final long fractionalExtra = parseFractionalPartRaw(arith, s, fraxStart, fraxEnd);
+		TruncatedPart truncatedPart = parseTruncatedPart(arith, s, trunStart, trunEnd);
+		if (integralToTruncated > 0) {
+			final TruncatedPart truncatedIntegral = parseTruncatedPart(arith, s, truxStart, truxEnd);
+			truncatedPart = truncatedIntegral.andThen(truncatedPart);
+		}
+		if (exponentToMultiply > 0) {
+			truncatedPart = TruncatedPart.ZERO.andThen(truncatedPart);
+		}
+		final boolean negative = integralPart < 0 | (integralPart == 0 && s.charAt(start) == '-');
+
+		if (truncatedPart.isGreaterThanZero() & rounding == DecimalRounding.UNNECESSARY) {
+			throw Exceptions.newRoundingNecessaryArithmeticException();
+		}
+		try {
+			final int fractionDigits = fracEnd - fracStart + fraxEnd - fraxStart;
+			final ScaleMetrics fractionScale = Scales.getScaleMetrics(scale - fractionDigits);
+			final ScaleMetrics fractionScaleH = Scales.getScaleMetrics(fracEnd - fracStart);
+			final ScaleMetrics integralScaleH = Scales.getScaleMetrics(intxEnd - intxStart);
+
+			final long unscaledIntH = integralScaleH.multiplyByScaleFactorExact(integralPart);
+			final long unscaledIntL = integralExtra;
+			final long unscaledIntHL = Checked.add(arith, unscaledIntH, unscaledIntL);
+			final long unscaledIntegral = scaleMetrics.multiplyByScaleFactorExact(unscaledIntHL);
+			final long unscaledFracH = fractionScaleH.multiplyByScaleFactorExact(fractionalExtra);
+			final long unscaledFracL = fractionalPart;
+			final long unscaledFracHL = negative ? -(unscaledFracH + unscaledFracL) : (unscaledFracH + unscaledFracL);
+			final long unscaledFractional = fractionScale.multiplyByScaleFactorExact(unscaledFracHL);
+			final long unscaledValue = Checked.add(arith, unscaledIntegral, unscaledFractional);
+			final long truncatedValue = Pow10.multiplyByPowerOf10Checked(arith, rounding, unscaledValue, exponentToMultiply);
 			final int roundingIncrement = rounding.calculateRoundingIncrement(negative ? -1 : 1, truncatedValue,
 					truncatedPart);
 			return roundingIncrement == 0 ? truncatedValue : Checked.add(arith, truncatedValue, roundingIncrement);
@@ -152,18 +227,24 @@ final class StringConversion {
 	}
 
 	private static final long parseFractionalPart(DecimalArithmetic arith, CharSequence s, int start, int end) {
-		final int len = end - start;
-		if (len > 0) {
-			int i = start;
-			long value = 0;
-			while  (i < end) {
-				final int digit = getDigit(arith, s, start, end, s.charAt(i++));
-				value = value * 10 + digit;
-			}
+		final long value = parseFractionalPartRaw(arith, s, start, end);
+		if (value != 0) {
+			final int len = end - start;
 			final int scale = arith.getScale();
 			if (len < scale) {
 				final ScaleMetrics diffScale = Scales.getScaleMetrics(scale - len);
 				return diffScale.multiplyByScaleFactor(value);
+			}
+		}
+		return value;
+	}
+
+	private static final long parseFractionalPartRaw(DecimalArithmetic arith, CharSequence s, int start, int end) {
+		if (start < end) {
+			long value = getDigit(arith, s, start, end, s.charAt(start));
+			for (int i = start + 1; i < end; i++) {
+				value *= 10;
+				value += getDigit(arith, s, start, end, s.charAt(i));
 			}
 			return value;
 		}
@@ -212,7 +293,17 @@ final class StringConversion {
 		return -1;
 	}
 
-	// copied from Long.parseLong(String, int) but for fixed radix 10
+	private static final int indexOfExponentIndicator(CharSequence s, int start, int end) {
+		for (int i = start; i < end; i++) {
+			final char ch = s.charAt(i);
+			if (ch == 'e' || ch == 'E') {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	// see Long.parseLong(String, int) but for fixed radix 10
 	private static final long parseIntegralPart(DecimalArithmetic arith, CharSequence s, int start, int end, ParseMode mode) {
 		long result = 0;
 		boolean negative = false;
@@ -222,6 +313,9 @@ final class StringConversion {
 		if (end > start) {
 			char firstChar = s.charAt(start);
 			if (firstChar < '0') { // Possible leading "+" or "-"
+				if (mode == ParseMode.IntegralExtra) {
+					throw newNumberFormatExceptionFor(arith, s, start, end);
+				}
 				if (firstChar == '-') {
 					negative = true;
 					limit = Long.MIN_VALUE;
@@ -249,29 +343,54 @@ final class StringConversion {
 				final int digit1 = getDigit(arith, s, start, end, s.charAt(i++));
 				final int inc = TENS[digit0] + digit1;
 				if (result < (-Long.MAX_VALUE / 100)) {//same limit with Long.MIN_VALUE
-					throw newNumberFormatExceptionFor(arith, s, start, end);
+					if (mode != ParseMode.Exponent) {
+						throw newNumberFormatExceptionFor(arith, s, start, end);
+					}
+					return excessiveExponent(arith, s, start, end, negative, i);
 				}
 				result *= 100;
 				if (result < limit + inc) {
-					throw newNumberFormatExceptionFor(arith, s, start, end);
+					if (mode != ParseMode.Exponent) {
+						throw newNumberFormatExceptionFor(arith, s, start, end);
+					}
+					return excessiveExponent(arith, s, start, end, negative, i);
 				}
 				result -= inc;
 			}
 			if (i < end) {
 				final int digit = getDigit(arith, s, start, end, s.charAt(i++));
 				if (result < (-Long.MAX_VALUE / 10)) {//same limit with Long.MIN_VALUE
-					throw newNumberFormatExceptionFor(arith, s, start, end);
+					if (mode != ParseMode.Exponent) {
+						throw newNumberFormatExceptionFor(arith, s, start, end);
+					}
+					return excessiveExponent(arith, s, start, end, negative, i);
 				}
 				result *= 10;
 				if (result < limit + digit) {
-					throw newNumberFormatExceptionFor(arith, s, start, end);
+					if (mode != ParseMode.Exponent) {
+						throw newNumberFormatExceptionFor(arith, s, start, end);
+					}
+					return excessiveExponent(arith, s, start, end, negative, i);
 				}
 				result -= digit;
 			}
 		} else {
+			if (mode == ParseMode.IntegralPart || mode == ParseMode.IntegralExtra) {
+				return 0;
+			}
 			throw newNumberFormatExceptionFor(arith, s, start, end);
 		}
 		return negative ? result : -result;
+	}
+
+	private static final long excessiveExponent(final DecimalArithmetic arith, final CharSequence s,
+												final int start, final int end, final boolean negative,
+												final int index) {
+		//check all remaining exponent chars are indeed numeric
+		for (int i = index; i < end; i++) {
+			getDigit(arith, s, start, end, s.charAt(i));
+		}
+		return negative ? Long.MIN_VALUE : Long.MAX_VALUE;
 	}
 	
 	private static final int getDigit(final DecimalArithmetic arith, final CharSequence s,

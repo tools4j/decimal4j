@@ -24,6 +24,7 @@
 package org.decimal4j.util;
 
 import org.decimal4j.api.DecimalArithmetic;
+import org.decimal4j.immutable.Decimal18f;
 import org.decimal4j.scale.ScaleMetrics;
 import org.decimal4j.scale.Scales;
 
@@ -201,12 +202,89 @@ public final class DoubleRounder {
 		// (a) the value is infinite or NaN
 		// (b) the next double is 2 decimal UPLs away (or more):
 		//     in this case no other double value represents the decimal value more accurately
-		if (!isFinite(value) || ulp * 2 <= Math.ulp(value)) {
+		if (!isFinite(value)) {
+			return value;
+		}
+		return round(value, roundingArith.getRoundingMode(), roundingArith.getScaleMetrics().getScaleFactor(), ulp);
+	}
+
+	private static final double round(double value, RoundingMode mode, double scaleFactor, double ulp) {
+		if (ulp < Math.ulp(value)) {
 			return value;
 		}
 		// NOTE: condition (b) above prevents overflows as such cases do not get to here
-		final long uDecimal = roundingArith.fromDouble(value);
-		return halfEvenArith.toDouble(uDecimal);
+		final double floor = floor(value, scaleFactor);
+		if (floor == value) {
+			return value;
+		}
+		final double ceil = ceil(value, scaleFactor);
+		if (ceil == value) {
+			return value;
+		}
+		switch (mode) {
+			case UNNECESSARY:
+				throw new ArithmeticException("rounding necessary");
+			case FLOOR:
+				return floor;
+			case CEILING:
+				return ceil;
+			case UP:
+				return value >= 0 ? ceil : floor;
+			case DOWN:
+				return value >= 0 ? floor : ceil;
+			case HALF_UP:
+				if (value >= 0) {
+					return ceil - value <= value - floor && ceil + floor <= 2 * value ? ceil : floor;
+//					return ceil - value <= value - floor ? ceil : floor;
+				} else {
+					return ceil - value < value - floor ? ceil : floor;
+				}
+			case HALF_DOWN:
+//				if (value >= 0) {
+//					return floor(Math.nextDown(value + ulp / 2), scaleFactor);
+//				} else {
+//					return ceil(Math.nextUp(value - ulp / 2), scaleFactor);
+//				}
+				if (value >= 0) {
+					return ceil - value < value - floor ? ceil : floor;
+				} else {
+					return ceil - value <= value - floor ? ceil : floor;
+				}
+			case HALF_EVEN:
+				if (2 * value == floor(2 * value, scaleFactor)) {
+					final double floorScaled = Math.floor(value * scaleFactor);
+					final boolean floorEven = floorScaled == 2 * Math.floor(floorScaled / 2);
+					return floorEven ? floor : ceil;
+				}
+				if (2 * value == ceil(2 * value, scaleFactor)) {
+					final double ceilScaled = Math.ceil(value * scaleFactor);
+					final boolean ceilEven = ceilScaled == 2 * Math.floor(ceilScaled / 2);
+					return ceilEven ? ceil : floor;
+				}
+				return ceil - value <= value - floor ? ceil : floor;
+			default:
+				throw new RuntimeException("unknown rounding mode: " + mode);
+		}
+	}
+
+	private static double floor(final double value, final double scaleFactor) {
+		double scaled = value * scaleFactor;
+		double floor = Math.floor(scaled) / scaleFactor;
+		while (floor > value) {
+			scaled = Math.nextDown(scaled);
+			floor = Math.floor(scaled) / scaleFactor;
+		}
+		return floor;
+	}
+
+	private static double ceil(final double value, final double scaleFactor) {
+		double scaled = value * scaleFactor;
+		double ceil = Math.ceil(scaled) / scaleFactor;
+		while (ceil < value) {
+			scaled = Math.nextUp(scaled);
+			ceil = Math.ceil(scaled) / scaleFactor;
+		}
+		return ceil;
 	}
 
 	private static final double checkRoundingUnnecessary(double value, DecimalArithmetic halfEvenArith, double ulp) {

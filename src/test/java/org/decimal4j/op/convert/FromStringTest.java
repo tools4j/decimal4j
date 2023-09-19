@@ -27,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import org.decimal4j.api.MutableDecimal;
 import org.decimal4j.factory.DecimalFactory;
 import org.decimal4j.op.AbstractRandomAndSpecialValueTest;
 import org.decimal4j.scale.ScaleMetrics;
+import org.decimal4j.scale.Scales;
 import org.decimal4j.test.ArithmeticResult;
 import org.decimal4j.test.TestSettings;
 import org.decimal4j.truncate.OverflowMode;
@@ -149,8 +151,47 @@ public class FromStringTest extends AbstractRandomAndSpecialValueTest {
 		values.add("-1.");
 		values.add("+1.A");
 		values.add("-1.A");
+		values.addAll(getSpecialScientificStrings());
 		values.add(null);// test null input
 		return values.toArray(new String[values.size()]);
+	}
+
+	private List<String> getSpecialScientificStrings() {
+		final List<String> values = new ArrayList<>();
+//		values.addAll(Arrays.asList(
+//				"+1.e0",
+//				"+1.e+0",
+//				"+1.e-0",
+//				"+1.e000",
+//				"+1.e+000",
+//				"+1.e-000",
+//				"+1.e000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//				"+1.e+000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//				"+1.e-000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+//				"+.1e-1",
+//				"-.1e-1"
+//		));
+		for (int exp = -22; exp < 10; exp++) {
+			values.add("9223372036854775807e" + exp);
+			values.add("-9223372036854775807e" + exp);
+			values.add("9223372036854775808e" + exp);
+			values.add("-9223372036854775808e" + exp);
+			values.add("9223372036854775809e" + exp);
+			values.add("-9223372036854775809e" + exp);
+			BigDecimal maxVal = BigDecimal.valueOf(Long.MAX_VALUE);
+			for (int pow10 = 1; pow10 < Math.max(3, -exp); pow10++) {
+				final BigDecimal powVal = maxVal.scaleByPowerOfTen(pow10);
+				final BigDecimal powVal1 = maxVal.add(BigDecimal.ONE).scaleByPowerOfTen(pow10);
+				final BigDecimal powVal2 = powVal1.add(BigDecimal.ONE).scaleByPowerOfTen(pow10);
+				values.add(powVal + "e" + exp);
+				values.add("-" + powVal + "e" + exp);
+				values.add(powVal1 + "e" + exp);
+				values.add("-" + powVal1 + "e" + exp);
+				values.add(powVal2 + "e" + exp);
+				values.add("-" + powVal2 + "e" + exp);
+			}
+		}
+		return values;
 	}
 
 	@Override

@@ -155,6 +155,25 @@ public enum TruncatedPart {
 	abstract public boolean isGreaterThanHalf();
 
 	/**
+	 * Returns the truncated part resulting of this part followed by {@code next},
+	 * for instance ZERO followed by EQUAL_TO_HALF would result in LESS_THAN_HALF_BUT_NOT_ZERO.
+	 *
+	 * @param next the part following after this one
+	 * @return the result of this followed by next
+	 */
+	public TruncatedPart andThen(final TruncatedPart next) {
+		if (next != ZERO) {
+			if (this == ZERO) {
+				return LESS_THAN_HALF_BUT_NOT_ZERO;
+			}
+			if (this == EQUAL_TO_HALF) {
+				return GREATER_THAN_HALF;
+			}
+		}
+		return this;
+	}
+
+	/**
 	 * Returns a truncated part constant given the first truncated digit and a
 	 * boolean indicating whether there is non-zero digits after that.
 	 * 

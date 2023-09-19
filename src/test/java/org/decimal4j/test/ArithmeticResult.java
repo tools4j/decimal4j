@@ -106,7 +106,13 @@ public class ArithmeticResult<T> {
 				throw (AssertionError)new AssertionError(messagePrefix + " exception lead to exception " + exception + " but expected was exception type: " + expected.exception).initCause(exception);
 			}
 		} else {
-			assertEquals(messagePrefix + " = " + expected.resultString, expected.compareValue, compareValue);
+			if (expected.compareValue instanceof Double && compareValue instanceof Double) {
+				//NOTE: this is needed due to the weird implementation of Double.equals(..)
+				//      e.g. this returns false: new Double(0.0).equals(new Double(-0.0))
+				assertEquals(messagePrefix + " = " + expected.resultString, (Double) expected.compareValue, (Double) compareValue, 0.0);
+			} else {
+				assertEquals(messagePrefix + " = " + expected.resultString, expected.compareValue, compareValue);
+			}
 		}
 	}
 	
