@@ -32,6 +32,9 @@ import org.decimal4j.scale.Scale4f;
 import org.junit.Test;
 
 import java.math.RoundingMode;
+import java.util.function.DoubleToLongFunction;
+import java.util.function.LongBinaryOperator;
+import java.util.stream.DoubleStream;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -77,5 +80,39 @@ public class FaqTest {
         final long valA = scale4.fromUnscaled(123, 2);
         final long valB = scale4.fromUnscaled(456, 2);
         assertEquals(56088, scale4.multiply(valA, valB));
+    }
+
+    /**
+     * Example given in <a href="https://github.com/tools4j/decimal4j/issues/24">Issue 24</a>
+     */
+    @Test
+    public void issue24() {
+        final double[] pnl = {1, 2, 3, 3.5, 3.2, 4.1};
+
+        //1) with immutable decimals
+        final Decimal2f totalPnl = DoubleStream.of(pnl)
+                .mapToObj(Decimal2f::valueOf)
+                .reduce(Decimal2f.ZERO, Decimal2f::add);
+        assertEquals("16.80", totalPnl.toString());
+        assertEquals(Decimal2f.valueOf(16.8), totalPnl);
+
+        //2) with mutable decimals
+        final MutableDecimal2f mutableTotalPnl = DoubleStream.of(pnl)
+                .mapToObj(MutableDecimal2f::new)
+                .reduce(MutableDecimal2f.zero(), MutableDecimal2f::add);
+        assertEquals("16.80", mutableTotalPnl.toString());
+        assertEquals(new MutableDecimal2f(16.8), mutableTotalPnl);
+
+        //3) with zero-GC
+        final DecimalArithmetic arithRoundHalfEven = Scale2f.INSTANCE.getRoundingHalfEvenArithmetic();
+        final DecimalArithmetic arithNoRounding = Scale2f.INSTANCE.getRoundingUnnecessaryArithmetic();
+        //NOTE: accessing instance method refs causes allocation, hence cache them usually in a constant
+        final DoubleToLongFunction fromDouble2f = arithRoundHalfEven::fromDouble;
+        final LongBinaryOperator add2f = arithNoRounding::add;
+        final long totalPnlUnscaled = DoubleStream.of(pnl)
+                .mapToLong(fromDouble2f)
+                .reduce(0, add2f);
+        assertEquals("16.80", arithNoRounding.toString(totalPnlUnscaled));
+        assertEquals(arithRoundHalfEven.fromDouble(16.8), totalPnlUnscaled);
     }
 }
