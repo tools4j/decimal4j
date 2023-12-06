@@ -103,7 +103,7 @@ public class FaqTest {
         assertEquals("16.80", mutableTotalPnl.toString());
         assertEquals(new MutableDecimal2f(16.8), mutableTotalPnl);
 
-        //3) with zero-GC
+        //3) with zero-GC API (NOTE: streams and map/reduce still causes object allocation)
         final DecimalArithmetic arithRoundHalfEven = Scale2f.INSTANCE.getRoundingHalfEvenArithmetic();
         final DecimalArithmetic arithNoRounding = Scale2f.INSTANCE.getRoundingUnnecessaryArithmetic();
         //NOTE: accessing instance method refs causes allocation, hence cache them usually in a constant
